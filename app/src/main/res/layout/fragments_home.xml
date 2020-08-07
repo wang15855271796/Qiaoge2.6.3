@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <android.support.design.widget.AppBarLayout
+        android:id="@+id/layout_appbar"
+        android:layout_width="match_parent"
+        app:layout_behavior="com.yuruiyin.appbarlayoutbehavior.AppBarLayoutBehavior"
+        android:layout_height="wrap_content">
+
+        <android.support.design.widget.CollapsingToolbarLayout
+            android:id="@+id/layout_collapsing"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="@dimen/size_25dp"
+            app:contentScrim="@color/colorPrimary"
+            app:layout_scrollFlags="scroll|exitUntilCollapsed"
+            app:scrimAnimationDuration="0"
+            app:statusBarScrim="@color/colorPrimary">
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="328dp"
+                    android:background="@mipmap/ic_guide_three"/>
+
+                <TextView
+                    android:gravity="center"
+                    android:textSize="35dp"
+                    android:textColor="#fff"
+                    android:text="打工是不可能的"
+                    android:background="@color/colorAccent"
+                    android:layout_width="match_parent"
+                    android:layout_height="140dp"/>
+
+            </LinearLayout>
+
+
+        </android.support.design.widget.CollapsingToolbarLayout>
+
+        <android.support.design.widget.TabLayout
+            android:id="@+id/tabs"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/size_60dp"
+            app:tabIndicatorColor="@color/colorAccent"
+            app:tabIndicatorHeight="2dp"
+            app:tabSelectedTextColor="@color/colorAccent"
+            app:tabTextColor="#fff"/>
+
+    </android.support.design.widget.AppBarLayout>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recycler"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+    </android.support.v7.widget.RecyclerView>
+
+    <!--    <android.support.v4.view.ViewPager-->
+    <!--        android:overScrollMode="never"-->
+    <!--        android:id="@+id/pager_view"-->
+    <!--        android:layout_width="match_parent"-->
+    <!--        android:layout_height="match_parent"-->
+    <!--        app:layout_behavior="@string/appbar_scrolling_view_behavior"/>-->
+
+</android.support.design.widget.CoordinatorLayout>
+
+
+
+
+
+
+
+
+
+<!--<android.support.design.widget.CoordinatorLayout-->
+<!--    xmlns:android="http://schemas.android.com/apk/res/android"-->
+<!--    xmlns:app="http://schemas.android.com/apk/res-auto"-->
+<!--    xmlns:tools="http://schemas.android.com/tools"-->
+<!--    android:layout_width="match_parent"-->
+<!--    android:layout_height="match_parent">-->
+
+<!--    <android.support.design.widget.AppBarLayout-->
+<!--        android:id="@+id/layout_appbar"-->
+<!--        app:layout_behavior="com.puyue.www.qiaoge.FixBounceV26Behavior"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content">-->
+
+<!--        <android.support.design.widget.CollapsingToolbarLayout-->
+<!--            android:id="@+id/layout_collapsing"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:minHeight="@dimen/size_25dp"-->
+<!--            app:contentScrim="@color/colorPrimary"-->
+<!--            app:layout_scrollFlags="scroll|exitUntilCollapsed"-->
+<!--            app:scrimAnimationDuration="0"-->
+<!--            app:statusBarScrim="@color/colorPrimary">-->
+
+<!--            <LinearLayout-->
+<!--                android:orientation="vertical"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content">-->
+
+<!--                <ImageView-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="328dp"-->
+<!--                    android:background="@mipmap/ic_guide_three"/>-->
+
+<!--                <TextView-->
+<!--                    android:gravity="center"-->
+<!--                    android:textSize="35dp"-->
+<!--                    android:textColor="#fff"-->
+<!--                    android:text="打工是不可能的"-->
+<!--                    android:background="@color/colorAccent"-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="140dp"/>-->
+
+<!--            </LinearLayout>-->
+
+
+<!--        </android.support.design.widget.CollapsingToolbarLayout>-->
+
+<!--        <android.support.design.widget.TabLayout-->
+<!--            android:id="@+id/tabs"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="@dimen/size_60dp"-->
+<!--            app:tabIndicatorColor="@color/colorAccent"-->
+<!--            app:tabSelectedTextColor="@color/colorAccent"-->
+<!--            app:tabTextColor="#fff"/>-->
+
+<!--    </android.support.design.widget.AppBarLayout>-->
+
+<!--    <android.support.v7.widget.RecyclerView-->
+<!--        android:id="@+id/recycler"-->
+<!--        app:layout_behavior="@string/appbar_scrolling_view_behavior"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="match_parent">-->
+
+<!--    </android.support.v7.widget.RecyclerView>-->
+
+<!--</android.support.design.widget.CoordinatorLayout>-->
