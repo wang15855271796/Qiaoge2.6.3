@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:background="#F0F0F0"
     android:orientation="vertical"
     android:layout_height="match_parent">
@@ -30,13 +31,211 @@
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/recyclerView"
-
-                android:background="@color/colorWhite"
+                android:layout_marginRight="@dimen/size_8dp"
+                android:layout_marginLeft="@dimen/size_8dp"
+                android:background="@drawable/shape_white1"
                 android:layout_marginTop="@dimen/size_10dp"
                 android:layout_width="match_parent"
+                android:layout_marginBottom="@dimen/size_8dp"
                 android:layout_height="wrap_content">
 
             </android.support.v7.widget.RecyclerView>
+
+            <LinearLayout
+                android:layout_marginTop="@dimen/dp_10"
+                android:background="@drawable/shape_white1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:id="@+id/subtractionActivitiesLinearLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="@dimen/size_10dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/size_13dp"
+                        android:text="商品数量"
+                        android:textColor="@color/app_black"
+                        android:textSize="@dimen/size_12dp" />
+
+
+                    <TextView
+                        tools:text="20"
+                        android:id="@+id/tv_num"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="@dimen/size_15dp"
+                        android:gravity="right"
+                        android:textColor="#333333"
+                        android:textSize="@dimen/size_11dp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="@dimen/size_10dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/size_13dp"
+                        android:text="@string/commodityAmount"
+                        android:textColor="@color/app_black"
+                        android:textSize="@dimen/size_12dp" />
+
+                    <TextView
+                        android:id="@+id/commodityAmount"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="@dimen/size_13dp"
+                        android:gravity="right"
+                        android:textColor="@color/app_black"
+                        android:textSize="@dimen/size_11dp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/ll_self_sufficiency"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="@dimen/size_10dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/size_13dp"
+                        android:text="@string/distributionFee"
+                        android:textColor="@color/app_black"
+                        android:textSize="@dimen/size_12dp" />
+
+                    <TextView
+                        android:id="@+id/distributionFee"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/size_10dp"
+                        android:textColor="@color/color_939393"
+                        android:textSize="@dimen/size_11dp" />
+
+                    <TextView
+                        android:id="@+id/distributionFeePrice"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="@dimen/size_15dp"
+                        android:gravity="right"
+                        android:textColor="@color/app_black"
+                        android:textSize="@dimen/size_11dp" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/vipSubtractionLinearLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="@dimen/size_10dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/size_13dp"
+                        android:text="@string/vipSubtraction"
+                        android:textColor="@color/app_black"
+                        android:textSize="@dimen/size_12dp" />
+
+                    <TextView
+                        android:id="@+id/vipSubtraction"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/size_10dp"
+                        android:background="@drawable/app_vipsubtraction_bg"
+                        android:paddingLeft="@dimen/size_10dp"
+                        android:paddingRight="@dimen/size_10dp"
+                        android:textColor="@color/color_DA673D"
+                        android:textSize="@dimen/size_13dp"
+                        android:visibility="gone" />
+
+                    <TextView
+
+                        android:id="@+id/vipSubtractionPrice"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="@dimen/size_15dp"
+                        android:gravity="right"
+                        android:textColor="@color/color_F6551A"
+                        android:textSize="@dimen/size_11dp" />
+                </LinearLayout>
+
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_marginTop="@dimen/dp_10"
+                android:background="@drawable/shape_white1"
+                android:id="@+id/linearLayoutCoupons"
+                android:gravity="center_vertical"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/size_45dp"
+                android:padding="@dimen/size_10dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/size_13dp"
+                    android:text="@string/textCoupons"
+                    android:textColor="@color/app_black"
+                    android:textSize="@dimen/size_12dp" />
+
+                <TextView
+                    android:id="@+id/textCoupons"
+                    android:textStyle="bold"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="@dimen/size_5dp"
+                    android:drawablePadding="@dimen/size_11dp"
+                    tools:text="sssssssssssssss"
+                    android:drawableRight="@mipmap/ic_address_icon"
+                    android:gravity="right"
+                    android:textColor="#F25E0D"
+                    android:textSize="@dimen/size_12dp" />
+
+            </LinearLayout>
+            <!--备注-->
+            <LinearLayout
+                android:id="@+id/ll_beizhu"
+                android:layout_marginTop="@dimen/dp_10"
+                android:background="@drawable/shape_white1"
+                android:layout_width="match_parent"
+                android:layout_height="45dp"
+                android:layout_marginBottom="@dimen/dp_10"
+                android:gravity="center_vertical"
+                android:padding="@dimen/size_10dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/size_13dp"
+                    android:text="备注"
+                    android:textColor="@color/app_black"
+                    android:textSize="@dimen/size_12dp" />
+
+                <TextView
+                    android:id="@+id/tv_beizhu"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="@dimen/size_5dp"
+                    android:drawablePadding="@dimen/size_11dp"
+                    android:layout_marginLeft="@dimen/dp_10"
+                    tools:text="要是这人特别啰只展示十五个字长..."
+                    android:drawableRight="@mipmap/ic_address_icon"
+                    android:gravity="right"
+                    android:maxLength="15"
+                    android:textColor="#999999"
+                    android:textSize="@dimen/size_12dp" />
+
+            </LinearLayout>
 
             <include layout="@layout/fragment_confirm_order_foot" />
 
@@ -58,6 +257,7 @@
             app:indicatorColor="#f40"
             />
     </RelativeLayout>
+
     <LinearLayout
         android:id="@+id/ll_collect_bills"
         android:layout_width="match_parent"
@@ -133,6 +333,7 @@
         </LinearLayout>
 
     </LinearLayout>
+
     <LinearLayout
         android:id="@+id/LinearLayout"
         android:layout_width="match_parent"

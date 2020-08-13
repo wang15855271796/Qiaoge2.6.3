@@ -1,38 +1,27 @@
 package com.puyue.www.qiaoge.activity.mine.coupons;
 
-import android.app.Activity;
 import android.os.Bundle;
-import android.support.design.widget.Snackbar;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import android.support.design.widget.TabLayout;
+import android.support.v4.app.Fragment;
+import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.LinearLayout;
 
-import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.puyue.www.qiaoge.R;
-import com.puyue.www.qiaoge.activity.CommonH5Activity;
-import com.puyue.www.qiaoge.adapter.coupon.MyCouponsAdapter;
-import com.puyue.www.qiaoge.adapter.home.NoticeAdapter;
-import com.puyue.www.qiaoge.api.home.NoticeAPI;
+import com.puyue.www.qiaoge.adapter.mine.ViewPagerAdapter;
 import com.puyue.www.qiaoge.api.mine.coupon.MyCouponsAPI;
 import com.puyue.www.qiaoge.base.BaseSwipeActivity;
 
+import com.puyue.www.qiaoge.fragment.mine.coupons.CouponsOverdueFragment;
+import com.puyue.www.qiaoge.fragment.mine.coupons.CouponsUseFragment;
 import com.puyue.www.qiaoge.helper.AppHelper;
-import com.puyue.www.qiaoge.helper.StringHelper;
 import com.puyue.www.qiaoge.listener.NoDoubleClickListener;
-import com.puyue.www.qiaoge.model.home.NoticeListModel;
 import com.puyue.www.qiaoge.model.mine.coupons.queryUserDeductByStateModel;
-import com.puyue.www.qiaoge.model.mine.coupons.queryUserList;
-import com.tencent.mm.opensdk.utils.Log;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import in.srain.cube.views.ptr.PtrClassicFrameLayout;
-import in.srain.cube.views.ptr.PtrDefaultHandler;
-import in.srain.cube.views.ptr.PtrFrameLayout;
-import in.srain.cube.views.ptr.PtrHandler;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
@@ -43,15 +32,15 @@ import rx.schedulers.Schedulers;
  */
 public class MyCouponsActivity extends BaseSwipeActivity {
 
-    private PtrClassicFrameLayout ptrClassicFrameLayout;
-    private RecyclerView recyclerView;
     private int pageNum = 1;
     private  LinearLayout data;
     private  LinearLayout noData;
     private Toolbar toolbar;
-    private MyCouponsAdapter adapter;
     private List<queryUserDeductByStateModel.DataBean.ListBean> lists =new ArrayList<>();
-
+    TabLayout tabLayout;
+    ViewPager viewPager;
+    private List<Fragment> list=new ArrayList<>();
+    private List<String> stringList =new ArrayList<>();
     @Override
     public boolean handleExtra(Bundle savedInstanceState) {
         return false;
@@ -64,62 +53,50 @@ public class MyCouponsActivity extends BaseSwipeActivity {
 
     @Override
     public void findViewById() {
+        tabLayout = (TabLayout) findViewById(R.id.tabLayout);
         toolbar= (Toolbar) findViewById(R.id.toolbar);
-        ptrClassicFrameLayout= (PtrClassicFrameLayout) findViewById(R.id.ptrClassicFrameLayout);
-        recyclerView= (RecyclerView) findViewById(R.id.recyclerView);
         data= (LinearLayout) findViewById(R.id.data);
         noData= (LinearLayout) findViewById(R.id.noData);
+        viewPager = (ViewPager) findViewById(R.id.viewPager);
     }
 
     @Override
     public void setViewData() {
         pageNum = 1;
-        requestMyCoupons();
-        ptrClassicFrameLayout.setPtrHandler(new PtrHandler() {
+        stringList.add("未使用");
+        stringList.add("已使用");
+        stringList.add("已过期/失效");
+        //未使用
+        list.add(new CouponsNotUseFragment());
+        //已使用
+        list.add(new CouponsUseFragment());
+        //过期
+        list.add(new CouponsOverdueFragment());
+
+
+
+
+
+        ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager(),list,stringList);
+        viewPager.setAdapter(viewPagerAdapter);
+        viewPager.setOffscreenPageLimit(4);
+        tabLayout.setupWithViewPager(viewPager);
+        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
-            public boolean checkCanDoRefresh(PtrFrameLayout frame, View content, View header) {
-                return PtrDefaultHandler.checkContentCanBePulledDown(frame, content, header);
+            public void onTabSelected(TabLayout.Tab tab) {
+                viewPager.setCurrentItem(tab.getPosition(),false);
             }
 
             @Override
-            public void onRefreshBegin(PtrFrameLayout frame) {
-                pageNum = 1;
-                requestMyCoupons();
-            }
-        });
+            public void onTabUnselected(TabLayout.Tab tab) {
 
-        adapter = new MyCouponsAdapter(R.layout.item_my_coupons,lists,this);
-        adapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-//                startActivity(UseOrNotUseActivity.getIntent(mContext, UseOrNotUseActivity.class));
-            }
-        });
-        recyclerView.setLayoutManager(new LinearLayoutManager(mContext));
-        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-                super.onScrollStateChanged(recyclerView, newState);
             }
 
             @Override
-            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                super.onScrolled(recyclerView, dx, dy);
-                if (recyclerView.canScrollVertically(-1)) {
-                    ptrClassicFrameLayout.setEnabled(false);
-                } else {
-                    ptrClassicFrameLayout.setEnabled(true);
-                }
+            public void onTabReselected(TabLayout.Tab tab) {
+
             }
         });
-        recyclerView.setAdapter(adapter);
-        adapter.setOnLoadMoreListener(new BaseQuickAdapter.RequestLoadMoreListener() {
-            @Override
-            public void onLoadMoreRequested() {
-                pageNum++;
-                requestMyCoupons();
-            }
-        }, recyclerView);
     }
 
     @Override
@@ -130,65 +107,6 @@ public class MyCouponsActivity extends BaseSwipeActivity {
                 finish();
             }
         });
-    }
-
-
-    private void requestMyCoupons() {
-        MyCouponsAPI.requestCoupons(mContext, pageNum, 10,"ENABLED")
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<queryUserDeductByStateModel>() {
-                    @Override
-                    public void onCompleted() {
-
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-
-                    }
-
-                    @Override
-                    public void onNext(queryUserDeductByStateModel info) {
-                        ptrClassicFrameLayout.refreshComplete();
-
-                        if (info.isSuccess()) {
-                            updateNoticeList(info);
-                        } else {
-                            AppHelper.showMsg(mContext, info.getMessage());
-                        }
-
-
-                    }
-                });
-    }
-
-    private void updateNoticeList(queryUserDeductByStateModel info) {
-
-        if (pageNum == 1) {
-            if (info.getData() != null && info.getData().getList().size() > 0) {
-                data.setVisibility(View.VISIBLE);
-                noData.setVisibility(View.GONE);
-                lists.clear();
-                lists.addAll(info.getData().getList());
-                adapter.notifyDataSetChanged();
-            } else {
-                data.setVisibility(View.GONE);
-                noData.setVisibility(View.VISIBLE);
-            }
-
-        } else {
-
-            lists.addAll(info.getData().getList());
-            adapter.notifyDataSetChanged();
-        }
-        if (info.getData().isHasNextPage()) {
-            //还有下一页数据
-            adapter.loadMoreComplete();
-        } else {
-            //没有下一页数据了
-            adapter.loadMoreEnd();
-        }
     }
 
 

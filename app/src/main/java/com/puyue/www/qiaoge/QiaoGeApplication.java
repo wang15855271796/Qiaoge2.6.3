@@ -1,5 +1,6 @@
 package com.puyue.www.qiaoge;
 
+import android.content.Context;
 import android.os.Build;
 import android.support.multidex.MultiDexApplication;
 import android.util.Log;
@@ -8,6 +9,9 @@ import com.baidu.location.LocationClientOption;
 import com.baidu.mapapi.SDKInitializer;
 import com.puyue.www.qiaoge.helper.UserInfoHelper;
 import com.puyue.www.qiaoge.utils.SharedPreferencesUtil;
+
+
+import com.rrtx.tzpaylib.CashierManager;
 import com.tencent.bugly.crashreport.CrashReport;
 import com.tencent.mm.opensdk.openapi.IWXAPI;
 import com.tencent.mm.opensdk.openapi.WXAPIFactory;
@@ -18,6 +22,8 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
 import cn.jpush.android.api.JPushInterface;
+
+import static com.qiyukf.nimlib.sdk.msg.constant.SystemMessageStatus.init;
 
 
 /**
@@ -33,7 +39,6 @@ public class QiaoGeApplication extends MultiDexApplication {
     public void onCreate() {
         super.onCreate();
         SharedPreferencesUtil.saveString(this,"pays","-1");
-        Log.d("weeeeeeeeeee.....","000");
         CrashReport.initCrashReport(getApplicationContext(), "385e5aaa75", false);
         SDKInitializer.initialize(getApplicationContext());
 //        mLocationClient = new LocationClient(getApplicationContext());
@@ -41,7 +46,6 @@ public class QiaoGeApplication extends MultiDexApplication {
 //        mLocationClient.registerLocationListener(myListener);
         //注册监听函数
         LocationClientOption option = new LocationClientOption();
-
         option.setLocationMode(LocationClientOption.LocationMode.Hight_Accuracy);
         option.setIsNeedAddress(true);
 //可选，是否需要地址信息，默认为不需要，即参数为false
@@ -50,9 +54,7 @@ public class QiaoGeApplication extends MultiDexApplication {
 //        mLocationClient.setLocOption(option);
 //        mLocationClient.start();
         option.setLocationMode(LocationClientOption.LocationMode.Battery_Saving);
-
-
-
+//        CashierManager.getInstance().init(getApplicationContext());
         UserInfoHelper.saveDate(this, 0+"");
         api = WXAPIFactory.createWXAPI(this, "wxbc18d7b8fee86977");
         api.registerApp("wxbc18d7b8fee86977");
@@ -69,6 +71,7 @@ public class QiaoGeApplication extends MultiDexApplication {
 
         disableAPIDialog();
     }
+
 
     private void disableAPIDialog(){
         if (Build.VERSION.SDK_INT < 28)return;

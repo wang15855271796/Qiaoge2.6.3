@@ -1,5 +1,6 @@
-package com.puyue.www.qiaoge.fragment.mine.coupons;
+package com.puyue.www.qiaoge.activity.mine.coupons;
 
+import android.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -8,8 +9,6 @@ import android.widget.TextView;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.puyue.www.qiaoge.R;
-import com.puyue.www.qiaoge.activity.mine.coupons.MyCouponsOverAdapter;
-import com.puyue.www.qiaoge.activity.mine.coupons.UseOrNotUseActivity;
 import com.puyue.www.qiaoge.adapter.coupon.MyCouponsAdapter;
 import com.puyue.www.qiaoge.api.mine.coupon.MyCouponsAPI;
 import com.puyue.www.qiaoge.base.BaseFragment;
@@ -28,18 +27,19 @@ import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
 /**
- * Created by ${daff} on 2018/9/20
- * 不可使用(过期)
+ * Created by ${王涛} on 2020/8/7（未使用）
  */
-public class CouponsOverdueFragment extends BaseFragment {
+public class CouponsNotUseFragment extends BaseFragment {
     private RecyclerView recyclerView;
-    private PtrClassicFrameLayout ptrClassicFrameLayout;
-    private MyCouponsOverAdapter adapter;
+    private PtrClassicFrameLayout ptrClassicFrameLayout ;
+    private MyCouponsAdapter adapter;
     private int pageNum = 1;
     private LinearLayout data;
-    private LinearLayout noData;
+    private  LinearLayout noData;
     TextView tv_desc;
-    private List<queryUserDeductByStateModel.DataBean.ListBean> lists = new ArrayList<>();
+    private List<queryUserDeductByStateModel.DataBean.ListBean > lists =new ArrayList<>();
+
+
 
     @Override
     public int setLayoutId() {
@@ -48,15 +48,16 @@ public class CouponsOverdueFragment extends BaseFragment {
 
     @Override
     public void initViews(View view) {
+
     }
 
     @Override
     public void findViewById(View view) {
-        recyclerView = view.findViewById(R.id.recyclerView);
-        data = view.findViewById(R.id.data);
-        noData = view.findViewById(R.id.noData);
         tv_desc = view.findViewById(R.id.tv_desc);
-        ptrClassicFrameLayout = view.findViewById(R.id.ptrClassicFrameLayout);
+        recyclerView=view.findViewById(R.id.recyclerView);
+        data= view .findViewById(R.id.data);
+        noData= view.findViewById(R.id.noData);
+        ptrClassicFrameLayout=view.findViewById(R.id.ptrClassicFrameLayout);
     }
 
     @Override
@@ -76,8 +77,7 @@ public class CouponsOverdueFragment extends BaseFragment {
             }
         });
 
-        adapter = new MyCouponsOverAdapter(R.layout.item_my_coupons, lists, getActivity());
-
+        adapter = new MyCouponsAdapter(R.layout.item_my_coupons,lists,getActivity());
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
@@ -110,8 +110,9 @@ public class CouponsOverdueFragment extends BaseFragment {
 
     }
 
+
     private void requestMyCoupons() {
-        MyCouponsAPI.requestCoupons(getActivity(), pageNum, 10, "OVERTIME")
+        MyCouponsAPI.requestCoupons(getActivity(), pageNum, 10,"ENABLED")
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<queryUserDeductByStateModel>() {
@@ -141,6 +142,7 @@ public class CouponsOverdueFragment extends BaseFragment {
     }
 
     private void updateNoticeList(queryUserDeductByStateModel info) {
+
         if (pageNum == 1) {
             if (info.getData() != null && info.getData().getList().size() > 0) {
                 data.setVisibility(View.VISIBLE);
@@ -150,9 +152,10 @@ public class CouponsOverdueFragment extends BaseFragment {
                 adapter.notifyDataSetChanged();
             } else {
                 data.setVisibility(View.GONE);
+                tv_desc.setText("您还没有优惠券可以使用哦");
                 noData.setVisibility(View.VISIBLE);
-                tv_desc.setText("您还没有失效的优惠券哦");
             }
+
         } else {
             lists.addAll(info.getData().getList());
             adapter.notifyDataSetChanged();

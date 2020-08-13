@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorWhite"
+    android:background="#F0F0F0"
     android:orientation="vertical">
 
     <LinearLayout
@@ -117,8 +117,6 @@
                     android:text="到仓自提(免运费)"
                     android:textColor="#FF333333"
                     android:textSize="@dimen/size_16dp"
-
-
                     android:visibility="gone" />
 
             </LinearLayout>
@@ -127,10 +125,8 @@
                 android:id="@+id/fr_confirm_oder"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_marginLeft="@dimen/size_8dp"
-                android:layout_marginRight="@dimen/size_8dp"
                 android:layout_weight="1"
-                android:background="@color/white">
+              >
 
             </FrameLayout>
 

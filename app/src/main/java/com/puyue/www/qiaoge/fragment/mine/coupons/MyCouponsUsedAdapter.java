@@ -1,49 +1,43 @@
-package com.puyue.www.qiaoge.adapter.coupon;
+package com.puyue.www.qiaoge.fragment.mine.coupons;
 
 import android.content.Context;
 import android.graphics.Color;
 import android.support.annotation.Nullable;
-import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.puyue.www.qiaoge.R;
-import com.puyue.www.qiaoge.activity.mine.coupons.UseOrNotUseActivity;
-import com.puyue.www.qiaoge.adapter.home.HomeGroupAdapter;
 import com.puyue.www.qiaoge.model.mine.coupons.queryUserDeductByStateModel;
-
 
 import java.util.List;
 
 /**
- * Created by ${daff} on 2018/9/20
+ * Created by ${王涛} on 2020/8/7(已使用)
  */
-public class MyCouponsAdapter  extends  BaseQuickAdapter <queryUserDeductByStateModel.DataBean.ListBean,BaseViewHolder> {
+public class MyCouponsUsedAdapter extends BaseQuickAdapter<queryUserDeductByStateModel.DataBean.ListBean,BaseViewHolder> {
     private TextView tv_style;
     private  TextView tv_user_factor;
     private  TextView tv_time;
     private  TextView tv_role;
     private  TextView tv_amount;
     private ImageView iv_status;
-    private  Context context;
+    private Context context;
     TextView tv_desc;
     List<queryUserDeductByStateModel.DataBean.ListBean> list;
     RelativeLayout rl_grey;
     TextView tv_tip;
-    public MyCouponsAdapter(int layoutResId, @Nullable List<queryUserDeductByStateModel.DataBean.ListBean> data,Context context) {
+    public MyCouponsUsedAdapter(int layoutResId, @Nullable List<queryUserDeductByStateModel.DataBean.ListBean> data,Context context) {
         super(layoutResId, data);
         list=data;
         this.context=context;
     }
+
 
     @Override
     protected void convert(final BaseViewHolder helper, queryUserDeductByStateModel.DataBean.ListBean item) {
@@ -59,6 +53,7 @@ public class MyCouponsAdapter  extends  BaseQuickAdapter <queryUserDeductByState
         if(!TextUtils.isEmpty(item.getApplyFrom())){
             tv_style.setText(item.getApplyFrom());
         }
+        //item.getGiftType()+"   "+
         tv_user_factor.setText(item.getGiftName());
         tv_time.setText(item.getDateTime());
         tv_amount.setText(item.getAmount());
@@ -71,7 +66,6 @@ public class MyCouponsAdapter  extends  BaseQuickAdapter <queryUserDeductByState
             tv_role.setText("");
             tv_role.setVisibility(View.INVISIBLE);
         }
-
         if(item.getState().equals("ENABLED")){  // State== ENABLED   可用使用的优惠卷
             iv_status.setVisibility(View.GONE);
             rl_grey.setVisibility(View.GONE);
@@ -106,7 +100,4 @@ public class MyCouponsAdapter  extends  BaseQuickAdapter <queryUserDeductByState
 
 
     }
-
-
-
 }

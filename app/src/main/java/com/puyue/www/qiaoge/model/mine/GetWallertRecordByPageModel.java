@@ -183,6 +183,33 @@ public class GetWallertRecordByPageModel {
             private int type;
             private int id;
             private String iconUrl;
+            private boolean nullData;
+
+            @Override
+            public String toString() {
+                return "RecordsBean{" +
+                        "dateTime='" + dateTime + '\'' +
+                        ", flowRecordTypeName='" + flowRecordTypeName + '\'' +
+                        ", createDate='" + createDate + '\'' +
+                        ", amount='" + amount + '\'' +
+                        ", walletRecordChannelType='" + walletRecordChannelType + '\'' +
+                        ", recordType=" + recordType +
+                        ", userId=" + userId +
+                        ", subUserId=" + subUserId +
+                        ", type=" + type +
+                        ", id=" + id +
+                        ", iconUrl='" + iconUrl + '\'' +
+                        ", nullData=" + nullData +
+                        '}';
+            }
+
+            public boolean isNullData() {
+                return nullData;
+            }
+
+            public void setNullData(boolean nullData) {
+                this.nullData = nullData;
+            }
 
             public String getDateTime() {
                 return dateTime;

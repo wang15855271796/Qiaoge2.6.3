@@ -24,27 +24,20 @@
             android:textSize="18dp" />
     </android.support.v7.widget.Toolbar>
 
-<LinearLayout
-    android:id="@+id/data"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content">
-    <in.srain.cube.views.ptr.PtrClassicFrameLayout
-        android:id="@+id/ptrClassicFrameLayout"
+    <android.support.design.widget.TabLayout
+        android:id="@+id/tabLayout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        app:tabIndicatorHeight="3dp"
+        android:background="#ffffff"
+        app:tabGravity="center"
+        app:tabIndicatorColor="#F25E0D"
+        app:tabSelectedTextColor="#333333"
+        app:tabTextAppearance="@style/TabText"
+        app:tabTextColor="#333333" />
 
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/recyclerView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-
-        </RelativeLayout>
-
-    </in.srain.cube.views.ptr.PtrClassicFrameLayout>
-</LinearLayout>
-<include layout="@layout/activity_coupons_no_data"/>
+    <android.support.v4.view.ViewPager
+        android:id="@+id/viewPager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 </LinearLayout>

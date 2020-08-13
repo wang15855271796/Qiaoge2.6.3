@@ -376,7 +376,7 @@ public class CouponListsAdapter extends RecyclerView.Adapter<CouponListsAdapter.
                     }
                 }
                 if(datas.size()<10) {
-                    datas.add(datas.size(), new ItemModel());
+                    datas.add(datas.size(), new ItemModel(""));
                 }else {
                     ToastUtil.showSuccessMsg(context,"单次最多兑换10张");
                 }

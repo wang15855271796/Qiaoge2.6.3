@@ -105,7 +105,6 @@ public class CouponListssAdapter extends BaseQuickAdapter<ItemModel,BaseViewHold
         TextWatcher textWatcher = new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
             }
 
             @Override
@@ -277,7 +276,7 @@ public class CouponListssAdapter extends BaseQuickAdapter<ItemModel,BaseViewHold
                 }
 
                 if(datas.size()<10) {
-                    datas.add(datas.size(), new ItemModel());
+                    datas.add(datas.size(), new ItemModel(""));
                 }else {
                     ToastUtil.showSuccessMsg(mContext,"单次最多兑换10张");
                 }
@@ -318,6 +317,7 @@ public class CouponListssAdapter extends BaseQuickAdapter<ItemModel,BaseViewHold
         lists.add(amounts);
         total1+=amounts;
         Double amountss = Double.valueOf(amount);
+        Log.d("wssssssssss.......",amountss.toString());
         if(amountss-total1==0||amountss-total1<0) {
             et.setText(amount);
             ToastUtil.showSuccessMsg(mContext,"可兑换余额不足");

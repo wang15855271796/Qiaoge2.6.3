@@ -3,13 +3,10 @@ package com.puyue.www.qiaoge.dialog;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.Context;
 import android.content.Intent;
-import android.os.Handler;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,6 +29,7 @@ import com.puyue.www.qiaoge.helper.NetWorkHelper;
 import com.puyue.www.qiaoge.helper.UserInfoHelper;
 import com.puyue.www.qiaoge.model.ExCouponModel;
 import com.puyue.www.qiaoge.model.cart.ExChangeModel;
+import com.puyue.www.qiaoge.model.cart.ItemModel;
 import com.puyue.www.qiaoge.model.mine.AccountCenterModel;
 import com.puyue.www.qiaoge.utils.ToastUtil;
 import com.puyue.www.qiaoge.utils.Utils;
@@ -39,7 +37,6 @@ import com.puyue.www.qiaoge.utils.Utils;
 import org.greenrobot.eventbus.EventBus;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -50,9 +47,9 @@ import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
 /**
- * Created by ${王涛} on 2020/7/8
+ * Created by ${王涛} on 2020/8/11
  */
-public class ExCouponDialog extends Dialog {
+public class ExCouponsDialog extends Dialog {
     private AlertDialog mDialog;
     public View view;
     Activity context;
@@ -64,14 +61,13 @@ public class ExCouponDialog extends Dialog {
     @BindView(R.id.tv_amount)
     TextView tv_amount;
     List<ExChangeModel.DetailListBean> mDatas;
-    List<String> amounts;
+    List<ItemModel> amounts;
     private EditText mEtPwd;
     Double total = 0.0;
     BigDecimal totals;
-    public ExCouponDialog(Activity context, List<ExChangeModel.DetailListBean> mDatas, List<String> amounts, BigDecimal totals) {
+    public ExCouponsDialog(Activity context, List<ItemModel> amounts, BigDecimal totals) {
         super(context, R.style.dialog);
         this.context = context;
-        this.mDatas = mDatas;
         this.amounts = amounts;
         this.totals = totals;
         init();
@@ -87,13 +83,13 @@ public class ExCouponDialog extends Dialog {
         WindowManager.LayoutParams attributes = getWindow().getAttributes();
         attributes.width = Utils.getScreenWidth(context);
         getWindow().setAttributes(attributes);
-//        ExchangeAdapter exchangeAdapter = new ExchangeAdapter(R.layout.item_exchange,amounts);
+        ExchangeAdapter exchangeAdapter = new ExchangeAdapter(R.layout.item_exchange,amounts);
         recyclerView.setLayoutManager(new LinearLayoutManager(context));
-//        recyclerView.setAdapter(exchangeAdapter);
-        for (int i = 0; i < amounts.size(); i++) {
-           Double s = Double.valueOf(amounts.get(i));
-           total+=s;
-        }
+        recyclerView.setAdapter(exchangeAdapter);
+//        for (int i = 0; i < amounts.size(); i++) {
+//            Double s = Double.valueOf(amounts.get(i));
+//            total+=s;
+//        }
         tv_amount.setText("兑换金额"+totals+"元");
         tv_add_car.setOnClickListener(new View.OnClickListener() {
             @Override

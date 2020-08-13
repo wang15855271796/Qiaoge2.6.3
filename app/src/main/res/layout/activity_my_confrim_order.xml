@@ -83,6 +83,47 @@
                 android:layout_height="@dimen/size_1dp"
                 android:layout_marginTop="@dimen/size_15dp"
                 android:background="@color/color_F6F6F6" />
+            <!--云闪付-->
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/size_20dp"
+                android:layout_marginRight="@dimen/size_20dp"
+                android:layout_marginTop="@dimen/size_15dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:drawableLeft="@mipmap/icon_yun"
+                    android:drawablePadding="@dimen/size_15dp"
+                    android:gravity="center"
+                    android:text="云闪付"
+                    android:textColor="@color/app_black"
+                    android:textSize="@dimen/size_15dp" />
+                <TextView
+                    android:textColor="@color/color_AAA8AB"
+                    android:textSize="@dimen/size_15dp"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="@dimen/size_15dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+                <ImageView
+                    android:id="@+id/iv_yun"
+                    android:layout_centerVertical="true"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:src="@mipmap/ic_pay_no" />
+            </RelativeLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/size_1dp"
+                android:layout_marginTop="@dimen/size_15dp"
+                android:background="@color/color_F6F6F6" />
+
 
             <RelativeLayout
                 android:layout_width="match_parent"

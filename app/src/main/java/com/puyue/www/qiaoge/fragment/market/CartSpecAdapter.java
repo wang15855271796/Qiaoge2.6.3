@@ -32,8 +32,9 @@ public class CartSpecAdapter extends BaseQuickAdapter<CartsListModel.DataBean.Va
     List<CartsListModel.DataBean.ValidListBean> validListBeans;
     int businessType;
     int businessId;
+    int num = 0;
     TestAdapter.IProductSelectCallback iProductSelectCallback;
-    List<CartsListModel.DataBean.ValidListBean.SpecProductListBean> listAll = new ArrayList<>();
+    List<CartsListModel.DataBean.ValidListBean> listAll = new ArrayList<>();
     public CartSpecAdapter(TestAdapter.IProductSelectCallback iProductSelectCallback, List<CartsListModel.DataBean.ValidListBean> validListBeans, int layoutResId, @Nullable List<CartsListModel.DataBean.ValidListBean.SpecProductListBean> data, CartsListModel.DataBean.ValidListBean item,
                            TestAdapter testAdapter, int businessType, int businessId) {
         super(layoutResId, data);
@@ -67,53 +68,9 @@ public class CartSpecAdapter extends BaseQuickAdapter<CartsListModel.DataBean.Va
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 //更改item选中状态同时进行实体内的选中状态改变
                 item.setSelected(isChecked);
+                listAll.clear();
 
-//                for (int i = 0; i < data.size(); i++) {
-//
-//                }
-//                for (int i = 0; i < validListBeans.size(); i++) {
-//                    if(validListBeans.get(i).isSelected()) {
-//                        for (int j = 0; j < data.size(); j++) {
-//                            if(data.get(j).isSelected()) {
-//
-//                            }
-//                        }
-//                    }
-//                }
-//                listAll.clear();
-//                for (int i = 0; i < data.size(); i++) {
-//                    if(data.get(i).isSelected()) {
-//
-//                        for (int j = 0; j < validListBeans.size(); j++) {
-//                            if(validListBeans.get(j).isSelected()) {
-//                                Log.d("ewerrrrrrr....",validListBeans.get(j).isSelected()+"aa");
-////                                listAll.add(validListBeans.get(j));
-//                            }else {
-////                                listAll.remove(validListBeans.get(j));
-//                            }
-//                        }
-//                    }else {
-//                        listAll.clear();
-//                        for (int j = 0; j < validListBeans.size(); j++) {
-//                            if(validListBeans.get(j).isSelected()) {
-////                                listAll.add(validListBeans.get(j));
-//                                Log.d("ewerrrrrrr....",validListBeans.get(j).isSelected()+"bb");
-//                                Log.d("ewerrrrrrr....",listAll.size()+"cc");
-//
-//                            }else {
-////                                listAll.remove(validListBeans.get(j));
-//                            }
-//                        }
-//                    }
-//                }
-//                listAll.clear();
-//                for (int i = 0; i < data.size(); i++) {
-//                    if(!data.get(i).isSelected()) {
-//                        listAll.remove(data.get(i));
-//                    }else {
-//                        listAll.add(data.get(i));
-//                    }
-//                }
+
                 boolean noSelect = false;
                 //内层item选中状态改变后要遍历判断是否全选，以改变外层item的选中状态
                 for (CartsListModel.DataBean.ValidListBean.SpecProductListBean validListBean : data) {
@@ -124,7 +81,6 @@ public class CartSpecAdapter extends BaseQuickAdapter<CartsListModel.DataBean.Va
                 if (!noSelect) {
                     items.setSelected(!noSelect);
                     testAdapter.notifyDataSetChanged();
-//                    listAll.add(items);
                 } else {
                     items.setSelected(!noSelect);
                     testAdapter.notifyDataSetChanged();

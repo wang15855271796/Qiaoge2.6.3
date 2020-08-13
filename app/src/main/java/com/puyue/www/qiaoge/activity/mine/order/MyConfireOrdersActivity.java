@@ -59,6 +59,10 @@ import com.puyue.www.qiaoge.model.mine.GetWalletAmountModel;
 import com.puyue.www.qiaoge.model.mine.order.GenerateOrderModel;
 import com.puyue.www.qiaoge.model.mine.order.MyOrderNumModel;
 import com.puyue.www.qiaoge.utils.SharedPreferencesUtil;
+import com.puyue.www.qiaoge.utils.ToastUtil;
+
+import com.rrtx.tzpaylib.CashierManager;
+import com.rrtx.tzpaylib.PaymentCallback;
 import com.tencent.mm.opensdk.modelpay.PayReq;
 import com.tencent.mm.opensdk.openapi.IWXAPI;
 import com.tencent.mm.opensdk.openapi.WXAPIFactory;
@@ -108,6 +112,7 @@ public class MyConfireOrdersActivity extends BaseSwipeActivity {
     boolean flag = false;
     private int orderDeliveryType;
     YueDialog yueDialog;
+    ImageView iv_yun;
     @Override
     public boolean handleExtra(Bundle savedInstanceState) {
         return false;
@@ -121,6 +126,7 @@ public class MyConfireOrdersActivity extends BaseSwipeActivity {
 
     @Override
     public void findViewById() {
+        iv_yun = (ImageView) findViewById(R.id.iv_yun);
         lav_activity_loading = (AVLoadingIndicatorView) findViewById(R.id.lav_activity_loading);
         imageViewBack = (ImageView) findViewById(R.id.imageViewBack);
         okPay = (ImageView) findViewById(R.id.okPay);
@@ -181,7 +187,7 @@ public class MyConfireOrdersActivity extends BaseSwipeActivity {
         balancPay.setOnClickListener(noDoubleClickListener);
         aliPay.setOnClickListener(noDoubleClickListener);
         wechatPay.setOnClickListener(noDoubleClickListener);
-
+        iv_yun.setOnClickListener(noDoubleClickListener);
     }
 
     private NoDoubleClickListener noDoubleClickListener = new NoDoubleClickListener() {
@@ -193,7 +199,7 @@ public class MyConfireOrdersActivity extends BaseSwipeActivity {
                     balancPay.setImageResource(R.mipmap.ic_pay_ok);
                     aliPay.setImageResource(R.mipmap.ic_pay_no);
                     wechatPay.setImageResource(R.mipmap.ic_pay_no);
-
+                    iv_yun.setImageResource(R.mipmap.ic_pay_no);
 
                     break;
                 case R.id.rb_activity_order_alipay: //支付宝支付
@@ -201,13 +207,22 @@ public class MyConfireOrdersActivity extends BaseSwipeActivity {
                     aliPay.setImageResource(R.mipmap.ic_pay_ok);
                     balancPay.setImageResource(R.mipmap.ic_pay_no);
                     wechatPay.setImageResource(R.mipmap.ic_pay_no);
+                    iv_yun.setImageResource(R.mipmap.ic_pay_no);
                     break;
                 case R.id.rb_activity_order_wechat: //微信支付
                     payChannel = 3;
                     wechatPay.setImageResource(R.mipmap.ic_pay_ok);
                     aliPay.setImageResource(R.mipmap.ic_pay_no);
                     balancPay.setImageResource(R.mipmap.ic_pay_no);
+                    iv_yun.setImageResource(R.mipmap.ic_pay_no);
                     break;
+                    case R.id.iv_yun:
+                        payChannel = 16;
+                        wechatPay.setImageResource(R.mipmap.ic_pay_no);
+                        aliPay.setImageResource(R.mipmap.ic_pay_no);
+                        balancPay.setImageResource(R.mipmap.ic_pay_no);
+                        iv_yun.setImageResource(R.mipmap.ic_pay_ok);
+                        break;
                 case R.id.okPay:
                     if (payChannel == 0) {
                         AppHelper.showMsg(mContext, "请选择支付方式");
@@ -230,54 +245,6 @@ public class MyConfireOrdersActivity extends BaseSwipeActivity {
                             }
 
                             Log.i("account", "onNoDoubleClick: " + payAmount + "____" + Double.parseDouble(userWalletAccount));
-//                            if (payAmount > Double.parseDouble(userWalletAccount)) {
-//                                AlertDialog mDialog = new AlertDialog.Builder(mActivity).create();
-//                                mDialog.show();
-//                                Window window = mDialog.getWindow();
-//                                window.setGravity(Gravity.CENTER);
-//                                window.setContentView(R.layout.dialog_wallet_account);
-//
-//                                TextView tvCancel = window.findViewById(R.id.tv_sub_close);
-//                                TextView tvConfirm = window.findViewById(R.id.tv_sub_confirm);
-//                                //  ImageView iv_cancel = window.findViewById(R.id.iv_cancel);
-//
-//                             /*   iv_cancel.setOnClickListener(new View.OnClickListener() {
-//                                    @Override
-//                                    public void onClick(View v) {
-//                                        mDialog.dismiss();
-//                                    }
-//                                });*/
-//                                tvCancel.setOnClickListener(new View.OnClickListener() {
-//                                    @Override
-//                                    public void onClick(View v) {
-//                                        mDialog.dismiss();
-//                                    }
-//                                });
-//                                tvConfirm.setOnClickListener(new View.OnClickListener() {
-//                                    @Override
-//                                    public void onClick(View v) {
-//
-//                                        if ((payAmount - Double.parseDouble(userWalletAccount) < 1000) && (payAmount - Double.parseDouble(userWalletAccount) >= 0)) {
-//                                            num = "3";
-//                                        } else if ((payAmount - Double.parseDouble(userWalletAccount) < 3000) && (payAmount - Double.parseDouble(userWalletAccount) >= 1000)) {
-//                                            num = "2";
-//                                        } else if ((payAmount - Double.parseDouble(userWalletAccount) < 6000) && (payAmount - Double.parseDouble(userWalletAccount) >= 3000)) {
-//                                            num = "1";
-//                                        } else if ((payAmount - Double.parseDouble(userWalletAccount) > 6000)) {
-//                                            num = "0";
-//                                        }
-//
-//                                        UserInfoHelper.saveUserWalletNum(getContext(), num);
-//
-//                                        Intent intent = new Intent(mActivity, MyWalletActivity.class);
-//
-//                                        startActivity(intent);
-//                                        mDialog.dismiss();
-//                                        //startActivity(new Intent(mActivity, MyWalletActivity.class));
-//                                    }
-//                                });
-//
-//                            }
                         }
                     }
                     //调支付接口
@@ -314,21 +281,50 @@ public class MyConfireOrdersActivity extends BaseSwipeActivity {
                         okPay.setEnabled(true);
                         if (orderPayModel.success) {
                             outTradeNo = orderPayModel.data.outTradeNo;
+                            String orderNoList = orderPayModel.data.orderNoList;
+                            String businessCstNo = orderPayModel.data.businessCstNo;
+                            String merchantNo = orderPayModel.data.merchantNo;
                             UserInfoHelper.saveWalletStatus(mContext, outTradeNo);
 
+                            JSONObject jsonObject = new JSONObject();
+                            try {
+                                jsonObject.put("orderFlowNo",orderNoList);
+                                jsonObject.put("businessCstNo",businessCstNo);
+                                jsonObject.put("platMerCstNo",merchantNo);
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                            //台州银行
+                            if(orderPayModel.data.payType==16) {
+                                CashierManager.getInstance().init(MyConfireOrdersActivity.this);
+                                CashierManager.getInstance().launchPayment(jsonObject.toString(), new PaymentCallback() {
+                                    @Override
+                                    public void paymentResult(String s) {
+                                        switch (s){
+                                            case "10":
+                                                //初始状态
+                                                break;
 
-//                            if (payChannel == 1) {
-//                                //余额支付
-//                                //ok
-//                                accountCenter();
-//                                okPay.setEnabled(true);
-//                            } else if (payChannel == 2) {
-//                                //支付宝支付 已经改好了
-//                                aliPay(orderPayModel.data.payToken);
-//                            } else if (payChannel == 3) {
-//                                //微信支付
-//                                weChatPay(orderPayModel.data.payToken);
-//                            }
+                                            case "70":
+                                                //失败
+                                                getPayResult(outTradeNo);
+                                                break;
+
+                                            case "80":
+                                                //关闭
+                                                ToastUtil.showSuccessMsg(mContext,"支付通道关闭");
+                                                break;
+
+                                            case "90":
+                                                //成功
+                                                getPayResult(outTradeNo);
+                                                break;
+                                        }
+                                    }
+                                });
+
+
+                            }
 
                             if (payChannel == 1) {
                                 //余额支付
@@ -355,7 +351,6 @@ public class MyConfireOrdersActivity extends BaseSwipeActivity {
                         } else {
                             //ok
                             okPay.setEnabled(true);
-//                            AppHelper.showMsg(MyConfireOrdersActivity.this, orderPayModel.message);
                         }
                     }
                 });
@@ -366,8 +361,7 @@ public class MyConfireOrdersActivity extends BaseSwipeActivity {
      * 支付宝
      * @param parms
      */
-//    Timer timer;
-//    Task task;
+
     private void payAliPay(String parms){
         UnifyPayRequest msg = new UnifyPayRequest();
         msg.payChannel = UnifyPayRequest.CHANNEL_ALIPAY;
@@ -375,37 +369,9 @@ public class MyConfireOrdersActivity extends BaseSwipeActivity {
         UnifyPayPlugin.getInstance(this).sendPayRequest(msg);
         lav_activity_loading.setVisibility(View.GONE);
         lav_activity_loading.hide();
-//        handler.postDelayed(new Runnable() {
-//                @Override
-//                public void run() {
-//                    Intent intent = MyOrdersActivity.getIntent(getContext(), MyOrdersActivity.class, AppConstant.ALL);
-//                    intent.putExtra("orderDeliveryType",0);
-//                    startActivity(intent);
-//                    finish();
-//                }
-//            },20000);
-//        finish();
-//        EventBus.getDefault().post(new BackEvent());
-
-//        timer = new Timer();
-//        task = new Task();
-//        //schedule 计划安排，时间表
-//        timer.schedule(task, 3 * 1000, 3 * 1000);
     }
 
-//    public class Task extends TimerTask {
-//        @Override
-//        public void run() {
-//
-//            handler.post(new Runnable() {
-//                @Override
-//                public void run() {
-//                    Log.d("dwddddddddd....",outTradeNo);
-//                    getPayResult(outTradeNo);
-//                }
-//            });
-//        }
-//    }
+
 
 
     @Override
@@ -736,7 +702,6 @@ public class MyConfireOrdersActivity extends BaseSwipeActivity {
         };
         lav_activity_loading.setVisibility(View.GONE);
         lav_activity_loading.hide();
-        SharedPreferencesUtil.saveString(mContext,"pays","-1");
         // 必须异步调用
         Thread payThread = new Thread(payRunnable);
         payThread.start();

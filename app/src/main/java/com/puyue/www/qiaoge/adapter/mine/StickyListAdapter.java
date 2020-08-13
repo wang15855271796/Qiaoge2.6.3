@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -62,7 +63,13 @@ public class StickyListAdapter extends BaseAdapter implements StickyListHeadersA
 		} else {
 			holder = (Holder) view.getTag();
 		}
-		holder.UpdateUI(parent.getContext(), list, position);
+		if (list.get(position).isNullData()){
+			holder.ll_detail.setVisibility(View.GONE);
+		}else {
+			holder.ll_detail.setVisibility(View.VISIBLE);
+
+			holder.UpdateUI(parent.getContext(), list, position);
+		}
 
 		return view;
 	}
@@ -73,12 +80,13 @@ public class StickyListAdapter extends BaseAdapter implements StickyListHeadersA
 
 	@Override
 	public View getHeaderView(int position, View convertView, ViewGroup parent) {
-
+		Log.e("rgh","getHeaderView");
+		Log.d("wdsssssssss....",position+"aa");
 		View headView = LayoutInflater.from(mActivity).inflate(R.layout.item_wallet_header, null);
 		TextView tv_month_select = headView.findViewById(R.id.tv_month_select);
 		TextView tv_expenditure = headView.findViewById(R.id.tv_expenditure);
-        TextView tv_income = headView.findViewById(R.id.tv_income);
-        tv_income.setText("收入 ￥"+lists.get(position).getInAmt());
+		TextView tv_income = headView.findViewById(R.id.tv_income);
+		tv_income.setText("收入 ￥"+lists.get(position).getInAmt());
 		tv_expenditure.setText("支出 ￥"+lists.get(position).getOutAmt());
 		tv_month_select.setText(list.get(position).getDateTime());
 		tv_month_select.setOnClickListener(new View.OnClickListener() {
@@ -95,19 +103,22 @@ public class StickyListAdapter extends BaseAdapter implements StickyListHeadersA
 
 	@Override
 	public long getHeaderId(int position) {
-
+		Log.d("wdsssssssss....",position+"bb");
 		long time=0;
 		try {
 			time=DateUtils.getMonthTime(list.get(position).getDateTime(),
 					DateUtils.DATE_FORMAT_NORMAL, "yyyy-MM");
+			Log.e("rgh","getHeaderId "+time);
 		} catch (ParseException e) {
 			time=0x1234;
+			Log.e("rgh","getHeaderId ParseException " +time);
 			e.printStackTrace();
 		}
-        return time;
+		return time;
 	}
 
 	class Holder {
+		private LinearLayout ll_detail;
 		private  TextView tv_time;
 		private  TextView tv_price;
 		private  TextView tv_title;
@@ -117,6 +128,7 @@ public class StickyListAdapter extends BaseAdapter implements StickyListHeadersA
 			tv_price = (TextView) view.findViewById(R.id.tv_price);
 			tv_title = (TextView) view.findViewById(R.id.tv_title);
 			iv_pic = (ImageView) view.findViewById(R.id.iv_pic);
+			ll_detail =  view.findViewById(R.id.ll_detail);
 		}
 
 		public void UpdateUI(Context context, List<GetWallertRecordByPageModel.DataBean.RecordsBean> data, int position) {
@@ -131,6 +143,7 @@ public class StickyListAdapter extends BaseAdapter implements StickyListHeadersA
 	public interface Onclick {
 		void clicks();
 	}
+
 
 
 }

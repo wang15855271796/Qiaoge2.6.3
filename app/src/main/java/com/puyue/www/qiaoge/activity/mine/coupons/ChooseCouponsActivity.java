@@ -8,19 +8,26 @@ import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 
 import com.puyue.www.qiaoge.R;
 import com.puyue.www.qiaoge.adapter.mine.ChooseCouponsAdapter;
+import com.puyue.www.qiaoge.api.cart.CartBalanceAPI;
 import com.puyue.www.qiaoge.api.home.GetCommentListByPageAPI;
 import com.puyue.www.qiaoge.api.mine.coupon.userChooseDeductAPI;
 import com.puyue.www.qiaoge.base.BaseSwipeActivity;
+import com.puyue.www.qiaoge.event.ChooseCoupon1Event;
+import com.puyue.www.qiaoge.event.ChooseCouponEvent;
 import com.puyue.www.qiaoge.helper.ActivityResultHelper;
 import com.puyue.www.qiaoge.helper.AppHelper;
 import com.puyue.www.qiaoge.listener.NoDoubleClickListener;
+import com.puyue.www.qiaoge.model.cart.CartBalanceModel;
 import com.puyue.www.qiaoge.model.home.GetCommentListByPageModel;
 import com.puyue.www.qiaoge.model.mine.coupons.UserChooseDeductModel;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,16 +46,13 @@ public class ChooseCouponsActivity extends BaseSwipeActivity {
 
     private Toolbar toolbar;
     private RecyclerView recyclerView;
-    private LinearLayout data;
-    private LinearLayout noData;
     private String proActAmount;
     private String teamAmount;
     private String killAmount;
     private String prodAmount;
     private String giftDetailNo="";
-
     private ChooseCouponsAdapter adapter;
-
+    ImageView iv_select_all;
     private List<UserChooseDeductModel.DataBean.AllBean> list = new ArrayList<>();
 
 
@@ -64,10 +68,21 @@ public class ChooseCouponsActivity extends BaseSwipeActivity {
 
     @Override
     public void findViewById() {
+        iv_select_all = (ImageView) findViewById(R.id.iv_select_all);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
-        data = (LinearLayout) findViewById(R.id.data);
-        noData = (LinearLayout) findViewById(R.id.noData);
+
+        iv_select_all.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(list!=null) {
+                    //未选
+                    adapter.setStat();
+                    EventBus.getDefault().post(new ChooseCoupon1Event());
+                    finish();
+                }
+            }
+        });
     }
 
     @Override
@@ -77,36 +92,25 @@ public class ChooseCouponsActivity extends BaseSwipeActivity {
         killAmount = getIntent().getStringExtra("killAmount");
         prodAmount = getIntent().getStringExtra("prodAmount");
         giftDetailNo = getIntent().getStringExtra("giftDetailNo");
-
         userChooseDeduct();
         setRecyclerView();
     }
 
+
     private void setRecyclerView() {
 
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
-        linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-
         adapter = new ChooseCouponsAdapter(R.layout.item_choose_copons, list, new ChooseCouponsAdapter.ImageOnclick() {
-
             @Override
             public void Onclick(int position, String giftDetailNo) {
                 UserChooseDeductModel.DataBean.AllBean info = list.get(position);
                 for (int i = 0; i < list.size(); i++) {
                     if (i == position) {
                         list.get(i).setFlag(!list.get(i).isFlag());
-
                         if (list.get(i).isFlag()) {
-                            Intent intent = new Intent();
-                            intent.putExtra("giftDetailNo", info.getGiftDetailNo());
-                            setResult(ActivityResultHelper.ChOOSE_COUPONS_RESULT_CODE, intent);
+                            EventBus.getDefault().post(new ChooseCouponEvent(info.getGiftDetailNo()));
                             finish();
-                            Log.d("-选中---->","------"+info.getGiftDetailNo());
+
                         } else {
-                            Intent intent = new Intent();
-                            intent.putExtra("giftDetailNo", "");
-                            setResult(ActivityResultHelper.ChOOSE_COUPONS_RESULT_CODE, intent);
-                            Log.d("-没选中---->","--giftDetailNo----");
                             finish();
                         }
                     } else {
@@ -118,7 +122,7 @@ public class ChooseCouponsActivity extends BaseSwipeActivity {
 
             }
         });
-        recyclerView.setLayoutManager(linearLayoutManager);
+        recyclerView.setLayoutManager(new LinearLayoutManager(mContext));
         recyclerView.setAdapter(adapter);
 
     }
@@ -135,8 +139,7 @@ public class ChooseCouponsActivity extends BaseSwipeActivity {
 
 
     private void userChooseDeduct() {
-        userChooseDeductAPI.requestData(mContext, proActAmount, teamAmount,
-                killAmount, prodAmount,"")
+        userChooseDeductAPI.requestData(mContext, proActAmount, teamAmount, killAmount, prodAmount,"")
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<UserChooseDeductModel>() {
@@ -154,8 +157,6 @@ public class ChooseCouponsActivity extends BaseSwipeActivity {
                     public void onNext(UserChooseDeductModel model) {
                         if (model.success) {
                             if (model.getData().getAll().size() > 0) {
-                                data.setVisibility(View.VISIBLE);
-                                noData.setVisibility(View.GONE);
                                 list.addAll(model.getData().getAll());
                                 for (int i = 0; i < list.size(); i++) {
                                     if (model.getData().getAll().get(i).getGiftDetailNo().equals(giftDetailNo)) {
@@ -165,15 +166,11 @@ public class ChooseCouponsActivity extends BaseSwipeActivity {
                                         model.getData().getAll().get(i).setFlag(false);
 
                                     }
+
                                 }
-
-                            }else {
-                                data.setVisibility(View.GONE);
-                                noData.setVisibility(View.VISIBLE);
-
                             }
-                            adapter.notifyDataSetChanged();
 
+                            adapter.notifyDataSetChanged();
 
                         } else {
                             AppHelper.showMsg(mContext, model.message);

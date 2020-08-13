@@ -8,6 +8,10 @@ public class ItemModel {
     private String num;
     private boolean focus;
 
+    public ItemModel(String num) {
+        this.num = num;
+    }
+
     public String getNum() {
         return num;
     }

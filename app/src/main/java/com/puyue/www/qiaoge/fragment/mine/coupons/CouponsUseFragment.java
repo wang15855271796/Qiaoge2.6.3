@@ -4,6 +4,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.puyue.www.qiaoge.R;
@@ -33,13 +34,12 @@ public class CouponsUseFragment extends BaseFragment {
 
     private RecyclerView recyclerView;
     private PtrClassicFrameLayout ptrClassicFrameLayout ;
-    private MyCouponsAdapter adapter;
+    private MyCouponsUsedAdapter adapter;
     private int pageNum = 1;
     private LinearLayout data;
     private  LinearLayout noData;
+    TextView tv_desc;
     private List<queryUserDeductByStateModel.DataBean.ListBean > lists =new ArrayList<>();
-
-
 
     @Override
     public int setLayoutId() {
@@ -53,6 +53,7 @@ public class CouponsUseFragment extends BaseFragment {
 
     @Override
     public void findViewById(View view) {
+        tv_desc = view.findViewById(R.id.tv_desc);
         recyclerView=view.findViewById(R.id.recyclerView);
         data= view .findViewById(R.id.data);
         noData= view.findViewById(R.id.noData);
@@ -76,14 +77,8 @@ public class CouponsUseFragment extends BaseFragment {
             }
         });
 
-        adapter = new MyCouponsAdapter(R.layout.item_my_coupons,lists,getActivity());
-        adapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-                startActivity(UseOrNotUseActivity.getIntent(getActivity(), UseOrNotUseActivity.class));
+        adapter = new MyCouponsUsedAdapter(R.layout.item_my_coupons,lists,getActivity());
 
-            }
-        });
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
@@ -135,7 +130,6 @@ public class CouponsUseFragment extends BaseFragment {
                     @Override
                     public void onNext(queryUserDeductByStateModel info) {
                         ptrClassicFrameLayout.refreshComplete();
-
                         if (info.isSuccess()) {
                             updateNoticeList(info);
                         } else {
@@ -159,6 +153,7 @@ public class CouponsUseFragment extends BaseFragment {
             } else {
                 data.setVisibility(View.GONE);
                 noData.setVisibility(View.VISIBLE);
+                tv_desc.setText("您还没有使用优惠券哦");
             }
 
         } else {

@@ -2,6 +2,7 @@ package com.puyue.www.qiaoge.fragment.order;
 
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Build;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
@@ -22,11 +23,14 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.lljjcoder.style.citylist.Toast.ToastUtils;
 import com.puyue.www.qiaoge.NewWebViewActivity;
 import com.puyue.www.qiaoge.R;
+import com.puyue.www.qiaoge.activity.BeizhuActivity;
 import com.puyue.www.qiaoge.activity.cart.CartPoint;
 import com.puyue.www.qiaoge.activity.mine.account.AddressListActivity;
 import com.puyue.www.qiaoge.activity.mine.account.AddressListsActivity;
+import com.puyue.www.qiaoge.activity.mine.coupons.ChooseCouponsActivity;
 import com.puyue.www.qiaoge.activity.mine.order.MyConfireOrdersActivity;
 import com.puyue.www.qiaoge.adapter.mine.ChooseCouponsAdapter;
 import com.puyue.www.qiaoge.adapter.mine.ConfirmOrderNewAdapter;
@@ -39,6 +43,11 @@ import com.puyue.www.qiaoge.constant.AppConstant;
 import com.puyue.www.qiaoge.dialog.ChooseAddressDialog;
 import com.puyue.www.qiaoge.dialog.ListViewDialog;
 import com.puyue.www.qiaoge.event.AddressEvent;
+import com.puyue.www.qiaoge.event.BeizhuEvent;
+import com.puyue.www.qiaoge.event.ChooseCoupon1Event;
+import com.puyue.www.qiaoge.event.ChooseCouponEvent;
+import com.puyue.www.qiaoge.event.GoToCartFragmentEvent;
+import com.puyue.www.qiaoge.helper.ActivityResultHelper;
 import com.puyue.www.qiaoge.helper.AlwaysMarqueeTextViewHelper;
 import com.puyue.www.qiaoge.helper.AppHelper;
 import com.puyue.www.qiaoge.helper.UserInfoHelper;
@@ -52,6 +61,7 @@ import com.wang.avi.AVLoadingIndicatorView;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -92,7 +102,7 @@ public class ConfirmOrderDeliverFragment extends BaseFragment {
     private AVLoadingIndicatorView lav_activity_loading;
     private LinearLayout linearLayoutCoupons;// 优惠券xml
     private String orderId;
-
+    TextView tv_beizhu;
     private ConfirmOrderNewAdapter adapter;
     private List<CartBalanceModel.DataBean.ProductVOListBean>
             list = new ArrayList<>();
@@ -150,7 +160,7 @@ public class ConfirmOrderDeliverFragment extends BaseFragment {
     private Double toRechargeAmount;
     private boolean toRecharge;
     private Double totalAmount;
-
+    LinearLayout ll_beizhu;
     private PopupWindow popWin; // 弹出窗口
     private View popView; // 保存弹出窗口布局
     private WheelView wheelView;
@@ -169,7 +179,7 @@ public class ConfirmOrderDeliverFragment extends BaseFragment {
     @Override
     public void findViewById(View view) {
         //  toolbar = (Toolbar) view.findViewById(R.id.toolbar);
-
+        ll_beizhu = (LinearLayout) view.findViewById(R.id.ll_beizhu);
         ll_info = (LinearLayout) view.findViewById(R.id.ll_info);
         lav_activity_loading = (AVLoadingIndicatorView) view.findViewById(R.id.lav_activity_loading);
         recyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
@@ -190,6 +200,7 @@ public class ConfirmOrderDeliverFragment extends BaseFragment {
 
         buttonPay = (TextView) view.findViewById(R.id.buttonPay);
         commodity = (TextView) view.findViewById(R.id.commodity);
+        tv_beizhu = (TextView) view.findViewById(R.id.tv_beizhu);
         payMoney = (TextView) view.findViewById(R.id.payMoney);
         LinearLayoutStoreName = (LinearLayout) view.findViewById(R.id.LinearLayoutStoreName);
         linearLayoutCoupons = (LinearLayout) view.findViewById(R.id.linearLayoutCoupons);
@@ -212,8 +223,6 @@ public class ConfirmOrderDeliverFragment extends BaseFragment {
         tv_vip_content_two = (TextView) view.findViewById(R.id.tv_tv_vip_content_two);
         tv_go = (TextView) view.findViewById(R.id.tv_go);
 
-//        progressBar.startAnimation(Animation );
-
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             getActivity().getWindow().setNavigationBarColor(ContextCompat.getColor(getContext(),R.color.white));
         }
@@ -221,8 +230,8 @@ public class ConfirmOrderDeliverFragment extends BaseFragment {
 
     @Override
     public void setViewData() {
-        EventBus.getDefault().register(this);
 
+        EventBus.getDefault().register(this);
         final Calendar mCalendar = Calendar.getInstance();
         long time = System.currentTimeMillis();
         mCalendar.setTimeInMillis(time);
@@ -242,6 +251,7 @@ public class ConfirmOrderDeliverFragment extends BaseFragment {
 
         recyclerView.setLayoutManager(linearLayoutManager);
         recyclerView.setAdapter(adapter);
+        requestCartBalance(NewgiftDetailNo, 1);//NewgiftDetailNo
     }
 
     @Override
@@ -253,17 +263,18 @@ public class ConfirmOrderDeliverFragment extends BaseFragment {
         linearLayoutCoupons.setOnClickListener(noDoubleClickListener);
         imVipButton.setOnClickListener(noDoubleClickListener);
         ll_go_market.setOnClickListener(noDoubleClickListener);
+        ll_beizhu.setOnClickListener(noDoubleClickListener);
     }
 
     private NoDoubleClickListener noDoubleClickListener = new NoDoubleClickListener() {
         @Override
         public void onNoDoubleClick(View view) {
             switch (view.getId()) {
+                case R.id.ll_beizhu:
+                    Intent intents = new Intent(mActivity,BeizhuActivity.class);
+                    startActivity(intents);
+                    break;
                 case R.id.linearLayoutAddressHead: // 地址切换
-//                    Intent intent_ = new Intent(mActivity, AddressListsActivity.class);
-//                    intent_.putExtra("type", 1);
-//                    intent_.putExtra("mineAddress", "mineAddress");
-//                    startActivityForResult(intent_, 31);
                     ChooseAddressDialog chooseAddressDialog = new ChooseAddressDialog(getContext(),orderId);
                     chooseAddressDialog.show();
 
@@ -292,7 +303,6 @@ public class ConfirmOrderDeliverFragment extends BaseFragment {
 
                                     @Override
                                     public void onError(Throwable e) {
-//                                        LoadingDialog.getInstance(getActivity()).dismiss();
                                         lav_activity_loading.hide();
                                     }
 
@@ -324,9 +334,6 @@ public class ConfirmOrderDeliverFragment extends BaseFragment {
                                                     popWin.setOnDismissListener(new poponDismissListener());
                                                     //取消
                                                     textView1 = (TextView) popView.findViewById(R.id.textView1);
-//                                                    sc = (AlwaysMarqueeTextViewHelper) popView.findViewById(R.id.sc);
-//                                                    sc.setText("温馨提示：仓库不提供储货服务，超过自提时间需要您退货重新下单。请您及时提货哦！");
-//                                                    sc.setTextColor(getResources().getColor(R.color.color_F6551A));
                                                     textView1.setOnClickListener(new View.OnClickListener() {
                                                         @Override
                                                         public void onClick(View v) {
@@ -354,47 +361,6 @@ public class ConfirmOrderDeliverFragment extends BaseFragment {
                                                         }
                                                     });
 
-//                                                    CustomDatePicker customDatePicker1 = new CustomDatePicker(mlist,getActivity(), new CustomDatePicker.ResultHandler() {
-//                                                        @Override
-//                                                        public void handle(String time) {
-////                                                            Log.d("wfwwwdwddwd.....","sdwdwdwd");
-//                                                        }
-//                                                    });
-//                                                    customDatePicker1.show("dwdwdw");
-
-//                                                    ListViewDialog listViewDialog = new ListViewDialog(mActivity, mlist, new ListViewDialog.Onclick() {
-//                                                        @Override
-//                                                        public void click(int num) {
-//                                                            ToastUtil.showSuccessMsg(mActivity,num+"");
-//                                                        }
-//                                                    });
-//                                                    listViewDialog.show();
-                                                    // 初始化日期格式请用：yyyy-MM-dd HH:mm，否则不能正常运行
-//                                                    if(mlist.size()>0) {
-//                                                        wheelView.lists(mlist).fontSize(16).select(0).listener(new WheelView.OnWheelViewItemSelectListener() {
-//                                                            @Override
-//                                                            public void onItemSelect(int index) {
-//                                                                ToastUtil.showSuccessMsg(mActivity,"dwdwdw");
-//                                                            }
-//                                                        }).build();
-//                                                    }
-
-
-//                                                    PickCityUtil.showSinglePickView(mActivity, mlist, "请选择配送时间段", new PickCityUtil.ChoosePositionListener() {
-//                                                        @Override
-//                                                        public void choosePosition(int position, String s) {
-//                                                            try {
-//                                                                JSONObject jsonObjects = jsonArray.getJSONObject(position);
-//                                                                deliverTimeStart = jsonObjects.getString("start");
-//                                                                deliverTimeName = jsonObjects.getString("name");
-//                                                                deliverTimeEnd = jsonObjects.getString("end");
-//                                                            } catch (JSONException e) {
-//                                                                e.printStackTrace();
-//                                                            }
-//                                                            requestOrderNum();
-//                                                        }
-//                                                    });
-
                                                 } catch (JSONException e) {
                                                     e.printStackTrace();
                                                 }
@@ -409,18 +375,16 @@ public class ConfirmOrderDeliverFragment extends BaseFragment {
 
                                     }
                                 });
-
-
                     }
                     break;
                 case R.id.linearLayoutCoupons: // 优惠券
-                  /*  Intent intent = new Intent(ConfirmOrderNewActivity.this, ChooseCouponsActivity.class);
-                    intent.putExtra("proActAmount", proActAmount);
-                    intent.putExtra("teamAmount", teamAmount);
-                    intent.putExtra("killAmount", killAmount);
-                    intent.putExtra("prodAmount", prodAmount);
-                    intent.putExtra("giftDetailNo", couponId);
-                    startActivityForResult(intent, ActivityResultHelper.ChOOSE_COUPONS_REQUESR_CODE);*/
+                    Intent intent2 = new Intent(getContext(), ChooseCouponsActivity.class);
+                    intent2.putExtra("proActAmount", proActAmount);
+                    intent2.putExtra("teamAmount", teamAmount);
+                    intent2.putExtra("killAmount", killAmount);
+                    intent2.putExtra("prodAmount", prodAmount);
+                    intent2.putExtra("giftDetailNo", couponId);
+                    startActivityForResult(intent2, ActivityResultHelper.ChOOSE_COUPONS_REQUESR_CODE);
                     //点击图片控件，根据当前的判断，设置点击之后的背景图片。
 //                    if(linearLayoutCoupons.isSelected()){
 //                        linearLayoutCoupons.setSelected(false);
@@ -706,7 +670,6 @@ public class ConfirmOrderDeliverFragment extends BaseFragment {
                                 setRecyclerView();
                                 couponsList.clear();
                                 couponsList.addAll(model.getData().getAll());
-                                Log.d("wddwdwdwddddddddd.....","sdewdwwddddd");
                                 for (int i = 0; i < couponsList.size(); i++) {
                                     if (model.getData().getAll().get(i).getGiftDetailNo().equals(couponId)) {
                                         //此处为第二次设置优惠券的isFlag
@@ -717,6 +680,16 @@ public class ConfirmOrderDeliverFragment extends BaseFragment {
                                         model.getData().getAll().get(i).setFlag(false);
 
                                     }
+                                }
+
+                                if(couponsList.size()>0) {
+                                    textCoupons.setEnabled(true);
+                                    textCoupons.setTextColor(Color.parseColor("#F25E0D"));
+                                }else {
+                                    textCoupons.setEnabled(false);
+                                    ToastUtil.showSuccessMsg(mActivity,"暂无优惠券可使用");
+                                    textCoupons.setTextColor(Color.parseColor("#999999"));
+//                                    textCoupons.setText("暂无优惠券可使用");
                                 }
                                 couponsAdapter.notifyDataSetChanged();
                             } else {
@@ -789,11 +762,40 @@ public class ConfirmOrderDeliverFragment extends BaseFragment {
         EventBus.getDefault().unregister(this);
     }
 
+    /**
+     * 获取备注内容
+     * @param beizhuEvent
+     */
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void getBeizhu(BeizhuEvent beizhuEvent) {
+        tv_beizhu.setText(beizhuEvent.getBeizhu());
+    }
+
+    /**
+     * 选中某一个优惠券
+     * @param chooseCouponEvent
+     */
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void getCoupon(ChooseCouponEvent chooseCouponEvent) {
+        list.clear();
+        requestCartBalance(chooseCouponEvent.getGiftDetailNo(), 1);
+    }
+
+    /**
+     * 为选优惠券
+     * @param chooseCouponEvent
+     */
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void getCoupons(ChooseCoupon1Event chooseCouponEvent) {
+        list.clear();
+        requestCartBalance("",0);
+    }
+
     @Override
     public void onResume() {
         super.onResume();
-        list.clear();
-        requestCartBalance(NewgiftDetailNo, 1);//NewgiftDetailNo
+//        list.clear();
+//        requestCartBalance(NewgiftDetailNo, 1);//NewgiftDetailNo
     }
     //设置添加屏幕的背景透明度
     public void backgroundAlpha(float bgAlpha) {
