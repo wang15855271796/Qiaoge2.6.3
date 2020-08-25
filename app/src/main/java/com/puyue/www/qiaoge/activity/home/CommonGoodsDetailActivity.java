@@ -57,6 +57,7 @@ import com.puyue.www.qiaoge.dialog.CouponDialog;
 import com.puyue.www.qiaoge.event.OnHttpCallBack;
 import com.puyue.www.qiaoge.fragment.cart.NumEvent;
 import com.puyue.www.qiaoge.fragment.cart.ReduceNumEvent;
+import com.puyue.www.qiaoge.fragment.mine.IntelliGencyActivity;
 import com.puyue.www.qiaoge.helper.AppHelper;
 import com.puyue.www.qiaoge.helper.CollapsingToolbarLayoutStateHelper;
 import com.puyue.www.qiaoge.helper.FVHelper;
@@ -115,7 +116,6 @@ public class CommonGoodsDetailActivity extends BaseSwipeActivity {
     private TextView mTvPrice;
     private String productName;
     private ImageView buyImg;
-    private TextView mTvSpec;
     private LinearLayout mLlCustomer;
     private TextView mTvCollection;
     private ImageView mIvCollection;
@@ -145,6 +145,7 @@ public class CommonGoodsDetailActivity extends BaseSwipeActivity {
     private TextView goodsEvaluationReply;
     private StarBarView sbv_star_bar;
     private TextView tv_status;
+    ImageView iv_vip;
     //推荐
     private RecyclerView recyclerViewRecommend;
     private GoodsRecommendAdapter adapterRecommend;
@@ -173,6 +174,8 @@ public class CommonGoodsDetailActivity extends BaseSwipeActivity {
     TextView tv_city;
     @BindView(R.id.tv_change)
     TextView tv_change;
+    @BindView(R.id.rv_given)
+    RecyclerView rv_given;
     private AlertDialog mTypedialog;
     LinearLayout ll_service;
     TextView tv_price;
@@ -236,7 +239,6 @@ public class CommonGoodsDetailActivity extends BaseSwipeActivity {
         mBanner = FVHelper.fv(this, R.id.banner_activity_common);
         mTvTitle = FVHelper.fv(this, R.id.tv_activity_common_title);
         mTvPrice = FVHelper.fv(this, R.id.tv_activity_common_price);
-        mTvSpec = FVHelper.fv(this, R.id.tv_activity_common_spec);
         mLlCustomer = FVHelper.fv(this, R.id.ll_include_common_customer);
         mTvCollection = FVHelper.fv(this, R.id.tv_include_common_collection);
         mIvCollection = FVHelper.fv(this, R.id.iv_include_common_collection);
@@ -259,7 +261,7 @@ public class CommonGoodsDetailActivity extends BaseSwipeActivity {
         linearLayoutOnclick = (LinearLayout) findViewById(R.id.linearLayoutOnclick);
         sbv_star_bar = findViewById(R.id.sbv_star_bar);
         tv_status = findViewById(R.id.tv_status);
-
+        iv_vip = findViewById(R.id.iv_vip);
         if(city!=null) {
             tv_city.setText("该商品为"+city+"地区商品，请切换到该地区购买");
         }
@@ -312,6 +314,10 @@ public class CommonGoodsDetailActivity extends BaseSwipeActivity {
         recyclerViewImage.setLayoutManager(new LinearLayoutManager(mActivity));
         recyclerViewImage.setAdapter(imageViewAdapter);
 
+        //商品活动recycleview
+        rv_given.setLayoutManager(new LinearLayoutManager(mContext));
+//        CommonActiveAdapter commonActiveAdapter = new CommonActiveAdapter(R.layout.item_common_active);
+//        rv_given.setAdapter();
     }
 
     @Override
@@ -345,6 +351,14 @@ public class CommonGoodsDetailActivity extends BaseSwipeActivity {
                 Intent intent = new Intent(mContext,ChangeCityActivity.class);
                 startActivity(intent);
                 finish();
+            }
+        });
+
+        iv_vip.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+//                Intent intent = new Intent(mActivity,.class);
+//                startActivity();
             }
         });
     }
@@ -511,7 +525,6 @@ public class CommonGoodsDetailActivity extends BaseSwipeActivity {
                                 iv_flag.setVisibility(View.VISIBLE);
                                 Glide.with(mContext).load(model.getData().getTypeUrl()).into(iv_flag);
                             }
-                            mTvSpec.setText("规格:"+model.getData().getSpec());
                             tv_sale.setText(model.getData().getSalesVolume());
                             prodSpecs = model.getData().getProdSpecs();
                             tv_desc.setText("产品说明："+model.getData().getIntroduction());

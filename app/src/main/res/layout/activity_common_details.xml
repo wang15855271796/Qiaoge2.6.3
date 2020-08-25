@@ -168,13 +168,14 @@
 
                             <TextView
                                 tools:text="鸡肉"
+                                android:textStyle="bold"
                                 android:layout_marginLeft="15dp"
                                 android:id="@+id/tv_activity_common_title"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:background="@color/app_color_white"
                                 android:textColor="#333333"
-                                android:textSize="@dimen/size_14dp" />
+                                android:textSize="@dimen/size_15dp" />
 
                             <LinearLayout
                                 android:layout_width="match_parent"
@@ -184,14 +185,7 @@
                                 android:layout_marginRight="@dimen/size_15dp"
                                 android:orientation="vertical">
 
-                                <TextView
-                                    android:id="@+id/tv_activity_common_spec"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:layout_marginTop="9dp"
-                                    android:textColor="#666666"
-                                    android:textSize="10sp"
-                                    tools:text="规格:" />
+
 
                                 <!--销量-->
 
@@ -206,15 +200,22 @@
 
                             </LinearLayout>
 
+                            <ImageView
+                                android:id="@+id/iv_vip"
+                                android:layout_marginTop="@dimen/sp_16"
+                                android:src="@mipmap/icon_vip"
+                                android:layout_marginLeft="@dimen/size_15dp"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content" />
+
                             <RelativeLayout
-                                android:background="#fcfcfc"
-                                android:layout_marginTop="10dp"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content">
 
                                 <TextView
-                                    android:text="规格"
+                                    android:text="产品规格"
                                     android:id="@+id/tv"
+                                    android:textStyle="bold"
                                     android:layout_marginTop="15dp"
                                     android:layout_marginLeft="15dp"
                                     android:textColor="#333333"
@@ -235,72 +236,87 @@
 
                             </RelativeLayout>
 
-                            <TextView
-                                android:id="@+id/tv_desc"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                tools:text="产品说明："
-                                android:layout_marginLeft="15dp"
-                                android:layout_marginRight="@dimen/size_15dp"
-                                android:layout_marginTop="12dp"
-                                android:layout_marginBottom="@dimen/size_17dp"
-                                android:textColor="@color/app_dark_gray"
-                                android:textSize="12dp" />
-
                             <View
                                 android:layout_width="match_parent"
-                                android:layout_height="5dp"
+                                android:layout_height="8dp"
                                 android:background="@color/app_bg_gray" />
 
+                            <!--产品说明-->
                             <RelativeLayout
-                                android:layout_width="match_parent"
-                                android:layout_height="55dp"
-                                android:visibility="gone">
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content">
 
                                 <TextView
+                                    android:id="@+id/tv1"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:layout_alignParentLeft="true"
-                                    android:layout_centerVertical="true"
-                                    android:layout_marginLeft="20dp"
-                                    android:text="合计"
-                                    android:textColor="@color/app_cancle_gray"
-                                    android:textSize="15dp" />
+                                    android:text="产品说明："
+                                    android:textStyle="bold"
+                                    android:layout_marginLeft="15dp"
+                                    android:layout_marginTop="15dp"
+                                    android:layout_marginBottom="@dimen/size_15dp"
+                                    android:textColor="#333333"
+                                    android:textSize="14dp" />
 
                                 <TextView
-                                    android:id="@+id/tv_activity_common_total_amount"
+                                    android:layout_toRightOf="@+id/tv1"
+                                    android:id="@+id/tv_desc"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:layout_centerInParent="true"
-                                    android:gravity="center"
-                                    android:textColor="@color/app_front_black"
-                                    android:textSize="15dp" />
+                                    tools:text="产品说明："
+                                    android:layout_marginRight="@dimen/size_15dp"
+                                    android:layout_marginTop="15dp"
+                                    android:layout_marginBottom="@dimen/size_15dp"
+                                    android:textColor="#292621"
+                                    android:textSize="12dp" />
 
-                                <TextView
-                                    android:id="@+id/tv_activity_common_total_money"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:layout_alignParentRight="true"
-                                    android:layout_centerVertical="true"
-                                    android:layout_marginRight="20dp"
-                                    android:text="￥0.0"
-                                    android:textColor="@color/app_tab_selected"
-                                    android:textSize="15dp" />
                             </RelativeLayout>
 
                             <View
                                 android:layout_width="match_parent"
-                                android:layout_height="1dp"
+                                android:layout_height="8dp"
                                 android:background="@color/app_bg_gray" />
+
+                            <!--商品活动-->
+                            <RelativeLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content">
+
+                                <TextView
+                                    android:id="@+id/tv2"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="商品活动："
+                                    android:textStyle="bold"
+                                    android:layout_marginLeft="15dp"
+                                    android:layout_marginTop="15dp"
+                                    android:layout_marginBottom="@dimen/size_15dp"
+                                    android:textColor="#333333"
+                                    android:textSize="14dp" />
+
+                                    <android.support.v7.widget.RecyclerView
+                                        android:id="@+id/rv_given"
+                                        android:layout_toRightOf="@+id/tv2"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content">
+
+                                    </android.support.v7.widget.RecyclerView>
+                            </RelativeLayout>
+
+                            <View
+                                android:layout_width="match_parent"
+                                android:layout_height="8dp"
+                                android:background="@color/app_bg_gray" />
+
+
                         </LinearLayout>
 
+                        <!--评论-->
                         <include layout="@layout/app_detail_evaluation" />
-
+                        <!--猜你喜欢-->
                         <include layout="@layout/activity_goods_recommed" />
                     </LinearLayout>
                 </LinearLayout>
-
-                <!--<include layout="@layout/view_include_common_detail" />-->
 
             </LinearLayout>
         </android.support.v4.widget.NestedScrollView>

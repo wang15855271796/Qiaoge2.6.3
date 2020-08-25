@@ -5,28 +5,27 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
+    <RelativeLayout
+        android:background="#333333"
+        android:layout_margin="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="60dp">
+
+        <TextView
+            android:id="@+id/tv"
+            android:text="sdsdsds"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </RelativeLayout>
 
     <com.puyue.www.qiaoge.view.EasySwipeMenuLayout
+        android:visibility="gone"
         android:id="@+id/es"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:contentView="@+id/rl_good"
         app:rightMenuView="@+id/right">
 
-
-        <!--<LinearLayout-->
-            <!--android:id="@+id/ll_cart"-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="match_parent"-->
-            <!--android:background="@drawable/cart_item_good_bg"-->
-            <!--android:orientation="vertical">-->
-        <!--<LinearLayout-->
-            <!--android:orientation="vertical"-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="wrap_content">-->
-            <!---->
-            <!---->
-        <!--</LinearLayout>-->
         <RelativeLayout
             android:id="@+id/rl_good"
             android:layout_width="match_parent"

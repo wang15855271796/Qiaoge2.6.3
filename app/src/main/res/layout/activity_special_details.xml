@@ -247,10 +247,11 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:text="标题"
+                                    android:textStyle="bold"
                                     android:ellipsize="end"
                                     android:singleLine="true"
                                     android:textColor="#333333"
-                                    android:textSize="@dimen/size_13dp" />
+                                    android:textSize="@dimen/size_15dp" />
                             </LinearLayout>
 
                             <TextView
@@ -280,7 +281,7 @@
                         <RelativeLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginBottom="@dimen/size_20dp"
+                            android:layout_marginBottom="@dimen/size_10dp"
                             android:layout_marginLeft="@dimen/size_15dp"
                             android:layout_marginTop="@dimen/size_5dp"
                             android:orientation="vertical">
@@ -337,8 +338,15 @@
 
                         </RelativeLayout>
 
+                        <ImageView
+                            android:id="@+id/iv_vip"
+                            android:src="@mipmap/icon_vip"
+                            android:layout_marginLeft="@dimen/size_15dp"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content" />
 
                         <TextView
+                            android:layout_marginTop="@dimen/dp_10"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:gravity="center"
@@ -403,22 +411,35 @@
                             </LinearLayout>
                         </LinearLayout>
 
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginLeft="@dimen/size_10dp"
-                            android:layout_marginRight="@dimen/size_15dp"
-                            android:orientation="horizontal"
-                            android:paddingBottom="@dimen/size_10dp">
+                        <RelativeLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content">
 
                             <TextView
-                                android:id="@+id/tv_desc"
-                                android:layout_width="match_parent"
+                                android:id="@+id/tv1"
+                                android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:textColor="@color/app_dark_gray"
+                                android:text="产品说明："
+                                android:textStyle="bold"
+                                android:layout_marginLeft="15dp"
+                                android:layout_marginTop="15dp"
+                                android:layout_marginBottom="@dimen/size_15dp"
+                                android:textColor="#333333"
+                                android:textSize="14dp" />
+
+                            <TextView
+                                android:layout_toRightOf="@+id/tv1"
+                                android:id="@+id/tv_desc"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                tools:text="产品说明："
+                                android:layout_marginRight="@dimen/size_15dp"
+                                android:layout_marginTop="15dp"
+                                android:layout_marginBottom="@dimen/size_15dp"
+                                android:textColor="#292621"
                                 android:textSize="12dp" />
 
-                        </LinearLayout>
+                        </RelativeLayout>
 
 
                         <View

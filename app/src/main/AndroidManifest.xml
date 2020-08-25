@@ -272,6 +272,9 @@
             android:screenOrientation="portrait" />
         <activity android:name=".activity.home.CommonGoodsDetailActivity"
             android:screenOrientation="portrait" />
+        <!--满赠界面-->
+        <activity android:name=".activity.home.FullGiftActivity"
+            android:screenOrientation="portrait" />
         <activity android:name=".activity.home.EquipmentGoodsDetailActivity"
             android:screenOrientation="portrait" />
         <activity android:name=".activity.home.ScenicListActivity"

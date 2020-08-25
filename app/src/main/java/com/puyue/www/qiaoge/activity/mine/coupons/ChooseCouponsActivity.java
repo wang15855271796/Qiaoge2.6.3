@@ -46,14 +46,12 @@ public class ChooseCouponsActivity extends BaseSwipeActivity {
 
     private Toolbar toolbar;
     private RecyclerView recyclerView;
-    private String proActAmount;
-    private String teamAmount;
-    private String killAmount;
-    private String prodAmount;
+    private String activityBalanceVOStr;
+    private String normalProductBalanceVOStr;
     private String giftDetailNo="";
     private ChooseCouponsAdapter adapter;
     ImageView iv_select_all;
-    private List<UserChooseDeductModel.DataBean.AllBean> list = new ArrayList<>();
+    private List<UserChooseDeductModel.DataBean> list = new ArrayList<>();
 
 
     @Override
@@ -87,10 +85,8 @@ public class ChooseCouponsActivity extends BaseSwipeActivity {
 
     @Override
     public void setViewData() {
-        proActAmount = getIntent().getStringExtra("proActAmount");
-        teamAmount = getIntent().getStringExtra("teamAmount");
-        killAmount = getIntent().getStringExtra("killAmount");
-        prodAmount = getIntent().getStringExtra("prodAmount");
+        activityBalanceVOStr = getIntent().getStringExtra("activityBalanceVOStr");
+        normalProductBalanceVOStr = getIntent().getStringExtra("normalProductBalanceVOStr");
         giftDetailNo = getIntent().getStringExtra("giftDetailNo");
         userChooseDeduct();
         setRecyclerView();
@@ -102,7 +98,7 @@ public class ChooseCouponsActivity extends BaseSwipeActivity {
         adapter = new ChooseCouponsAdapter(R.layout.item_choose_copons, list, new ChooseCouponsAdapter.ImageOnclick() {
             @Override
             public void Onclick(int position, String giftDetailNo) {
-                UserChooseDeductModel.DataBean.AllBean info = list.get(position);
+                UserChooseDeductModel.DataBean info = list.get(position);
                 for (int i = 0; i < list.size(); i++) {
                     if (i == position) {
                         list.get(i).setFlag(!list.get(i).isFlag());
@@ -139,7 +135,7 @@ public class ChooseCouponsActivity extends BaseSwipeActivity {
 
 
     private void userChooseDeduct() {
-        userChooseDeductAPI.requestData(mContext, proActAmount, teamAmount, killAmount, prodAmount,"")
+        userChooseDeductAPI.requestData(mContext, activityBalanceVOStr, normalProductBalanceVOStr)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<UserChooseDeductModel>() {
@@ -156,14 +152,14 @@ public class ChooseCouponsActivity extends BaseSwipeActivity {
                     @Override
                     public void onNext(UserChooseDeductModel model) {
                         if (model.success) {
-                            if (model.getData().getAll().size() > 0) {
-                                list.addAll(model.getData().getAll());
+                            if (model.getData().size()> 0) {
+                                list.addAll(model.getData());
                                 for (int i = 0; i < list.size(); i++) {
-                                    if (model.getData().getAll().get(i).getGiftDetailNo().equals(giftDetailNo)) {
-                                        model.getData().getAll().get(i).setFlag(true);
+                                    if (model.getData().get(i).getGiftDetailNo().equals(giftDetailNo)) {
+                                        model.getData().get(i).setFlag(true);
 
                                     } else {
-                                        model.getData().getAll().get(i).setFlag(false);
+                                        model.getData().get(i).setFlag(false);
 
                                     }
 

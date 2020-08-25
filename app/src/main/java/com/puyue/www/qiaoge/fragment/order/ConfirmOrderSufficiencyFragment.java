@@ -140,7 +140,7 @@ public class ConfirmOrderSufficiencyFragment extends BaseFragment {
     //  优惠卷
     private RecyclerView couponsRecyclerView;
     private ChooseCouponsAdapter couponsAdapter;
-    private List<UserChooseDeductModel.DataBean.AllBean> couponsList = new ArrayList<>();
+    private List<UserChooseDeductModel.DataBean> couponsList = new ArrayList<>();
     private TextView noData;
 
 
@@ -672,11 +672,9 @@ public class ConfirmOrderSufficiencyFragment extends BaseFragment {
                     break;
                 case R.id.linearLayoutCoupons: // 优惠券
                     Intent intent2 = new Intent(getContext(), ChooseCouponsActivity.class);
-                    intent2.putExtra("proActAmount", proActAmount);
-                    intent2.putExtra("teamAmount", teamAmount);
-                    intent2.putExtra("killAmount", killAmount);
-                    intent2.putExtra("prodAmount", prodAmount);
-                    intent2.putExtra("giftDetailNo", couponId);
+                    intent2.putExtra("activityBalanceVOStr", activityBalanceVOStr);
+                    intent2.putExtra("normalProductBalanceVOStr", normalProductBalanceVOStr);
+                    intent2.putExtra("giftDetailNo", NewgiftDetailNo);
                     startActivityForResult(intent2, ActivityResultHelper.ChOOSE_COUPONS_REQUESR_CODE);
                     break;
                 case R.id.ll_go_market:
@@ -723,7 +721,7 @@ public class ConfirmOrderSufficiencyFragment extends BaseFragment {
                             if (cartBalanceModel != null) {
                                 setText(cartBalanceModel);
                                 if (requestCount == 0) {
-                                    userChooseDeduct();
+//                                    userChooseDeduct();
                                     requestCount++;
                                 }
 
@@ -774,7 +772,7 @@ public class ConfirmOrderSufficiencyFragment extends BaseFragment {
                             if (cartBalanceModel != null) {
                                 setTexts(cartBalanceModel);
                                 if (requestCount == 0) {
-                                    userChooseDeduct();
+//                                    userChooseDeduct();
                                     requestCount++;
                                 }
 
@@ -1122,74 +1120,74 @@ public class ConfirmOrderSufficiencyFragment extends BaseFragment {
 
         list.clear();
         requestCartBalance(NewgiftDetailNo, 1);
-        userChooseDeduct();
+//        userChooseDeduct();
     }
 
     /**
      * 获取优惠卷列表
      */
-    private void userChooseDeduct() {
-        userChooseDeductAPI.requestData(mActivity, proActAmount, teamAmount, killAmount, prodAmount, deductDetail)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<UserChooseDeductModel>() {
-                    @Override
-                    public void onCompleted() {
-
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-
-                    }
-
-                    @Override
-                    public void onNext(UserChooseDeductModel model) {
-                        if (model.success) {
-                            if (model.getData().getAll().size() > 0) {
-                                couponsRecyclerView.setVisibility(View.VISIBLE);
-                                noData.setVisibility(View.GONE);
-                                setRecyclerView();
-                                couponsList.clear();
-                                couponsList.addAll(model.getData().getAll());
-
-                                for (int i = 0; i < couponsList.size(); i++) {
-                                    if (model.getData().getAll().get(i).getGiftDetailNo().equals(couponId)) {
-                                        //此处为第二次设置优惠券的isFlag
-                                        model.getData().getAll().get(i).setFlag(true);
-
-                                    } else {
-                                        //此处为第二次设置优惠券的isFlag
-                                        model.getData().getAll().get(i).setFlag(false);
-
-                                    }
-                                }
-
-                                if(couponsList.size()>0) {
-                                    textCoupons.setEnabled(true);
-                                    textCoupons.setTextColor(Color.parseColor("#F25E0D"));
-                                }else {
-                                    textCoupons.setEnabled(false);
-                                    ToastUtil.showSuccessMsg(mActivity,"暂无优惠券可使用");
-                                    textCoupons.setTextColor(Color.parseColor("#999999"));
-//                                    textCoupons.setText("暂无优惠券可使用");
-                                }
-                                couponsAdapter.notifyDataSetChanged();
-                            } else {
-                                couponsRecyclerView.setVisibility(View.GONE);
-                                noData.setVisibility(View.VISIBLE);
-
-                            }
-                            adapter.notifyDataSetChanged();
-
-
-                        } else {
-                            AppHelper.showMsg(mActivity, model.message);
-                        }
-
-                    }
-                });
-    }
+//    private void userChooseDeduct() {
+//        userChooseDeductAPI.requestData(mActivity, proActAmount, teamAmount, killAmount, prodAmount, deductDetail)
+//                .subscribeOn(Schedulers.io())
+//                .observeOn(AndroidSchedulers.mainThread())
+//                .subscribe(new Subscriber<UserChooseDeductModel>() {
+//                    @Override
+//                    public void onCompleted() {
+//
+//                    }
+//
+//                    @Override
+//                    public void onError(Throwable e) {
+//
+//                    }
+//
+//                    @Override
+//                    public void onNext(UserChooseDeductModel model) {
+//                        if (model.success) {
+//                            if (model.getData().getAll().size() > 0) {
+//                                couponsRecyclerView.setVisibility(View.VISIBLE);
+//                                noData.setVisibility(View.GONE);
+//                                setRecyclerView();
+//                                couponsList.clear();
+//                                couponsList.addAll(model.getData().getAll());
+//
+//                                for (int i = 0; i < couponsList.size(); i++) {
+//                                    if (model.getData().getAll().get(i).getGiftDetailNo().equals(couponId)) {
+//                                        //此处为第二次设置优惠券的isFlag
+//                                        model.getData().getAll().get(i).setFlag(true);
+//
+//                                    } else {
+//                                        //此处为第二次设置优惠券的isFlag
+//                                        model.getData().getAll().get(i).setFlag(false);
+//
+//                                    }
+//                                }
+//
+//                                if(couponsList.size()>0) {
+//                                    textCoupons.setEnabled(true);
+//                                    textCoupons.setTextColor(Color.parseColor("#F25E0D"));
+//                                }else {
+//                                    textCoupons.setEnabled(false);
+//                                    ToastUtil.showSuccessMsg(mActivity,"暂无优惠券可使用");
+//                                    textCoupons.setTextColor(Color.parseColor("#999999"));
+////                                    textCoupons.setText("暂无优惠券可使用");
+//                                }
+//                                couponsAdapter.notifyDataSetChanged();
+//                            } else {
+//                                couponsRecyclerView.setVisibility(View.GONE);
+//                                noData.setVisibility(View.VISIBLE);
+//
+//                            }
+//                            adapter.notifyDataSetChanged();
+//
+//
+//                        } else {
+//                            AppHelper.showMsg(mActivity, model.message);
+//                        }
+//
+//                    }
+//                });
+//    }
 
     /**
      * 选中某一个优惠券
@@ -1217,7 +1215,7 @@ public class ConfirmOrderSufficiencyFragment extends BaseFragment {
 
             @Override
             public void Onclick(int position, String giftDetailNo) {
-                UserChooseDeductModel.DataBean.AllBean info = couponsList.get(position);
+                UserChooseDeductModel.DataBean info = couponsList.get(position);
 //                Log.e(TAG, "Onclick: "+info.toString()+giftDetailNo );
                 for (int i = 0; i < couponsList.size(); i++) {
                     //表示点到第几个是第几个，

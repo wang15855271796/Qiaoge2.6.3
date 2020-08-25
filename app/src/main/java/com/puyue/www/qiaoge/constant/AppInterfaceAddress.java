@@ -339,7 +339,7 @@ public class AppInterfaceAddress {
     public static final String UPDATEUSERINVITATION = "auth/updateUserInvitation";
     public static final String QUERY_USER_DEDUCTBYSTATE = "gift/queryUserDeductByState";
     public static final String GET_WALLET_INFO = "wallet/getWalletInfo";
-    public static final String USER_CHOOSE_DEDUCT = "gift/userChooseDeduct";//gift/userChooseDeduct
+    public static final String USER_CHOOSE_DEDUCT = "gift/queryAppOrderChooseGiftList";//gift/userChooseDeduct
     /**
      * 生成订单
      */

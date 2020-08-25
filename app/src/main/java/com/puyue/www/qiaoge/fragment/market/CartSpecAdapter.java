@@ -32,7 +32,7 @@ public class CartSpecAdapter extends BaseQuickAdapter<CartsListModel.DataBean.Va
     List<CartsListModel.DataBean.ValidListBean> validListBeans;
     int businessType;
     int businessId;
-    int num = 0;
+    boolean slect = false;
     TestAdapter.IProductSelectCallback iProductSelectCallback;
     List<CartsListModel.DataBean.ValidListBean> listAll = new ArrayList<>();
     public CartSpecAdapter(TestAdapter.IProductSelectCallback iProductSelectCallback, List<CartsListModel.DataBean.ValidListBean> validListBeans, int layoutResId, @Nullable List<CartsListModel.DataBean.ValidListBean.SpecProductListBean> data, CartsListModel.DataBean.ValidListBean item,
@@ -70,6 +70,9 @@ public class CartSpecAdapter extends BaseQuickAdapter<CartsListModel.DataBean.Va
                 item.setSelected(isChecked);
                 listAll.clear();
 
+//                if(getStat()) {
+//
+//                }
 
                 boolean noSelect = false;
                 //内层item选中状态改变后要遍历判断是否全选，以改变外层item的选中状态
@@ -92,6 +95,16 @@ public class CartSpecAdapter extends BaseQuickAdapter<CartsListModel.DataBean.Va
 //                iProductSelectCallback.update(validListBeans,listAll);
             }
         });
+    }
+
+    private boolean getStat() {
+        for (int i = 0; i < data.size(); i++) {
+            if(data.get(i).isSelected()==false) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     public interface IProductSelectCallback {

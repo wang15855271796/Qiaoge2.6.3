@@ -24,19 +24,16 @@ public class userChooseDeductAPI {
         @FormUrlEncoded
         @POST(AppInterfaceAddress.USER_CHOOSE_DEDUCT)
         Observable<UserChooseDeductModel> getData(
-                @Field("proActAmount") String proActAmount,
-                @Field("teamAmount") String teamAmount,
-                @Field("killAmount") String killAmount,
-                @Field("prodAmount") String prodAmount,
-                @Field("giftDetailNo") String giftDetailNo
+                @Field("activityBalanceVOStr") String activityBalanceVOStr,
+                @Field("normalProductBalanceVOStr") String normalProductBalanceVOStr
 
         );
     }
 
-    public static Observable<UserChooseDeductModel> requestData(Context context,String proActAmount,String teamAmount,
-                                                                String killAmount, String prodAmount, String giftDetailNo) {
+    public static Observable<UserChooseDeductModel> requestData(Context context,String activityBalanceVOStr,
+                                                                String normalProductBalanceVOStr) {
         userChooseDeductService service = RestHelper.getBaseRetrofit(context).create(userChooseDeductService.class);
-        return service.getData(proActAmount, teamAmount,killAmount, prodAmount,giftDetailNo);
+        return service.getData(activityBalanceVOStr, normalProductBalanceVOStr);
     }
 
 }

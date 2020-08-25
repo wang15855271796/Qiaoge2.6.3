@@ -103,7 +103,7 @@ public class ConfirmOrderNewActivity extends BaseSwipeActivity {
     //  优惠卷
     private RecyclerView couponsRecyclerView;
     private ChooseCouponsAdapter couponsAdapter;
-    private List<UserChooseDeductModel.DataBean.AllBean> couponsList = new ArrayList<>();
+    private List<UserChooseDeductModel.DataBean> couponsList = new ArrayList<>();
     private TextView noData;
 
 
@@ -371,7 +371,7 @@ public class ConfirmOrderNewActivity extends BaseSwipeActivity {
                             if (cartBalanceModel != null) {
                                 setText(cartBalanceModel);
                                 if (requestCount == 0) {
-                                    userChooseDeduct();
+//                                    userChooseDeduct();
                                     requestCount++;
                                 }
 
@@ -571,108 +571,108 @@ public class ConfirmOrderNewActivity extends BaseSwipeActivity {
     /**
      * 获取优惠卷列表
      */
-    private void userChooseDeduct() {
+//    private void userChooseDeduct() {
+//
+//
+//        userChooseDeductAPI.requestData(mContext, proActAmount, teamAmount,
+//                killAmount, prodAmount, deductDetail)
+//                .subscribeOn(Schedulers.io())
+//                .observeOn(AndroidSchedulers.mainThread())
+//                .subscribe(new Subscriber<UserChooseDeductModel>() {
+//                    @Override
+//                    public void onCompleted() {
+//
+//                    }
+//
+//                    @Override
+//                    public void onError(Throwable e) {
+//
+//                    }
+//
+//                    @Override
+//                    public void onNext(UserChooseDeductModel model) {
+//                        if (model.success) {
+//                            if (model.getData().getAll().size() > 0) {
+//                                couponsRecyclerView.setVisibility(View.VISIBLE);
+//                                noData.setVisibility(View.GONE);
+//                                setRecyclerView();
+//                                couponsList.clear();
+//                                couponsList.addAll(model.getData().getAll());
+//
+//                                for (int i = 0; i < couponsList.size(); i++) {
+//                                    if (model.getData().getAll().get(i).getGiftDetailNo().equals(couponId)) {
+//                                        //此处为第二次设置优惠券的isFlag
+//                                        model.getData().getAll().get(i).setFlag(true);
+//
+//                                    } else {
+//                                        //此处为第二次设置优惠券的isFlag
+//                                        model.getData().getAll().get(i).setFlag(false);
+//
+//                                    }
+//                                }
+//                                couponsAdapter.notifyDataSetChanged();
+//                            } else {
+//                                couponsRecyclerView.setVisibility(View.GONE);
+//                                noData.setVisibility(View.VISIBLE);
+//
+//                            }
+//                            adapter.notifyDataSetChanged();
+//
+//
+//                        } else {
+//                            AppHelper.showMsg(mContext, model.message);
+//                        }
+//
+//                    }
+//                });
+//    }
 
-
-        userChooseDeductAPI.requestData(mContext, proActAmount, teamAmount,
-                killAmount, prodAmount, deductDetail)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<UserChooseDeductModel>() {
-                    @Override
-                    public void onCompleted() {
-
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-
-                    }
-
-                    @Override
-                    public void onNext(UserChooseDeductModel model) {
-                        if (model.success) {
-                            if (model.getData().getAll().size() > 0) {
-                                couponsRecyclerView.setVisibility(View.VISIBLE);
-                                noData.setVisibility(View.GONE);
-                                setRecyclerView();
-                                couponsList.clear();
-                                couponsList.addAll(model.getData().getAll());
-
-                                for (int i = 0; i < couponsList.size(); i++) {
-                                    if (model.getData().getAll().get(i).getGiftDetailNo().equals(couponId)) {
-                                        //此处为第二次设置优惠券的isFlag
-                                        model.getData().getAll().get(i).setFlag(true);
-
-                                    } else {
-                                        //此处为第二次设置优惠券的isFlag
-                                        model.getData().getAll().get(i).setFlag(false);
-
-                                    }
-                                }
-                                couponsAdapter.notifyDataSetChanged();
-                            } else {
-                                couponsRecyclerView.setVisibility(View.GONE);
-                                noData.setVisibility(View.VISIBLE);
-
-                            }
-                            adapter.notifyDataSetChanged();
-
-
-                        } else {
-                            AppHelper.showMsg(mContext, model.message);
-                        }
-
-                    }
-                });
-    }
-
-    private void setRecyclerView() {
-        LinearLayoutManager linearLayoutManagerCoupons = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
-        couponsAdapter = new ChooseCouponsAdapter(R.layout.item_choose_copons, couponsList, new ChooseCouponsAdapter.ImageOnclick() {
-
-            @Override
-            public void Onclick(int position, String giftDetailNo) {
-                UserChooseDeductModel.DataBean.AllBean info = couponsList.get(position);
-//                Log.e(TAG, "Onclick: "+info.toString()+giftDetailNo );
-                for (int i = 0; i < couponsList.size(); i++) {
-                    //表示点到第几个是第几个，
-                    if (i == position) {
-                        //首个是true
-                        //当它是true的时候，将这个该设置为false
-                        //假设flag是用来控制ImageView 的状态的。
-                        //第一次设置
-                        //首次是true
-                        couponsList.get(i).setFlag(!couponsList.get(i).isFlag());
-//                        boolean flag = couponsList.get(i).isFlag();
-//                        flag=!flag;
-//                        Log.e(TAG, "Onclick: "+j );
-                        if (couponsList.get(i).isFlag()) {
-//                            couponsList.get(i).setFlag(!flag);
-                            //1
-                            list.clear();
-                            requestCartBalance(info.getGiftDetailNo(), 1);
-                            NewgiftDetailNo = info.getGiftDetailNo();
-                        } else {
-//                            couponsList.get(i).setFlag(flag);
-                            //0
-                            list.clear();
-                            requestCartBalance("", 0);
-                            NewgiftDetailNo = "";
-                        }
-//                        j++;
-
-                    } else {
-                        couponsList.get(i).setFlag(false);
-                    }
-                }
-                couponsAdapter.notifyDataSetChanged();
-            }
-        });
-        couponsRecyclerView.setLayoutManager(linearLayoutManagerCoupons);
-        couponsRecyclerView.setAdapter(couponsAdapter);
-
-    }
+//    private void setRecyclerView() {
+//        LinearLayoutManager linearLayoutManagerCoupons = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
+//        couponsAdapter = new ChooseCouponsAdapter(R.layout.item_choose_copons, couponsList, new ChooseCouponsAdapter.ImageOnclick() {
+//
+//            @Override
+//            public void Onclick(int position, String giftDetailNo) {
+//                UserChooseDeductModel.DataBean.AllBean info = couponsList.get(position);
+////                Log.e(TAG, "Onclick: "+info.toString()+giftDetailNo );
+//                for (int i = 0; i < couponsList.size(); i++) {
+//                    //表示点到第几个是第几个，
+//                    if (i == position) {
+//                        //首个是true
+//                        //当它是true的时候，将这个该设置为false
+//                        //假设flag是用来控制ImageView 的状态的。
+//                        //第一次设置
+//                        //首次是true
+//                        couponsList.get(i).setFlag(!couponsList.get(i).isFlag());
+////                        boolean flag = couponsList.get(i).isFlag();
+////                        flag=!flag;
+////                        Log.e(TAG, "Onclick: "+j );
+//                        if (couponsList.get(i).isFlag()) {
+////                            couponsList.get(i).setFlag(!flag);
+//                            //1
+//                            list.clear();
+//                            requestCartBalance(info.getGiftDetailNo(), 1);
+//                            NewgiftDetailNo = info.getGiftDetailNo();
+//                        } else {
+////                            couponsList.get(i).setFlag(flag);
+//                            //0
+//                            list.clear();
+//                            requestCartBalance("", 0);
+//                            NewgiftDetailNo = "";
+//                        }
+////                        j++;
+//
+//                    } else {
+//                        couponsList.get(i).setFlag(false);
+//                    }
+//                }
+//                couponsAdapter.notifyDataSetChanged();
+//            }
+//        });
+//        couponsRecyclerView.setLayoutManager(linearLayoutManagerCoupons);
+//        couponsRecyclerView.setAdapter(couponsAdapter);
+//
+//    }
 
 
     @Override

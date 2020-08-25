@@ -502,7 +502,7 @@ public class NewOrderDetailActivity extends BaseSwipeActivity {
 
 
         tvNewOrderCommodityNum.setText("共" + getOrderDetailModel.totalNum + "件商品");
-        tvNewOrderCommodity.setText("实付金额");
+        tvNewOrderCommodity.setText("支付金额");
 
         tvNewOrderCommodityAmount.setText("￥" + getOrderDetailModel.prodAmount);
 
@@ -613,7 +613,6 @@ public class NewOrderDetailActivity extends BaseSwipeActivity {
 
     //返回上个页面
     private void backEvent() {
-        Log.d("wdssssssssst......",account);
         if(account.equals("0")) {
             if (goAccount != null && StringHelper.notEmptyAndNull(goAccount)) {
                 finish();

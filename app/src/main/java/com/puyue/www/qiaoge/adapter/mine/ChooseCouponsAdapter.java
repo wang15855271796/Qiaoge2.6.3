@@ -27,7 +27,7 @@ import java.util.List;
  * @date 2018/9/23.
  * 备注 选择优惠券
  */
-public class ChooseCouponsAdapter extends BaseQuickAdapter<UserChooseDeductModel.DataBean.AllBean, BaseViewHolder> {
+public class ChooseCouponsAdapter extends BaseQuickAdapter<UserChooseDeductModel.DataBean, BaseViewHolder> {
 
     private TextView tv_style;
     private  TextView tv_user_factor;
@@ -36,11 +36,11 @@ public class ChooseCouponsAdapter extends BaseQuickAdapter<UserChooseDeductModel
     private  TextView tv_amount;
     private Context context;
     TextView tv_desc;
-    List<UserChooseDeductModel.DataBean.AllBean> list;
+    List<UserChooseDeductModel.DataBean> list;
     TextView tv_tip;
     ImageOnclick imageOnclick;
     ImageView iv_select;
-    public ChooseCouponsAdapter(int layoutResId, @Nullable List<UserChooseDeductModel.DataBean.AllBean> data, ImageOnclick imageOnclick) {
+    public ChooseCouponsAdapter(int layoutResId, @Nullable List<UserChooseDeductModel.DataBean> data, ImageOnclick imageOnclick) {
         super(layoutResId, data);
         list=data;
         this.context=context;
@@ -57,7 +57,7 @@ public class ChooseCouponsAdapter extends BaseQuickAdapter<UserChooseDeductModel
     }
 
     @Override
-    protected void convert(final BaseViewHolder helper, final UserChooseDeductModel.DataBean.AllBean item) {
+    protected void convert(final BaseViewHolder helper, final UserChooseDeductModel.DataBean item) {
 
         tv_tip=helper.getView(R.id.tv_tip);
         tv_style=helper.getView(R.id.tv_style);

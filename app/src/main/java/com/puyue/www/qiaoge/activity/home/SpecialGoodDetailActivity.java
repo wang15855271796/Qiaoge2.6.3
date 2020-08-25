@@ -602,7 +602,6 @@ public class SpecialGoodDetailActivity extends BaseSwipeActivity {
                             mTvInven.setText(model.getData().getRemainNum());
 
                             tv_desc.setText(model.getData().getIntroduction());
-
                             long currentTime = System.currentTimeMillis();
                             long startTime = model.getData().getStartTime();
 
