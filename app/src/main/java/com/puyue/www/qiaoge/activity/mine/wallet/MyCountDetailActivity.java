@@ -168,6 +168,7 @@ public class MyCountDetailActivity extends BaseSwipeActivity {
                         Intent intent = new Intent(mContext, NewOrderDetailActivity.class);
                         intent.putExtra(AppConstant.ORDERID, orderId);
                         intent.putExtra(AppConstant.ORDERSTATE, orderStatus);
+                        intent.putExtra("account","0");
                         //  intent.putExtra(AppConstant.RETURNPRODUCTMAINID, returnProductMainId);
                         intent.putExtra("goAccount", "goAccount");
                         startActivity(intent);
@@ -175,6 +176,7 @@ public class MyCountDetailActivity extends BaseSwipeActivity {
                     } else if (orderDeliverType == 1) {
                         Intent intent = new Intent(mContext, SelfSufficiencyOrderDetailActivity.class);
                         intent.putExtra(AppConstant.ORDERID, orderId);
+                        intent.putExtra("account","0");
                         intent.putExtra(AppConstant.ORDERSTATE, orderStatus);
                         //      intent.putExtra(AppConstant.RETURNPRODUCTMAINID, returnProductMainId);
                         intent.putExtra("goAccount", "goAccount");
@@ -254,6 +256,7 @@ public class MyCountDetailActivity extends BaseSwipeActivity {
                                 Intent intent = new Intent(mContext, NewOrderDetailActivity.class);
                                 intent.putExtra(AppConstant.ORDERID, orderId);
                                 intent.putExtra(AppConstant.ORDERSTATE, orderStatus);
+                                intent.putExtra("account", "0");
                                 //  intent.putExtra(AppConstant.RETURNPRODUCTMAINID, returnProductMainId);
                                 intent.putExtra("goAccount", "goAccount");
                                 startActivity(intent);
@@ -261,6 +264,7 @@ public class MyCountDetailActivity extends BaseSwipeActivity {
                             } else if (orderDeliverType == 1) {
                                 Intent intent = new Intent(mContext, SelfSufficiencyOrderDetailActivity.class);
                                 intent.putExtra(AppConstant.ORDERID, orderId);
+                                intent.putExtra("account", "0");
                                 intent.putExtra(AppConstant.ORDERSTATE, orderStatus);
                                 //      intent.putExtra(AppConstant.RETURNPRODUCTMAINID, returnProductMainId);
                                 intent.putExtra("goAccount", "goAccount");
