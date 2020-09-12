@@ -72,6 +72,7 @@ class VerticalBannerAdapter extends BaseBannerAdapter<DriverInfo.DataBean> {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(context, NewOrderDetailActivity.class);
+                intent.putExtra("account","0");
                 intent.putExtra(AppConstant.ORDERID, data.getOrderId());
                 context.startActivity(intent);
             }

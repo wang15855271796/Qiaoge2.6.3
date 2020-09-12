@@ -57,6 +57,7 @@ import com.puyue.www.qiaoge.activity.mine.login.LoginActivity;
 import com.puyue.www.qiaoge.base.BaseSwipeActivity;
 import com.puyue.www.qiaoge.constant.AppConstant;
 import com.puyue.www.qiaoge.event.GoToMarketEvent;
+import com.puyue.www.qiaoge.fragment.mine.coupons.PaymentFragment;
 import com.puyue.www.qiaoge.helper.AppHelper;
 import com.puyue.www.qiaoge.helper.AppSafeHelper;
 import com.puyue.www.qiaoge.helper.StringHelper;
@@ -169,6 +170,7 @@ public class NewWebViewActivity extends BaseSwipeActivity {
         } else {
             toolbar_h5.setVisibility(View.VISIBLE);
             mTvTitle.setText("登录");
+
         }
 
 
@@ -456,6 +458,14 @@ public class NewWebViewActivity extends BaseSwipeActivity {
             Intent intent = new Intent(NewWebViewActivity.this, IntegralPayActivity.class);
             intent.putExtra("vipPackageId", msg);
             startActivity(intent);
+//            PaymentFragment paymentFragment = new PaymentFragment();
+//            Bundle bundle = new Bundle();
+//            bundle.putString("total", "1");
+//            bundle.putString("payAmount","1");
+//            bundle.putString("orderId","122");
+//            bundle.putString("orderDeliveryType","0");
+//            paymentFragment.setArguments(bundle);
+//            paymentFragment.show(getSupportFragmentManager(),"paymentFragment");
         }
     }
 

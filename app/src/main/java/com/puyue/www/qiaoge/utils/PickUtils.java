@@ -204,7 +204,6 @@ public class PickUtils {
 
                 .build();
 
-        Log.d("wdddwwddd......","11");
         View tvTitle = pvOptions.findViewById(R.id.tvTitle);
         tvTitle.setVisibility(View.VISIBLE);
 

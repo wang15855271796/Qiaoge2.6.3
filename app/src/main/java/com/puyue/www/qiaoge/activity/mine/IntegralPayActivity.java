@@ -16,22 +16,31 @@ import com.puyue.www.qiaoge.QiaoGeApplication;
 import com.puyue.www.qiaoge.R;
 
 import com.puyue.www.qiaoge.activity.HomeActivity;
-import com.puyue.www.qiaoge.activity.cart.PayResultActivity;
+
 import com.puyue.www.qiaoge.activity.mine.order.MyOrdersActivity;
 import com.puyue.www.qiaoge.activity.mine.order.VipPayResultActivity;
 import com.puyue.www.qiaoge.api.cart.GetPayResultAPI;
-import com.puyue.www.qiaoge.api.mine.order.CopyToCartAPI;
+
 import com.puyue.www.qiaoge.api.mine.order.VipPayAPI;
+import com.puyue.www.qiaoge.api.mine.order.VipPayResultAPI;
 import com.puyue.www.qiaoge.base.BaseSwipeActivity;
 import com.puyue.www.qiaoge.constant.AppConstant;
 import com.puyue.www.qiaoge.event.WeChatPayEvent;
 import com.puyue.www.qiaoge.event.WeChatUnPayEvent;
 import com.puyue.www.qiaoge.helper.AppHelper;
+
+import com.puyue.www.qiaoge.helper.UserInfoHelper;
 import com.puyue.www.qiaoge.listener.NoDoubleClickListener;
 import com.puyue.www.qiaoge.model.cart.GetPayResultModel;
-import com.puyue.www.qiaoge.model.mine.order.CopyToCartModel;
+
 import com.puyue.www.qiaoge.model.mine.order.VipPayModel;
+import com.puyue.www.qiaoge.model.mine.order.VipPayResultModel;
 import com.puyue.www.qiaoge.utils.SharedPreferencesUtil;
+
+import com.puyue.www.qiaoge.utils.ToastUtil;
+
+import com.rrtx.tzpaylib.CashierManager;
+import com.rrtx.tzpaylib.PaymentCallback;
 import com.tencent.mm.opensdk.modelpay.PayReq;
 import com.tencent.mm.opensdk.openapi.IWXAPI;
 import com.tencent.mm.opensdk.openapi.WXAPIFactory;
@@ -39,6 +48,8 @@ import com.wang.avi.AVLoadingIndicatorView;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
+
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.Map;
@@ -66,6 +77,7 @@ public class IntegralPayActivity extends BaseSwipeActivity {
     private static final int SDK_PAY_FLAG = 1;
     private static final int SDK_AUTH_FLAG = 2;
     AVLoadingIndicatorView lav_activity_loading;
+    ImageView iv_yun;
     private Handler handler = new Handler();
     @Override
     public boolean handleExtra(Bundle savedInstanceState) {
@@ -80,6 +92,7 @@ public class IntegralPayActivity extends BaseSwipeActivity {
 
     @Override
     public void findViewById() {
+        iv_yun = (ImageView) findViewById(R.id.iv_yun);
         lav_activity_loading = (AVLoadingIndicatorView) findViewById(R.id.lav_activity_loading);
         imageViewBack = (ImageView) findViewById(R.id.imageViewBack);
         alipay = (ImageView) findViewById(R.id.rb_activity_order_alipay);
@@ -99,6 +112,7 @@ public class IntegralPayActivity extends BaseSwipeActivity {
         alipay.setOnClickListener(noDoubleClickListener);
         wechat.setOnClickListener(noDoubleClickListener);
         okPay.setOnClickListener(noDoubleClickListener);
+        iv_yun.setOnClickListener(noDoubleClickListener);
     }
 
     public NoDoubleClickListener noDoubleClickListener = new NoDoubleClickListener() {
@@ -106,6 +120,12 @@ public class IntegralPayActivity extends BaseSwipeActivity {
         public void onNoDoubleClick(View view) {
 
             switch (view.getId()) {
+                case R.id.iv_yun:
+                    payChannel = 16;
+                    alipay.setImageResource(R.mipmap.ic_pay_no);
+                    wechat.setImageResource(R.mipmap.ic_pay_no);
+                    iv_yun.setImageResource(R.mipmap.ic_pay_ok);
+                    break;
                 case R.id.imageViewBack:
                     finish();
                     break;
@@ -113,12 +133,13 @@ public class IntegralPayActivity extends BaseSwipeActivity {
                     payChannel = 2;
                     alipay.setImageResource(R.mipmap.ic_pay_ok);
                     wechat.setImageResource(R.mipmap.ic_pay_no);
+                    iv_yun.setImageResource(R.mipmap.ic_pay_no);
                     break;
                 case R.id.rb_activity_order_wechat:
                     payChannel = 3;
                     alipay.setImageResource(R.mipmap.ic_pay_no);
                     wechat.setImageResource(R.mipmap.ic_pay_ok);
-
+                    iv_yun.setImageResource(R.mipmap.ic_pay_no);
                     break;
                 case R.id.okPay:
                     if (payChannel==0){
@@ -147,10 +168,10 @@ public class IntegralPayActivity extends BaseSwipeActivity {
     }
 
     private void getPayResult(String outTradeNo) {
-        GetPayResultAPI.requestData(mContext, outTradeNo)
+        VipPayResultAPI.requestOrderComment(mContext, outTradeNo)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<GetPayResultModel>() {
+                .subscribe(new Subscriber<VipPayResultModel>() {
                     @Override
                     public void onCompleted() {
 
@@ -162,7 +183,7 @@ public class IntegralPayActivity extends BaseSwipeActivity {
                     }
 
                     @Override
-                    public void onNext(GetPayResultModel getPayResultModel) {
+                    public void onNext(VipPayResultModel getPayResultModel) {
                         logoutAndToHome(mContext, getPayResultModel.getCode());
                         if (getPayResultModel.isSuccess()) {
                             if(getPayResultModel.getData()!=null) {
@@ -202,6 +223,48 @@ public class IntegralPayActivity extends BaseSwipeActivity {
                     public void onNext(VipPayModel vipPayModel) {
                         if (vipPayModel.isSuccess()) {
                             outTradeNo = vipPayModel.getData().getOutTradeNo();
+                            String orderNoList = vipPayModel.getData().orderNoList;
+                            String businessCstNo = vipPayModel.getData().businessCstNo;
+                            String merchantNo = vipPayModel.getData().merchantNo;
+                            UserInfoHelper.saveWalletStatus(mContext, outTradeNo);
+                            JSONObject jsonObject = new JSONObject();
+                            try {
+                                jsonObject.put("orderFlowNo",orderNoList);
+                                jsonObject.put("businessCstNo",businessCstNo);
+                                jsonObject.put("platMerCstNo",merchantNo);
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                            //台州银行
+                            if(vipPayModel.getData().getPayType()==16) {
+                                CashierManager.getInstance().init(mActivity);
+                                CashierManager.getInstance().launchPayment(jsonObject.toString(), new PaymentCallback() {
+                                    @Override
+                                    public void paymentResult(String s) {
+                                        switch (s){
+                                            case "10":
+                                                //初始状态
+                                                break;
+
+                                            case "70":
+                                                //失败
+                                                getPayResult(outTradeNo);
+                                                break;
+
+                                            case "80":
+                                                //关闭
+                                                ToastUtil.showSuccessMsg(mContext,"支付通道关闭");
+                                                break;
+
+                                            case "90":
+                                                //成功
+                                                getPayResult(outTradeNo);
+                                                break;
+                                        }
+                                    }
+                                });
+                            }
+
                             if (payChannel == 2&&vipPayModel.getData().getPayType()==2) {
                                 //支付宝支付
                                 SharedPreferencesUtil.saveString(mContext,"payKey","2");

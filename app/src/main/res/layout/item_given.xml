@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content">
 
     <RelativeLayout
 
@@ -28,9 +28,10 @@
                 android:scaleType="fitXY" />
 
             <TextView
-                android:id="@+id/tv_iv_bg"
+                android:id="@+id/tv_bg"
                 android:layout_width="@dimen/size_65dp"
                 android:layout_height="@dimen/size_65dp"
+                android:alpha="0.3"
                 android:background="@color/black"
                 android:visibility="gone" />
 
@@ -38,7 +39,6 @@
                 android:id="@+id/iv_finish"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-
                 android:layout_gravity="center"
                 android:scaleType="fitXY"
                 android:visibility="gone" />
@@ -61,13 +61,10 @@
                 android:orientation="horizontal">
 
                 <ImageView
-                    android:src="@mipmap/ic_logo"
                     android:id="@+id/iv_flag"
                     android:layout_width="20dp"
                     android:layout_height="18dp"
                     android:layout_marginLeft="5dp"
-
-
                     android:layout_marginRight="5dp" />
 
                 <TextView
@@ -98,7 +95,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/size_5dp"
-                android:text="规格"
+                tools:text="规格"
                 android:textColor="@color/color_9B9B9B"
                 android:textSize="10dp" />
 
@@ -120,7 +117,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="5dp"
-                    android:text="赠品数量"
+                    android:text="赠:"
                     android:textColor="#FFF6551A"
                     android:textSize="14dp" />
 

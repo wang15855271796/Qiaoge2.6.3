@@ -353,7 +353,6 @@ public class ChooseAddressActivity extends BaseSwipeActivity implements View.OnC
      */
     @Override
     public void onRefreshAutoComplete(String text) {
-        Log.d("defefffffff",text+"");
         if(!text.equals("")) {
             search_recycleView.setVisibility(View.VISIBLE);
             getReasonList(text);

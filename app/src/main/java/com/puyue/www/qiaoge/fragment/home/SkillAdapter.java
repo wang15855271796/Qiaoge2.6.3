@@ -47,17 +47,15 @@ public class SkillAdapter extends RecyclerView.Adapter<SkillAdapter.BaseViewHold
     private TextView tv_old_price;
     private TextView tv_coupon;
     RelativeLayout rl_coupon;
-    String style;
     public OnClick onClick;
-    ImageView iv_sale_done;
     TextView tv_desc;
     Context mContext;
     int layoutResId;
     int pos;
+//    CouponModel.DataBean.ActivesBean activesBean;
     List<CouponModel.DataBean.ActivesBean> actives;
     public SkillAdapter(Context context,int layoutResId, List<CouponModel.DataBean.ActivesBean> actives, String flag,OnClick onClick) {
         this.mContext = context;
-        this.style = style;
         this.onClick = onClick;
         this.layoutResId = layoutResId;
         this.actives = actives;
@@ -79,8 +77,14 @@ public class SkillAdapter extends RecyclerView.Adapter<SkillAdapter.BaseViewHold
 
     @Override
     public void onBindViewHolder(@NonNull SkillAdapter.BaseViewHolder holder, int position) {
-        pos = position%actives.size();
-        CouponModel.DataBean.ActivesBean activesBean = actives.get(position%actives.size());
+//        try {
+//            pos = position%actives.size();
+//            activesBean = actives.get(position%actives.size());
+//        }catch (Exception e) {
+//
+//        }
+
+        CouponModel.DataBean.ActivesBean activesBean = actives.get(position);
         holder.tv_name.setText(activesBean.getActiveName());
         Glide.with(mContext).load(activesBean.getDefaultPic()).into(holder.iv_pic);
         holder.tv_price.setText(activesBean.getPrice());
@@ -113,7 +117,7 @@ public class SkillAdapter extends RecyclerView.Adapter<SkillAdapter.BaseViewHold
 
         if(activesBean.getFlag()==1) {
             holder.iv_sale_done.setVisibility(View.VISIBLE);
-            Glide.with(mContext).load(activesBean.getSoldOutPic()).into(iv_sale_done);
+            Glide.with(mContext).load(activesBean.getSoldOutPic()).into(holder.iv_sale_done);
         }else {
             holder.iv_sale_done.setVisibility(View.GONE);
         }
@@ -121,20 +125,20 @@ public class SkillAdapter extends RecyclerView.Adapter<SkillAdapter.BaseViewHold
         holder.rl_group.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(style.equals("2")) {
-                    Intent intent = new Intent(mContext,SeckillGoodActivity.class);
-                    intent.putExtra(AppConstant.ACTIVEID,activesBean.getActiveId());
-                    intent.putExtra("priceType",SharedPreferencesUtil.getString(mContext,"priceType"));
-                    intent.putExtra("num","-1");
-                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK );
-                    mContext.startActivity(intent);
-                }else {
-                    Intent intent = new Intent(mContext,SpecialGoodDetailActivity.class);
-                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK );
-                    intent.putExtra(AppConstant.ACTIVEID,activesBean.getActiveId());
-                    intent.putExtra("priceType",SharedPreferencesUtil.getString(mContext,"priceType"));
-                    mContext.startActivity(intent);
-                }
+
+                Intent intent = new Intent(mContext,SeckillGoodActivity.class);
+                intent.putExtra(AppConstant.ACTIVEID,activesBean.getActiveId());
+                intent.putExtra("priceType",SharedPreferencesUtil.getString(mContext,"priceType"));
+                intent.putExtra("num","-1");
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK );
+                mContext.startActivity(intent);
+
+//                    Intent intent = new Intent(mContext,SpecialGoodDetailActivity.class);
+//                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK );
+//                    intent.putExtra(AppConstant.ACTIVEID,activesBean.getActiveId());
+//                    intent.putExtra("priceType",SharedPreferencesUtil.getString(mContext,"priceType"));
+//                    mContext.startActivity(intent);
+
             }
         });
 

@@ -4,6 +4,8 @@ import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -15,9 +17,13 @@ import com.bumptech.glide.Glide;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.puyue.www.qiaoge.R;
+import com.puyue.www.qiaoge.adapter.FullConfirmAdapter;
+import com.puyue.www.qiaoge.adapter.FullGiftAdapter;
+import com.puyue.www.qiaoge.adapter.FullGivenConfirmAdapter;
 import com.puyue.www.qiaoge.helper.GlideRoundTransform;
 import com.puyue.www.qiaoge.helper.StringHelper;
 import com.puyue.www.qiaoge.model.cart.CartBalanceModel;
+import com.puyue.www.qiaoge.model.cart.CartsListModel;
 import com.puyue.www.qiaoge.view.GlideModel;
 import com.puyue.www.qiaoge.view.LineBreakLayout;
 
@@ -39,14 +45,22 @@ public class ConfirmOrderNewAdapter extends BaseQuickAdapter<CartBalanceModel.Da
     ImageView iv_add;
     ImageView iv_flag_add;
     TextView tv_iv_bg;
+    RecyclerView rv_full;
+    TextView tv_full_desc;
+    RecyclerView rv_given;
+    List<CartBalanceModel.DataBean.ProductVOListBean> data;
+    List<CartBalanceModel.DataBean.ProductVOListBean.AdditionVOList>additionVOList1 = new ArrayList<>();
+    List<CartBalanceModel.DataBean.ProductVOListBean.AdditionVOList>additionVOList2 = new ArrayList<>();
     public ConfirmOrderNewAdapter(int layoutResId, @Nullable List<CartBalanceModel.DataBean.ProductVOListBean> data) {
         super(layoutResId, data);
-
+        this.data = data;
     }
 
     @Override
     protected void convert(BaseViewHolder helper, CartBalanceModel.DataBean.ProductVOListBean item) {
-
+        tv_full_desc = helper.getView(R.id.tv_full_desc);
+        rv_given = helper.getView(R.id.rv_given);
+        rv_full = helper.getView(R.id.rv_full);
         tv_iv_bg = helper.getView(R.id.tv_iv_bg);
         imageView = helper.getView(R.id.imageView);
         imageIcon = helper.getView(R.id.imageIcon);
@@ -58,6 +72,26 @@ public class ConfirmOrderNewAdapter extends BaseQuickAdapter<CartBalanceModel.Da
 
         lineBreakLayout.removeAllViews();
 
+        additionVOList1 = new ArrayList<>();
+        additionVOList2 = new ArrayList<>();
+
+        if(item.getAdditionVOList()!=null) {
+            for (int i = 0; i < item.getAdditionVOList().size(); i++) {
+                if(item.getAdditionVOList().get(i).getType().equals("1")) {
+                    additionVOList1.add(item.getAdditionVOList().get(i));
+                }else {
+                    additionVOList2.add(item.getAdditionVOList().get(i));
+                }
+            }
+        }
+
+        rv_given.setLayoutManager(new LinearLayoutManager(mContext));
+        FullGivenConfirmAdapter fullGivenConfirmAdapter = new FullGivenConfirmAdapter(R.layout.item_given,additionVOList2);
+        rv_given.setAdapter(fullGivenConfirmAdapter);
+
+        rv_full.setLayoutManager(new LinearLayoutManager(mContext));
+        FullConfirmAdapter fullConfirmAdapter = new FullConfirmAdapter(R.layout.item_full,additionVOList1);
+        rv_full.setAdapter(fullConfirmAdapter);
 
         // 添加 什么规格购买了多少
         for (int i = 0; i < item.getProductDescVOList().size(); i++) {

@@ -30,6 +30,7 @@ import com.puyue.www.qiaoge.activity.CartActivity;
 import com.puyue.www.qiaoge.activity.HomeActivity;
 import com.puyue.www.qiaoge.activity.mine.account.AddressListActivity;
 import com.puyue.www.qiaoge.activity.mine.account.AddressListsActivity;
+import com.puyue.www.qiaoge.adapter.OrderFullAdapter;
 import com.puyue.www.qiaoge.adapter.mine.MyWalletAdapter;
 import com.puyue.www.qiaoge.adapter.mine.NewOrderDetailAdapter;
 import com.puyue.www.qiaoge.api.cart.CancelOrderAPI;
@@ -45,6 +46,8 @@ import com.puyue.www.qiaoge.constant.AppConstant;
 import com.puyue.www.qiaoge.event.AddressEvent;
 import com.puyue.www.qiaoge.event.BackEvent;
 import com.puyue.www.qiaoge.event.GoToCartFragmentEvent;
+import com.puyue.www.qiaoge.fragment.mine.coupons.PaymentFragment;
+import com.puyue.www.qiaoge.fragment.mine.coupons.PaymentFragments;
 import com.puyue.www.qiaoge.helper.AppHelper;
 import com.puyue.www.qiaoge.helper.StringHelper;
 import com.puyue.www.qiaoge.listener.NoDoubleClickListener;
@@ -83,6 +86,7 @@ public class NewOrderDetailActivity extends BaseSwipeActivity {
     private ImageView imageViewBreak;
     private TextView textViewTitle;
     private RecyclerView recyclerView;
+    RecyclerView rv_full;
     // 非退货订单layout 头部
     private LinearLayout orderLinearLayout;
     private TextView tvOrderTitle; //订单类型
@@ -151,7 +155,7 @@ public class NewOrderDetailActivity extends BaseSwipeActivity {
 
     private NewOrderDetailAdapter adapter;
     private List<GetOrderDetailModel.DataBean.ProductVOListBean> list = new ArrayList<>();
-
+    private List<GetOrderDetailModel.DataBean.SendGiftInfo> list_full = new ArrayList<>();
     private String returnProductMainId = "";
     private String orderId;
     private String orderState = "";
@@ -224,7 +228,7 @@ public class NewOrderDetailActivity extends BaseSwipeActivity {
     private boolean isShowed = false;
     private String account;
     private String subId;
-
+    OrderFullAdapter orderFullAdapter;
     @Override
     public boolean handleExtra(Bundle savedInstanceState) {
         return false;
@@ -237,6 +241,7 @@ public class NewOrderDetailActivity extends BaseSwipeActivity {
 
     @Override
     public void findViewById() {
+        rv_full = (RecyclerView) findViewById(R.id.rv_full);
         imageViewBreak = (ImageView) findViewById(R.id.imageViewBreak);
         textViewTitle = (TextView) findViewById(R.id.textViewTitle);
         recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
@@ -351,6 +356,10 @@ public class NewOrderDetailActivity extends BaseSwipeActivity {
         adapter = new NewOrderDetailAdapter(R.layout.new_order_detail, list,orderId);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(adapter);
+
+        rv_full.setLayoutManager(new LinearLayoutManager(mContext));
+        orderFullAdapter = new OrderFullAdapter(R.layout.item_full,list_full);
+        rv_full.setAdapter(orderFullAdapter);
         getOrderDetail(orderId, orderState, returnProductMainId);
         // 文字渐变色
         LinearGradient mLinearGradient = new LinearGradient(0, 0, 0, tvInfo.getPaint().getTextSize(), Color.parseColor("#CEA6FF")
@@ -437,7 +446,9 @@ public class NewOrderDetailActivity extends BaseSwipeActivity {
                                 if (orderDetailModel.data.productVOList.size() > 0) {
                                     Log.e(TAG, "onNext: " + orderDetailModel.data.productVOList.get(0).productDescVOList.get(0).newDesc);
                                     list.clear();
+//                                    list_full.clear();
                                     list.addAll(orderDetailModel.data.productVOList);
+//                                    list_full.addAll(orderDetailModel.data.sendGiftInfo);
                                 }
                             }
                             adapter.notifyDataSetChanged();
@@ -472,12 +483,16 @@ public class NewOrderDetailActivity extends BaseSwipeActivity {
                             if (orderDetailModel != null) {
                                 setText(orderDetailModel);
                                 if (orderDetailModel.data.productVOList.size() > 0) {
-                                    Log.e(TAG, "onNext: " + orderDetailModel.data.productVOList.get(0).productDescVOList.get(0).newDesc);
+
                                     list.clear();
                                     list.addAll(orderDetailModel.data.productVOList);
+                                    adapter.notifyDataSetChanged();
+                                    list_full.clear();
+                                    list_full.addAll(orderDetailModel.data.sendGiftInfo);
+                                    orderFullAdapter.notifyDataSetChanged();
                                 }
                             }
-                            adapter.notifyDataSetChanged();
+
 
                             if (returnCode == 39 && !isShowed) {
                                 isShowed = true;
@@ -556,7 +571,10 @@ public class NewOrderDetailActivity extends BaseSwipeActivity {
             tvNewOrderPay.setImageResource(R.mipmap.ic_we_chat_icon);
         }else if(getOrderDetailModel.payChannelType == 14){
             tvNewOrderPay.setImageResource(R.mipmap.ic_pay_alipay);
+        }else if(getOrderDetailModel.payChannelType == 16){
+            tvNewOrderPay.setImageResource(R.mipmap.icon_yun);
         }
+
 
 
         if (orderStatusRequest == 2) {
@@ -1082,14 +1100,24 @@ public class NewOrderDetailActivity extends BaseSwipeActivity {
                     showCancleOrder();
                     break;
                 case R.id.buttonGOPay://去支付
-                    Intent intent = new Intent(mContext, MyConfireOrdersActivity.class);
-                    intent.putExtra("remark", getOrderDetailModel.remark);
-                    // Log.i("wwb", "onNoDoubleClick: "+getOrderDetailModel.remark);
-                    intent.putExtra("payAmount", Double.parseDouble(getOrderDetailModel.totalAmount));
-                    intent.putExtra("orderId", orderId);
-                    intent.putExtra("flag", true);
-                    finish();
-                    startActivity(intent);
+//                    Intent intent = new Intent(mContext, MyConfireOrdersActivity.class);
+//                    intent.putExtra("remark", getOrderDetailModel.remark);
+//                    // Log.i("wwb", "onNoDoubleClick: "+getOrderDetailModel.remark);
+//                    intent.putExtra("payAmount", Double.parseDouble(getOrderDetailModel.totalAmount));
+//                    intent.putExtra("orderId", orderId);
+//                    intent.putExtra("flag", true);
+//                    finish();
+//                    startActivity(intent);
+                    PaymentFragments paymentFragment = new PaymentFragments();
+                    Bundle bundle = new Bundle();
+                    bundle.putString("total", getOrderDetailModel.totalAmount);
+                    bundle.putString("remark","");
+                    bundle.putString("payAmount",getOrderDetailModel.totalAmount);
+                    bundle.putString("orderId",orderId);
+                    bundle.putString("orderDeliveryType","0");
+                    paymentFragment.setArguments(bundle);
+                    paymentFragment.setCancelable(false);
+                    paymentFragment.show(getSupportFragmentManager(),"paymentFragment");
                     break;
 
                 case R.id.buttonReturnGood_two:

@@ -65,6 +65,9 @@ import rx.schedulers.Schedulers;
 
 public class ReturnGoodActivity extends BaseSwipeActivity {
     private String orderId;
+//    Intent intent = MyOrdersActivity.getIntent(mContext, MyOrdersActivity.class, AppConstant.DELIVERY);
+//                    intent.putExtra("orderDeliveryType",orderDeliveryType);
+//    startActivity(intent);
     private String orderStatus;
     private TextView mTvSelectReason;
     private List<String> mReturnReason = new ArrayList<>();
@@ -97,7 +100,6 @@ public class ReturnGoodActivity extends BaseSwipeActivity {
     private CheckBox rd_check;
     private TextView tv_return_way;
     private String channelValue;
-
     @Override
     public boolean handleExtra(Bundle savedInstanceState) {
         return false;

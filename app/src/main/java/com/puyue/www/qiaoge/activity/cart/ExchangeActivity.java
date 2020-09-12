@@ -103,7 +103,6 @@ public class ExchangeActivity extends BaseSwipeActivity implements View.OnClickL
 
             @Override
             public void onArticleOnItemClick(EditText et) {
-
                 Amount = 0.0;
                 for (int i = 0; i < couponListsAdapter.getItemCount(); i++) {
                     String amount = couponListsAdapter.getItem(i).getNum();
@@ -133,7 +132,7 @@ public class ExchangeActivity extends BaseSwipeActivity implements View.OnClickL
 
     private List<ItemModel> initData() {
         for (int i = 0; i < 1; i++) {
-            mDatas.add(new ItemModel(""));
+            mDatas.add(new ItemModel());
         }
         return mDatas;
     }
@@ -163,7 +162,7 @@ public class ExchangeActivity extends BaseSwipeActivity implements View.OnClickL
 
                 break;
             case R.id.iv_add:
-                couponListsAdapter.addData(new ItemModel(""),amount);
+                couponListsAdapter.addData(new ItemModel(),amount);
                 break;
 
             case R.id.tv_exchange:

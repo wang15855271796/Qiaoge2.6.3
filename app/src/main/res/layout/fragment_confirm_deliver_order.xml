@@ -40,6 +40,9 @@
 
                     </android.support.v7.widget.RecyclerView>
 
+
+
+
                     <LinearLayout
                         android:layout_marginTop="@dimen/dp_10"
                         android:background="@drawable/shape_white1"
@@ -48,7 +51,6 @@
                         android:orientation="vertical">
 
                         <LinearLayout
-                            android:id="@+id/subtractionActivitiesLinearLayout"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:padding="@dimen/size_10dp">
@@ -62,24 +64,12 @@
                                 android:textSize="@dimen/size_12dp" />
 
                             <TextView
-                                android:id="@+id/subtractionActivities"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginLeft="@dimen/size_10dp"
-                                android:background="@drawable/app_vipsubtraction_bg"
-                                android:paddingLeft="@dimen/size_10dp"
-                                android:paddingRight="@dimen/size_10dp"
-                                android:textColor="@color/color_DA673D"
-                                android:textSize="@dimen/size_13dp"
-                                android:visibility="gone" />
-
-                            <TextView
                                 android:id="@+id/subtractionActivitiesPrice"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:layout_marginRight="@dimen/size_15dp"
                                 android:gravity="right"
-                                android:textColor="@color/color_F6551A"
+                                android:textColor="#000000"
                                 android:textSize="@dimen/size_11dp" />
                         </LinearLayout>
 
@@ -100,7 +90,7 @@
                                 android:id="@+id/commodityAmount"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:layout_marginRight="@dimen/size_13dp"
+                                android:layout_marginRight="@dimen/size_15dp"
                                 android:gravity="right"
                                 android:textColor="@color/app_black"
                                 android:textSize="@dimen/size_11dp" />
@@ -175,8 +165,44 @@
                                 android:textColor="@color/color_F6551A"
                                 android:textSize="@dimen/size_11dp" />
                         </LinearLayout>
+                        <!--满减活动-->
+                        <LinearLayout
+                            android:orientation="horizontal"
+                            android:id="@+id/subtractionActivitiesLinearLayout"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:padding="@dimen/size_10dp">
 
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginLeft="@dimen/size_15dp"
+                                android:text="@string/vipSubtractionActivity"
+                                android:textColor="@color/app_black"
+                                android:textSize="@dimen/size_11dp" />
 
+                            <TextView
+                                android:id="@+id/subtractionActivities"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginLeft="@dimen/size_10dp"
+                                android:background="@drawable/app_vipsubtraction_bg"
+                                android:paddingLeft="@dimen/size_10dp"
+                                android:paddingRight="@dimen/size_10dp"
+                                android:textColor="@color/color_DA673D"
+                                android:textSize="@dimen/size_13dp"
+                                android:visibility="gone" />
+
+                            <TextView
+                                android:id="@+id/tv_full_price"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginRight="@dimen/size_15dp"
+                                android:gravity="right"
+                                android:textColor="@color/color_F6551A"
+                                android:textSize="@dimen/size_11dp" />
+
+                        </LinearLayout>
 
                     </LinearLayout>
 
@@ -199,20 +225,19 @@
 
                         <TextView
                             android:id="@+id/textCoupons"
-                            android:textStyle="bold"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginRight="@dimen/size_5dp"
                             android:drawablePadding="@dimen/size_11dp"
                             tools:text="sssssssssssssss"
+                            android:textColor="#999999"
                             android:drawableRight="@mipmap/ic_address_icon"
                             android:gravity="right"
-                            android:textColor="#F25E0D"
                             android:textSize="@dimen/size_12dp" />
 
                     </LinearLayout>
                     <!--备注-->
-                    <LinearLayout
+                    <RelativeLayout
                         android:id="@+id/ll_beizhu"
                         android:layout_marginTop="@dimen/dp_10"
                         android:background="@drawable/shape_white1"
@@ -231,20 +256,23 @@
                             android:textSize="@dimen/size_12dp" />
 
                         <TextView
+                            android:layout_alignParentRight="true"
                             android:id="@+id/tv_beizhu"
-                            android:layout_width="match_parent"
+                            android:layout_width="215dp"
                             android:layout_height="wrap_content"
                             android:layout_marginRight="@dimen/size_5dp"
                             android:drawablePadding="@dimen/size_11dp"
-                            android:layout_marginLeft="@dimen/dp_10"
-                            tools:text="要是这人特别啰只展示十五个字长..."
                             android:drawableRight="@mipmap/ic_address_icon"
+                            android:hint="请输入你的备注"
+                            android:maxLines="1"
+                            android:singleLine="true"
                             android:gravity="right"
-                            android:maxLength="15"
+                            android:ellipsize="end"
                             android:textColor="#999999"
                             android:textSize="@dimen/size_12dp" />
 
-                    </LinearLayout>
+                    </RelativeLayout>
+                    <!--      android:drawableRight="@mipmap/ic_address_icon"-->
                     <include layout="@layout/fragment_confirm_order_foot" />
 
                 </LinearLayout>

@@ -45,7 +45,6 @@ public class AutoPollRecyclerView extends RecyclerView {
 
     //开启:如果正在运行,先停止->再开启
     public void start() {
-        Log.d("wsaaaaaaa....",running+"aa");
         removeCallbacks(autoPollTask);
         if (running)
             stop();
@@ -72,8 +71,6 @@ public class AutoPollRecyclerView extends RecyclerView {
             case MotionEvent.ACTION_CANCEL:
             case MotionEvent.ACTION_OUTSIDE:
                 int nowX = (int) ev.getRawX();
-                Log.d("wsaaaaaaa....",nowX+"bb");
-                Log.d("wsaaaaaaa....",lastX+"cc");
 //                if(lastX-nowX>10) {
 //                    smoothScrollToPosition(++index);
 //

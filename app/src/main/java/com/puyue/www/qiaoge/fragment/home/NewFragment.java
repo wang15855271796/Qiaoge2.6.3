@@ -60,7 +60,6 @@ public class NewFragment extends BaseFragment {
     ImageView iv_back;
     public int pageNum = 1;
     ProductNormalModel productNormalModel;
-    String flag = "new";
     View emptyView;
     CouponDialog couponDialog;
     String cell;
@@ -245,11 +244,11 @@ public class NewFragment extends BaseFragment {
     public void getPriceType(CityEvent event) {
         refreshLayout.autoRefresh();
         getCustomerPhone();
-
     }
 
     @Override
     public void setViewData() {
+        getCustomerPhone();
     }
 
     @Override

@@ -370,12 +370,12 @@
                 android:id="@+id/tv_role"
                 android:layout_marginLeft="@dimen/sp_16"
                 android:layout_below="@+id/rl"
-                android:layout_marginTop="@dimen/dp_10"
                 tools:text="全场通用（仅限杭州市）"
                 android:textColor="#999999"
                 android:textSize="10dp"
+                android:gravity="center_vertical"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_height="match_parent" />
 
         </RelativeLayout>
 

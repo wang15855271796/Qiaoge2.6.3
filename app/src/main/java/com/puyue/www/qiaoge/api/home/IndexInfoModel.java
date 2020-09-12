@@ -96,9 +96,36 @@ public class IndexInfoModel {
         String cityName;
         String deductAmountStr;
         String offerStr;
+        String sendTime;
+        String sendAmount;
+        int fullGiftNum;
         private List<BannersBean> banners;
         private List<IconsBean> icons;
         private List<ClassifyListBean> classifyList;
+
+        public String getSendTime() {
+            return sendTime;
+        }
+
+        public void setSendTime(String sendTime) {
+            this.sendTime = sendTime;
+        }
+
+        public String getSendAmount() {
+            return sendAmount;
+        }
+
+        public void setSendAmount(String sendAmount) {
+            this.sendAmount = sendAmount;
+        }
+
+        public int getFullGiftNum() {
+            return fullGiftNum;
+        }
+
+        public void setFullGiftNum(int fullGiftNum) {
+            this.fullGiftNum = fullGiftNum;
+        }
 
         public String getDeductAmountStr() {
             return deductAmountStr;

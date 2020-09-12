@@ -81,7 +81,13 @@ public class ReturnGoodDetailTwoAdapter extends RecyclerView.Adapter<ReturnGoodD
         List<ReturnOrderDetailModel.DataBean.ProductsBean.DetailsBean> mListReturnNum = new ArrayList<>();
         selectPosition = position;
         holder.tvProductName.setText(mListProduct.get(position).getProductName());
-        Glide.with(context).load(mListProduct.get(position).getFlagUrl()).into(holder.ivFlag);
+        if(mListProduct.get(position).getFlagUrl()!=null) {
+            Glide.with(context).load(mListProduct.get(position).getFlagUrl()).into(holder.ivFlag);
+            holder.ivFlag.setVisibility(View.VISIBLE);
+        }else {
+            holder.ivFlag.setVisibility(View.GONE);
+        }
+
         Glide.with(context).load(mListProduct.get(position).getDefaultPic()).into(holder.ivProduct);
         //侧滑菜单
         //数量

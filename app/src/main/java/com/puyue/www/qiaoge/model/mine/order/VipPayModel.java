@@ -73,9 +73,35 @@ public class VipPayModel {
         private String title;
         private String payToken;
         private int payType;
-
+        public String businessCstNo;
+        public String merchantNo;
+        public String orderNoList;
         public String getOutTradeNo() {
             return outTradeNo;
+        }
+
+        public String getBusinessCstNo() {
+            return businessCstNo;
+        }
+
+        public void setBusinessCstNo(String businessCstNo) {
+            this.businessCstNo = businessCstNo;
+        }
+
+        public String getMerchantNo() {
+            return merchantNo;
+        }
+
+        public void setMerchantNo(String merchantNo) {
+            this.merchantNo = merchantNo;
+        }
+
+        public String getOrderNoList() {
+            return orderNoList;
+        }
+
+        public void setOrderNoList(String orderNoList) {
+            this.orderNoList = orderNoList;
         }
 
         public void setOutTradeNo(String outTradeNo) {

@@ -115,7 +115,6 @@ public class HotDialog extends Dialog implements View.OnClickListener{
     public void cancel() {
         super.cancel();
         EventBus.getDefault().unregister(this);
-        Log.d("sdwdddddrrrrrr.....","000000");
     }
 
     public void init() {
@@ -213,7 +212,7 @@ public class HotDialog extends Dialog implements View.OnClickListener{
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void getTotal(UpDateNumEvent6 upDateNumEvent) {
         getCartNum();
-        Log.d("sdwdddddrrrrrr.....","111111");
+
     }
     /**
      * 获取角标数据

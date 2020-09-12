@@ -83,9 +83,9 @@ public class ExCouponsDialog extends Dialog {
         WindowManager.LayoutParams attributes = getWindow().getAttributes();
         attributes.width = Utils.getScreenWidth(context);
         getWindow().setAttributes(attributes);
-        ExchangeAdapter exchangeAdapter = new ExchangeAdapter(R.layout.item_exchange,amounts);
+//        ExchangeAdapter exchangeAdapter = new ExchangeAdapter(R.layout.item_exchange,amounts);
         recyclerView.setLayoutManager(new LinearLayoutManager(context));
-        recyclerView.setAdapter(exchangeAdapter);
+//        recyclerView.setAdapter(exchangeAdapter);
 //        for (int i = 0; i < amounts.size(); i++) {
 //            Double s = Double.valueOf(amounts.get(i));
 //            total+=s;

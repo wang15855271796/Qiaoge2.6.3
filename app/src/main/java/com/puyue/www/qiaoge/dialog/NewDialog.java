@@ -249,6 +249,7 @@ public class NewDialog extends Dialog implements View.OnClickListener{
                                 tv_free_desc.setText("未选购商品");
                                 tv_num.setVisibility(View.GONE);
                                 tv_price_total.setText(getCartNumModel.getData().getTotalPrice());
+
                             }
                         } else {
                             AppHelper.showMsg(context, getCartNumModel.getMessage());

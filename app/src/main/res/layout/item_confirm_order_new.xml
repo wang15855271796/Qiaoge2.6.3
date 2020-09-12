@@ -109,15 +109,27 @@
         </RelativeLayout>
     </RelativeLayout>
 
-
-    <View
+    <TextView
+        android:visibility="gone"
+        android:id="@+id/tv_full_desc"
+        android:textColor="#FF0025"
+        android:paddingBottom="@dimen/size_5dp"
+        android:paddingTop="@dimen/size_5dp"
+        android:paddingLeft="@dimen/size_13dp"
+        android:textSize="@dimen/sp_12"
+        android:layout_marginTop="@dimen/size_15dp"
+        android:layout_marginBottom="16dp"
+        android:layout_marginRight="@dimen/size_9dp"
+        android:background="@drawable/shape_cart_orange"
+        android:layout_marginLeft="@dimen/size_90dp"
+        tools:text="该商品再买600元可获赠5元优惠券"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/size_1dp"
-        android:layout_marginTop="5dp"
-        android:background="@color/color_F6F6F6" />
+        android:layout_height="wrap_content" />
+
+
+
 
     <RelativeLayout
-
         android:id="@+id/rl_cart_item_add"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
@@ -276,4 +288,28 @@
 
     </RelativeLayout>
 
+
+    <!--满赠商品赠品-->
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rv_given"
+        android:layout_marginTop="@dimen/dp_10"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+    </android.support.v7.widget.RecyclerView>
+
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rv_full"
+        android:layout_marginLeft="@dimen/dp_10"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+    </android.support.v7.widget.RecyclerView>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/size_1dp"
+        android:layout_marginTop="5dp"
+        android:background="@color/color_F6F6F6" />
 </LinearLayout>

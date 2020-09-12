@@ -10,6 +10,7 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.chad.library.adapter.base.BaseQuickAdapter;
@@ -19,10 +20,14 @@ import com.puyue.www.qiaoge.activity.home.CommonGoodsDetailActivity;
 import com.puyue.www.qiaoge.activity.home.SpecialGoodDetailActivity;
 import com.puyue.www.qiaoge.activity.home.SpikeGoodsDetailsActivity;
 import com.puyue.www.qiaoge.activity.home.TeamGoodsDetailActivity;
+import com.puyue.www.qiaoge.adapter.FullGiftAdapter;
+import com.puyue.www.qiaoge.adapter.GivensAdapter;
+import com.puyue.www.qiaoge.adapter.cart.CartAdapter;
 import com.puyue.www.qiaoge.adapter.home.SeckillGoodActivity;
 import com.puyue.www.qiaoge.constant.AppConstant;
 import com.puyue.www.qiaoge.fragment.cart.CartFragment;
 import com.puyue.www.qiaoge.fragment.cart.UpdateEvent;
+import com.puyue.www.qiaoge.model.FullModel;
 import com.puyue.www.qiaoge.model.cart.CartsListModel;
 import com.puyue.www.qiaoge.model.mine.CartCheckModel;
 import com.puyue.www.qiaoge.utils.SharedPreferencesUtil;
@@ -42,16 +47,42 @@ public class TestAdapter extends BaseQuickAdapter<CartsListModel.DataBean.ValidL
     private RecyclerView rv_given;
     List<CartCheckModel> list = new ArrayList<>();
     List<CartsListModel.DataBean.ValidListBean> listAll = new ArrayList<>();
-    public TestAdapter(int layoutResId, @Nullable List<CartsListModel.DataBean.ValidListBean> data,IProductSelectCallback iProductSelectCallback) {
+    private Onclick onclick;
+    RecyclerView rv_full;
+    RecyclerView rv_givens;
+    List<CartsListModel.DataBean.ValidListBean.SpecProductListBean.AdditionVOList>additionVOList1 = new ArrayList<>();
+    List<CartsListModel.DataBean.ValidListBean.SpecProductListBean.AdditionVOList>additionVOList2 = new ArrayList<>();
+    List<CartsListModel.DataBean.ValidListBean.SpecProductListBean.AdditionProductVOList> additionProductVOList = new ArrayList<>();
+    int cartId;
+    public TestAdapter(int layoutResId, @Nullable List<CartsListModel.DataBean.ValidListBean> data,IProductSelectCallback iProductSelectCallback,Onclick onclick) {
         super(layoutResId, data);
         this.data = data;
         this.iProductSelectCallback = iProductSelectCallback;
-
+        this.onclick = onclick;
     }
 
     @Override
     protected void convert(BaseViewHolder helper, CartsListModel.DataBean.ValidListBean item) {
         ImageView iv_icon = helper.getView(R.id.iv_icon);
+        rv_full = helper.getView(R.id.rv_full);
+        TextView tv_full_desc = helper.getView(R.id.tv_full_desc);
+
+        rv_givens = helper.getView(R.id.rv_givens);
+        for (int i = 0; i < item.getSpecProductList().size(); i++) {
+            if(item.getSpecProductList().get(i).getBuySendAdditionInfo()!=null) {
+                if(item.getSpecProductList().get(i).getBuySendAdditionInfo().equals("")) {
+                    tv_full_desc.setVisibility(View.GONE);
+                }else {
+                    tv_full_desc.setText(item.getSpecProductList().get(i).getBuySendAdditionInfo());
+                    tv_full_desc.setVisibility(View.VISIBLE);
+                }
+            }else {
+                tv_full_desc.setVisibility(View.GONE);
+            }
+        }
+
+
+        TextView tv_delete = helper.getView(R.id.tv_delete);
         LinearLayout ll_cart = helper.getView(R.id.ll_cart);
         ll_cart.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -84,13 +115,42 @@ public class TestAdapter extends BaseQuickAdapter<CartsListModel.DataBean.ValidL
                     }
             }
         });
+        additionVOList1 = new ArrayList<>();
+        additionVOList2 = new ArrayList<>();
+        additionProductVOList = new ArrayList<>();
+        for (int i = 0; i < item.getSpecProductList().size(); i++) {
+            cartId = item.getSpecProductList().get(i).getCartId();
+            if(item.getSpecProductList().get(i).getProductDescVOList()!=null) {
+                additionProductVOList = item.getSpecProductList().get(i).getAdditionProductVOList();
+            }
+            if(item.getSpecProductList().get(i).getAdditionVOList()!=null) {
+                List<CartsListModel.DataBean.ValidListBean.SpecProductListBean.AdditionVOList> additionVOList = item.getSpecProductList().get(i).getAdditionVOList();
+                for (int j = 0; j <additionVOList.size(); j++) {
+                    //优惠券
+                    if(additionVOList.get(j).getType().equals("1")) {
+                        additionVOList1.add(additionVOList.get(j));
+                    }else {
+                        additionVOList2.add(additionVOList.get(j));
+                    }
+                }
+            }
+        }
+
+        //普通赠品
+//        GivensAdapter givenAdapters = new GivensAdapter(R.layout.item_given,additionProductVOList);
+//        rv_givens.setLayoutManager(new LinearLayoutManager(mContext));
+//        rv_givens.setAdapter(givenAdapters);
 
 
+        rv_full.setLayoutManager(new LinearLayoutManager(mContext));
+        FullGiftAdapter fullGiftAdapter = new FullGiftAdapter(R.layout.item_full,additionVOList1);
+        rv_full.setAdapter(fullGiftAdapter);
         Glide.with(mContext).load(item.getFlagUrl()).into(iv_icon);
         recyclerView = helper.getView(R.id.recyclerView);
+        //满赠赠品
         rv_given = helper.getView(R.id.rv_given);
         rv_given.setLayoutManager(new LinearLayoutManager(mContext));
-        GivenAdapter givenAdapter = new GivenAdapter(R.layout.item_given,item.getSpecProductList().get(0).getAdditionProductVOList());
+        GivenAdapter givenAdapter = new GivenAdapter(R.layout.item_given,additionVOList2);
         rv_given.setAdapter(givenAdapter);
         CheckBox cb_item_out = helper.getView(R.id.cb_item_out);
         helper.setText(R.id.tv_title,item.getProductName());
@@ -113,7 +173,15 @@ public class TestAdapter extends BaseQuickAdapter<CartsListModel.DataBean.ValidL
             }
             mOnResfreshListener.onResfresh(isSelect);
         }
-
+        tv_delete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(onclick!=null) {
+//                    onclick.deteItem(helper.getAdapterPosition(),cartId);
+                    onclick.deteItem(helper.getAdapterPosition(),item);
+                }
+            }
+        });
 
         cb_item_out.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -208,7 +276,8 @@ public class TestAdapter extends BaseQuickAdapter<CartsListModel.DataBean.ValidL
 
     public interface Onclick {
 
-        void refreshCart();
+//        void deteItem(int pos,int id);
+        void deteItem(int pos,CartsListModel.DataBean.ValidListBean validListBean);
     }
 
 }

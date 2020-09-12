@@ -5,6 +5,7 @@ import android.graphics.Typeface;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -124,6 +125,7 @@ public class MarketSecondAdapter extends BaseQuickAdapter<ClassIfyModel.DataBean
             public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {
                 switch (view.getId()) {
                     case R.id.ll_bg:
+                        Log.d("wsassssssssss......",item.getSecondClassify().get(position).getSecondId()+"");
                         innerAdapter.selectPosition(position);
                         if(mOnEventClickListener!=null) {
                             mOnEventClickListener.onEventClick(position,item.getSecondClassify().get(position).getSecondId());

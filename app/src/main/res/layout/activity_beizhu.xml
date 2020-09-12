@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:background="#FFFFFF"
     android:orientation="vertical"
-    android:layout_height="wrap_content">
+    android:layout_height="match_parent">
 
     <com.puyue.www.qiaoge.view.CompatToolbar
         android:layout_width="match_parent"
@@ -50,19 +50,34 @@
 
     </com.puyue.www.qiaoge.view.CompatToolbar>
 
+    <!--<EditText-->
+        <!--android:id="@+id/et"-->
+        <!--android:layout_marginTop="@dimen/size_33dp"-->
+        <!--android:background="#FFFFFF"-->
+        <!--android:textColorHint="#cccccc"-->
+        <!--android:textSize="@dimen/sp_12"-->
+        <!--android:textColor="#333333"-->
+        <!--android:maxLines="4"-->
+        <!--android:lineSpacingExtra="1.5dp"-->
+        <!--android:layout_marginRight="21dp"-->
+        <!--android:layout_marginLeft="21dp"-->
+        <!--android:hint="在这里填写您的备注信息"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="120dp" />-->
+
     <EditText
         android:id="@+id/et"
-        android:layout_marginTop="@dimen/size_33dp"
-        android:background="#FFFFFF"
-        android:textColorHint="#cccccc"
-        android:textSize="@dimen/sp_12"
-        android:textColor="#333333"
-        android:maxLines="4"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="20dp"
+        android:background="#ffffff"
+        android:gravity="top"
         android:lineSpacingExtra="1.5dp"
         android:layout_marginRight="21dp"
         android:layout_marginLeft="21dp"
         android:hint="在这里填写您的备注信息"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
-
+        android:padding="10dp"
+        android:textColor="#232131"
+        android:textColorHint="@color/color_E5E5E5"
+        android:textSize="14dp" />
 </LinearLayout>

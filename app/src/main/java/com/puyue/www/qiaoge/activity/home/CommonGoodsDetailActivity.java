@@ -29,11 +29,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.puyue.www.qiaoge.NewWebViewActivity;
 import com.puyue.www.qiaoge.R;
 import com.puyue.www.qiaoge.activity.CartActivity;
 import com.puyue.www.qiaoge.activity.mine.login.LoginActivity;
 import com.puyue.www.qiaoge.activity.mine.login.RegisterActivity;
 import com.puyue.www.qiaoge.activity.mine.login.RegisterMessageActivity;
+import com.puyue.www.qiaoge.adapter.FullActivitesAdapter;
 import com.puyue.www.qiaoge.adapter.cart.ChooseSpecAdapter;
 import com.puyue.www.qiaoge.adapter.cart.ImageViewAdapter;
 import com.puyue.www.qiaoge.adapter.home.RegisterShopAdapterTwo;
@@ -54,6 +57,7 @@ import com.puyue.www.qiaoge.base.BaseSwipeActivity;
 import com.puyue.www.qiaoge.constant.AppConstant;
 import com.puyue.www.qiaoge.dialog.ChooseDialog;
 import com.puyue.www.qiaoge.dialog.CouponDialog;
+import com.puyue.www.qiaoge.dialog.FullDialog;
 import com.puyue.www.qiaoge.event.OnHttpCallBack;
 import com.puyue.www.qiaoge.fragment.cart.NumEvent;
 import com.puyue.www.qiaoge.fragment.cart.ReduceNumEvent;
@@ -149,7 +153,6 @@ public class CommonGoodsDetailActivity extends BaseSwipeActivity {
     //推荐
     private RecyclerView recyclerViewRecommend;
     private GoodsRecommendAdapter adapterRecommend;
-    private List<GetProductListModel.DataBean.ListBean> listRecommend = new ArrayList<>();
     private List<GoodsDetailModel> mListDetailImage = new ArrayList<>();
     private LinearLayout linearLayoutEvaluation;// 评价布局
     private LinearLayout linearLayoutEvaluationNoData;
@@ -174,8 +177,10 @@ public class CommonGoodsDetailActivity extends BaseSwipeActivity {
     TextView tv_city;
     @BindView(R.id.tv_change)
     TextView tv_change;
-    @BindView(R.id.rv_given)
-    RecyclerView rv_given;
+    @BindView(R.id.recyclerView)
+    RecyclerView recyclerView;
+    @BindView(R.id.rl_business)
+    RelativeLayout rl_business;
     private AlertDialog mTypedialog;
     LinearLayout ll_service;
     TextView tv_price;
@@ -195,6 +200,7 @@ public class CommonGoodsDetailActivity extends BaseSwipeActivity {
     String city;
     String priceType;
     private GetProductDetailModel models;
+    FullActivitesAdapter fullActivitesAdapter;
     @Override
     public boolean handleExtra(Bundle savedInstanceState) {
         if (getIntent() != null && getIntent().getExtras() != null) {
@@ -314,10 +320,10 @@ public class CommonGoodsDetailActivity extends BaseSwipeActivity {
         recyclerViewImage.setLayoutManager(new LinearLayoutManager(mActivity));
         recyclerViewImage.setAdapter(imageViewAdapter);
 
-        //商品活动recycleview
-        rv_given.setLayoutManager(new LinearLayoutManager(mContext));
-//        CommonActiveAdapter commonActiveAdapter = new CommonActiveAdapter(R.layout.item_common_active);
-//        rv_given.setAdapter();
+        //满赠活动列表
+        fullActivitesAdapter = new FullActivitesAdapter(R.layout.item_full_actives,fullactives);
+        recyclerView.setLayoutManager(new LinearLayoutManager(mContext));
+        recyclerView.setAdapter(fullActivitesAdapter);
     }
 
     @Override
@@ -357,8 +363,11 @@ public class CommonGoodsDetailActivity extends BaseSwipeActivity {
         iv_vip.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                Intent intent = new Intent(mActivity,.class);
-//                startActivity();
+                Intent intent = new Intent(mActivity, NewWebViewActivity.class);
+                intent.putExtra("URL", models.getData().getBannerDetailUrl());
+                intent.putExtra("TYPE", 1);
+                intent.putExtra("name", "");
+                startActivity(intent);
             }
         });
     }
@@ -480,6 +489,7 @@ public class CommonGoodsDetailActivity extends BaseSwipeActivity {
     /**
      * 获取详情
      */
+    List<String> fullactives = new ArrayList<>();
     private void getProductDetail(final int productId) {
         GetProductDetailAPI.requestData(mContext,productId)
                 .subscribeOn(Schedulers.io())
@@ -492,19 +502,47 @@ public class CommonGoodsDetailActivity extends BaseSwipeActivity {
 
                     @Override
                     public void onError(Throwable e) {
-
+//                        Log.d("wdasaaaaaaa.....",e.getMessage());
                     }
 
                     @Override
                     public void onNext(GetProductDetailModel model) {
                         if (model.isSuccess()) {
+
                             detailList.clear();
                             detailList.addAll(model.getData().getDetailPic());
                             imageViewAdapter.notifyDataSetChanged();
                             models = model;
+
                             productId1 = model.getData().getProductId();
                             productName = model.getData().getProductName();
                             mTvTitle.setText(productName);
+                            if(models.getData().getFullGiftSendInfo()!=null) {
+                                fullactives.clear();
+                                List<String> fullGiftSendInfo = models.getData().getFullGiftSendInfo();
+                                fullactives.addAll(fullGiftSendInfo);
+                                fullActivitesAdapter.notifyDataSetChanged();
+
+                                fullActivitesAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
+                                    @Override
+                                    public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
+                                        FullDialog fullDialog = new FullDialog(mActivity,models.getData().getDivFullGiftSendInfo());
+                                        fullDialog.show();
+                                    }
+                                });
+                                rl_business.setVisibility(View.VISIBLE);
+
+                            }else {
+                                rl_business.setVisibility(View.GONE);
+                            }
+
+//                            rl_business.setOnClickListener(new View.OnClickListener() {
+//                                @Override
+//                                public void onClick(View v) {
+//
+//                                }
+//                            });
+
                             if(priceType.equals("1")) {
                                 mTvPrice.setText(model.getData().getMinMaxPrice());
                                 mTvPrice.setVisibility(View.VISIBLE);
@@ -525,9 +563,10 @@ public class CommonGoodsDetailActivity extends BaseSwipeActivity {
                                 iv_flag.setVisibility(View.VISIBLE);
                                 Glide.with(mContext).load(model.getData().getTypeUrl()).into(iv_flag);
                             }
+
                             tv_sale.setText(model.getData().getSalesVolume());
                             prodSpecs = model.getData().getProdSpecs();
-                            tv_desc.setText("产品说明："+model.getData().getIntroduction());
+                            tv_desc.setText(model.getData().getIntroduction());
                             chooseSpecAdapter = new ChooseSpecAdapter(mContext,prodSpecs, new ChooseSpecAdapter.Onclick() {
                                 @Override
                                 public void addDialog(int position) {
@@ -556,7 +595,6 @@ public class CommonGoodsDetailActivity extends BaseSwipeActivity {
                             });
 
                             fl_container.setAdapter(chooseSpecAdapter);
-
 
                             //填充banner
                             images.clear();

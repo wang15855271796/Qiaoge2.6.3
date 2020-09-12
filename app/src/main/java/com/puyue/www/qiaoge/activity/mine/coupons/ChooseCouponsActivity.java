@@ -20,9 +20,11 @@ import com.puyue.www.qiaoge.api.mine.coupon.userChooseDeductAPI;
 import com.puyue.www.qiaoge.base.BaseSwipeActivity;
 import com.puyue.www.qiaoge.event.ChooseCoupon1Event;
 import com.puyue.www.qiaoge.event.ChooseCouponEvent;
+import com.puyue.www.qiaoge.event.ChooseCouponsEvent;
 import com.puyue.www.qiaoge.helper.ActivityResultHelper;
 import com.puyue.www.qiaoge.helper.AppHelper;
 import com.puyue.www.qiaoge.listener.NoDoubleClickListener;
+import com.puyue.www.qiaoge.model.StatModel;
 import com.puyue.www.qiaoge.model.cart.CartBalanceModel;
 import com.puyue.www.qiaoge.model.home.GetCommentListByPageModel;
 import com.puyue.www.qiaoge.model.mine.coupons.UserChooseDeductModel;
@@ -51,6 +53,7 @@ public class ChooseCouponsActivity extends BaseSwipeActivity {
     private String giftDetailNo="";
     private ChooseCouponsAdapter adapter;
     ImageView iv_select_all;
+    boolean statModel;
     private List<UserChooseDeductModel.DataBean> list = new ArrayList<>();
 
 
@@ -78,9 +81,15 @@ public class ChooseCouponsActivity extends BaseSwipeActivity {
                     adapter.setStat();
                     EventBus.getDefault().post(new ChooseCoupon1Event());
                     finish();
+
                 }
+                statModel = true;
+                adapter.notifyDataSetChanged();
             }
+
+
         });
+
     }
 
     @Override
@@ -88,6 +97,7 @@ public class ChooseCouponsActivity extends BaseSwipeActivity {
         activityBalanceVOStr = getIntent().getStringExtra("activityBalanceVOStr");
         normalProductBalanceVOStr = getIntent().getStringExtra("normalProductBalanceVOStr");
         giftDetailNo = getIntent().getStringExtra("giftDetailNo");
+        statModel = getIntent().getBooleanExtra("statModel",false);
         userChooseDeduct();
         setRecyclerView();
     }
@@ -99,13 +109,15 @@ public class ChooseCouponsActivity extends BaseSwipeActivity {
             @Override
             public void Onclick(int position, String giftDetailNo) {
                 UserChooseDeductModel.DataBean info = list.get(position);
+                statModel = false;
                 for (int i = 0; i < list.size(); i++) {
                     if (i == position) {
                         list.get(i).setFlag(!list.get(i).isFlag());
                         if (list.get(i).isFlag()) {
+//                            EventBus.getDefault().post(new ChooseCouponsEvent(info.getGiftDetailNo()));
                             EventBus.getDefault().post(new ChooseCouponEvent(info.getGiftDetailNo()));
-                            finish();
 
+                            finish();
                         } else {
                             finish();
                         }
@@ -133,7 +145,7 @@ public class ChooseCouponsActivity extends BaseSwipeActivity {
         });
     }
 
-
+    UserChooseDeductModel models;
     private void userChooseDeduct() {
         userChooseDeductAPI.requestData(mContext, activityBalanceVOStr, normalProductBalanceVOStr)
                 .subscribeOn(Schedulers.io())
@@ -152,14 +164,26 @@ public class ChooseCouponsActivity extends BaseSwipeActivity {
                     @Override
                     public void onNext(UserChooseDeductModel model) {
                         if (model.success) {
+                            models = model;
                             if (model.getData().size()> 0) {
                                 list.addAll(model.getData());
+
                                 for (int i = 0; i < list.size(); i++) {
                                     if (model.getData().get(i).getGiftDetailNo().equals(giftDetailNo)) {
                                         model.getData().get(i).setFlag(true);
-
+                                        if(statModel) {
+                                            iv_select_all.setBackgroundResource(R.mipmap.ic_pay_ok);
+                                        }else {
+                                            iv_select_all.setBackgroundResource(R.mipmap.ic_pay_no);
+                                        }
                                     } else {
                                         model.getData().get(i).setFlag(false);
+                                        if(statModel) {
+                                            iv_select_all.setBackgroundResource(R.mipmap.ic_pay_ok);
+                                        }else {
+                                            iv_select_all.setBackgroundResource(R.mipmap.ic_pay_no);
+                                        }
+
 
                                     }
 

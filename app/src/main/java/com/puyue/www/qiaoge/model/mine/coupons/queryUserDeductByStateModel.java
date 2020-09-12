@@ -164,7 +164,7 @@ public class queryUserDeductByStateModel{
              * state : ENABLED
              * giftDetailNo : 112018092000000015
              */
-
+            String useInfo;
             private String giftName;
             private String giftType;
             private String amount;
@@ -179,6 +179,23 @@ public class queryUserDeductByStateModel{
             private String state;
             private String giftDetailNo;
             private List<String> role;
+            private String giftProdUseType;
+
+            public String getGiftProdUseType() {
+                return giftProdUseType;
+            }
+
+            public void setGiftProdUseType(String giftProdUseType) {
+                this.giftProdUseType = giftProdUseType;
+            }
+
+            public String getUseInfo() {
+                return useInfo;
+            }
+
+            public void setUseInfo(String useInfo) {
+                this.useInfo = useInfo;
+            }
 
             public String getGiftName() {
                 return giftName;

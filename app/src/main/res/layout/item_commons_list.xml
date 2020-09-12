@@ -34,6 +34,7 @@
                 android:layout_height="wrap_content" />
 
             <RelativeLayout
+                android:visibility="gone"
                 android:id="@+id/rl_coupon"
                 android:background="@drawable/shape_ring"
                 android:layout_width="30dp"
@@ -55,6 +56,31 @@
                     android:src="@mipmap/ic_back_arrow" />
 
             </RelativeLayout>
+
+            <RelativeLayout
+                android:visibility="gone"
+                android:id="@+id/rl_full"
+                android:background="@drawable/shape_full_orange"
+                android:layout_width="30dp"
+                android:layout_alignParentRight="true"
+                android:layout_marginTop="80dp"
+                android:layout_marginRight="15dp"
+                android:layout_height="15dp"
+                >
+
+                <TextView
+                    tools:text="300"
+                    android:textColor="@color/white"
+                    android:textStyle="bold"
+                    android:layout_centerInParent="true"
+                    android:id="@+id/tv_full"
+                    android:textSize="9dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@mipmap/ic_back_arrow" />
+
+            </RelativeLayout>
+
 
         </RelativeLayout>
 

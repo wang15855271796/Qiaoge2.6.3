@@ -83,6 +83,7 @@ public class SubAccountListAdapter extends BaseQuickAdapter<SubAccountListModel.
                                 }else {
                                     Intent intent2 = new Intent(mContext, NewOrderDetailActivity.class);
                                     intent2.putExtra(AppConstant.ORDERID,item.getOrderId());
+                                    intent2.putExtra("account","0");
                                     intent2.putExtra(AppConstant.ORDERSTATE, "3");
                                     intent2.putExtra(AppConstant.RETURNPRODUCTMAINID, "");
                                     mContext.startActivity(intent2);
@@ -99,6 +100,7 @@ public class SubAccountListAdapter extends BaseQuickAdapter<SubAccountListModel.
                                     Intent intent4 = new Intent(mContext, SelfSufficiencyOrderDetailActivity.class);
                                     intent4.putExtra(AppConstant.ORDERID, item.getOrderId());
                                     intent4.putExtra(AppConstant.ORDERSTATE, "3");
+                                    intent4.putExtra("account", "0");
                                     intent4.putExtra(AppConstant.RETURNPRODUCTMAINID, "");
                                     mContext.startActivity(intent4);
                                 }

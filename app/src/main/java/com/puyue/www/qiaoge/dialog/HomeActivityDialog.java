@@ -13,6 +13,7 @@ import com.puyue.www.qiaoge.NewWebViewActivity;
 import com.puyue.www.qiaoge.R;
 import com.puyue.www.qiaoge.activity.HomeActivity;
 import com.puyue.www.qiaoge.activity.home.CouponDetailActivity;
+import com.puyue.www.qiaoge.activity.home.FullGiftActivity;
 import com.puyue.www.qiaoge.activity.home.HomeGoodsListActivity;
 import com.puyue.www.qiaoge.activity.home.TeamDetailActivity;
 import com.puyue.www.qiaoge.activity.mine.coupons.MyCouponsActivity;
@@ -124,7 +125,9 @@ public class HomeActivityDialog extends Dialog {
                         //  toPage: 跳转页面 vip(会员),deduct(优惠券),seckill(秒杀),group（团购）,sharePage(分享),priceDown(降价),self(自定义界面),disable(无，不可跳转)
                         if (popupViewHomeModel.success) {
                             switch (homePropup.getToPage()) {
-
+                                case "fullGiftSend"://满赠界面
+                                    context.startActivity(MyCouponsActivity.getIntent(context, FullGiftActivity.class));
+                                    break;
                                 case "deduct": // 优惠券页面
                                     context.startActivity(MyCouponsActivity.getIntent(context, MyCouponsActivity.class));
                                     break;

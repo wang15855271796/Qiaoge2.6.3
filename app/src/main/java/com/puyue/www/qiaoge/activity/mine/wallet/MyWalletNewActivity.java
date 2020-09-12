@@ -161,7 +161,7 @@ public class MyWalletNewActivity extends BaseSwipeActivity {
                             relative_account_detail.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
-                                    Intent intent =new Intent(mContext,ExChangesActivity.class);
+                                    Intent intent =new Intent(mContext,ExchangeActivity.class);
                                     intent.putExtra("amount",getMyBalanceModles.getData().getAmount());
                                     startActivity(intent);
                                 }

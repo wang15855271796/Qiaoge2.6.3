@@ -176,10 +176,7 @@ public class MarketsFragment extends BaseFragment {
     private TextView mTvOk;
     private ImageView ivSearch;
     private LoadingDailog dialog;
-    private boolean isFirst = true;
     TextView tv_search;
-    int isSelected;
-    boolean isChecked = false;
     View v_shadow;
     private List<MarketBeanModel> mListBrand = new ArrayList<>();
     //商品名
@@ -209,7 +206,6 @@ public class MarketsFragment extends BaseFragment {
     private SearchProdAdapter searchProdAdapter;
     public int selectionPositon;
     private AlertDialog mTypedialog;
-    int shopTypeId;
     boolean flag = false;
 
     public static MarketsFragment getInstance() {
@@ -227,17 +223,9 @@ public class MarketsFragment extends BaseFragment {
 
     @Override
     public void initViews(View view) {
-//        initStatusBarWhiteColor();
     }
 
-//    protected void initStatusBarWhiteColor() {
-//        //设置状态栏颜色为白色，状态栏图标为黑色
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-//            getActivity().getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-//            getActivity().getWindow().setStatusBarColor(Color.WHITE);
-//            StatusBarUtil.setStatusBarLightMode(getActivity());
-//        }
-//    }
+
     @Override
     public void findViewById(View view) {
         context = getActivity();
@@ -510,13 +498,11 @@ public class MarketsFragment extends BaseFragment {
                             dialog.dismiss();
                             updateMarketGoods();
                             lav_activity_loading.hide();
-//                            Log.d("swsssssssssss.......","1");
 
                         } else {
                             lav_activity_loading.hide();
                             AppHelper.showMsg(mActivity, marketGoodSelectModel.getMessage());
                         }
-
                     }
                 });
     }
@@ -921,16 +907,17 @@ public class MarketsFragment extends BaseFragment {
             public void onEventClick(int position, int secondId) {
                 dialog.show();
                 pageNum = 1;
+                mSecondCode = secondId;
+                selectBrandName = "";
                 if (isCheck) {
                     getDataTwo();
 
                 } else {
-                    mSecondCode = secondId;
                     getData();
+
                 }
             }
         });
-
         mAdapterMarketDetail = new MarketGoodsAdapter(R.layout.item_noresult_recommends, mListGoods, new MarketGoodsAdapter.Onclick() {
             @Override
             public void addDialog() {
@@ -1060,7 +1047,6 @@ public class MarketsFragment extends BaseFragment {
      * @param maxPrices
      */
     private void sendSelectGoodThree(String saleVolume, String priceUp, String newProduct, String brandName, String minPrices, String maxPrices) {
-        Log.d("dsdsdwdwdd....",pageNum+"");
         MarketGoodSelcetAPI.getClassifyRight(mActivity, pageNum, 4, mFirstCode, mSecondCode,
                 saleVolume, priceUp, newProduct, brandName, minPrices, maxPrices)
                 .subscribeOn(Schedulers.io())

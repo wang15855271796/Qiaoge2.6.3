@@ -16,11 +16,19 @@ import android.widget.TextView;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.puyue.www.qiaoge.R;
+import com.puyue.www.qiaoge.api.mine.coupon.userChooseDeductAPI;
+import com.puyue.www.qiaoge.dialog.CouponProdDialog;
+import com.puyue.www.qiaoge.helper.AppHelper;
 import com.puyue.www.qiaoge.listener.NoDoubleClickListener;
+import com.puyue.www.qiaoge.model.QueryProdModel;
 import com.puyue.www.qiaoge.model.mine.coupons.UserChooseDeductModel;
 import com.puyue.www.qiaoge.model.mine.coupons.queryUserDeductByStateModel;
 
 import java.util.List;
+
+import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 /**
  * @author daff
@@ -50,15 +58,15 @@ public class ChooseCouponsAdapter extends BaseQuickAdapter<UserChooseDeductModel
     public void setStat() {
         for (int i = 0; i < list.size(); i++) {
             list.get(i).setFlag(false);
-            iv_select.setImageResource(R.mipmap.ic_pay_no);
+            iv_select.setBackgroundResource(R.mipmap.ic_pay_no);
 
         }
         notifyDataSetChanged();
+
     }
 
     @Override
     protected void convert(final BaseViewHolder helper, final UserChooseDeductModel.DataBean item) {
-
         tv_tip=helper.getView(R.id.tv_tip);
         tv_style=helper.getView(R.id.tv_style);
         tv_desc=helper.getView(R.id.tv_desc);
@@ -84,6 +92,17 @@ public class ChooseCouponsAdapter extends BaseQuickAdapter<UserChooseDeductModel
             tv_role.setVisibility(View.INVISIBLE);
         }
 
+        tv_role.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(item.getGiftProdUseType().equals("1")||item.getGiftProdUseType().equals("2")) {
+                    queryProd(item.getGiftDetailNo());
+                }else {
+
+                }
+
+            }
+        });
         iv_select.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -99,13 +118,19 @@ public class ChooseCouponsAdapter extends BaseQuickAdapter<UserChooseDeductModel
             tv_tip.setTextColor(Color.parseColor("#F54022"));
             iv_select.setEnabled(true);
         }else  if (item.getState().equals("USED")){//USED 已使用
-            tv_desc.setText("该券已用在子账户的订单"+item.getGiftDetailNo()+"中使用");
+            tv_desc.setText(item.getUseInfo());
             tv_amount.setTextColor(Color.parseColor("#A1A1A1"));
             tv_user_factor.setTextColor(Color.parseColor("#A1A1A1"));
             tv_style.setTextColor(Color.parseColor("#A1A1A1"));
             tv_tip.setTextColor(Color.parseColor("#A1A1A1"));
             iv_select.setEnabled(false);
         }else if(item.getState().equals("OVERTIME")){ //OVERTIME 过期
+            tv_amount.setTextColor(Color.parseColor("#A1A1A1"));
+            tv_user_factor.setTextColor(Color.parseColor("#A1A1A1"));
+            tv_style.setTextColor(Color.parseColor("#A1A1A1"));
+            tv_tip.setTextColor(Color.parseColor("#A1A1A1"));
+            iv_select.setEnabled(false);
+        }else if(item.getState().equals("UN_ENABLED")) {
             tv_amount.setTextColor(Color.parseColor("#A1A1A1"));
             tv_user_factor.setTextColor(Color.parseColor("#A1A1A1"));
             tv_style.setTextColor(Color.parseColor("#A1A1A1"));
@@ -174,6 +199,46 @@ public class ChooseCouponsAdapter extends BaseQuickAdapter<UserChooseDeductModel
 //           }
 //        );
 
+    }
+    String datas;
+    private void queryProd(String giftDetailNo) {
+        userChooseDeductAPI.queryProd(mContext,giftDetailNo)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<QueryProdModel>() {
+                    @Override
+                    public void onCompleted() {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onNext(QueryProdModel model) {
+                        if (model.isSuccess()) {
+
+                            if(model.getData()!=null) {
+                                datas = model.getData();
+
+                                CouponProdDialog couponProdDialog = new CouponProdDialog(mContext,datas) {
+                                    @Override
+                                    public void Confirm() {
+                                        dismiss();
+                                    }
+                                };
+                                couponProdDialog.show();
+                            }
+
+
+                        } else {
+//                            AppHelper.showMsg(mContext, model.getMessage());
+                        }
+
+                    }
+                });
     }
 
     public interface ImageOnclick {

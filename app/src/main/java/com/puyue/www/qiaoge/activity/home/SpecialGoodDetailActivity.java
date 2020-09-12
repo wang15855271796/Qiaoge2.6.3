@@ -39,6 +39,8 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.puyue.www.qiaoge.NewWebViewActivity;
 import com.puyue.www.qiaoge.R;
 import com.puyue.www.qiaoge.activity.CartActivity;
 import com.puyue.www.qiaoge.activity.mine.login.LoginActivity;
@@ -206,7 +208,7 @@ public class SpecialGoodDetailActivity extends BaseSwipeActivity {
     LinearLayout ll_service;
     TextView tv_city;
     RelativeLayout rl_price;
-
+    ImageView iv_pic;
     class MyHandler extends Handler {
         @Override
         public void handleMessage(Message msg) {
@@ -245,6 +247,8 @@ public class SpecialGoodDetailActivity extends BaseSwipeActivity {
         super.onCreate(savedInstanceState);
     }
 
+
+
     @Override
     public void setContentView() {
         setContentView(R.layout.activity_special_details);
@@ -252,6 +256,7 @@ public class SpecialGoodDetailActivity extends BaseSwipeActivity {
 
     @Override
     public void findViewById() {
+        iv_pic = FVHelper.fv(this, R.id.iv_vip);
         rl_price = FVHelper.fv(this, R.id.rl_price);
         tv_desc_price = FVHelper.fv(this, R.id.tv_desc_price);
         tv_change = FVHelper.fv(this, R.id.tv_change);
@@ -618,6 +623,17 @@ public class SpecialGoodDetailActivity extends BaseSwipeActivity {
                             }
 
 
+                            iv_pic.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    Intent intent = new Intent(mActivity, NewWebViewActivity.class);
+                                    intent.putExtra("URL", models.getData().getBannerDetailUrl());
+                                    intent.putExtra("TYPE", 1);
+                                    intent.putExtra("name", "");
+                                    startActivity(intent);
+                                }
+                            });
+
                             if(startTime == 0) {
                                 tv_time.setVisibility(View.VISIBLE);
                                 if (model.getData().getSaleDone() == 0) {
@@ -740,7 +756,9 @@ public class SpecialGoodDetailActivity extends BaseSwipeActivity {
 //                                    mTvAddCar.setBackgroundColor(Color.parseColor("#F6551A"));
                                 }
                             }
-
+//                            if(model.getData().getBannerUrl()!=null) {
+//                                Glide.with(mContext).load(model.getData().getBannerUrl()).into(iv_pic);
+//                            }
 
                             images.clear();
                             if (model.getData().getTopPics() != null) {

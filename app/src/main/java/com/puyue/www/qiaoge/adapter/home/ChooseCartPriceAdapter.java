@@ -247,6 +247,8 @@ public class ChooseCartPriceAdapter extends BaseQuickAdapter<CartsListModel.Data
                             tv_num.setText(num + "");
                             ToastUtil.showSuccessMsg(mContext,"添加购物车成功");
                             EventBus.getDefault().post(new UpdateEvent(testAdapter.getAllPrice()));
+                            EventBus.getDefault().post(new ReduceNumEvent());
+
                         } else {
                             ToastUtil.showSuccessMsg(mContext,addMountReduceModel.getMessage());
                         }
@@ -276,6 +278,7 @@ public class ChooseCartPriceAdapter extends BaseQuickAdapter<CartsListModel.Data
                             data.get(adapterPosition).setProductNum(num);
                             tv_num.setText(num + "");
                             EventBus.getDefault().post(new UpdateEvent(testAdapter.getAllPrice()));
+                            EventBus.getDefault().post(new ReduceNumEvent());
                         } else {
                             ToastUtil.showSuccessMsg(mContext,addMountReduceModel.getMessage());
                         }

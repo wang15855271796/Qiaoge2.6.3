@@ -4,20 +4,27 @@ package com.puyue.www.qiaoge.constant;
  * Created by GuoGai on 2016/10/31.
  */
 public class AppInterfaceAddress {
-    //https://shaokao.qoger.com/qiaoge/正式
+    //https://shaokao.qoger.com/qiaoge/正式   http://192.168.2.188:8082/qiaoge/
     //http://116.62.67.230:8082/qiaoge/   测试http://120.55.55.99:8082/qiaoge/
-    public static final String BASE_URL = "http://120.55.55.99:8082/qiaoge/";
+    public static final String BASE_URL = "https://shaokao.qoger.com/qiaoge/";
     // 正式https://shaokao.qoger.com/qiaoge/
     //http://192.168.1.45/   本地192.168.101.69:8088
     //http://qg.zhiyun88u.com/shen
     //http://192.168.101.17/
 
     //http://192.168.101.41:8088/
+//    queryReturnProdIsContainFullGift
 
     /**
-     *账户列表
+     *查看优惠券指定商品
      */
-    public static final String My_Account = "wallet/queryWalletRecordMonth";
+    public static final String Query_Prod = "gift/queryGiftUseInProds";
+
+
+    /**
+     *退货判断是否有满赠商品
+     */
+    public static final String Is_ReturnGoods = "order/queryReturnProdIsContainFullGift";
     /**
      *首页是否根据城市展示价格
      */
@@ -58,6 +65,11 @@ public class AppInterfaceAddress {
     public static final String CHANGE_LOGIN_PASSWORD = "auth/resetPwd";
     public static final String CHANGE_PAY_PASSWORD = "pay/updatePayPwd";
 
+    /**
+     *
+     * 支付列表
+     */
+    public static final String Pay_List = "app/payChannelList";
     /**
      *
      * 判断地址是否在配送范围内

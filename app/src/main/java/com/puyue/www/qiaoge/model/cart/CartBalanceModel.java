@@ -119,7 +119,7 @@ public class CartBalanceModel extends BaseModel {
         private String normalAmount;
         private boolean isVip;
         public boolean addressOk;
-
+        int giftNum;
         public boolean isAddressOk() {
             return addressOk;
         }
@@ -190,6 +190,14 @@ public class CartBalanceModel extends BaseModel {
                     ", deductDesc='" + deductDesc + '\'' +
                     ", productVOList=" + productVOList +
                     '}';
+        }
+
+        public int getGiftNum() {
+            return giftNum;
+        }
+
+        public void setGiftNum(int giftNum) {
+            this.giftNum = giftNum;
         }
 
         public boolean isOpenVip() {
@@ -316,7 +324,8 @@ public class CartBalanceModel extends BaseModel {
         private String vipCenterUrl;
         private String sysCurrentTime;
         private String orderOverTime;
-
+        private String deductDesc;
+        private List<ProductVOListBean> productVOList;
 
         public String getDeductDesc() {
             return deductDesc;
@@ -326,8 +335,7 @@ public class CartBalanceModel extends BaseModel {
             this.deductDesc = deductDesc;
         }
 
-        private String deductDesc;
-        private List<ProductVOListBean> productVOList;
+
 
         public String getOrderId() {
             return orderId;
@@ -839,8 +847,8 @@ public class CartBalanceModel extends BaseModel {
             private String prodTypeUrl;
             private List<ProductDescVOListBean> productDescVOList;
             public List<AdditionProductVOListBean> cartAdditionProductVOList;
-
-
+            private List<AdditionVOList> additionVOList;
+            private String buySendAdditionInfo;
             public static class AdditionProductVOListBean {
                 public String picUrl;
                 public String name;//赠品名称
@@ -851,6 +859,23 @@ public class CartBalanceModel extends BaseModel {
                 public String flagUrl;
                 public String finishUrl;
             }
+
+            public String getBuySendAdditionInfo() {
+                return buySendAdditionInfo;
+            }
+
+            public void setBuySendAdditionInfo(String buySendAdditionInfo) {
+                this.buySendAdditionInfo = buySendAdditionInfo;
+            }
+
+            public List<AdditionVOList> getAdditionVOList() {
+                return additionVOList;
+            }
+
+            public void setAdditionVOList(List<AdditionVOList> additionVOList) {
+                this.additionVOList = additionVOList;
+            }
+
             public String getNewDesc() {
                 return newDesc;
             }
@@ -1105,6 +1130,143 @@ public class CartBalanceModel extends BaseModel {
                     this.newDesc = newDesc;
                 }
             }
+
+            public static class AdditionVOList {
+                private String type;
+                private String productId;
+                private String giftPoolNo;
+                private String warehouseId;
+                private String productUnit;
+                private String name;
+                private String spec;
+                private String picUrl;
+                private String sendNum;
+                private String sendNumDesc;
+                private String additionFlag;
+                private String finishUrl;
+                private String flagUrl;
+                @Override
+                public String toString() {
+                    return "AdditionVOList{" +
+                            "type='" + type + '\'' +
+                            ", productId='" + productId + '\'' +
+                            ", giftPoolNo='" + giftPoolNo + '\'' +
+                            ", warehouseId='" + warehouseId + '\'' +
+                            ", productUnit='" + productUnit + '\'' +
+                            ", name='" + name + '\'' +
+                            ", spec='" + spec + '\'' +
+                            ", picUrl='" + picUrl + '\'' +
+                            ", sendNum='" + sendNum + '\'' +
+                            ", sendNumDesc='" + sendNumDesc + '\'' +
+                            ", additionFlag='" + additionFlag + '\'' +
+                            '}';
+                }
+
+                public String getFlagUrl() {
+                    return flagUrl;
+                }
+
+                public void setFlagUrl(String flagUrl) {
+                    this.flagUrl = flagUrl;
+                }
+
+                public String getFinishUrl() {
+                    return finishUrl;
+                }
+
+                public void setFinishUrl(String finishUrl) {
+                    this.finishUrl = finishUrl;
+                }
+
+                public String getType() {
+                    return type;
+                }
+
+                public void setType(String type) {
+                    this.type = type;
+                }
+
+                public String getProductId() {
+                    return productId;
+                }
+
+                public void setProductId(String productId) {
+                    this.productId = productId;
+                }
+
+                public String getGiftPoolNo() {
+                    return giftPoolNo;
+                }
+
+                public void setGiftPoolNo(String giftPoolNo) {
+                    this.giftPoolNo = giftPoolNo;
+                }
+
+                public String getWarehouseId() {
+                    return warehouseId;
+                }
+
+                public void setWarehouseId(String warehouseId) {
+                    this.warehouseId = warehouseId;
+                }
+
+                public String getProductUnit() {
+                    return productUnit;
+                }
+
+                public void setProductUnit(String productUnit) {
+                    this.productUnit = productUnit;
+                }
+
+                public String getName() {
+                    return name;
+                }
+
+                public void setName(String name) {
+                    this.name = name;
+                }
+
+                public String getSpec() {
+                    return spec;
+                }
+
+                public void setSpec(String spec) {
+                    this.spec = spec;
+                }
+
+                public String getPicUrl() {
+                    return picUrl;
+                }
+
+                public void setPicUrl(String picUrl) {
+                    this.picUrl = picUrl;
+                }
+
+                public String getSendNum() {
+                    return sendNum;
+                }
+
+                public void setSendNum(String sendNum) {
+                    this.sendNum = sendNum;
+                }
+
+                public String getSendNumDesc() {
+                    return sendNumDesc;
+                }
+
+                public void setSendNumDesc(String sendNumDesc) {
+                    this.sendNumDesc = sendNumDesc;
+                }
+
+                public String getAdditionFlag() {
+                    return additionFlag;
+                }
+
+                public void setAdditionFlag(String additionFlag) {
+                    this.additionFlag = additionFlag;
+                }
+            }
+
         }
 
         public static class DeductDetailBean {

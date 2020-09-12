@@ -338,7 +338,7 @@
             android:screenOrientation="portrait" />
         <activity android:name=".activity.mine.coupons.ChooseCouponsActivity"
             android:screenOrientation="portrait" />
-        <activity android:name=".activity.mine.order.ConfirmOrderNewActivity"
+        <activity android:name=".activity.mine.coupons.ChooseCouponssActivity"
             android:screenOrientation="portrait" />
         <!--  -->
 
@@ -458,10 +458,6 @@
                    android:resource="@xml/custom_filepaths" />
            </provider>-->
 
-        <activity android:name=".activity.cart.CartPoint"
-            android:screenOrientation="portrait" >
-
-        </activity>
         <activity android:name=".activity.mine.wallet.MyWalletPointActivity"
             android:screenOrientation="portrait" ></activity>
         <activity android:name=".activity.mine.wallet.WalletResultPointActivity"

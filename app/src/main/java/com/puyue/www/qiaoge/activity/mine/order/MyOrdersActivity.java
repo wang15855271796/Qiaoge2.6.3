@@ -152,7 +152,7 @@ public class MyOrdersActivity extends BaseActivity {
         mAdapterViewPager = new MyOrdersViewPagerAdapter(getSupportFragmentManager(), mListTitles, mListFragment);
 
 
-    mViewPager.setOffscreenPageLimit(5);
+        mViewPager.setOffscreenPageLimit(5);
         mAdapterViewPager.clear(mViewPager);
         mViewPager.setAdapter(mAdapterViewPager);
         mTab.setupWithViewPager(mViewPager);

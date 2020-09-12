@@ -555,6 +555,7 @@ public class CartActivity extends BaseSwipeActivity implements View.OnClickListe
 
                     @Override
                     public void onError(Throwable e) {
+                        btn_sure.setEnabled(true);
                     }
 
                     @Override
@@ -742,6 +743,8 @@ public class CartActivity extends BaseSwipeActivity implements View.OnClickListe
     /**
      * 购物车列表
      */
+    int cartId;
+    List<Integer> CartsIds = new ArrayList<>();
     private void requestCartList() {
         CartListAPI.requestCartLists(mContext)
                 .subscribeOn(Schedulers.io())
@@ -769,7 +772,18 @@ public class CartActivity extends BaseSwipeActivity implements View.OnClickListe
                             List<CartsListModel.DataBean.ValidListBean> validList = cartListModel.getData().getValidList();
                             mListCart.addAll(validList);
 //                            btn_sure.setText("结算"+"("+cartListModel.getData().getValidList().size()+")");
-                            testAdapter = new TestAdapter(R.layout.item_carts, mListCart,CartActivity.this);
+                            testAdapter = new TestAdapter(R.layout.item_carts, mListCart, CartActivity.this, new TestAdapter.Onclick() {
+                                @Override
+                                public void deteItem(int pos,CartsListModel.DataBean.ValidListBean validListBean) {
+                                    for (int i = 0; i < validListBean.getSpecProductList().size(); i++) {
+                                        cartId = validListBean.getSpecProductList().get(i).getCartId();
+                                    }
+
+                                    CartsIds.clear();
+                                    CartsIds.add(cartId);
+                                    requestDeleteCart(CartsIds.toString());
+                                }
+                            });
                             mRv.setAdapter(testAdapter);
                             //过期列表
                             List<CartsListModel.DataBean.InValidListBean> inValidList = cartListModel.getData().getInValidList();
@@ -781,7 +795,6 @@ public class CartActivity extends BaseSwipeActivity implements View.OnClickListe
                                 rl_unable.setVisibility(View.VISIBLE);
                                 rv_unable.setVisibility(View.VISIBLE);
                             }
-                            Log.d("wxssssssss......",mListCart.size()+"---"+unList.size());
                             if(mListCart.size()==0&&unList.size()==0) {
                                 ll_NoData.setVisibility(View.VISIBLE);
                                 ll.setVisibility(View.GONE);
@@ -839,10 +852,11 @@ public class CartActivity extends BaseSwipeActivity implements View.OnClickListe
                             });
                             lav_activity_loading.hide();
                             lav_activity_loading.setVisibility(View.GONE);
-
+                            btn_sure.setEnabled(true);
                         }else {
                             lav_activity_loading.hide();
                             lav_activity_loading.setVisibility(View.GONE);
+                            btn_sure.setEnabled(false);
                         }
 
 

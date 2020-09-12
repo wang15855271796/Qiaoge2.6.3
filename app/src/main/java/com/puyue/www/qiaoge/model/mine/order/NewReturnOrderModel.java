@@ -1,5 +1,7 @@
 package com.puyue.www.qiaoge.model.mine.order;
 
+import com.puyue.www.qiaoge.model.cart.CartBalanceModel;
+
 import java.util.List;
 
 /**
@@ -222,8 +224,43 @@ public class NewReturnOrderModel {
             private String returnNum;
             private String returnTotalAmount;
             private int additionFlag;
-
+            String type;
             public int onShelves;
+            private List<AdditionList> additionList;
+            @Override
+            public String toString() {
+                return "ProductsBean{" +
+                        "productMainId=" + productMainId +
+                        ", afterPrice='" + afterPrice + '\'' +
+                        ", businessId=" + businessId +
+                        ", businessType=" + businessType +
+                        ", typeImg='" + typeImg + '\'' +
+                        ", defaultPic='" + defaultPic + '\'' +
+                        ", productName='" + productName + '\'' +
+                        ", spec='" + spec + '\'' +
+                        ", returnNum='" + returnNum + '\'' +
+                        ", returnTotalAmount='" + returnTotalAmount + '\'' +
+                        ", additionFlag=" + additionFlag +
+                        ", type='" + type + '\'' +
+                        ", onShelves=" + onShelves +
+                        '}';
+            }
+
+            public List<AdditionList> getAdditionList() {
+                return additionList;
+            }
+
+            public void setAdditionList(List<AdditionList> additionList) {
+                this.additionList = additionList;
+            }
+
+            public String getType() {
+                return type;
+            }
+
+            public void setType(String type) {
+                this.type = type;
+            }
 
             public int getProductMainId() {
                 return productMainId;
@@ -312,6 +349,109 @@ public class NewReturnOrderModel {
             public void setAdditionFlag(int additionFlag) {
                 this.additionFlag = additionFlag;
             }
+
+            public static class AdditionList {
+                private String businessId;
+                private String businessType;
+                private String typeImg;
+                private String defaultPic;
+                private String productName;
+                private String spec;
+                private String returnNum;
+                private String returnTotalAmount;
+                private String additionFlag;
+                private String onShelves;
+                private String type;
+
+                public String getBusinessId() {
+                    return businessId;
+                }
+
+                public void setBusinessId(String businessId) {
+                    this.businessId = businessId;
+                }
+
+                public String getBusinessType() {
+                    return businessType;
+                }
+
+                public void setBusinessType(String businessType) {
+                    this.businessType = businessType;
+                }
+
+                public String getTypeImg() {
+                    return typeImg;
+                }
+
+                public void setTypeImg(String typeImg) {
+                    this.typeImg = typeImg;
+                }
+
+                public String getDefaultPic() {
+                    return defaultPic;
+                }
+
+                public void setDefaultPic(String defaultPic) {
+                    this.defaultPic = defaultPic;
+                }
+
+                public String getProductName() {
+                    return productName;
+                }
+
+                public void setProductName(String productName) {
+                    this.productName = productName;
+                }
+
+                public String getSpec() {
+                    return spec;
+                }
+
+                public void setSpec(String spec) {
+                    this.spec = spec;
+                }
+
+                public String getReturnNum() {
+                    return returnNum;
+                }
+
+                public void setReturnNum(String returnNum) {
+                    this.returnNum = returnNum;
+                }
+
+                public String getReturnTotalAmount() {
+                    return returnTotalAmount;
+                }
+
+                public void setReturnTotalAmount(String returnTotalAmount) {
+                    this.returnTotalAmount = returnTotalAmount;
+                }
+
+                public String getAdditionFlag() {
+                    return additionFlag;
+                }
+
+                public void setAdditionFlag(String additionFlag) {
+                    this.additionFlag = additionFlag;
+                }
+
+                public String getOnShelves() {
+                    return onShelves;
+                }
+
+                public void setOnShelves(String onShelves) {
+                    this.onShelves = onShelves;
+                }
+
+                public String getType() {
+                    return type;
+                }
+
+                public void setType(String type) {
+                    this.type = type;
+                }
+            }
+
         }
     }
 }

@@ -19,10 +19,18 @@ import com.chad.library.adapter.base.BaseViewHolder;
 import com.puyue.www.qiaoge.R;
 import com.puyue.www.qiaoge.activity.mine.coupons.UseOrNotUseActivity;
 import com.puyue.www.qiaoge.adapter.home.HomeGroupAdapter;
+import com.puyue.www.qiaoge.api.mine.coupon.userChooseDeductAPI;
+import com.puyue.www.qiaoge.dialog.CouponProdDialog;
+import com.puyue.www.qiaoge.helper.AppHelper;
+import com.puyue.www.qiaoge.model.QueryProdModel;
 import com.puyue.www.qiaoge.model.mine.coupons.queryUserDeductByStateModel;
 
 
 import java.util.List;
+
+import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 /**
  * Created by ${daff} on 2018/9/20
@@ -72,6 +80,16 @@ public class MyCouponsAdapter  extends  BaseQuickAdapter <queryUserDeductByState
             tv_role.setVisibility(View.INVISIBLE);
         }
 
+        tv_role.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(item.getGiftProdUseType().equals("1")||item.getGiftProdUseType().equals("2")) {
+                    queryProd(item.getGiftDetailNo());
+                }
+
+            }
+        });
+
         if(item.getState().equals("ENABLED")){  // State== ENABLED   可用使用的优惠卷
             iv_status.setVisibility(View.GONE);
             rl_grey.setVisibility(View.GONE);
@@ -82,7 +100,7 @@ public class MyCouponsAdapter  extends  BaseQuickAdapter <queryUserDeductByState
             tv_tip.setTextColor(Color.parseColor("#F54022"));
 
         }else  if (item.getState().equals("USED")){//USED 已使用
-            tv_desc.setText("该券已用在子账户的订单"+item.getGiftDetailNo()+"中使用");
+            tv_desc.setText(item.getUseInfo());
             rl_grey.setVisibility(View.VISIBLE);
             iv_status.setVisibility(View.VISIBLE);
             iv_status.setImageResource(R.mipmap.ic_user);
@@ -102,11 +120,46 @@ public class MyCouponsAdapter  extends  BaseQuickAdapter <queryUserDeductByState
             tv_style.setTextColor(Color.parseColor("#A1A1A1"));
             tv_tip.setTextColor(Color.parseColor("#A1A1A1"));
         }
-
-
-
     }
+    String datas;
+    private void queryProd(String giftDetailNo) {
+        userChooseDeductAPI.queryProd(mContext,giftDetailNo)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<QueryProdModel>() {
+                    @Override
+                    public void onCompleted() {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onNext(QueryProdModel model) {
+                        if (model.isSuccess()) {
+
+                            if(model.getData()!=null) {
+                                datas = model.getData();
+
+                                CouponProdDialog couponProdDialog = new CouponProdDialog(mContext,datas) {
+                                    @Override
+                                    public void Confirm() {
+                                        dismiss();
+                                    }
+                                };
+                                couponProdDialog.show();
+                            }
 
 
+                        } else {
+//                            AppHelper.showMsg(mContext, model.getMessage());
+                        }
+
+                    }
+                });
+    }
 
 }

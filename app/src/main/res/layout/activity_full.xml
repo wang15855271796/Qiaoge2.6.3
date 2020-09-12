@@ -17,7 +17,7 @@
             android:orientation="vertical">
 
             <RelativeLayout
-
+                android:layout_marginTop="@dimen/size_45dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
@@ -49,6 +49,7 @@
                     android:layout_height="@dimen/size_48dp">
 
                     <ImageView
+                        android:visibility="gone"
                         android:id="@+id/iv_carts"
                         android:padding="5dp"
                         android:layout_centerVertical="true"

@@ -170,7 +170,6 @@ public class CustomDatePicker {
 //                    addListener();
 //                    setSelectedTime(time);
                     datePickerDialog.show();
-        Log.d("swffddffffffff.","sdas");
 
 
     }

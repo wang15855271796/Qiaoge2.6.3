@@ -168,7 +168,6 @@ public class HomePopuWindow extends PopupWindow {
 
                     @Override
                     public void onNext(PopupViewHomeModel popupViewHomeModel) {
-                        Log.d("weeeeweeeeee.....",toPage);
                         //  toPage: 跳转页面 vip(会员),deduct(优惠券),seckill(秒杀),group（团购）,sharePage(分享),priceDown(降价),self(自定义界面),disable(无，不可跳转)
                         if (popupViewHomeModel.success) {
                             switch (toPage) {

@@ -11,7 +11,9 @@ public class ItemModel {
     public ItemModel(String num) {
         this.num = num;
     }
+    public ItemModel() {
 
+    }
     public String getNum() {
         return num;
     }

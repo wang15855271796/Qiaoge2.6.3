@@ -50,6 +50,8 @@ public class CommonAdapter extends RecyclerView.Adapter<CommonAdapter.BaseViewHo
     int layoutResId;
     List<CouponModel.DataBean.ActivesBean> actives;
     private int pos;
+//    private CouponModel.DataBean.ActivesBean activesBean;
+
     public CommonAdapter(Context context,String style, int layoutResId, List<CouponModel.DataBean.ActivesBean> actives,String flag,OnClick onClick) {
         this.mContext = context;
         this.style = style;
@@ -70,10 +72,15 @@ public class CommonAdapter extends RecyclerView.Adapter<CommonAdapter.BaseViewHo
 
     @Override
     public void onBindViewHolder(@NonNull BaseViewHolder holder, int position) {
-        pos = position%actives.size();
-        CouponModel.DataBean.ActivesBean activesBean = actives.get(position%actives.size());
-        holder.tv_name.setText(activesBean.getActiveName());
+//        try{
+//            pos = position%actives.size();
+//            activesBean = actives.get(position%actives.size());
+//        }catch (Exception e) {
+//
+//        }
+        CouponModel.DataBean.ActivesBean activesBean = actives.get(position);
         Glide.with(mContext).load(activesBean.getDefaultPic()).into(holder.iv_pic);
+        holder.tv_name.setText(activesBean.getActiveName());
         holder.tv_price.setText(activesBean.getPrice());
         holder.tv_old_price.getPaint().setFlags(Paint.STRIKE_THRU_TEXT_FLAG);
         holder.tv_old_price.setText(activesBean.getOldPrice());
@@ -103,8 +110,8 @@ public class CommonAdapter extends RecyclerView.Adapter<CommonAdapter.BaseViewHo
         }
 
         if(activesBean.getFlag()==1) {
+            Glide.with(mContext).load(activesBean.getSoldOutPic()).into(holder.iv_sale_done);
             holder.iv_sale_done.setVisibility(View.VISIBLE);
-            Glide.with(mContext).load(activesBean.getSoldOutPic()).into(iv_sale_done);
         }else {
             holder.iv_sale_done.setVisibility(View.GONE);
         }
@@ -114,7 +121,7 @@ public class CommonAdapter extends RecyclerView.Adapter<CommonAdapter.BaseViewHo
             public void onClick(View v) {
                 if(style.equals("2")) {
                     Intent intent = new Intent(mContext,SeckillGoodActivity.class);
-                    intent.putExtra(AppConstant.ACTIVEID,activesBean.getActiveId());
+                    intent.putExtra(AppConstant.ACTIVEID, activesBean.getActiveId());
                     intent.putExtra("priceType",SharedPreferencesUtil.getString(mContext,"priceType"));
                     intent.putExtra("num","-1");
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK );
@@ -122,7 +129,7 @@ public class CommonAdapter extends RecyclerView.Adapter<CommonAdapter.BaseViewHo
                 }else {
                     Intent intent = new Intent(mContext,SpecialGoodDetailActivity.class);
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK );
-                    intent.putExtra(AppConstant.ACTIVEID,activesBean.getActiveId());
+                    intent.putExtra(AppConstant.ACTIVEID, activesBean.getActiveId());
                     intent.putExtra("priceType",SharedPreferencesUtil.getString(mContext,"priceType"));
                     mContext.startActivity(intent);
                 }
@@ -134,7 +141,6 @@ public class CommonAdapter extends RecyclerView.Adapter<CommonAdapter.BaseViewHo
             public void onClick(View v) {
 
                 if(onClick!=null) {
-
                     if(StringHelper.notEmptyAndNull(UserInfoHelper.getUserId(mContext))) {
                         if(SharedPreferencesUtil.getString(mContext,"priceType").equals("1")) {
                             onClick.shoppingCartOnClick(position%actives.size());
@@ -147,6 +153,8 @@ public class CommonAdapter extends RecyclerView.Adapter<CommonAdapter.BaseViewHo
                 }
             }
         });
+
+
 
     }
 
@@ -168,88 +176,6 @@ public class CommonAdapter extends RecyclerView.Adapter<CommonAdapter.BaseViewHo
     public void onClick(View v) {
 
     }
-
-
-//    @Override
-//    protected void convert(final BaseViewHolder helper, CouponModel.DataBean.ActivesBean item) {
-//
-//        if(item.getDiscount()!=null) {
-//            tv_coupon.setText(item.getDiscount());
-//            rl_coupon.setVisibility(View.VISIBLE);
-//        }else {
-//            rl_coupon.setVisibility(View.GONE);
-//        }
-//
-//        if(item.getFlag()==1) {
-//            iv_sale_done.setVisibility(View.VISIBLE);
-//            Glide.with(mContext).load(item.getSoldOutPic()).into(iv_sale_done);
-//        }else {
-//            iv_sale_done.setVisibility(View.GONE);
-//        }
-//
-//        if(StringHelper.notEmptyAndNull(UserInfoHelper.getUserId(mContext))) {
-//            if(SharedPreferencesUtil.getString(mContext,"priceType").equals("1")) {
-//                tv_desc.setVisibility(View.GONE);
-//                tv_old_price.setVisibility(View.VISIBLE);
-//                tv_price.setVisibility(View.VISIBLE);
-//            }else {
-//                tv_desc.setVisibility(View.VISIBLE);
-//                tv_old_price.setVisibility(View.GONE);
-//                tv_price.setVisibility(View.GONE);
-//            }
-//        }else {
-//            tv_desc.setVisibility(View.GONE);
-//            tv_old_price.setVisibility(View.VISIBLE);
-//            tv_price.setVisibility(View.VISIBLE);
-//        }
-//
-//
-//        tv_desc.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                if(onClick!=null) {
-////                    onClick.tipClick();
-//                }
-//            }
-//        });
-//
-//        rl_group.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                if(style.equals("2")) {
-//                    Intent intent = new Intent(mContext,SeckillGoodActivity.class);
-//                    intent.putExtra(AppConstant.ACTIVEID,item.getActiveId());
-//                    intent.putExtra("priceType",SharedPreferencesUtil.getString(mContext,"priceType"));
-//                    intent.putExtra("num","-1");
-//                    mContext.startActivity(intent);
-//                }else {
-//                    Intent intent = new Intent(mContext,SpecialGoodDetailActivity.class);
-//                    intent.putExtra(AppConstant.ACTIVEID,item.getActiveId());
-//                    intent.putExtra("priceType",SharedPreferencesUtil.getString(mContext,"priceType"));
-//                    mContext.startActivity(intent);
-//                }
-//            }
-//        });
-//
-//        iv_add.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                if(onClick!=null) {
-//                    if(StringHelper.notEmptyAndNull(UserInfoHelper.getUserId(mContext))) {
-//                        if(SharedPreferencesUtil.getString(mContext,"priceType").equals("1")) {
-//                            onClick.shoppingCartOnClick(helper.getAdapterPosition());
-//                        }else {
-//                            onClick.tipClick();
-//                        }
-//                    }else {
-//                        onClick.addDialog();
-//                    }
-//
-//
-//                }
-//            }
-//        });
-//    }
 
     public class BaseViewHolder extends RecyclerView.ViewHolder {
         private RelativeLayout rl_group;

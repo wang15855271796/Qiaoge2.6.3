@@ -21,16 +21,12 @@ import org.greenrobot.eventbus.EventBus;
 public abstract class RefundDialog extends Dialog {
 
     Context mContext;
-    TextView tv_account;
     public TextView tv_sure,hint;
     TextView tv_cancle;
-    public TextView title;
-    WebView webView;
-    CheckBox checkbox;
-    String url = "https://shaokao.qoger.com/apph5/html/czxy.html";
+
     public RefundDialog(@NonNull Context context) {
         super(context, R.style.promptDialog);
-        setContentView(R.layout.dialog_xieyi);
+        setContentView(R.layout.dialog_refund);
         mContext = context;
         initView();
         initAction();
@@ -38,10 +34,7 @@ public abstract class RefundDialog extends Dialog {
 
     private void initView() {
         tv_sure= (TextView) findViewById(R.id.tv_sure);
-        webView = (WebView) findViewById(R.id.webView);
         tv_cancle = findViewById(R.id.tv_cancle);
-        webView.loadUrl(url);
-        checkbox = (CheckBox) findViewById(R.id.checkbox);
     }
 
 
@@ -49,7 +42,7 @@ public abstract class RefundDialog extends Dialog {
         tv_sure.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                dismiss();
+                Confirm();
             }
         });
 

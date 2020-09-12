@@ -168,7 +168,12 @@ public class CouponModel {
             private int flag;
             private String soldOutPic;
             String discount;
-
+            String sendGiftType;
+            String productName;
+            String minMaxPrice;
+            String sendGiftInfo;
+            String productId;
+            int productMainId;
             @Override
             public String toString() {
                 return "ActivesBean{" +
@@ -182,6 +187,54 @@ public class CouponModel {
                         ", soldOutPic='" + soldOutPic + '\'' +
                         ", discount='" + discount + '\'' +
                         '}';
+            }
+
+            public String getProductId() {
+                return productId;
+            }
+
+            public void setProductId(String productId) {
+                this.productId = productId;
+            }
+
+            public int getProductMainId() {
+                return productMainId;
+            }
+
+            public void setProductMainId(int productMainId) {
+                this.productMainId = productMainId;
+            }
+
+            public String getSendGiftInfo() {
+                return sendGiftInfo;
+            }
+
+            public void setSendGiftInfo(String sendGiftInfo) {
+                this.sendGiftInfo = sendGiftInfo;
+            }
+
+            public String getMinMaxPrice() {
+                return minMaxPrice;
+            }
+
+            public void setMinMaxPrice(String minMaxPrice) {
+                this.minMaxPrice = minMaxPrice;
+            }
+
+            public String getSendGiftType() {
+                return sendGiftType;
+            }
+
+            public void setSendGiftType(String sendGiftType) {
+                this.sendGiftType = sendGiftType;
+            }
+
+            public String getProductName() {
+                return productName;
+            }
+
+            public void setProductName(String productName) {
+                this.productName = productName;
             }
 
             public String getDiscount() {

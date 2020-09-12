@@ -11,7 +11,6 @@ import com.puyue.www.qiaoge.helper.UserInfoHelper;
 import com.puyue.www.qiaoge.utils.SharedPreferencesUtil;
 
 
-import com.rrtx.tzpaylib.CashierManager;
 import com.tencent.bugly.crashreport.CrashReport;
 import com.tencent.mm.opensdk.openapi.IWXAPI;
 import com.tencent.mm.opensdk.openapi.WXAPIFactory;
@@ -54,7 +53,6 @@ public class QiaoGeApplication extends MultiDexApplication {
 //        mLocationClient.setLocOption(option);
 //        mLocationClient.start();
         option.setLocationMode(LocationClientOption.LocationMode.Battery_Saving);
-//        CashierManager.getInstance().init(getApplicationContext());
         UserInfoHelper.saveDate(this, 0+"");
         api = WXAPIFactory.createWXAPI(this, "wxbc18d7b8fee86977");
         api.registerApp("wxbc18d7b8fee86977");

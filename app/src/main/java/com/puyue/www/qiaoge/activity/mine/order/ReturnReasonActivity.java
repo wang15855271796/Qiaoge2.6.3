@@ -134,6 +134,7 @@ public class ReturnReasonActivity extends BaseSwipeActivity {
                             //回到订单详情页并且重新请求数据
                             Intent intent = new Intent(mContext, NewOrderDetailActivity.class);
                             intent.putExtra(AppConstant.ORDERID, orderId);
+                            intent.putExtra("account","0");
                             intent.putExtra(AppConstant.ORDERSTATE, "11");
                             intent.putExtra(AppConstant.RETURNPRODUCTMAINID, returnGoodsModel.data);
                             startActivity(intent);

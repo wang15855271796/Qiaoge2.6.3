@@ -23,6 +23,7 @@ import android.widget.TextView;
 import com.puyue.www.qiaoge.R;
 import com.puyue.www.qiaoge.activity.HomeActivity;
 import com.puyue.www.qiaoge.activity.mine.order.ConfirmNewOrderActivity;
+import com.puyue.www.qiaoge.adapter.cart.CartAdapter;
 import com.puyue.www.qiaoge.adapter.cart.CartUnableAdapter;
 import com.puyue.www.qiaoge.api.cart.CartBalanceAPI;
 import com.puyue.www.qiaoge.api.cart.CartListAPI;
@@ -53,6 +54,7 @@ import com.puyue.www.qiaoge.model.home.MustModel;
 import com.puyue.www.qiaoge.model.mine.order.CartGetReductModel;
 import com.puyue.www.qiaoge.utils.ToastUtil;
 import com.puyue.www.qiaoge.view.Arith;
+import com.puyue.www.qiaoge.view.SlideRecyclerView;
 import com.wang.avi.AVLoadingIndicatorView;
 
 import org.greenrobot.eventbus.EventBus;
@@ -85,7 +87,7 @@ public class CartFragment extends BaseFragment implements View.OnClickListener,T
     @BindView(R.id.cb_select_all)
     CheckBox cb_select_all;
     @BindView(R.id.rv_cart)
-    RecyclerView mRv;
+    SlideRecyclerView mRv;
     @BindView(R.id.lav_activity_loading)
     AVLoadingIndicatorView lav_activity_loading;
     @BindView(R.id.ll_select_all)
@@ -125,6 +127,7 @@ public class CartFragment extends BaseFragment implements View.OnClickListener,T
     ImageView tv;
     //失效商品的cartId
     List<Integer> unCartsId = new ArrayList<>();
+    List<Integer> CartsIds = new ArrayList<>();
     //点击删除时的cartId存储集合
     List<Integer> cartsId = new ArrayList<>();
     private FragmentInteraction listterner;
@@ -480,7 +483,6 @@ public class CartFragment extends BaseFragment implements View.OnClickListener,T
             @Override
             public void onNoDoubleClick(View view) {
                 for (int i = 0; i <unList.size() ; i++) {
-//                    unCartsId.clear();
                     List<CartsListModel.DataBean.InValidListBean.SpecProductListBeanX> specProductList = unList.get(i).getSpecProductList();
 
                     for (int j = 0; j <specProductList.size() ; j++) {
@@ -607,6 +609,7 @@ public class CartFragment extends BaseFragment implements View.OnClickListener,T
 
                     @Override
                     public void onError(Throwable e) {
+                        btn_sure.setEnabled(true);
                     }
 
                     @Override
@@ -620,11 +623,12 @@ public class CartFragment extends BaseFragment implements View.OnClickListener,T
                             lav_activity_loading.hide();
                             lav_activity_loading.setVisibility(View.GONE);
                             btn_sure.setEnabled(true);
-                            }else {
-                            lav_activity_loading.hide();
-                            lav_activity_loading.setVisibility(View.GONE);
-                            btn_sure.setEnabled(true);
-                            ToastUtil.showSuccessMsg(mActivity, cartBalanceModel.message);
+
+                            } else {
+                                lav_activity_loading.hide();
+                                lav_activity_loading.setVisibility(View.GONE);
+                                btn_sure.setEnabled(true);
+                                ToastUtil.showSuccessMsg(mActivity, cartBalanceModel.message);
                         }
                     }
                 });
@@ -635,10 +639,9 @@ public class CartFragment extends BaseFragment implements View.OnClickListener,T
     List<CartsListModel.DataBean.ValidListBean> listAll;
     @Override
     public void update(List<CartsListModel.DataBean.ValidListBean> data,List<CartsListModel.DataBean.ValidListBean> listAll) {
-        Log.d("wsssdddddddd....",listAll.size()+"s");
         this.data = data;
         this.listAll = listAll;
-        btn_sure.setText("结算"+listAll.size());
+        btn_sure.setText("结算");
     }
 
     // 1 定义了所有activity必须实现的接口方法
@@ -686,7 +689,7 @@ public class CartFragment extends BaseFragment implements View.OnClickListener,T
 
     @Override
     public void setViewData() {
-        requestCartList();
+//        requestCartList();
         getCustomerPhone();
         getProductsList();
     }
@@ -733,6 +736,7 @@ public class CartFragment extends BaseFragment implements View.OnClickListener,T
     @Override
     public void onHiddenChanged(boolean hidden) {
         super.onHiddenChanged(hidden);
+        btn_sure.setEnabled(false);
         if (!hidden) {
             requestCartList();
         }
@@ -741,6 +745,7 @@ public class CartFragment extends BaseFragment implements View.OnClickListener,T
     /**
      * 购物车列表
      */
+    int cartId;
     private void requestCartList() {
         CartListAPI.requestCartLists(getContext())
                 .subscribeOn(Schedulers.io())
@@ -748,17 +753,16 @@ public class CartFragment extends BaseFragment implements View.OnClickListener,T
                 .subscribe(new Subscriber<CartsListModel>() {
                     @Override
                     public void onCompleted() {
-
                     }
 
 
                     @Override
                     public void onError(Throwable e) {
-
                     }
 
                     @Override
                     public void onNext(CartsListModel cartListModel) {
+
                         if(cartListModel.isSuccess()) {
                             mListCart.clear();
                             unList.clear();
@@ -769,19 +773,24 @@ public class CartFragment extends BaseFragment implements View.OnClickListener,T
                             List<CartsListModel.DataBean.ValidListBean> validList = cartListModel.getData().getValidList();
                             mListCart.addAll(validList);
 
-                            testAdapter = new TestAdapter(R.layout.item_carts, mListCart,CartFragment.this);
-//                            testAdapter = new Test2Adapter(mActivity,mListCart, new Test2Adapter.Onclick() {
-//                                @Override
-//                                public void clicks() {
-//                                    requestCartList();
-//                                }
-//
-//                                @Override
-//                                public void refreshCart() {
-//
-//                                }
-//                            });
+                            testAdapter = new TestAdapter(R.layout.item_carts, mListCart,CartFragment.this, new TestAdapter.Onclick() {
+                                @Override
+                                public void deteItem(int pos,CartsListModel.DataBean.ValidListBean validListBean) {
+
+                                    for (int i = 0; i < validListBean.getSpecProductList().size(); i++) {
+                                        cartId = validListBean.getSpecProductList().get(i).getCartId();
+                                    }
+
+                                    CartsIds.clear();
+                                    CartsIds.add(cartId);
+                                    requestDeleteCart(CartsIds.toString());
+
+                                }
+                            });
+
                             mRv.setAdapter(testAdapter);
+                            mRv.setHasFixedSize(true);
+                            mRv.setNestedScrollingEnabled(true);
                             //过期列表
                             List<CartsListModel.DataBean.InValidListBean> inValidList = cartListModel.getData().getInValidList();
                             unList.addAll(inValidList);
@@ -835,11 +844,6 @@ public class CartFragment extends BaseFragment implements View.OnClickListener,T
 //                            getAllPrice(validList);
                             }
 
-//                        if(unList.size()!=0&&mListCart.size()!=0) {
-//                            ll.setVisibility(View.VISIBLE);
-//                        }else {
-//                            ll.setVisibility(View.GONE);
-//                        }
 
                             CartUnableAdapter unAbleAdapter = new CartUnableAdapter(R.layout.item_uncarts,unList);
                             rv_unable.setLayoutManager(new LinearLayoutManager(mActivity));
@@ -861,9 +865,11 @@ public class CartFragment extends BaseFragment implements View.OnClickListener,T
 
                             lav_activity_loading.hide();
                             lav_activity_loading.setVisibility(View.GONE);
+                            btn_sure.setEnabled(true);
                         }else {
                             lav_activity_loading.hide();
                             lav_activity_loading.setVisibility(View.GONE);
+                            btn_sure.setEnabled(false);
                         }
 
 
@@ -983,11 +989,6 @@ public class CartFragment extends BaseFragment implements View.OnClickListener,T
         getCartNum();
     }
 
-//    @Subscribe(threadMode = ThreadMode.MAIN)
-//    public void cityEvent(CityEvent event) {
-//        requestCartList();
-//
-//    }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void getTotals(UpDateNumEvent1 upDateNumEvent) {

@@ -87,12 +87,12 @@ public class ExCouponDialog extends Dialog {
         WindowManager.LayoutParams attributes = getWindow().getAttributes();
         attributes.width = Utils.getScreenWidth(context);
         getWindow().setAttributes(attributes);
-//        ExchangeAdapter exchangeAdapter = new ExchangeAdapter(R.layout.item_exchange,amounts);
+        ExchangeAdapter exchangeAdapter = new ExchangeAdapter(R.layout.item_exchange,amounts);
         recyclerView.setLayoutManager(new LinearLayoutManager(context));
-//        recyclerView.setAdapter(exchangeAdapter);
+        recyclerView.setAdapter(exchangeAdapter);
         for (int i = 0; i < amounts.size(); i++) {
-           Double s = Double.valueOf(amounts.get(i));
-           total+=s;
+            Double s = Double.valueOf(amounts.get(i));
+            total+=s;
         }
         tv_amount.setText("兑换金额"+totals+"元");
         tv_add_car.setOnClickListener(new View.OnClickListener() {

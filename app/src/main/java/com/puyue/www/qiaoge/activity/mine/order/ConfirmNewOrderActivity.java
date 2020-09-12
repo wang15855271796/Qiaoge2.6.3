@@ -32,8 +32,6 @@ public class ConfirmNewOrderActivity extends BaseSwipeActivity {
     private TextView tv_sufficiency_order;
     private TextView tv_deliver_order_two;
     private TextView tv_sufficiency_order_two;
-
-
     private Fragment mFragmentDeliver;//送货上门
     private Fragment mFragmentSufficiency;//自提货物
     private FragmentTransaction mFragmentTransaction;
@@ -62,14 +60,14 @@ public class ConfirmNewOrderActivity extends BaseSwipeActivity {
 
     @Override
     public void setViewData() {
-
+        switchTab(TAB_DELIVER);
+        setTranslucentStatus();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        switchTab(TAB_DELIVER);
-        setTranslucentStatus();
+
     }
 
     @Override

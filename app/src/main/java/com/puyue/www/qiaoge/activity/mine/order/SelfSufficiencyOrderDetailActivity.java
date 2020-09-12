@@ -55,6 +55,7 @@ import com.baidu.mapapi.search.geocode.ReverseGeoCodeResult;
 import com.puyue.www.qiaoge.R;
 import com.puyue.www.qiaoge.activity.CartActivity;
 import com.puyue.www.qiaoge.activity.mine.account.AddressListActivity;
+import com.puyue.www.qiaoge.adapter.OrderFullAdapter;
 import com.puyue.www.qiaoge.adapter.mine.NewOrderDetailAdapter;
 import com.puyue.www.qiaoge.api.cart.CancelOrderAPI;
 import com.puyue.www.qiaoge.api.cart.DeleteOrderAPI;
@@ -68,6 +69,7 @@ import com.puyue.www.qiaoge.base.BaseSwipeActivity;
 import com.puyue.www.qiaoge.constant.AppConstant;
 import com.puyue.www.qiaoge.event.AddressEvent;
 import com.puyue.www.qiaoge.event.BackEvent;
+import com.puyue.www.qiaoge.fragment.mine.coupons.PaymentFragments;
 import com.puyue.www.qiaoge.helper.AppHelper;
 import com.puyue.www.qiaoge.helper.MapHelper;
 import com.puyue.www.qiaoge.helper.StringHelper;
@@ -275,7 +277,7 @@ public class SelfSufficiencyOrderDetailActivity extends BaseSwipeActivity {
     private TextView tv_phone;
 
     private LinearLayout ll_deliver;
-
+    private List<GetOrderDetailModel.DataBean.SendGiftInfo> list_full = new ArrayList<>();
 
     //地球半径
     private static final double EARTH_RADIUS = 6378.137;
@@ -283,7 +285,8 @@ public class SelfSufficiencyOrderDetailActivity extends BaseSwipeActivity {
 
     private TextView tv_evaluate;
     private String account;
-
+    private RecyclerView rv_full;
+    OrderFullAdapter orderFullAdapter;
     @Override
     public boolean handleExtra(Bundle savedInstanceState) {
         return false;
@@ -296,6 +299,7 @@ public class SelfSufficiencyOrderDetailActivity extends BaseSwipeActivity {
 
     @Override
     public void findViewById() {
+        rv_full =  (RecyclerView) findViewById(R.id.rv_full);
         imageViewBreak = (ImageView) findViewById(R.id.imageViewBreak);
         textViewTitle = (TextView) findViewById(R.id.textViewTitle);
         recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
@@ -471,19 +475,13 @@ public class SelfSufficiencyOrderDetailActivity extends BaseSwipeActivity {
         });
 
         adapter = new NewOrderDetailAdapter(R.layout.new_order_detail, list,orderId);
-      /*  LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false) {
-            @Override
-            public boolean canScrollVertically() {
-                return false;
-            }
-
-
-        };
-    recyclerView.setLayoutManager(linearLayoutManager);*/
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-
-
         recyclerView.setAdapter(adapter);
+
+        rv_full.setLayoutManager(new LinearLayoutManager(mContext));
+        orderFullAdapter = new OrderFullAdapter(R.layout.item_full,list_full);
+        rv_full.setAdapter(orderFullAdapter);
+
         getOrderDetail(orderId, orderState, returnProductMainId);
         // 文字渐变色
         LinearGradient mLinearGradient = new LinearGradient(0, 0, 0, tvInfo.getPaint().getTextSize(), Color.parseColor("#CEA6FF")
@@ -714,41 +712,6 @@ public class SelfSufficiencyOrderDetailActivity extends BaseSwipeActivity {
 
     }
 
-//    private void initOptionPicker() {//条件选择器初始化
-//
-//        /**
-//         * 注意 ：如果是三级联动的数据(省市区等)，请参照 JsonDataActivity 类里面的写法。
-//         */
-//
-//        OptionsPickerView pvOptions = new OptionsPickerBuilder(this, new OnOptionsSelectListener() {
-//            @Override
-//            public void onOptionsSelect(int options1, int options2, int options3, View v) {
-//                //返回的分别是三个级别的选中位置
-////                String tx = options1Items.get(options1).getPickerViewText()
-////                        + options2Items.get(options1).get(options2)
-////                        /* + options3Items.get(options1).get(options2).get(options3).getPickerViewText()*/;
-////                btn_Options.setText(tx);
-//            }
-//        })
-//                .setTitleText("请选择自提时间段")
-//                .setTitleColor(Color.parseColor("#F56D23"))
-//
-//                .setCancelColor(Color.parseColor("#F56D23"))
-//                .setSubmitColor(Color.parseColor("#F56D23"))
-//                .setOptionsSelectChangeListener(new OnOptionsSelectChangeListener() {
-//                    @Override
-//                    public void onOptionsSelectChanged(int options1, int options2, int options3) {
-//                    }
-//                })
-//                .build();
-//
-////        pvOptions.setSelectOptions(1,1);
-//        /*pvOptions.setPicker(options1Items);//一级选择器*/
-////        pvOptions.setPicker(options1Items, options2Items);//二级选择器
-////        pvOptions.show();
-//        /*pvOptions.setPicker(options1Items, options2Items,options3Items);//三级选择器*/
-//    }
-
     private GetTimeOrderModel dataBean;
 
     private void showGetTime() {
@@ -964,9 +927,14 @@ public class SelfSufficiencyOrderDetailActivity extends BaseSwipeActivity {
                                     //  Log.e(TAG, "onNext: " + orderDetailModel.data.productVOList.get(0).productDescVOList.get(0).newDesc);
                                     list.clear();
                                     list.addAll(orderDetailModel.data.productVOList);
+                                    adapter.notifyDataSetChanged();
+
+                                    list_full.clear();
+                                    list_full.addAll(orderDetailModel.data.sendGiftInfo);
+                                    orderFullAdapter.notifyDataSetChanged();
                                 }
                             }
-                            adapter.notifyDataSetChanged();
+
 
                         } else {
                             AppHelper.showMsg(mContext, orderDetailModel.message);
@@ -1036,7 +1004,9 @@ public class SelfSufficiencyOrderDetailActivity extends BaseSwipeActivity {
         } else if (getOrderDetailModel.payChannelType == 3) {
             tvNewOrderPay.setImageResource(R.mipmap.ic_we_chat_icon);
         }else if(getOrderDetailModel.payChannelType == 14) {
-
+            tvNewOrderPay.setImageResource(R.mipmap.ic_pay_alipay);
+        }else if(getOrderDetailModel.payChannelType == 16) {
+            tvNewOrderPay.setImageResource(R.mipmap.icon_yun);
         }
 
 
@@ -1532,35 +1502,6 @@ public class SelfSufficiencyOrderDetailActivity extends BaseSwipeActivity {
                         }
                     }
                 });
-
-
-    /*    ConfirmGetGoodsAPI.reuqestConfirmGetGoods(mContext, orderId)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<ConfirmGetGoodsModel>() {
-                    @Override
-                    public void onCompleted() {
-
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-
-                    }
-
-                    @Override
-                    public void onNext(ConfirmGetGoodsModel confirmGetGoodsModel) {
-                        mModelConfirmGetGoods = confirmGetGoodsModel;
-                        if (mModelConfirmGetGoods.success) {
-                            //确认收货成功
-                            AppHelper.showMsg(mContext, "确认收货成功");
-                            //刷新订单状态
-                            getOrderDetail(orderId, orderState, returnProductMainId);
-                        } else {
-                            AppHelper.showMsg(mContext, mModelConfirmGetGoods.message);
-                        }
-                    }
-                });*/
     }
 
     private NoDoubleClickListener noDoubleClickListener = new NoDoubleClickListener() {
@@ -1575,16 +1516,25 @@ public class SelfSufficiencyOrderDetailActivity extends BaseSwipeActivity {
                     break;
                 case R.id.buttonGOPay://去支付
 
-
-                    Intent intent = new Intent(mContext, MyConfireOrdersActivity.class);
-                    intent.putExtra("remark", getOrderDetailModel.remark);
-                    // Log.i("wwb", "onNoDoubleClick: "+getOrderDetailModel.remark);
-                    intent.putExtra("payAmount", Double.parseDouble(getOrderDetailModel.totalAmount));
-                    intent.putExtra("orderId", orderId);
-                    intent.putExtra("flag", true);
-                    intent.putExtra("orderDeliveryType", 1);
-                    finish();
-                    startActivity(intent);
+                    PaymentFragments paymentFragment = new PaymentFragments();
+                    Bundle bundle = new Bundle();
+                    bundle.putString("total", getOrderDetailModel.totalAmount);
+                    bundle.putString("remark", "");
+                    bundle.putString("payAmount",getOrderDetailModel.totalAmount);
+                    bundle.putString("orderId",orderId);
+                    bundle.putString("orderDeliveryType",1+"");
+                    paymentFragment.setArguments(bundle);
+                    paymentFragment.setCancelable(false);
+                    paymentFragment.show(getSupportFragmentManager(),"paymentFragment");
+//                    Intent intent = new Intent(mContext, MyConfireOrdersActivity.class);
+//                    intent.putExtra("remark", getOrderDetailModel.remark);
+//                    // Log.i("wwb", "onNoDoubleClick: "+getOrderDetailModel.remark);
+//                    intent.putExtra("payAmount", Double.parseDouble(getOrderDetailModel.totalAmount));
+//                    intent.putExtra("orderId", orderId);
+//                    intent.putExtra("flag", true);
+//                    intent.putExtra("orderDeliveryType", 1);
+//                    finish();
+//                    startActivity(intent);
                     break;
 
                 case R.id.buttonReturnGood_two:
@@ -1926,23 +1876,6 @@ public class SelfSufficiencyOrderDetailActivity extends BaseSwipeActivity {
                     }
                 });
     }
-
-/*
-
-    protected void setTranslucentStatus() {
-        // 5.0以上系统状态栏透明
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            Window window = getWindow();
-            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-            window.getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                    | View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
-            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-            window.setStatusBarColor(Color.TRANSPARENT);
-        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-        }
-    }
-*/
 
     @Override
     public void onPause() {

@@ -208,8 +208,9 @@
                                                     android:layout_height="142dp" />
                                             </RelativeLayout>
 
-
+                                            <include layout="@layout/home_tip_iv"/>
                                             <ImageView
+                                                android:visibility="gone"
                                                 android:id="@+id/iv_pic"
                                                 android:layout_marginLeft="@dimen/size_50dp"
                                                 android:layout_marginRight="@dimen/size_50dp"
@@ -257,7 +258,7 @@
                                                     android:orientation="horizontal"
                                                     android:layout_width="match_parent"
                                                     android:layout_height="@dimen/size_60dp">
-
+                                                    <!--限时秒杀-->
                                                     <RadioButton
                                                         android:visibility="gone"
                                                         android:background="@drawable/shape_orange"
@@ -274,7 +275,7 @@
                                                         android:layout_width="0dp"
                                                         android:layout_gravity="center_vertical"
                                                         android:layout_height="wrap_content" />
-
+                                                    <!--精选折扣-->
                                                     <RelativeLayout
                                                         android:id="@+id/rl_coupon"
                                                         android:visibility="gone"
@@ -293,6 +294,8 @@
                                                             android:paddingTop="@dimen/size_3dp"
                                                             android:text="精选折扣"
                                                             android:gravity="center"
+                                                            android:singleLine="true"
+                                                            android:maxLines="1"
                                                             android:layout_weight="1"
                                                             android:textStyle="bold"
                                                             android:layout_gravity="center_vertical"
@@ -315,9 +318,25 @@
                                                             android:layout_height="wrap_content" />
                                                     </RelativeLayout>
 
-
-
-
+                                                    <!--满赠活动-->
+                                                    <RadioButton
+                                                        android:id="@+id/rb_4"
+                                                        android:button="@null"
+                                                        android:visibility="gone"
+                                                        android:background="@drawable/shape_white_home"
+                                                        android:layout_marginLeft="@dimen/dp_10"
+                                                        android:paddingBottom="@dimen/size_3dp"
+                                                        android:paddingTop="@dimen/size_3dp"
+                                                        android:text="满赠活动"
+                                                        android:gravity="center"
+                                                        android:textStyle="bold"
+                                                        android:textColor="#333333"
+                                                        android:textSize="@dimen/sp_16"
+                                                        android:layout_gravity="center_vertical"
+                                                        android:layout_weight="1"
+                                                        android:layout_width="0dp"
+                                                        android:layout_height="wrap_content" />
+                                                    <!--超值组合-->
                                                     <RadioButton
                                                         android:id="@+id/rb_3"
                                                         android:button="@null"
@@ -424,8 +443,39 @@
                                                         android:layout_width="wrap_content"
                                                         android:layout_height="wrap_content" />
                                                 </RelativeLayout>
-
                                                 <!--标题3-->
+                                                <RelativeLayout
+                                                    android:id="@+id/rl_more4"
+                                                    android:visibility="gone"
+                                                    android:orientation="horizontal"
+                                                    android:layout_width="match_parent"
+                                                    android:layout_height="wrap_content">
+
+
+                                                    <TextView
+                                                        android:id="@+id/tv_desc4"
+                                                        android:textColor="#FF680A"
+                                                        android:textSize="@dimen/sp_12"
+                                                        android:layout_marginLeft="@dimen/size_15dp"
+                                                        android:layout_marginRight="@dimen/size_10dp"
+                                                        android:layout_centerVertical="true"
+                                                        tools:text="精选冻品，秒到就是赚到!"
+                                                        android:layout_width="wrap_content"
+                                                        android:layout_height="wrap_content" />
+
+                                                    <TextView
+                                                        android:text="更多"
+                                                        android:id="@+id/tv_more4"
+                                                        android:textSize="@dimen/sp_12"
+                                                        android:drawableRight="@mipmap/fenlei_rigth_huangse"
+                                                        android:layout_centerVertical="true"
+                                                        android:textColor="#FF680A"
+                                                        android:layout_marginRight="@dimen/size_5dp"
+                                                        android:layout_alignParentRight="true"
+                                                        android:layout_width="wrap_content"
+                                                        android:layout_height="wrap_content" />
+                                                </RelativeLayout>
+                                                <!--标题4-->
                                                 <RelativeLayout
                                                     android:id="@+id/rl_more3"
                                                     android:visibility="gone"

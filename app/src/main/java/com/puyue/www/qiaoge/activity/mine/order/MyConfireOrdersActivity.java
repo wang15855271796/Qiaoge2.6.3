@@ -61,6 +61,7 @@ import com.puyue.www.qiaoge.model.mine.order.MyOrderNumModel;
 import com.puyue.www.qiaoge.utils.SharedPreferencesUtil;
 import com.puyue.www.qiaoge.utils.ToastUtil;
 
+
 import com.rrtx.tzpaylib.CashierManager;
 import com.rrtx.tzpaylib.PaymentCallback;
 import com.tencent.mm.opensdk.modelpay.PayReq;
@@ -250,7 +251,6 @@ public class MyConfireOrdersActivity extends BaseSwipeActivity {
                     //调支付接口
                     //将这个按钮设置为false,失去焦点，只有在确切的事件之后，我们才会将这个状态重置回来。这样就写好了。
                     okPay.setEnabled(false);
-
                     orderPay(orderId, payChannel, payAmount, remark);
 
                     break;
@@ -322,8 +322,6 @@ public class MyConfireOrdersActivity extends BaseSwipeActivity {
                                         }
                                     }
                                 });
-
-
                             }
 
                             if (payChannel == 1) {
@@ -762,7 +760,7 @@ public class MyConfireOrdersActivity extends BaseSwipeActivity {
             }
         }
 
-        ;
+
     };
 
     @Override

@@ -69,6 +69,7 @@ public class NewOrderDetailAdapter extends BaseQuickAdapter<GetOrderDetailModel.
 
     @Override
     protected void convert(BaseViewHolder helper, GetOrderDetailModel.DataBean.ProductVOListBean item) {
+
         coupon = helper.getView(R.id.coupon);
         recyclerView = helper.getView(R.id.recyclerView);
         imageView = helper.getView(R.id.imageView);

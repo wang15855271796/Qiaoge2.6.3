@@ -15,7 +15,7 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.puyue.www.qiaoge.NewWebViewActivity;
 import com.puyue.www.qiaoge.R;
 import com.puyue.www.qiaoge.activity.home.HomeUseActivity;
-import com.puyue.www.qiaoge.activity.mine.order.ConfirmOrderNewActivity;
+
 import com.puyue.www.qiaoge.activity.mine.order.MyConfireOrdersActivity;
 import com.puyue.www.qiaoge.adapter.mine.MinerIntegralAdapter;
 import com.puyue.www.qiaoge.api.mine.PointApI;

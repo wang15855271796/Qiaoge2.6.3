@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Color;
+import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -26,6 +27,8 @@ import com.puyue.www.qiaoge.api.home.GetOrderDetailAPI;
 import com.puyue.www.qiaoge.api.mine.order.MyOrderListAPI;
 import com.puyue.www.qiaoge.base.BaseFragment;
 import com.puyue.www.qiaoge.constant.AppConstant;
+import com.puyue.www.qiaoge.fragment.mine.coupons.PaymentFragment;
+import com.puyue.www.qiaoge.fragment.mine.coupons.PaymentFragments;
 import com.puyue.www.qiaoge.helper.AppHelper;
 import com.puyue.www.qiaoge.helper.StringHelper;
 import com.puyue.www.qiaoge.helper.UserInfoHelper;
@@ -180,14 +183,24 @@ public class PaymentOrderFragment extends BaseFragment {
 
                 @Override
                 public void imageGo(String orderId, String payAmount) {
-                    Intent intent = new Intent(getActivity(), MyConfireOrdersActivity.class);
-                    intent.putExtra("orderId", orderId);
-                    intent.putExtra("remark", "");
-
-                    intent.putExtra("payAmount", Double.parseDouble(payAmount));
-                    intent.putExtra("flag", true);
-
-                    startActivity(intent);
+//                    Intent intent = new Intent(getActivity(), MyConfireOrdersActivity.class);
+//                    intent.putExtra("orderId", orderId);
+//                    intent.putExtra("remark", "");
+//
+//                    intent.putExtra("payAmount", Double.parseDouble(payAmount));
+//                    intent.putExtra("flag", true);
+//
+//                    startActivity(intent);
+                    PaymentFragments paymentFragment = new PaymentFragments();
+                    Bundle bundle = new Bundle();
+                    bundle.putString("total", payAmount);
+                    bundle.putString("remark","");
+                    bundle.putString("payAmount",payAmount);
+                    bundle.putString("orderId",orderId);
+                    bundle.putString("orderDeliveryType",orderDeliveryType+"");
+                    paymentFragment.setArguments(bundle);
+                    paymentFragment.setCancelable(false);
+                    paymentFragment.show(getFragmentManager(),"paymentFragment");
                 }
 
                 @Override
@@ -280,14 +293,26 @@ public class PaymentOrderFragment extends BaseFragment {
 
                 @Override
                 public void imageGo(String orderId, String payAmount) {
-                    Intent intent = new Intent(getActivity(), MyConfireOrdersActivity.class);
-                    intent.putExtra("orderId", orderId);
-                    intent.putExtra("remark", "");
+//                    Intent intent = new Intent(getActivity(), MyConfireOrdersActivity.class);
+//                    intent.putExtra("orderId", orderId);
+//                    intent.putExtra("remark", "");
+//
+//                    intent.putExtra("payAmount", Double.parseDouble(payAmount));
+//                    intent.putExtra("flag", true);
+//
+//                    startActivity(intent);
 
-                    intent.putExtra("payAmount", Double.parseDouble(payAmount));
-                    intent.putExtra("flag", true);
+                    PaymentFragments paymentFragment = new PaymentFragments();
+                    Bundle bundle = new Bundle();
+                    bundle.putString("total", payAmount);
+                    bundle.putString("remark","");
+                    bundle.putString("payAmount",payAmount);
+                    bundle.putString("orderId",orderId);
+                    bundle.putString("orderDeliveryType",orderDeliveryType+"");
+                    paymentFragment.setArguments(bundle);
+                    paymentFragment.setCancelable(false);
+                    paymentFragment.show(getFragmentManager(),"paymentFragment");
 
-                    startActivity(intent);
                 }
 
                 @Override

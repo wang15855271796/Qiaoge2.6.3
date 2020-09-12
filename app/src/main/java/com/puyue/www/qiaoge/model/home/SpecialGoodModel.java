@@ -108,6 +108,23 @@ public class SpecialGoodModel {
         private int saleDone;
         private List<String> topPics;
         private List<String> detailPics;
+        String bannerDetailUrl;
+        String bannerUrl;
+        public String getBannerDetailUrl() {
+            return bannerDetailUrl;
+        }
+
+        public String getBannerUrl() {
+            return bannerUrl;
+        }
+
+        public void setBannerUrl(String bannerUrl) {
+            this.bannerUrl = bannerUrl;
+        }
+
+        public void setBannerDetailUrl(String bannerDetailUrl) {
+            this.bannerDetailUrl = bannerDetailUrl;
+        }
 
         public int getWarnMe() {
             return warnMe;

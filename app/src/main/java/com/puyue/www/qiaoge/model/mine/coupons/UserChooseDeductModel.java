@@ -41,6 +41,25 @@ public class UserChooseDeductModel extends BaseModel {
         private String dateTime;
         private List<String> role;
         private boolean flag;
+        String useInfo;
+        String giftProdUseType;
+
+        public String getGiftProdUseType() {
+            return giftProdUseType;
+        }
+
+        public void setGiftProdUseType(String giftProdUseType) {
+            this.giftProdUseType = giftProdUseType;
+        }
+
+        public String getUseInfo() {
+            return useInfo;
+        }
+
+        public void setUseInfo(String useInfo) {
+            this.useInfo = useInfo;
+        }
+
         public boolean isFlag() {
                 return flag;
             }

@@ -102,7 +102,10 @@ public class GetProductDetailModel {
         private List<ProdPricesBean> prodPrices;
         private List<String> detailPic;
         private List<String> topPic;
-
+        private List<String> fullGiftSendInfo;
+        String bannerDetailUrl;
+        String bannerUrl;
+        String divFullGiftSendInfo;
         @Override
         public String toString() {
             return "DataBean{" +
@@ -124,6 +127,38 @@ public class GetProductDetailModel {
                     ", detailPic=" + detailPic +
                     ", topPic=" + topPic +
                     '}';
+        }
+
+        public String getDivFullGiftSendInfo() {
+            return divFullGiftSendInfo;
+        }
+
+        public void setDivFullGiftSendInfo(String divFullGiftSendInfo) {
+            this.divFullGiftSendInfo = divFullGiftSendInfo;
+        }
+
+        public List<String> getFullGiftSendInfo() {
+            return fullGiftSendInfo;
+        }
+
+        public void setFullGiftSendInfo(List<String> fullGiftSendInfo) {
+            this.fullGiftSendInfo = fullGiftSendInfo;
+        }
+
+        public String getBannerUrl() {
+            return bannerUrl;
+        }
+
+        public void setBannerUrl(String bannerUrl) {
+            this.bannerUrl = bannerUrl;
+        }
+
+        public String getBannerDetailUrl() {
+            return bannerDetailUrl;
+        }
+
+        public void setBannerDetailUrl(String bannerDetailUrl) {
+            this.bannerDetailUrl = bannerDetailUrl;
         }
 
         public int getSaleDone() {
@@ -279,7 +314,7 @@ public class GetProductDetailModel {
             private int productId;
             private String spec;
             int prodDeduct;
-
+            String prodFullGift;
             public int getProdDeduct() {
                 return prodDeduct;
             }
@@ -294,6 +329,14 @@ public class GetProductDetailModel {
                         "productId=" + productId +
                         ", spec='" + spec + '\'' +
                         '}';
+            }
+
+            public String getProdFullGift() {
+                return prodFullGift;
+            }
+
+            public void setProdFullGift(String prodFullGift) {
+                this.prodFullGift = prodFullGift;
             }
 
             public int getProductId() {

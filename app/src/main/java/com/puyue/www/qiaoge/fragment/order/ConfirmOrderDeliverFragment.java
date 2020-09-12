@@ -4,6 +4,7 @@ package com.puyue.www.qiaoge.fragment.order;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
+import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
@@ -27,14 +28,16 @@ import com.lljjcoder.style.citylist.Toast.ToastUtils;
 import com.puyue.www.qiaoge.NewWebViewActivity;
 import com.puyue.www.qiaoge.R;
 import com.puyue.www.qiaoge.activity.BeizhuActivity;
-import com.puyue.www.qiaoge.activity.cart.CartPoint;
+
 import com.puyue.www.qiaoge.activity.mine.account.AddressListActivity;
 import com.puyue.www.qiaoge.activity.mine.account.AddressListsActivity;
 import com.puyue.www.qiaoge.activity.mine.coupons.ChooseCouponsActivity;
 import com.puyue.www.qiaoge.activity.mine.order.MyConfireOrdersActivity;
+import com.puyue.www.qiaoge.adapter.PayListAdapter;
 import com.puyue.www.qiaoge.adapter.mine.ChooseCouponsAdapter;
 import com.puyue.www.qiaoge.adapter.mine.ConfirmOrderNewAdapter;
 import com.puyue.www.qiaoge.api.cart.CartBalanceAPI;
+import com.puyue.www.qiaoge.api.cart.OrderPayAPI;
 import com.puyue.www.qiaoge.api.home.GetDeliverTimeAPI;
 import com.puyue.www.qiaoge.api.mine.GetWalletAmountAPI;
 import com.puyue.www.qiaoge.api.mine.coupon.userChooseDeductAPI;
@@ -48,17 +51,21 @@ import com.puyue.www.qiaoge.event.BeizhuEvent;
 import com.puyue.www.qiaoge.event.ChooseCoupon1Event;
 import com.puyue.www.qiaoge.event.ChooseCouponEvent;
 import com.puyue.www.qiaoge.event.GoToCartFragmentEvent;
+import com.puyue.www.qiaoge.event.PayListEvent;
 import com.puyue.www.qiaoge.fragment.mine.coupons.PaymentFragment;
 import com.puyue.www.qiaoge.helper.ActivityResultHelper;
 import com.puyue.www.qiaoge.helper.AlwaysMarqueeTextViewHelper;
 import com.puyue.www.qiaoge.helper.AppHelper;
 import com.puyue.www.qiaoge.helper.UserInfoHelper;
 import com.puyue.www.qiaoge.listener.NoDoubleClickListener;
+import com.puyue.www.qiaoge.model.PayListModel;
+import com.puyue.www.qiaoge.model.StatModel;
 import com.puyue.www.qiaoge.model.cart.CartBalanceModel;
 import com.puyue.www.qiaoge.model.home.GetDeliverTimeModel;
 import com.puyue.www.qiaoge.model.mine.GetWalletAmountModel;
 import com.puyue.www.qiaoge.model.mine.coupons.UserChooseDeductModel;
 import com.puyue.www.qiaoge.model.mine.order.GenerateOrderModel;
+import com.puyue.www.qiaoge.utils.SharedPreferencesUtil;
 import com.puyue.www.qiaoge.utils.ToastUtil;
 import com.wang.avi.AVLoadingIndicatorView;
 
@@ -121,7 +128,7 @@ public class ConfirmOrderDeliverFragment extends BaseFragment {
     private String killAmount = "";
     private String prodAmount = "";
     private String couponId = "";
-
+    private int giftNum;
     private String payAmount = "";
     // 判断是否匹配优惠券，0否1是，默认1
     CartBalanceModel cModel;
@@ -163,13 +170,15 @@ public class ConfirmOrderDeliverFragment extends BaseFragment {
     private Double toRechargeAmount;
     private boolean toRecharge;
     private Double totalAmount;
-    LinearLayout ll_beizhu;
+    RelativeLayout ll_beizhu;
     private PopupWindow popWin; // 弹出窗口
     private View popView; // 保存弹出窗口布局
     private WheelView wheelView;
     private TextView textView1;//取消
     private TextView textView2;//确定
     AlwaysMarqueeTextViewHelper sc;
+    StatModel statModel;
+    TextView tv_full_price;
     @Override
     public int setLayoutId() {
         return R.layout.fragment_confirm_deliver_order;
@@ -182,7 +191,8 @@ public class ConfirmOrderDeliverFragment extends BaseFragment {
     @Override
     public void findViewById(View view) {
         //  toolbar = (Toolbar) view.findViewById(R.id.toolbar);
-        ll_beizhu = (LinearLayout) view.findViewById(R.id.ll_beizhu);
+        tv_full_price = (TextView) view.findViewById(R.id.tv_full_price);
+        ll_beizhu = (RelativeLayout) view.findViewById(R.id.ll_beizhu);
         ll_info = (LinearLayout) view.findViewById(R.id.ll_info);
         lav_activity_loading = (AVLoadingIndicatorView) view.findViewById(R.id.lav_activity_loading);
         recyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
@@ -254,12 +264,12 @@ public class ConfirmOrderDeliverFragment extends BaseFragment {
 
         recyclerView.setLayoutManager(linearLayoutManager);
         recyclerView.setAdapter(adapter);
-        requestCartBalance(NewgiftDetailNo, 1);//NewgiftDetailNo
+        requestCartBalance(NewgiftDetailNo, 0);//NewgiftDetailNo
     }
 
     @Override
     public void setClickEvent() {
-
+        statModel = new StatModel();
         linearLayoutAddressHead.setOnClickListener(noDoubleClickListener);
         LinearLayoutAddress.setOnClickListener(noDoubleClickListener);
         buttonPay.setOnClickListener(noDoubleClickListener);
@@ -275,6 +285,7 @@ public class ConfirmOrderDeliverFragment extends BaseFragment {
             switch (view.getId()) {
                 case R.id.ll_beizhu:
                     Intent intents = new Intent(mActivity,BeizhuActivity.class);
+                    intents.putExtra("beizhu",tv_beizhu.getText().toString()+"");
                     startActivity(intents);
                     break;
                 case R.id.linearLayoutAddressHead: // 地址切换
@@ -294,6 +305,7 @@ public class ConfirmOrderDeliverFragment extends BaseFragment {
                     if (LinearLayoutAddress.getVisibility() == View.VISIBLE) { // 没有地址
                         AppHelper.showMsg(mActivity, "请填写地址");
                         lav_activity_loading.hide();
+                        buttonPay.setEnabled(true);
                     } else {
                         GetDeliverTimeAPI.requestDeliverTime(mActivity, areaContent)
                                 .subscribeOn(Schedulers.io())
@@ -307,6 +319,7 @@ public class ConfirmOrderDeliverFragment extends BaseFragment {
                                     @Override
                                     public void onError(Throwable e) {
                                         lav_activity_loading.hide();
+                                        buttonPay.setEnabled(true);
                                     }
 
                                     @Override
@@ -373,6 +386,7 @@ public class ConfirmOrderDeliverFragment extends BaseFragment {
                                         } else {
                                             AppHelper.showMsg(mActivity, getDeliverTimeModel.message);
                                             lav_activity_loading.hide();
+                                            buttonPay.setEnabled(true);
                                         }
 
 
@@ -381,11 +395,16 @@ public class ConfirmOrderDeliverFragment extends BaseFragment {
                     }
                     break;
                 case R.id.linearLayoutCoupons: // 优惠券
-                    Intent intent2 = new Intent(getContext(), ChooseCouponsActivity.class);
-                    intent2.putExtra("activityBalanceVOStr", activityBalanceVOStr);
-                    intent2.putExtra("normalProductBalanceVOStr", normalProductBalanceVOStr);
-                    intent2.putExtra("giftDetailNo", NewgiftDetailNo);
-                    startActivityForResult(intent2, ActivityResultHelper.ChOOSE_COUPONS_REQUESR_CODE);
+                    if(giftNum>0) {
+                        Intent intent2 = new Intent(getContext(), ChooseCouponsActivity.class);
+                        intent2.putExtra("statModel",statModel.isSelects());
+                        intent2.putExtra("activityBalanceVOStr", activityBalanceVOStr);
+                        intent2.putExtra("normalProductBalanceVOStr", normalProductBalanceVOStr);
+                        intent2.putExtra("giftDetailNo", NewgiftDetailNo);
+                        startActivityForResult(intent2, ActivityResultHelper.ChOOSE_COUPONS_REQUESR_CODE);
+                    }else {
+                    }
+
 
                     break;
                 case R.id.ll_go_market:
@@ -482,16 +501,16 @@ public class ConfirmOrderDeliverFragment extends BaseFragment {
      *
      * @param cartBalanceModel
      */
+    CartBalanceModel.DataBean info;
     private void setText(CartBalanceModel cartBalanceModel) {
-        CartBalanceModel.DataBean info = cartBalanceModel.getData();
-
+        info = cartBalanceModel.getData();
         proActAmount = info.getProActAmount();
         teamAmount = info.getTeamAmount();
         killAmount = info.getKillAmount();
         prodAmount = info.getNormalAmount();
+        giftNum = info.getGiftNum();
 
-        areaContent =
-                info.getAddressVO().getAreaCode();
+        areaContent = info.getAddressVO().getAreaCode();
 
         if (info.getDeductDetail() != null) {
             deductDetail = info.getDeductDetail().getGiftDetailNo();
@@ -549,7 +568,17 @@ public class ConfirmOrderDeliverFragment extends BaseFragment {
 
             }
         }
-        textCoupons.setText(cartBalanceModel.getData().getDeductDesc());
+        if(giftNum>0) {
+            textCoupons.setText(cartBalanceModel.getData().getDeductDesc());
+            textCoupons.setTextColor(Color.parseColor("#F25E0E"));
+            linearLayoutCoupons.setEnabled(true);
+        }else {
+            textCoupons.setText("暂无优惠券使用");
+            textCoupons.setTextColor(Color.parseColor("#999999"));
+            linearLayoutCoupons.setEnabled(false);
+
+        }
+
 
         VipURl = cartBalanceModel.getData().getVipCenterUrl();
         vipSubtractionPrice.setText("¥" + cartBalanceModel.getData().getVipReduct());
@@ -596,10 +625,10 @@ public class ConfirmOrderDeliverFragment extends BaseFragment {
             relativeLayoutVIP.setVisibility(View.GONE);
 
         }
+        subtractionActivitiesPrice.setText(cartBalanceModel.getData().getTotalNum()+"");
+        tv_full_price.setText("¥" + cartBalanceModel.getData().getNormalReduct());
         if (cartBalanceModel.getData().isOfferIsOpen()) { // 活动满减
             subtractionActivitiesLinearLayout.setVisibility(View.VISIBLE);
-
-            subtractionActivitiesPrice.setText("¥" + cartBalanceModel.getData().getNormalReduct());
             if (!TextUtils.isEmpty(cartBalanceModel.getData().getNormalReductDesc())) {
                 subtractionActivities.setVisibility(View.VISIBLE);
                 subtractionActivities.setText(cartBalanceModel.getData().getNormalReductDesc());
@@ -619,7 +648,7 @@ public class ConfirmOrderDeliverFragment extends BaseFragment {
     // 获取订单号
     private void requestOrderNum() {
 
-        GenerateOrderAPI.requestGenerateOrder(mActivity, activityBalanceVOStr, normalProductBalanceVOStr, cartListStr, NewgiftDetailNo, messageEditText.getText().toString(),
+        GenerateOrderAPI.requestGenerateOrder(mActivity, activityBalanceVOStr, normalProductBalanceVOStr, cartListStr, NewgiftDetailNo, tv_beizhu.getText().toString(),
                 deliverTimeStart, deliverTimeEnd, deliverTimeName, 0, "", "", "")
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -638,18 +667,21 @@ public class ConfirmOrderDeliverFragment extends BaseFragment {
                     public void onNext(GenerateOrderModel generateOrderModel) {
 
                         if (generateOrderModel.success) {
-                                if(generateOrderModel.getData()!=null) {
-                                    orderId = generateOrderModel.getData();
-                                    PaymentFragment paymentFragment = new PaymentFragment();
-                                    paymentFragment.show(getFragmentManager(),"paymentFragment");
-//                                    Intent intent = new Intent(mActivity, MyConfireOrdersActivity.class);
-//                                    intent.putExtra("orderId", generateOrderModel.getData());
-//                                    intent.putExtra("payAmount", Double.parseDouble(payAmount));
-//                                    intent.putExtra("remark", messageEditText.getText().toString());
-//                                    intent.putExtra("orderDeliveryType", 0);
-//                                    startActivity(intent);
-//                                    mActivity.finish();
-                                }
+                            if(generateOrderModel.getData()!=null) {
+                                orderId = generateOrderModel.getData();
+                                PaymentFragment paymentFragment = new PaymentFragment();
+                                Bundle bundle = new Bundle();
+                                bundle.putString("remark", tv_beizhu.getText().toString());
+                                bundle.putString("total", info.getTotalAmount());
+                                bundle.putString("payAmount",payAmount);
+                                bundle.putString("orderId",orderId);
+                                bundle.putString("orderDeliveryType","0");
+                                paymentFragment.setArguments(bundle);
+                                paymentFragment.show(getFragmentManager(),"paymentFragment");
+                                paymentFragment.setCancelable(false);
+//                                getDialog().setCanceledOnTouchOutside(false);
+
+                            }
                             lav_activity_loading.hide();
                             lav_activity_loading.setVisibility(View.GONE);
                             buttonPay.setEnabled(true);
@@ -663,124 +695,13 @@ public class ConfirmOrderDeliverFragment extends BaseFragment {
                 });
     }
 
+
     @Subscribe
     public void onEventMainThread(AddressEvent event) {
         list.clear();
-        requestCartBalance(NewgiftDetailNo, 1);////NewgiftDetailNo
+        requestCartBalance(NewgiftDetailNo, 0);////NewgiftDetailNo
 //        userChooseDeduct();
     }
-
-    /**
-     * 获取优惠卷列表
-     */
-//    private void userChooseDeduct() {
-//        userChooseDeductAPI.requestData(mActivity, proActAmount, teamAmount,killAmount, prodAmount, deductDetail)
-//                .subscribeOn(Schedulers.io())
-//                .observeOn(AndroidSchedulers.mainThread())
-//                .subscribe(new Subscriber<UserChooseDeductModel>() {
-//                    @Override
-//                    public void onCompleted() {
-//
-//                    }
-//
-//                    @Override
-//                    public void onError(Throwable e) {
-//
-//                    }
-//
-//                    @Override
-//                    public void onNext(UserChooseDeductModel model) {
-//                        if (model.success) {
-//                            if (model.getData().getAll().size() > 0) {
-//                                couponsRecyclerView.setVisibility(View.VISIBLE);
-//                                noData.setVisibility(View.GONE);
-//                                setRecyclerView();
-//                                couponsList.clear();
-//                                couponsList.addAll(model.getData().getAll());
-//                                for (int i = 0; i < couponsList.size(); i++) {
-//                                    if (model.getData().getAll().get(i).getGiftDetailNo().equals(couponId)) {
-//                                        //此处为第二次设置优惠券的isFlag
-//                                        model.getData().getAll().get(i).setFlag(true);
-//
-//                                    } else {
-//                                        //此处为第二次设置优惠券的isFlag
-//                                        model.getData().getAll().get(i).setFlag(false);
-//
-//                                    }
-//                                }
-//
-//                                if(couponsList.size()>0) {
-//                                    textCoupons.setEnabled(true);
-//                                    textCoupons.setTextColor(Color.parseColor("#F25E0D"));
-//                                }else {
-//                                    textCoupons.setEnabled(false);
-//                                    ToastUtil.showSuccessMsg(mActivity,"暂无优惠券可使用");
-//                                    textCoupons.setTextColor(Color.parseColor("#999999"));
-////                                    textCoupons.setText("暂无优惠券可使用");
-//                                }
-//                                couponsAdapter.notifyDataSetChanged();
-//                            } else {
-//                                couponsRecyclerView.setVisibility(View.GONE);
-//                                noData.setVisibility(View.VISIBLE);
-//
-//                            }
-//                            adapter.notifyDataSetChanged();
-//
-//
-//                        } else {
-//                            AppHelper.showMsg(mActivity, model.message);
-//                        }
-//
-//                    }
-//                });
-//    }
-
-//    private void setRecyclerView() {
-//        LinearLayoutManager linearLayoutManagerCoupons = new LinearLayoutManager(mActivity, LinearLayoutManager.HORIZONTAL, false);
-//        couponsAdapter = new ChooseCouponsAdapter(R.layout.item_choose_copons, couponsList, new ChooseCouponsAdapter.ImageOnclick() {
-//
-//            @Override
-//            public void Onclick(int position, String giftDetailNo) {
-//                UserChooseDeductModel.DataBean.AllBean info = couponsList.get(position);
-////                Log.e(TAG, "Onclick: "+info.toString()+giftDetailNo );
-//                for (int i = 0; i < couponsList.size(); i++) {
-//                    //表示点到第几个是第几个，
-//                    if (i == position) {
-//                        //首个是true
-//                        //当它是true的时候，将这个该设置为false
-//                        //假设flag是用来控制ImageView 的状态的。
-//                        //第一次设置
-//                        //首次是true
-//                        couponsList.get(i).setFlag(!couponsList.get(i).isFlag());
-////                        boolean flag = couponsList.get(i).isFlag();
-////                        flag=!flag;
-////                        Log.e(TAG, "Onclick: "+j );
-//                        if (couponsList.get(i).isFlag()) {
-////                            couponsList.get(i).setFlag(!flag);
-//                            //1
-//                            list.clear();
-//                            requestCartBalance(info.getGiftDetailNo(), 1);
-//                            NewgiftDetailNo = info.getGiftDetailNo();
-//                        } else {
-////                            couponsList.get(i).setFlag(flag);
-//                            //0
-//                            list.clear();
-//                            requestCartBalance("", 0);
-//                            NewgiftDetailNo = "";
-//                        }
-////                        j++;
-//
-//                    } else {
-//                        couponsList.get(i).setFlag(false);
-//                    }
-//                }
-//                couponsAdapter.notifyDataSetChanged();
-//            }
-//        });
-//        couponsRecyclerView.setLayoutManager(linearLayoutManagerCoupons);
-//        couponsRecyclerView.setAdapter(couponsAdapter);
-//
-//    }
 
 
     @Override
@@ -793,8 +714,10 @@ public class ConfirmOrderDeliverFragment extends BaseFragment {
      * 获取备注内容
      * @param beizhuEvent
      */
+    BeizhuEvent beizhuEvent;
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void getBeizhu(BeizhuEvent beizhuEvent) {
+        this.beizhuEvent = beizhuEvent;
         tv_beizhu.setText(beizhuEvent.getBeizhu());
     }
 
@@ -804,25 +727,29 @@ public class ConfirmOrderDeliverFragment extends BaseFragment {
      */
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void getCoupon(ChooseCouponEvent chooseCouponEvent) {
-        list.clear();
-        requestCartBalance(chooseCouponEvent.getGiftDetailNo(), 1);
-    }
 
+        list.clear();
+        requestCartBalance(chooseCouponEvent.getGiftDetailNo(), 0);
+        statModel.setSelects(false);
+    }
+//      subtractionActivitiesPrice.setText("¥" + cartBalanceModel.getData().getNormalReduct());
     /**
-     * 为选优惠券
+     * 未选优惠券
      * @param chooseCouponEvent
      */
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void getCoupons(ChooseCoupon1Event chooseCouponEvent) {
         list.clear();
         requestCartBalance("",0);
+        NewgiftDetailNo = "";
+        statModel.setSelects(true);
     }
 
     @Override
     public void onResume() {
         super.onResume();
-//        list.clear();
-//        requestCartBalance(NewgiftDetailNo, 1);//NewgiftDetailNo
+
+
     }
     //设置添加屏幕的背景透明度
     public void backgroundAlpha(float bgAlpha) {

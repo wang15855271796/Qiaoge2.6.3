@@ -202,6 +202,7 @@
 
                             <ImageView
                                 android:id="@+id/iv_vip"
+                                android:visibility="gone"
                                 android:layout_marginTop="@dimen/sp_16"
                                 android:src="@mipmap/icon_vip"
                                 android:layout_marginLeft="@dimen/size_15dp"
@@ -241,8 +242,57 @@
                                 android:layout_height="8dp"
                                 android:background="@color/app_bg_gray" />
 
+                            <!--商品活动-->
+                            <RelativeLayout
+                                android:id="@+id/rl_business"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content">
+
+                                <TextView
+                                    android:id="@+id/tv2"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="商品活动："
+                                    android:layout_marginTop="@dimen/size_15dp"
+                                    android:textStyle="bold"
+                                    android:layout_marginLeft="15dp"
+                                    android:textColor="#333333"
+                                    android:textSize="14dp" />
+
+                                <!--<TextView-->
+                                    <!--android:textColor="#F42828"-->
+                                    <!--android:textSize="@dimen/sp_12"-->
+                                    <!--android:text="该商品2.5kg*4包/箱规格满200元赠送本规格一包"-->
+                                    <!--android:id="@+id/tv_given"-->
+                                    <!--android:ellipsize="end"-->
+                                    <!--android:layout_marginRight="@dimen/size_20dp"-->
+                                    <!--android:singleLine="true"-->
+                                    <!--android:maxLines="1"-->
+                                    <!--android:layout_centerVertical="true"-->
+                                    <!--android:layout_toRightOf="@+id/tv2"-->
+                                    <!--android:layout_width="match_parent"-->
+                                    <!--android:layout_height="wrap_content"/>-->
+                                <android.support.v7.widget.RecyclerView
+                                    android:id="@+id/recyclerView"
+                                    android:layout_marginRight="@dimen/size_20dp"
+                                    android:layout_toRightOf="@+id/tv2"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content">
+
+                                </android.support.v7.widget.RecyclerView>
+
+
+                            </RelativeLayout>
+
+                            <View
+                                android:layout_width="match_parent"
+                                android:layout_height="8dp"
+                                android:background="@color/app_bg_gray" />
+
                             <!--产品说明-->
                             <RelativeLayout
+                                android:layout_marginLeft="15dp"
+                                android:paddingTop="@dimen/size_15dp"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content">
 
@@ -252,9 +302,6 @@
                                     android:layout_height="wrap_content"
                                     android:text="产品说明："
                                     android:textStyle="bold"
-                                    android:layout_marginLeft="15dp"
-                                    android:layout_marginTop="15dp"
-                                    android:layout_marginBottom="@dimen/size_15dp"
                                     android:textColor="#333333"
                                     android:textSize="14dp" />
 
@@ -263,11 +310,10 @@
                                     android:id="@+id/tv_desc"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    tools:text="产品说明："
+                                    tools:text="产品说明"
                                     android:layout_marginRight="@dimen/size_15dp"
-                                    android:layout_marginTop="15dp"
-                                    android:layout_marginBottom="@dimen/size_15dp"
                                     android:textColor="#292621"
+                                    android:layout_marginBottom="@dimen/size_15dp"
                                     android:textSize="12dp" />
 
                             </RelativeLayout>
@@ -276,38 +322,6 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="8dp"
                                 android:background="@color/app_bg_gray" />
-
-                            <!--商品活动-->
-                            <RelativeLayout
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content">
-
-                                <TextView
-                                    android:id="@+id/tv2"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:text="商品活动："
-                                    android:textStyle="bold"
-                                    android:layout_marginLeft="15dp"
-                                    android:layout_marginTop="15dp"
-                                    android:layout_marginBottom="@dimen/size_15dp"
-                                    android:textColor="#333333"
-                                    android:textSize="14dp" />
-
-                                    <android.support.v7.widget.RecyclerView
-                                        android:id="@+id/rv_given"
-                                        android:layout_toRightOf="@+id/tv2"
-                                        android:layout_width="match_parent"
-                                        android:layout_height="wrap_content">
-
-                                    </android.support.v7.widget.RecyclerView>
-                            </RelativeLayout>
-
-                            <View
-                                android:layout_width="match_parent"
-                                android:layout_height="8dp"
-                                android:background="@color/app_bg_gray" />
-
 
                         </LinearLayout>
 

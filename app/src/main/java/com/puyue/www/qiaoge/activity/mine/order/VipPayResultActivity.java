@@ -96,6 +96,12 @@ public class VipPayResultActivity extends BaseSwipeActivity {
                   getPayResult(outTradeNo);
                 }
             }, 3000);
+        }else if(payChannal==16){
+            new Handler().postDelayed(new Runnable() {
+                public void run() {
+                    getPayResult(outTradeNo);
+                }
+            }, 3000);
         }
 
     }

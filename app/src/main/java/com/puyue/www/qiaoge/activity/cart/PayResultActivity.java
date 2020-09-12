@@ -126,16 +126,16 @@ public class PayResultActivity extends BaseSwipeActivity {
                     intent.putExtra(AppConstant.ORDERID, orderId);
                     intent.putExtra(AppConstant.ORDERSTATE, "");
                     intent.putExtra(AppConstant.RETURNPRODUCTMAINID, "");
+                    intent.putExtra("account","0");
                     startActivity(intent);
-                    Log.d("sddddd...........","000000");
                     finish();
                 }else if (orderDeliveryType==1){
                     Intent intent = new Intent(mContext, SelfSufficiencyOrderDetailActivity.class);
                     intent.putExtra(AppConstant.ORDERID, orderId);
                     intent.putExtra(AppConstant.ORDERSTATE, "");
                     intent.putExtra(AppConstant.RETURNPRODUCTMAINID, "");
+                    intent.putExtra("account","0");
                     startActivity(intent);
-                    Log.d("sddddd...........","111111");
                     finish();
                 }
 
@@ -318,6 +318,12 @@ public class PayResultActivity extends BaseSwipeActivity {
                 }
             }, 3000);
         } else if (payChannal == 3) {
+            new Handler().postDelayed(new Runnable() {
+                public void run() {
+                    getPayResult(outTradeNo);
+                }
+            }, 3000);
+        }else if(payChannal == 16) {
             new Handler().postDelayed(new Runnable() {
                 public void run() {
                     getPayResult(outTradeNo);

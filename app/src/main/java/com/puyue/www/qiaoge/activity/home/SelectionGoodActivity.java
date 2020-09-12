@@ -88,7 +88,7 @@ public class SelectionGoodActivity extends BaseSwipeActivity implements View.OnC
     @BindView(R.id.iv_carts)
     ImageView iv_carts;
     MarketRightModel marketRightModel;
-    View emptyView;
+//    View emptyView;
     //分类集合
     private List<MarketRightModel.DataBean.ProdClassifyBean.ListBean> list = new ArrayList<>();
     private int productId;
@@ -144,8 +144,8 @@ public class SelectionGoodActivity extends BaseSwipeActivity implements View.OnC
             }
         });
 
-        emptyView = View.inflate(mActivity, R.layout.layout_empty, null);
-        selectionAdapter.setEmptyView(emptyView);
+//        emptyView = View.inflate(mActivity, R.layout.layout_empty, null);
+//        selectionAdapter.setEmptyView(emptyView);
         refreshLayout.setEnableLoadMore(false);
         recyclerView.setLayoutManager(new GridLayoutManager(mContext,2));
         recyclerView.setAdapter(selectionAdapter);
@@ -207,7 +207,7 @@ public class SelectionGoodActivity extends BaseSwipeActivity implements View.OnC
                 mDialog.dismiss();
             }
         });
-    }
+    } 
 
     /**
      * @param

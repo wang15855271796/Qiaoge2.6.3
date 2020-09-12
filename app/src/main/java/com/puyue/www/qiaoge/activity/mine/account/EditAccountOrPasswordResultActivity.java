@@ -129,12 +129,13 @@ public class EditAccountOrPasswordResultActivity extends BaseSwipeActivity {
                             if (forgetPas != null && StringHelper.notEmptyAndNull(forgetPas)) {
 
 
-                                Intent intent = new Intent(mContext, MyConfireOrdersActivity.class);
-                                intent.putExtra("orderId", orderId);
-                                intent.putExtra("payAmount", amount);
-                                intent.putExtra("remark", remark);
-                                intent.putExtra("orderDeliveryType", orderDeliveryType);
-                                startActivity(intent);
+//                                Intent intent = new Intent(mContext, MyConfireOrdersActivity.class);
+//                                intent.putExtra("orderId", orderId);
+//                                intent.putExtra("payAmount", amount);
+//                                intent.putExtra("remark", remark);
+//                                intent.putExtra("orderDeliveryType", orderDeliveryType);
+//                                startActivity(intent);
+                                finish();
                             } else {
                                 startActivity(AccountCenterActivity.getIntent(mContext, AccountCenterActivity.class));
                             }
@@ -171,16 +172,16 @@ public class EditAccountOrPasswordResultActivity extends BaseSwipeActivity {
                         public void onClick(View v) {
 
 
-                            if (forgetPas != null && StringHelper.notEmptyAndNull(forgetPas)) {
-                                Intent intent = new Intent(mContext, MyConfireOrdersActivity.class);
-                                intent.putExtra("orderId", orderId);
-                                intent.putExtra("payAmount", amount);
-                                intent.putExtra("remark", remark);
-                                intent.putExtra("orderDeliveryType", orderDeliveryType);
-                                startActivity(intent);
-                            } else {
-//                                startActivity(AccountCenterActivity.getIntent(mContext, AccountCenterActivity.class));
-                            }
+//                            if (forgetPas != null && StringHelper.notEmptyAndNull(forgetPas)) {
+//                                Intent intent = new Intent(mContext, MyConfireOrdersActivity.class);
+//                                intent.putExtra("orderId", orderId);
+//                                intent.putExtra("payAmount", amount);
+//                                intent.putExtra("remark", remark);
+//                                intent.putExtra("orderDeliveryType", orderDeliveryType);
+//                                startActivity(intent);
+//                            } else {
+////                                startActivity(AccountCenterActivity.getIntent(mContext, AccountCenterActivity.class));
+//                            }
 
 
                             finish();

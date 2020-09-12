@@ -222,7 +222,8 @@ public class CouponListsss extends BaseQuickAdapter<ItemModel,BaseViewHolder> {
                 finalTotal6 = finalTotal6.add(finalTotal5);
             }
         }
-
+//        Log.d("waaaaaaassssss...",currentTotal2+"aa");
+//        Log.d("waaaaaaassssss...",total1+"bb");
         if(BigDecimalUtils.sub(currentTotal2,total1)>0.00) {
             ToastUtil.showSuccessMsg(mActivity,"超出兑换金额");
             return;

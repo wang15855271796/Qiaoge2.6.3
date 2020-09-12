@@ -4,6 +4,8 @@ import android.content.Context;
 
 import com.puyue.www.qiaoge.constant.AppInterfaceAddress;
 import com.puyue.www.qiaoge.helper.RestHelper;
+import com.puyue.www.qiaoge.model.PayListModel;
+import com.puyue.www.qiaoge.model.cart.GetCartNumModel;
 import com.puyue.www.qiaoge.model.cart.OrderPayModel;
 
 import retrofit2.http.Field;
@@ -31,5 +33,16 @@ public class OrderPayAPI {
     public static Observable<OrderPayModel> requestData(Context context, String orderId, byte payChannel, double payAmount, String remark) {
         OrderPayService service = RestHelper.getBaseRetrofit(context).create(OrderPayService.class);
         return service.getData(orderId, payChannel, payAmount, remark);
+    }
+
+
+    private interface PayListService {
+        @GET(AppInterfaceAddress.Pay_List)
+        Observable<PayListModel> setParams();
+    }
+
+    public static Observable<PayListModel> requestsData(Context context) {
+        PayListService service = RestHelper.getBaseRetrofit(context).create(PayListService.class);
+        return service.setParams();
     }
 }

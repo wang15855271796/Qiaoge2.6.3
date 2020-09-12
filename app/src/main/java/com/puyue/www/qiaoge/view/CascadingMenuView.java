@@ -80,84 +80,130 @@ public class CascadingMenuView extends LinearLayout {
 
 		firstMenuListViewAdapter.setOnItemClickListener(new MenuItemAdapter.OnItemClickListener() {
 
-					@Override
-					public void onItemClick(View view, int position) {
-						// 选择主菜单，清空原本子菜单内容，增加新内容
-						if (mOnSelectListener != null) {
-							mOnSelectListener.getValuess(menuItem.get(position));
-						}
+			@Override
+			public void onItemClick(View view, int position) {
+				// 选择主菜单，清空原本子菜单内容，增加新内容
+				if (mOnSelectListener != null) {
+					mOnSelectListener.getValuess(menuItem.get(position));
+				}
 
-						if(menuItem.get(position).getList()!=null&&menuItem.get(position).getList().size()!=0) {
-							secondItem = menuItem.get(position).getList();
+				if(menuItem.get(position).getList()!=null&&menuItem.get(position).getList().size()!=0) {
+					secondItem = menuItem.get(position).getList();
+					secondMenuListViewAdapter = new Menu2ItemAdapter(context, secondItem, R.color.white, R.color.white);
+					secondMenuListView.setAdapter(secondMenuListViewAdapter);
+					// 通知适配器刷新
+					secondMenuListView.setVisibility(View.VISIBLE);
+					secondMenuListViewAdapter.setTextSize(15);
+					secondMenuListViewAdapter.setSelectedPositionNoNotifys(0, secondItem);
+					secondMenuListViewAdapter.notifyDataSetChanged();
+					secondMenuListViewAdapter.setOnItemClickListener(new MenuItemAdapter.OnItemClickListener() {
 
-							// 通知适配器刷新
-							secondMenuListView.setVisibility(View.VISIBLE);
-							secondMenuListViewAdapter.notifyDataSetChanged();
-							secondMenuListViewAdapter.setSelectedPositionNoNotifys(0, secondItem);
-
-							if(secondItem.get(secondPosition).getList()!=null&&secondItem.get(secondPosition).getList().size()!=0) {
-								thirdItem = secondItem.get(secondPosition).getList();
-								// 通知适配器刷新
-								thirdMenuListView.setVisibility(View.VISIBLE);
-								thirdMenuListViewAdapter.notifyDataSetChanged();
-								thirdMenuListViewAdapter.setSelectedPositionNoNotifys(0,thirdItem);
-
-							}else {
-
-								thirdMenuListView.setVisibility(View.GONE);
+						@Override
+						public void onItemClick(View view, final int position) {
+							// 选择主菜单，清空原本子菜单内容，增加新内容
+							if (mOnSelectListener != null) {
+								mOnSelectListener.getValues(secondItem.get(position));
 							}
 
-						}else {
+							if(secondItem.get(position).getList()!=null&&secondItem.get(position).getList().size()!=0) {
+								thirdItem = secondItem.get(position).getList();
+								menuItem1 = secondItem.get(position);
+								thirdMenuListViewAdapter = new Menu3ItemAdapter(context, thirdItem, R.color.white,R.color.white);
+								// 通知适配器刷新
+								thirdMenuListViewAdapter.setTextSize(15);
+								thirdMenuListViewAdapter.notifyDataSetChanged();
+								thirdMenuListViewAdapter.setSelectedPositionNoNotifys(0,thirdItem);
+								thirdMenuListView.setVisibility(View.VISIBLE);
+								thirdMenuListView.setAdapter(thirdMenuListViewAdapter);
+								thirdMenuListViewAdapter.setOnItemClickListener(new MenuItemAdapter.OnItemClickListener() {
+									@Override
+									public void onItemClick(View view, final int position) {
+										AddressBean.DataBean.ListBeanX.ListBean menuItem = thirdItem.get(position);
+										if (mOnSelectListener != null) {
+											mOnSelectListener.getValue(menuItem);
+										}
+									}
+								});
 
-							secondMenuListView.setVisibility(View.GONE);
-							thirdMenuListView.setVisibility(View.GONE);
+							}else {
+								thirdMenuListView.setVisibility(View.GONE);
+							}
 						}
-					}
-				});
+					});
+
+//							if(secondItem.get(secondPosition).getList()!=null&&secondItem.get(secondPosition).getList().size()!=0) {
+//								thirdItem = secondItem.get(secondPosition).getList();
+//								// 通知适配器刷新
+//								thirdMenuListView.setVisibility(View.VISIBLE);
+//								thirdMenuListViewAdapter.notifyDataSetChanged();
+//								thirdMenuListViewAdapter.setSelectedPositionNoNotifys(0,thirdItem);
+//
+//							}else {
+//
+//								thirdMenuListView.setVisibility(View.GONE);
+//							}
+
+				}else {
+
+					secondMenuListView.setVisibility(View.GONE);
+					thirdMenuListView.setVisibility(View.GONE);
+				}
+			}
+		});
 
 
 		// 初始化二级主菜单
-		secondItem = menuItem.get(firstPosition).getList();
-		thirdItem = secondItem.get(secondPosition).getList();
-		secondMenuListViewAdapter = new Menu2ItemAdapter(context, secondItem, R.color.white, R.color.white);
-		secondMenuListViewAdapter.setTextSize(15);
-		secondMenuListView.setAdapter(secondMenuListViewAdapter);
-		secondMenuListViewAdapter.setOnItemClickListener(new MenuItemAdapter.OnItemClickListener() {
+//		if(menuItem!=null) {
+//			secondItem = menuItem.get(firstPosition).getList();
+//			if(secondItem!=null) {
+//				thirdItem = secondItem.get(secondPosition).getList();
+//				secondMenuListViewAdapter = new Menu2ItemAdapter(context, secondItem, R.color.white, R.color.white);
+//				secondMenuListViewAdapter.setTextSize(15);
+//
+//                secondMenuListView.setAdapter(secondMenuListViewAdapter);
+//                secondMenuListViewAdapter.setOnItemClickListener(new MenuItemAdapter.OnItemClickListener() {
+//
+//                    @Override
+//                    public void onItemClick(View view, final int position) {
+//                        // 选择主菜单，清空原本子菜单内容，增加新内容
+//                        if (mOnSelectListener != null) {
+//                            mOnSelectListener.getValues(secondItem.get(position));
+//                        }
+//                        if(secondItem.get(position).getList()!=null&&secondItem.get(position).getList().size()!=0) {
+//                            thirdItem = secondItem.get(position).getList();
+//                            menuItem1 = secondItem.get(position);
+//                            // 通知适配器刷新
+//                            thirdMenuListViewAdapter.notifyDataSetChanged();
+//                            thirdMenuListViewAdapter.setSelectedPositionNoNotifys(0,thirdItem);
+//                            thirdMenuListView.setVisibility(View.VISIBLE);
+//
+//                        }else {
+//                            thirdMenuListView.setVisibility(View.GONE);
+//                        }
+//                    }
+//                });
+//                // 初始化三级主菜单
+//                thirdItem = secondItem.get(secondPosition).getList();
+//                thirdMenuListViewAdapter = new Menu3ItemAdapter(context, thirdItem, R.color.white,R.color.white);
+//                thirdMenuListViewAdapter.setTextSize(13);
+//                thirdMenuListView.setAdapter(thirdMenuListViewAdapter);
+//                thirdMenuListViewAdapter.setOnItemClickListener(new MenuItemAdapter.OnItemClickListener() {
+//                    @Override
+//                    public void onItemClick(View view, final int position) {
+//                        AddressBean.DataBean.ListBeanX.ListBean menuItem = thirdItem.get(position);
+//                        if (mOnSelectListener != null) {
+//                            mOnSelectListener.getValue(menuItem);
+//                        }
+//                    }
+//                });
+//			}
+//		}
 
-					@Override
-					public void onItemClick(View view, final int position) {
-						// 选择主菜单，清空原本子菜单内容，增加新内容
-                        if (mOnSelectListener != null) {
-                            mOnSelectListener.getValues(secondItem.get(position));
-                        }
-                        if(secondItem.get(position).getList()!=null&&secondItem.get(position).getList().size()!=0) {
-                            thirdItem = secondItem.get(position).getList();
-                            menuItem1 = secondItem.get(position);
-                            // 通知适配器刷新
-                            thirdMenuListViewAdapter.notifyDataSetChanged();
-                            thirdMenuListViewAdapter.setSelectedPositionNoNotifys(0,thirdItem);
-                            thirdMenuListView.setVisibility(View.VISIBLE);
 
-                        }else {
-                            thirdMenuListView.setVisibility(View.GONE);
-                        }
-					}
-				});
 
-		// 初始化三级主菜单
-		thirdItem = secondItem.get(secondPosition).getList();
-		thirdMenuListViewAdapter = new Menu3ItemAdapter(context, thirdItem, R.color.white,R.color.white);
-		thirdMenuListViewAdapter.setTextSize(13);
-		thirdMenuListView.setAdapter(thirdMenuListViewAdapter);
-		thirdMenuListViewAdapter.setOnItemClickListener(new MenuItemAdapter.OnItemClickListener() {
-					@Override
-					public void onItemClick(View view, final int position) {
-						AddressBean.DataBean.ListBeanX.ListBean menuItem = thirdItem.get(position);
-						if (mOnSelectListener != null) {
-							mOnSelectListener.getValue(menuItem);
-						}
-					}
-				});
+
+
+
 		// 设置默认选择
 		setDefaultSelect();
 	}

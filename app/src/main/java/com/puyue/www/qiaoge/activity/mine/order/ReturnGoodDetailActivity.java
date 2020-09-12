@@ -68,8 +68,7 @@ public class ReturnGoodDetailActivity extends BaseActivity {
     private TextView tv_amount_content;
     private TextView tv_amount_spec;
     private String returnContent;
-    private String account;
-
+    RecyclerView rv_full;
     @Override
     public boolean handleExtra(Bundle savedInstanceState) {
         return false;
@@ -82,6 +81,7 @@ public class ReturnGoodDetailActivity extends BaseActivity {
 
     @Override
     public void findViewById() {
+        rv_full = findViewById(R.id.rv_full);
         tvOrderTitle = findViewById(R.id.tvOrderTitle);
         tv_return_success = findViewById(R.id.tv_return_success);
         tvOrderContent = findViewById(R.id.tvOrderContent);
@@ -103,7 +103,8 @@ public class ReturnGoodDetailActivity extends BaseActivity {
         tv_amount_content = findViewById(R.id.tv_amount_content);
         tv_amount_spec = findViewById(R.id.tv_amount_spec);
 
-
+//        rv_full.setLayoutManager(new LinearLayoutManager(mContext));
+//        rv_full.setAdapter();
     }
 
     @Override
@@ -121,7 +122,6 @@ public class ReturnGoodDetailActivity extends BaseActivity {
     public void setViewData() {
         returnProductMainId = getIntent().getStringExtra(AppConstant.RETURNPRODUCTMAINID);
         orderDeliveryType = getIntent().getIntExtra("orderType", 0);
-        account = getIntent().getStringExtra("account");
         mProductList.clear();
         getData();
     }
@@ -131,6 +131,9 @@ public class ReturnGoodDetailActivity extends BaseActivity {
         imageViewBreak.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Intent intent = MyOrdersActivity.getIntent(mContext, MyOrdersActivity.class, AppConstant.DELIVERY);
+                intent.putExtra("orderDeliveryType",orderDeliveryType);
+                startActivity(intent);
                 finish();
             }
         });
@@ -150,12 +153,14 @@ public class ReturnGoodDetailActivity extends BaseActivity {
                     Intent intent = new Intent(mContext, NewOrderDetailActivity.class);
                     intent.putExtra(AppConstant.ORDERID, orderId);
                     intent.putExtra(AppConstant.ORDERSTATE, "11");
+                    intent.putExtra("account","0");
                    // intent.putExtra(AppConstant.RETURNPRODUCTMAINID, returnProductMainId);
                     intent.putExtra("goAccount", "goAccount");
                     startActivity(intent);
                 } else if (orderDeliveryType == 1) {
                     Intent intent = new Intent(mContext, SelfSufficiencyOrderDetailActivity.class);
                     intent.putExtra(AppConstant.ORDERID, orderId);
+                    intent.putExtra("account","0");
                     intent.putExtra(AppConstant.ORDERSTATE, "11");
                 //    intent.putExtra(AppConstant.RETURNPRODUCTMAINID, returnProductMainId);
                     intent.putExtra("goAccount", "goAccount");
@@ -316,6 +321,7 @@ public class ReturnGoodDetailActivity extends BaseActivity {
                             if (newReturnOrderModel.getData().getProducts().size() > 0) {
                                 mProductList.clear();
                                 mProductList.addAll(newReturnOrderModel.getData().getProducts());
+
                                 recycler_good.setLayoutManager(new LinearLayoutManager(mContext));
                                 returnDetailOrderAdapter = new ReturnDetailOrderAdapter(R.layout.return_order_detail_item, mProductList,returnState,orderId);
                                 recycler_good.setAdapter(returnDetailOrderAdapter);

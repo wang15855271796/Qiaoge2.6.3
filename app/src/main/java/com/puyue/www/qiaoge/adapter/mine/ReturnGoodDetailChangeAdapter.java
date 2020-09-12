@@ -101,6 +101,7 @@ public class ReturnGoodDetailChangeAdapter extends RecyclerView.Adapter<ReturnGo
             @Override
             public void delete() {
                 EasySwipeMenuLayout easySwipeMenuLayout = holder.itemView.findViewById(R.id.es);
+
                 if (isSelect[0]) {
                     easySwipeMenuLayout.handlerSwipeMenu(State.RIGHTOPEN);
                     isSelect[0] = false;

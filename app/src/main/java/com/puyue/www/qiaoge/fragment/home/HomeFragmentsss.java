@@ -52,6 +52,7 @@ import com.puyue.www.qiaoge.activity.home.ChangeCityActivity;
 import com.puyue.www.qiaoge.activity.home.ChooseAddressActivity;
 import com.puyue.www.qiaoge.activity.home.CommonGoodsDetailActivity;
 import com.puyue.www.qiaoge.activity.home.CouponDetailActivity;
+import com.puyue.www.qiaoge.activity.home.FullGiftActivity;
 import com.puyue.www.qiaoge.activity.home.HomeGoodsListActivity;
 import com.puyue.www.qiaoge.activity.home.SearchStartActivity;
 import com.puyue.www.qiaoge.activity.home.SpecialGoodDetailActivity;
@@ -69,7 +70,13 @@ import com.puyue.www.qiaoge.activity.mine.order.MyOrdersActivity;
 import com.puyue.www.qiaoge.activity.mine.wallet.MinerIntegralActivity;
 import com.puyue.www.qiaoge.activity.mine.wallet.MyWalletNewActivity;
 import com.puyue.www.qiaoge.activity.mine.wallet.MyWalletPointActivity;
+import com.puyue.www.qiaoge.adapter.CommonCouponAdapter;
+import com.puyue.www.qiaoge.adapter.CommonsAdapter;
+import com.puyue.www.qiaoge.adapter.CommonssAdapter;
+import com.puyue.www.qiaoge.adapter.CommonsssAdapter;
 import com.puyue.www.qiaoge.adapter.CouponListAdapter;
+import com.puyue.www.qiaoge.adapter.Skill2Adapter;
+import com.puyue.www.qiaoge.adapter.Skill3Adapter;
 import com.puyue.www.qiaoge.adapter.home.AutoPollAdapter;
 import com.puyue.www.qiaoge.adapter.home.CommonAdapter;
 import com.puyue.www.qiaoge.adapter.home.CommonProductActivity;
@@ -121,6 +128,7 @@ import com.puyue.www.qiaoge.event.UpDateNumEvent7;
 import com.puyue.www.qiaoge.event.UpDateNumEvent8;
 import com.puyue.www.qiaoge.event.UpDateNumEvent9;
 import com.puyue.www.qiaoge.event.UpNumEvent;
+import com.puyue.www.qiaoge.fragment.market.TestAdapter;
 import com.puyue.www.qiaoge.helper.AppHelper;
 import com.puyue.www.qiaoge.helper.PublicRequestHelper;
 import com.puyue.www.qiaoge.helper.StringHelper;
@@ -175,7 +183,6 @@ import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
-import static cn.com.chinatelecom.account.api.CtAuth.mContext;
 
 /**
  * Created by ${王涛} on 2020/1/4
@@ -214,6 +221,8 @@ public class HomeFragmentsss extends BaseFragment implements View.OnClickListene
     RadioButton rb_2;
     @BindView(R.id.rb_3)
     RadioButton rb_3;
+    @BindView(R.id.rb_4)
+    RadioButton rb_4;
     @BindView(R.id.rg_new)
     RadioGroup rg_new;
     @BindView(R.id.rb_new)
@@ -266,12 +275,16 @@ public class HomeFragmentsss extends BaseFragment implements View.OnClickListene
     TextView tv_desc;
     @BindView(R.id.tv_desc3)
     TextView tv_desc3;
+    @BindView(R.id.tv_desc4)
+    TextView tv_desc4;
     @BindView(R.id.rl_more)
     RelativeLayout rl_more;
     @BindView(R.id.rl_more2)
     RelativeLayout rl_more2;
     @BindView(R.id.rl_more3)
     RelativeLayout rl_more3;
+    @BindView(R.id.rl_more4)
+    RelativeLayout rl_more4;
     @BindView(R.id.verticalBanner)
     VerticalBannerView verticalBanner;
     @BindView(R.id.lav_activity_loading)
@@ -290,10 +303,15 @@ public class HomeFragmentsss extends BaseFragment implements View.OnClickListene
     RelativeLayout rl_coupon;
     @BindView(R.id.tv_search1)
     TextView tv_search1;
+    @BindView(R.id.tv_times)
+    TextView tv_times;
+    @BindView(R.id.tv_amount)
+    TextView tv_amount;
     CouponDialog couponDialog;
     private String cell; // 客服电话
     private PrivacyDialog privacyDialog;
     ChooseHomeDialog chooseAddressDialog;
+    CommonsssAdapter commonsssAdapter;
     //司机信息
     List<DriverInfo.DataBean> driverList = new ArrayList<>();
     //八个icon集合
@@ -334,11 +352,30 @@ public class HomeFragmentsss extends BaseFragment implements View.OnClickListene
     private String questUrl;
     private CouponModel.DataBean data1;
     private int showType;
+    private CommonCouponAdapter commonCouponAdapter;
+    private CommonsAdapter commonsAdapter;
     private CommonAdapter commonAdapter;
     private List<CouponModel.DataBean.ActivesBean> actives = new ArrayList<>();
+    private List<CouponModel.DataBean.ActivesBean> skillActive3 = new ArrayList<>();
+    private List<CouponModel.DataBean.ActivesBean> skillActive2 = new ArrayList<>();
+    private List<CouponModel.DataBean.ActivesBean> skillActive1 = new ArrayList<>();
+
+    private List<CouponModel.DataBean.ActivesBean> couponActive1 = new ArrayList<>();
+    private List<CouponModel.DataBean.ActivesBean> couponActive2 = new ArrayList<>();
+    private List<CouponModel.DataBean.ActivesBean> couponActive3 = new ArrayList<>();
+
+    private List<CouponModel.DataBean.ActivesBean> teamActive1 = new ArrayList<>();
+    private List<CouponModel.DataBean.ActivesBean> teamActive2 = new ArrayList<>();
+    private List<CouponModel.DataBean.ActivesBean> teamActive3 = new ArrayList<>();
+
+    private List<CouponModel.DataBean.ActivesBean> fullActive1 = new ArrayList<>();
+    private List<CouponModel.DataBean.ActivesBean> fullActive2 = new ArrayList<>();
+    private List<CouponModel.DataBean.ActivesBean> fullActive3 = new ArrayList<>();
+
     private int spikeNum;
     private int teamNum;
     private int specialNum;
+    private int fullGiftNum;
     private long currentTime;
     private long startTime;
     private long endTime;
@@ -352,12 +389,14 @@ public class HomeFragmentsss extends BaseFragment implements View.OnClickListene
     private List<TurnModel.DataBean> data2;
     private TurnTableDialog turnTableDialog;
     private SkillAdapter skillAdapter;
+    private Skill2Adapter skill2Adapter;
+    private Skill3Adapter skill3Adapter;
     private String deductAmountStr;
     private String offerStr;
     private String currentVersion;
     private boolean isUpdate;
     private HomeActivityDialog homeActivityDialog;
-
+    CommonssAdapter commonssAdapter;
     public static HomeFragmentsss getInstance() {
         HomeFragmentsss fragment = new HomeFragmentsss();
         Bundle bundle = new Bundle();
@@ -368,12 +407,6 @@ public class HomeFragmentsss extends BaseFragment implements View.OnClickListene
     @Override
     public int setLayoutId() {
         return R.layout.test1;
-
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
 
     }
 
@@ -441,90 +474,103 @@ public class HomeFragmentsss extends BaseFragment implements View.OnClickListene
                                     PagerSnapHelper snapHelper = new PagerSnapHelper();
                                     rl_more.setVisibility(View.VISIBLE);
                                     rl_more2.setVisibility(View.GONE);
+                                    rl_more4.setVisibility(View.GONE);
                                     rl_more3.setVisibility(View.GONE);
-                                    actives.addAll(data1.getActives());
-                                    rb_1.setVisibility(View.VISIBLE);
                                     tv_desc.setText(data1.getDesc());
-                                    currentTime = couponModel.getData().getCurrentTime();
-                                    startTime = couponModel.getData().getStartTime();
-                                    if(actives.size()==1) {
-                                        skillAdapter = new SkillAdapter(mActivity,R.layout.item_skill_lists, actives,"1", new SkillAdapter.OnClick() {
-                                            @Override
-                                            public void shoppingCartOnClick(int position) {
-                                                int activeId = actives.get(position).getActiveId();
-                                                addCar(activeId, "", 2, "1");
-                                            }
-
-                                            @Override
-                                            public void tipClick() {
-
-                                                showPhoneDialog(cell);
-                                            }
-
-                                            @Override
-                                            public void addDialog() {
-                                                initDialog();
-                                            }
-                                        });
-                                        recyclerView.setAdapter(skillAdapter);
-                                        recyclerViewTest.setVisibility(View.GONE);
-                                        recyclerView.setVisibility(View.VISIBLE);
-                                    }else if(actives.size()==2){
-                                        skillAdapter = new SkillAdapter(mActivity, R.layout.item_skill_lists, actives, "0", new SkillAdapter.OnClick() {
-                                            @Override
-                                            public void shoppingCartOnClick(int position) {
-                                                int activeId = actives.get(position).getActiveId();
-                                                addCar(activeId, "", 2, "1");
-                                            }
-
-                                            @Override
-                                            public void tipClick() {
-
-                                                showPhoneDialog(cell);
-                                            }
-
-                                            @Override
-                                            public void addDialog() {
-                                                initDialog();
-                                            }
-                                        });
-                                        recyclerViewTest.setAdapter(skillAdapter);
-                                        recyclerViewTest.setVisibility(View.VISIBLE);
-                                        recyclerView.setVisibility(View.GONE);
-                                        initRecycle();
-                                        snapHelper.attachToRecyclerView(recyclerViewTest);
-                                    }else {
-                                        skillAdapter = new SkillAdapter(mActivity, R.layout.item_skill_list, actives, "0", new SkillAdapter.OnClick() {
-                                            @Override
-                                            public void shoppingCartOnClick(int position) {
-                                                int activeId = actives.get(position).getActiveId();
-                                                addCar(activeId, "", 2, "1");
-                                            }
-
-                                            @Override
-                                            public void tipClick() {
-
-                                                showPhoneDialog(cell);
-                                            }
-
-                                            @Override
-                                            public void addDialog() {
-                                                initDialog();
-                                            }
-                                        });
-                                        recyclerView.setAdapter(skillAdapter);
-                                        recyclerViewTest.setVisibility(View.GONE);
-                                        recyclerView.setVisibility(View.VISIBLE);
-                                    }
+                                    rb_1.setVisibility(View.VISIBLE);
                                     rb_1.setTextColor(Color.parseColor("#ffffff"));
                                     rb_1.setBackgroundResource(R.drawable.shape_oranges_home);
-
                                     rb_2.setTextColor(Color.parseColor("#FF680A"));
                                     rb_2.setBackgroundResource(R.drawable.shape_white_home);
-
                                     rb_3.setTextColor(Color.parseColor("#FF680A"));
                                     rb_3.setBackgroundResource(R.drawable.shape_white_home);
-                                    skillAdapter.notifyDataSetChanged();
+                                    rb_4.setTextColor(Color.parseColor("#FF680A"));
+                                    rb_4.setBackgroundResource(R.drawable.shape_white_home);
+                                    currentTime = couponModel.getData().getCurrentTime();
+                                    startTime = couponModel.getData().getStartTime();
+                                    if(data1.getActives().size()==1) {
+                                        skillActive1.clear();
+                                        skillActive1.addAll(data1.getActives());
+                                        skillAdapter = new SkillAdapter(mActivity,R.layout.item_skill_lists, skillActive1,"1", new SkillAdapter.OnClick() {
+                                            @Override
+                                            public void shoppingCartOnClick(int position) {
+                                                int activeId = skillActive1.get(position).getActiveId();
+                                                addCar(activeId, "", 2, "1");
+                                            }
+
+                                            @Override
+                                            public void tipClick() {
+
+                                                showPhoneDialog(cell);
+                                            }
+
+                                            @Override
+                                            public void addDialog() {
+                                                initDialog();
+                                            }
+                                        });
+                                        recyclerView.setAdapter(skillAdapter);
+                                        recyclerView.setLayoutManager(new LinearLayoutManager(mActivity,LinearLayoutManager.HORIZONTAL, false));
+                                        recyclerViewTest.setVisibility(View.GONE);
+                                        recyclerView.setVisibility(View.VISIBLE);
+                                        skillAdapter.notifyDataSetChanged();
+                                    }else if(data1.getActives().size()==2){
+                                        skillActive2.clear();
+                                        skillActive2.addAll(data1.getActives());
+                                        skill2Adapter = new Skill2Adapter(mActivity, R.layout.item_skill_lists, skillActive2, "0", new Skill2Adapter.OnClick() {
+                                            @Override
+                                            public void shoppingCartOnClick(int position) {
+                                                int activeId = skillActive2.get(position).getActiveId();
+                                                addCar(activeId, "", 2, "1");
+                                            }
+
+                                            @Override
+                                            public void tipClick() {
+
+                                                showPhoneDialog(cell);
+                                            }
+
+                                            @Override
+                                            public void addDialog() {
+                                                initDialog();
+                                            }
+                                        });
+                                        recyclerViewTest.setAdapter(skill2Adapter);
+                                        recyclerView.setVisibility(View.GONE);
+                                        recyclerViewTest.setVisibility(View.VISIBLE);
+                                        skill2Adapter.notifyDataSetChanged();
+                                        snapHelper.attachToRecyclerView(recyclerViewTest);
+                                        initRecycle();
+
+                                    }else {
+                                        skillActive3.clear();
+                                        skillActive3.addAll(data1.getActives());
+                                        skill3Adapter = new Skill3Adapter(mActivity, R.layout.item_skill_list, skillActive3, "1", new Skill3Adapter.OnClick() {
+                                            @Override
+                                            public void shoppingCartOnClick(int position) {
+                                                int activeId = skillActive3.get(position).getActiveId();
+                                                addCar(activeId, "", 2, "1");
+                                            }
+
+                                            @Override
+                                            public void tipClick() {
+
+                                                showPhoneDialog(cell);
+                                            }
+
+                                            @Override
+                                            public void addDialog() {
+                                                initDialog();
+                                            }
+                                        });
+                                        recyclerView.setAdapter(skill3Adapter);
+                                        recyclerView.setLayoutManager(new MyLinearLayoutManger(mActivity,MyLinearLayoutManger.HORIZONTAL, false));
+                                        recyclerViewTest.setVisibility(View.GONE);
+                                        recyclerView.setVisibility(View.VISIBLE);
+                                        skill3Adapter.notifyDataSetChanged();
+                                    }
+
+
                                     endTime = couponModel.getData().getEndTime();
                                     String current = DateUtils.formatDate(currentTime, "MM月dd日HH时mm分ss秒");
                                     String start = DateUtils.formatDate(startTime, "MM月dd日HH时mm分ss秒");
@@ -581,83 +627,13 @@ public class HomeFragmentsss extends BaseFragment implements View.OnClickListene
                             } else if(type==11) {
                                 data1 = couponModel.getData();
                                 if(data1!=null) {
-                                    PagerSnapHelper snapHelper = new PagerSnapHelper();
                                     rb_2.setVisibility(View.VISIBLE);
                                     rl_coupon.setVisibility(View.VISIBLE);
                                     rl_more3.setVisibility(View.GONE);
+                                    rl_more4.setVisibility(View.GONE);
                                     rl_more.setVisibility(View.GONE);
-                                    actives.addAll(data1.getActives());
-                                    if(actives.size()==1) {
-                                        commonAdapter = new CommonAdapter(mActivity, 11 + "", R.layout.item_common_lists, actives, "1", new CommonAdapter.OnClick() {
-                                            @Override
-                                            public void shoppingCartOnClick(int position) {
-                                                int activeId = actives.get(position).getActiveId();
-                                                addCar(activeId, "", 11, "1");
-                                            }
-
-                                            @Override
-                                            public void tipClick() {
-                                                showPhoneDialog(cell);
-                                            }
-
-                                            @Override
-                                            public void addDialog() {
-                                                initDialog();
-                                            }
-                                        });
-
-                                        recyclerView.setLayoutManager(new LinearLayoutManager(mActivity,LinearLayoutManager.HORIZONTAL, false));
-                                        recyclerView.setAdapter(commonAdapter);
-                                        recyclerView.setVisibility(View.VISIBLE);
-                                        recyclerViewTest.setVisibility(View.GONE);
-                                    }else if(actives.size()==2){
-                                        commonAdapter = new CommonAdapter(mActivity, 11 + "", R.layout.item_common_lists, actives, "0", new CommonAdapter.OnClick() {
-                                            @Override
-                                            public void shoppingCartOnClick(int position) {
-                                                int activeId = actives.get(position).getActiveId();
-                                                addCar(activeId, "", 11, "1");
-                                            }
-
-                                            @Override
-                                            public void tipClick() {
-                                                showPhoneDialog(cell);
-                                            }
-
-                                            @Override
-                                            public void addDialog() {
-                                                initDialog();
-                                            }
-                                        });
-                                        recyclerViewTest.setAdapter(commonAdapter);
-                                        recyclerView.setVisibility(View.GONE);
-                                        recyclerViewTest.setVisibility(View.VISIBLE);
-                                        initRecycle();
-                                        snapHelper.attachToRecyclerView(recyclerViewTest);
-
-
-                                    }else {
-                                        commonAdapter = new CommonAdapter(mActivity, 11 + "", R.layout.item_commons_list, actives, "1", new CommonAdapter.OnClick() {
-                                            @Override
-                                            public void shoppingCartOnClick(int position) {
-                                                int activeId = actives.get(position).getActiveId();
-                                                addCar(activeId, "", 11, "1");
-                                            }
-
-                                            @Override
-                                            public void tipClick() {
-                                                showPhoneDialog(cell);
-                                            }
-
-                                            @Override
-                                            public void addDialog() {
-                                                initDialog();
-                                            }
-                                        });
-                                        recyclerView.setLayoutManager(new LinearLayoutManager(mActivity,LinearLayoutManager.HORIZONTAL, false));
-                                        recyclerView.setAdapter(commonAdapter);
-                                        recyclerView.setVisibility(View.VISIBLE);
-                                        recyclerViewTest.setVisibility(View.GONE);
-                                    }
+                                    rl_more2.setVisibility(View.VISIBLE);
+                                    tv_desc2.setText(data1.getDesc());
                                     rb_2.setTextColor(Color.parseColor("#ffffff"));
                                     rb_2.setBackgroundResource(R.drawable.shape_oranges_home);
 
@@ -666,10 +642,91 @@ public class HomeFragmentsss extends BaseFragment implements View.OnClickListene
 
                                     rb_3.setTextColor(Color.parseColor("#FF680A"));
                                     rb_3.setBackgroundResource(R.drawable.shape_white_home);
+                                    rb_4.setTextColor(Color.parseColor("#FF680A"));
+                                    rb_4.setBackgroundResource(R.drawable.shape_white_home);
+
+                                    if(data1.getActives().size()==1) {
+                                        couponActive1.clear();
+                                        couponActive1.addAll(data1.getActives());
+                                        commonAdapter = new CommonAdapter(mActivity, 11 + "", R.layout.item_common_lists, couponActive1, "1", new CommonAdapter.OnClick() {
+                                            @Override
+                                            public void shoppingCartOnClick(int position) {
+                                                int activeId = couponActive1.get(position).getActiveId();
+                                                addCar(activeId, "", 11, "1");
+                                            }
+
+                                            @Override
+                                            public void tipClick() {
+                                                showPhoneDialog(cell);
+                                            }
+
+                                            @Override
+                                            public void addDialog() {
+                                                initDialog();
+                                            }
+                                        });
+
+                                        recyclerView.setLayoutManager(new LinearLayoutManager(mActivity,LinearLayoutManager.HORIZONTAL, false));
+                                        recyclerView.setAdapter(commonAdapter);
+                                        recyclerView.setVisibility(View.VISIBLE);
+                                        recyclerViewTest.setVisibility(View.GONE);
+                                        commonAdapter.notifyDataSetChanged();
+                                    }else if(data1.getActives().size()==2){
+                                        couponActive2.clear();
+                                        couponActive2.addAll(data1.getActives());
+                                        commonCouponAdapter = new CommonCouponAdapter(mActivity, 11 + "", R.layout.item_common_lists, couponActive2, "0", new CommonCouponAdapter.OnClick() {
+                                            @Override
+                                            public void shoppingCartOnClick(int position) {
+                                                int activeId = couponActive2.get(position).getActiveId();
+                                                addCar(activeId, "", 11, "1");
+                                            }
+
+                                            @Override
+                                            public void tipClick() {
+                                                showPhoneDialog(cell);
+                                            }
+
+                                            @Override
+                                            public void addDialog() {
+                                                initDialog();
+                                            }
+                                        });
+                                        recyclerViewTest.setAdapter(commonCouponAdapter);
+                                        recyclerView.setVisibility(View.GONE);
+                                        recyclerViewTest.setVisibility(View.VISIBLE);
+                                        commonCouponAdapter.notifyDataSetChanged();
+                                        PagerSnapHelper snapHelper = new PagerSnapHelper();
+                                        snapHelper.attachToRecyclerView(recyclerViewTest);
+                                        initRecycle();
+
+                                    }else {
+                                        couponActive3.clear();
+                                        couponActive3.addAll(data1.getActives());
+                                        commonAdapter = new CommonAdapter(mActivity, 11 + "", R.layout.item_commons_list, couponActive3, "1", new CommonAdapter.OnClick() {
+                                            @Override
+                                            public void shoppingCartOnClick(int position) {
+                                                int activeId = couponActive3.get(position).getActiveId();
+                                                addCar(activeId, "", 11, "1");
+                                            }
+
+                                            @Override
+                                            public void tipClick() {
+                                                showPhoneDialog(cell);
+                                            }
+
+                                            @Override
+                                            public void addDialog() {
+                                                initDialog();
+                                            }
+                                        });
+                                        recyclerView.setLayoutManager(new LinearLayoutManager(mActivity,LinearLayoutManager.HORIZONTAL, false));
+                                        recyclerView.setAdapter(commonAdapter);
+                                        recyclerView.setVisibility(View.VISIBLE);
+                                        recyclerViewTest.setVisibility(View.GONE);
+                                        commonAdapter.notifyDataSetChanged();
+                                    }
 
 
-                                    rl_more2.setVisibility(View.VISIBLE);
-                                    tv_desc2.setText(data1.getDesc());
                                 }else {
                                     rb_2.setVisibility(View.GONE);
                                     rl_coupon.setVisibility(View.GONE);
@@ -679,96 +736,211 @@ public class HomeFragmentsss extends BaseFragment implements View.OnClickListene
                                 data1 = couponModel.getData();
                                 if(data1!=null) {
                                     PagerSnapHelper snapHelper = new PagerSnapHelper();
-                                    rb_3.setVisibility(View.VISIBLE);
-                                    actives.addAll(data1.getActives());
-
-                                    if(actives.size()==1) {
-                                        commonAdapter = new CommonAdapter(mActivity, 3 + "", R.layout.item_skill_lists, actives, "1", new CommonAdapter.OnClick() {
-                                            @Override
-                                            public void shoppingCartOnClick(int position) {
-                                                int activeId = actives.get(position).getActiveId();
-                                                addCar(activeId, "", 3, "1");
-                                            }
-
-                                            @Override
-                                            public void tipClick() {
-                                                showPhoneDialog(cell);
-                                            }
-
-                                            @Override
-                                            public void addDialog() {
-                                                initDialog();
-                                            }
-                                        });
-                                        recyclerView.setAdapter(commonAdapter);
-                                        recyclerView.setVisibility(View.VISIBLE);
-                                        recyclerViewTest.setVisibility(View.GONE);
-                                        recyclerView.setLayoutManager(new LinearLayoutManager(mActivity,LinearLayoutManager.HORIZONTAL, false));
-
-                                    }else if(actives.size()==2){
-
-                                        commonAdapter = new CommonAdapter(mActivity, 3 + "", R.layout.item_skill_lists, actives, "0", new CommonAdapter.OnClick() {
-                                            @Override
-                                            public void shoppingCartOnClick(int position) {
-                                                int activeId = actives.get(position).getActiveId();
-                                                addCar(activeId, "", 3, "1");
-                                            }
-
-                                            @Override
-                                            public void tipClick() {
-                                                showPhoneDialog(cell);
-                                            }
-
-                                            @Override
-                                            public void addDialog() {
-                                                initDialog();
-                                            }
-                                        });
-                                        recyclerViewTest.setAdapter(commonAdapter);
-                                        recyclerView.setVisibility(View.GONE);
-                                        recyclerViewTest.setVisibility(View.VISIBLE);
-                                        initRecycle();
-
-                                        snapHelper.attachToRecyclerView(recyclerViewTest);
-
-                                    }else {
-                                        commonAdapter = new CommonAdapter(mActivity, 3 + "", R.layout.item_commons_list, actives, "1", new CommonAdapter.OnClick() {
-                                            @Override
-                                            public void shoppingCartOnClick(int position) {
-                                                int activeId = actives.get(position).getActiveId();
-                                                addCar(activeId, "", 3, "1");
-                                            }
-
-                                            @Override
-                                            public void tipClick() {
-                                                showPhoneDialog(cell);
-                                            }
-
-                                            @Override
-                                            public void addDialog() {
-                                                initDialog();
-                                            }
-                                        });
-                                        recyclerView.setLayoutManager(new LinearLayoutManager(mActivity,LinearLayoutManager.HORIZONTAL, false));
-                                        recyclerView.setAdapter(commonAdapter);
-                                        recyclerView.setVisibility(View.VISIBLE);
-                                        recyclerViewTest.setVisibility(View.GONE);
-                                    }
-
-                                    rb_1.setTextColor(Color.parseColor("#FF680A"));
-                                    rb_1.setBackgroundResource(R.drawable.shape_white_home);
-
-                                    rb_2.setTextColor(Color.parseColor("#FF680A"));
-                                    rb_2.setBackgroundResource(R.drawable.shape_white_home);
-                                    rb_3.setTextColor(Color.parseColor("#ffffff"));
-                                    rb_3.setBackgroundResource(R.drawable.shape_oranges_home);
                                     rl_more.setVisibility(View.GONE);
                                     rl_more2.setVisibility(View.GONE);
-                                    tv_desc3.setText(data1.getDesc());
+                                    rl_more4.setVisibility(View.GONE);
                                     rl_more3.setVisibility(View.VISIBLE);
+                                    tv_desc3.setText(data1.getDesc());
+                                    rb_1.setTextColor(Color.parseColor("#FF680A"));
+                                    rb_1.setBackgroundResource(R.drawable.shape_white_home);
+                                    rb_2.setTextColor(Color.parseColor("#FF680A"));
+                                    rb_2.setBackgroundResource(R.drawable.shape_white_home);
+                                    rb_4.setTextColor(Color.parseColor("#FF680A"));
+                                    rb_4.setBackgroundResource(R.drawable.shape_white_home);
+
+                                    rb_3.setTextColor(Color.parseColor("#ffffff"));
+                                    rb_3.setBackgroundResource(R.drawable.shape_oranges_home);
+                                    rb_3.setVisibility(View.VISIBLE);
+
+                                    if(data1.getActives().size()==1) {
+                                        teamActive1.clear();
+                                        teamActive1.addAll(data1.getActives());
+                                        commonAdapter = new CommonAdapter(mActivity, 3 + "", R.layout.item_skill_lists, teamActive1, "1", new CommonAdapter.OnClick() {
+                                            @Override
+                                            public void shoppingCartOnClick(int position) {
+                                                int activeId = teamActive1.get(position).getActiveId();
+                                                addCar(activeId, "", 3, "1");
+                                            }
+
+                                            @Override
+                                            public void tipClick() {
+                                                showPhoneDialog(cell);
+                                            }
+
+                                            @Override
+                                            public void addDialog() {
+                                                initDialog();
+                                            }
+                                        });
+                                        recyclerView.setAdapter(commonAdapter);
+                                        recyclerView.setVisibility(View.VISIBLE);
+                                        recyclerViewTest.setVisibility(View.GONE);
+                                        recyclerView.setLayoutManager(new LinearLayoutManager(mActivity,LinearLayoutManager.HORIZONTAL, false));
+                                        commonAdapter.notifyDataSetChanged();
+
+                                    } else if(data1.getActives().size()==2){
+                                        teamActive2.clear();
+                                        teamActive2.addAll(data1.getActives());
+                                        TestsAdapter testAdapter = new TestsAdapter(mActivity, 3 + "", R.layout.item_skill_lists, teamActive2, "0", new TestsAdapter.OnClick() {
+                                            @Override
+                                            public void shoppingCartOnClick(int position) {
+                                                int activeId = teamActive2.get(position).getActiveId();
+                                                addCar(activeId, "", 3, "1");
+                                            }
+
+                                            @Override
+                                            public void tipClick() {
+                                                showPhoneDialog(cell);
+                                            }
+
+                                            @Override
+                                            public void addDialog() {
+                                                initDialog();
+                                            }
+                                        });
+                                        recyclerViewTest.setAdapter(testAdapter);
+                                        recyclerView.setVisibility(View.GONE);
+                                        recyclerViewTest.setVisibility(View.VISIBLE);
+                                        testAdapter.notifyDataSetChanged();
+                                        snapHelper.attachToRecyclerView(recyclerViewTest);
+                                        initRecycle();
+
+                                    }else {
+                                        teamActive3.clear();
+                                        teamActive3.addAll(data1.getActives());
+                                        commonAdapter = new CommonAdapter(mActivity, 3 + "", R.layout.item_commons_list, teamActive3, "1", new CommonAdapter.OnClick() {
+                                            @Override
+                                            public void shoppingCartOnClick(int position) {
+                                                int activeId = teamActive3.get(position).getActiveId();
+                                                addCar(activeId, "", 3, "1");
+                                            }
+
+                                            @Override
+                                            public void tipClick() {
+                                                showPhoneDialog(cell);
+                                            }
+
+                                            @Override
+                                            public void addDialog() {
+                                                initDialog();
+                                            }
+                                        });
+                                        recyclerView.setLayoutManager(new LinearLayoutManager(mActivity,LinearLayoutManager.HORIZONTAL, false));
+                                        recyclerView.setAdapter(commonAdapter);
+                                        recyclerView.setVisibility(View.VISIBLE);
+                                        recyclerViewTest.setVisibility(View.GONE);
+                                        commonAdapter.notifyDataSetChanged();
+                                    }
+
                                 }else {
                                     rb_3.setVisibility(View.GONE);
                                 }
+                            }else if(type==12) {
+                                data1 = couponModel.getData();
+                                if(data1!=null) {
+                                    rb_4.setVisibility(View.VISIBLE);
+                                    rl_more.setVisibility(View.GONE);
+                                    rl_more2.setVisibility(View.GONE);
+                                    rl_more3.setVisibility(View.GONE);
+                                    tv_desc4.setText(data1.getDesc());
+                                    rb_3.setTextColor(Color.parseColor("#FF680A"));
+                                    rb_3.setBackgroundResource(R.drawable.shape_white_home);
+                                    rb_2.setTextColor(Color.parseColor("#FF680A"));
+                                    rb_2.setBackgroundResource(R.drawable.shape_white_home);
+                                    rb_1.setTextColor(Color.parseColor("#FF680A"));
+                                    rb_1.setBackgroundResource(R.drawable.shape_white_home);
+
+                                    rb_4.setTextColor(Color.parseColor("#ffffff"));
+                                    rb_4.setBackgroundResource(R.drawable.shape_oranges_home);
+                                    rl_more4.setVisibility(View.VISIBLE);
+
+                                    if(data1.getActives().size()==1) {
+                                        fullActive1.clear();
+                                        fullActive1.addAll(data1.getActives());
+                                        commonssAdapter = new CommonssAdapter(mActivity, 12 + "", R.layout.item_full_list, fullActive1, "1", new CommonssAdapter.OnClick() {
+                                            @Override
+                                            public void shoppingCartOnClick(int position) {
+//                                                Intent intent = new Intent(mActivity,CommonGoodsDetailActivity.class);
+//                                                startActivity(intent);
+                                            }
+
+                                            @Override
+                                            public void tipClick() {
+                                                showPhoneDialog(cell);
+                                            }
+
+                                            @Override
+                                            public void addDialog() {
+                                                initDialog();
+                                            }
+                                        });
+                                        recyclerView.setAdapter(commonssAdapter);
+                                        recyclerView.setVisibility(View.VISIBLE);
+                                        recyclerViewTest.setVisibility(View.GONE);
+                                        recyclerView.setLayoutManager(new LinearLayoutManager(mActivity,LinearLayoutManager.HORIZONTAL, false));
+                                        commonssAdapter.notifyDataSetChanged();
+
+                                    } else if(data1.getActives().size()==2){
+                                        fullActive2.clear();
+                                        fullActive2.addAll(data1.getActives());
+                                        commonsAdapter = new CommonsAdapter(mActivity, 12 + "", R.layout.item_full_list, fullActive2, "0", new CommonsAdapter.OnClick() {
+                                            @Override
+                                            public void shoppingCartOnClick(int position) {
+//                                                int activeId = actives.get(position).getActiveId();
+//                                                addCar(activeId, "", 3, "1");
+                                            }
+
+                                            @Override
+                                            public void tipClick() {
+                                                showPhoneDialog(cell);
+                                            }
+
+                                            @Override
+                                            public void addDialog() {
+                                                initDialog();
+                                            }
+                                        });
+                                        recyclerViewTest.setAdapter(commonsAdapter);
+                                        recyclerView.setVisibility(View.GONE);
+                                        recyclerViewTest.setVisibility(View.VISIBLE);
+                                        commonsAdapter.notifyDataSetChanged();
+                                        PagerSnapHelper snapHelper = new PagerSnapHelper();
+                                        snapHelper.attachToRecyclerView(recyclerViewTest);
+                                        initRecycle();
+
+
+                                    }else {
+                                        fullActive3.clear();
+                                        fullActive3.addAll(data1.getActives());
+                                        commonsssAdapter = new CommonsssAdapter(getContext(), 12 + "", R.layout.item_full_lists, fullActive3, "1", new CommonsssAdapter.OnClick() {
+                                            @Override
+                                            public void shoppingCartOnClick(int position) {
+//                                                int activeId = actives.get(position).getActiveId();
+//                                                addCar(activeId, "", 3, "1");
+                                            }
+
+                                            @Override
+                                            public void tipClick() {
+                                                showPhoneDialog(cell);
+                                            }
+
+                                            @Override
+                                            public void addDialog() {
+                                                initDialog();
+                                            }
+                                        });
+                                        recyclerView.setLayoutManager(new LinearLayoutManager(mActivity,LinearLayoutManager.HORIZONTAL, false));
+                                        recyclerView.setAdapter(commonsssAdapter);
+                                        recyclerView.setVisibility(View.VISIBLE);
+                                        recyclerViewTest.setVisibility(View.GONE);
+                                        commonsssAdapter.notifyDataSetChanged();
+                                    }
+
+                                }else {
+                                    rb_4.setVisibility(View.GONE);
+                                    rl_more4.setVisibility(View.GONE);
+                                }
+
                             }
                             commonAdapter.notifyDataSetChanged();
                         }
@@ -933,9 +1105,15 @@ public class HomeFragmentsss extends BaseFragment implements View.OnClickListene
         rb_3.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                Log.d("wddddddddssss......","333");
-
                 getSpikeList(3);
+
+            }
+        });
+
+        rb_4.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                getSpikeList(12);
 
             }
         });
@@ -951,9 +1129,31 @@ public class HomeFragmentsss extends BaseFragment implements View.OnClickListene
 
                 rb_3.setTextColor(Color.parseColor("#FF680A"));
                 rb_3.setBackgroundResource(R.drawable.shape_white_home);
+
+                rb_4.setTextColor(Color.parseColor("#FF680A"));
+                rb_4.setBackgroundResource(R.drawable.shape_white_home);
                 getSpikeList(2);
             }
         });
+
+        rb_4.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                rb_1.setTextColor(Color.parseColor("#FF680A"));
+                rb_1.setBackgroundResource(R.drawable.shape_white_home);
+
+                rb_2.setTextColor(Color.parseColor("#FF680A"));
+                rb_2.setBackgroundResource(R.drawable.shape_white_home);
+
+                rb_3.setTextColor(Color.parseColor("#FF680A"));
+                rb_3.setBackgroundResource(R.drawable.shape_white_home);
+
+                rb_4.setTextColor(Color.parseColor("#ffffff"));
+                rb_4.setBackgroundResource(R.drawable.shape_oranges_home);
+                getSpikeList(12);
+            }
+        });
+
 
         rb_2.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -966,6 +1166,9 @@ public class HomeFragmentsss extends BaseFragment implements View.OnClickListene
 
                 rb_3.setTextColor(Color.parseColor("#FF680A"));
                 rb_3.setBackgroundResource(R.drawable.shape_white_home);
+
+                rb_4.setTextColor(Color.parseColor("#FF680A"));
+                rb_4.setBackgroundResource(R.drawable.shape_white_home);
                 getSpikeList(11);
             }
         });
@@ -981,10 +1184,15 @@ public class HomeFragmentsss extends BaseFragment implements View.OnClickListene
 
                 rb_3.setTextColor(Color.parseColor("#ffffff"));
                 rb_3.setBackgroundResource(R.drawable.shape_oranges_home);
+
+                rb_4.setTextColor(Color.parseColor("#FF680A"));
+                rb_4.setBackgroundResource(R.drawable.shape_white_home);
                 getSpikeList(3);
 
             }
         });
+
+
 
 
         rg_new.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
@@ -1099,6 +1307,7 @@ public class HomeFragmentsss extends BaseFragment implements View.OnClickListene
         rl_more.setOnClickListener(this);
         rl_more2.setOnClickListener(this);
         rl_more3.setOnClickListener(this);
+        rl_more4.setOnClickListener(this);
         tv_change.setOnClickListener(this);
         tv_change_address.setOnClickListener(this);
     }
@@ -1123,10 +1332,10 @@ public class HomeFragmentsss extends BaseFragment implements View.OnClickListene
                     public void onNext(IsShowModel isShowModel) {
                         if(isShowModel.isSuccess()) {
                             if(isShowModel.data!=null) {
-                                SharedPreferencesUtil.saveString(mContext,"priceType",isShowModel.getData().enjoyProduct);
+                                SharedPreferencesUtil.saveString(mActivity,"priceType",isShowModel.getData().enjoyProduct);
                             }
                         }else {
-                            AppHelper.showMsg(mContext,isShowModel.getMessage());
+                            AppHelper.showMsg(mActivity,isShowModel.getMessage());
                         }
                     }
                 });
@@ -1386,7 +1595,6 @@ public class HomeFragmentsss extends BaseFragment implements View.OnClickListene
             @Override
             public void onRefresh(@NonNull RefreshLayout refreshLayout) {
                 PageNum = 1;
-//                recyclerViewTest.stop();
                 newList.clear();
                 skillList.clear();
                 skillAdvList.clear();
@@ -1785,9 +1993,12 @@ public class HomeFragmentsss extends BaseFragment implements View.OnClickListene
                                 rv_icon.setVisibility(View.GONE);
                             }
 
+                            tv_times.setText("最快"+indexInfoModel.getData().getSendTime()+"小时送达");
+                            tv_amount.setText("满"+indexInfoModel.getData().getSendAmount()+"元免配送费");
                             spikeNum = indexInfoModel.getData().getSpikeNum();
                             teamNum = indexInfoModel.getData().getTeamNum();
                             specialNum = indexInfoModel.getData().getSpecialNum();
+                            fullGiftNum = indexInfoModel.getData().getFullGiftNum();
                             if(spikeNum!=0) {
                                 rb_1.setVisibility(View.VISIBLE);
                                 rb_1.setChecked(true);
@@ -1808,6 +2019,14 @@ public class HomeFragmentsss extends BaseFragment implements View.OnClickListene
                                     rb_2.setChecked(false);
                                     rb_2.setVisibility(View.GONE);
                                     rl_coupon.setVisibility(View.GONE);
+
+                                    if(fullGiftNum==0) {
+                                        rb_4.setVisibility(View.GONE);
+                                    }else {
+                                        rb_4.setVisibility(View.VISIBLE);
+                                        rb_4.setChecked(true);
+                                        getSpikeList(12);
+                                    }
                                 }
 
                                 if(specialNum==0) {
@@ -1821,8 +2040,6 @@ public class HomeFragmentsss extends BaseFragment implements View.OnClickListene
                                         rb_3.setVisibility(View.GONE);
                                     }
                                 }
-
-
                             }
 
                             if(teamNum==0) {
@@ -1830,6 +2047,13 @@ public class HomeFragmentsss extends BaseFragment implements View.OnClickListene
 
                             }else {
                                 rb_3.setVisibility(View.VISIBLE);
+                            }
+
+                            if(fullGiftNum==0) {
+                                rb_4.setVisibility(View.GONE);
+
+                            }else {
+                                rb_4.setVisibility(View.VISIBLE);
                             }
 
                             if(spikeNum==0) {
@@ -1847,8 +2071,7 @@ public class HomeFragmentsss extends BaseFragment implements View.OnClickListene
                                 rl_coupon.setVisibility(View.VISIBLE);
                             }
 
-
-                            if(teamNum==0&&specialNum==0&&spikeNum==0) {
+                            if(teamNum==0&&specialNum==0&&spikeNum==0&&fullGiftNum==0) {
                                 ll_active.setVisibility(View.GONE);
                             }else {
                                 ll_active.setVisibility(View.VISIBLE);
@@ -1857,7 +2080,6 @@ public class HomeFragmentsss extends BaseFragment implements View.OnClickListene
                             rvIconAdapter.notifyDataSetChanged();
                             questUrl = indexInfoModel.getData().getQuestUrl();
 
-//                            showPopWindow();
                             //----------------------------
                             tv_city.setText(data.getAddress());
                             Glide.with(mActivity).load(data.getOtherInfo()).into(iv_pic);
@@ -2171,6 +2393,11 @@ public class HomeFragmentsss extends BaseFragment implements View.OnClickListene
                 Intent teamIntent = new Intent(getActivity(), TeamDetailActivity.class);
                 startActivity(teamIntent);
                 break;
+            case R.id.rl_more4:
+                //精选折扣
+                Intent fullIntent = new Intent(getActivity(), FullGiftActivity.class);
+                startActivity(fullIntent);
+                break;
             case R.id.tv_change:
                 Intent changeCityIntent = new Intent(getActivity(), ChangeCityActivity.class);
                 startActivityForResult(changeCityIntent, 105);
@@ -2204,7 +2431,6 @@ public class HomeFragmentsss extends BaseFragment implements View.OnClickListene
             skillAdvList.clear();
             getBaseLists();
             EventBus.getDefault().post(new BackEvent());
-            Log.d("dwssssssssssss...","4444");
         }
 
         if (requestCode == 105) {

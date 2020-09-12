@@ -5,6 +5,7 @@ import android.content.Context;
 import com.puyue.www.qiaoge.api.home.GetCommentListByPageAPI;
 import com.puyue.www.qiaoge.constant.AppInterfaceAddress;
 import com.puyue.www.qiaoge.helper.RestHelper;
+import com.puyue.www.qiaoge.model.QueryProdModel;
 import com.puyue.www.qiaoge.model.home.GetCommentListByPageModel;
 import com.puyue.www.qiaoge.model.mine.coupons.UserChooseDeductModel;
 
@@ -34,6 +35,17 @@ public class userChooseDeductAPI {
                                                                 String normalProductBalanceVOStr) {
         userChooseDeductService service = RestHelper.getBaseRetrofit(context).create(userChooseDeductService.class);
         return service.getData(activityBalanceVOStr, normalProductBalanceVOStr);
+    }
+
+    private interface QueryProdsService {
+        @FormUrlEncoded
+        @POST(AppInterfaceAddress.Query_Prod)
+        Observable<QueryProdModel> getData(@Field("giftDetailNo") String giftDetailNo);
+    }
+
+    public static Observable<QueryProdModel> queryProd(Context context,String giftDetailNo) {
+        QueryProdsService service = RestHelper.getBaseRetrofit(context).create(QueryProdsService.class);
+        return service.getData(giftDetailNo);
     }
 
 }
