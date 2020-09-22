@@ -57,7 +57,6 @@ import com.puyue.www.qiaoge.activity.home.HomeGoodsListActivity;
 import com.puyue.www.qiaoge.activity.home.SearchStartActivity;
 import com.puyue.www.qiaoge.activity.home.SpecialGoodDetailActivity;
 import com.puyue.www.qiaoge.activity.home.TeamDetailActivity;
-import com.puyue.www.qiaoge.activity.home.TeamGoodsDetailActivity;
 import com.puyue.www.qiaoge.activity.home.ViewPagerAdapters;
 import com.puyue.www.qiaoge.activity.home.myViewPagerAdapter;
 import com.puyue.www.qiaoge.activity.mine.MessageCenterActivity;
@@ -65,11 +64,11 @@ import com.puyue.www.qiaoge.activity.mine.login.LoginActivity;
 import com.puyue.www.qiaoge.activity.mine.login.LogoutsEvent;
 import com.puyue.www.qiaoge.activity.mine.login.RegisterActivity;
 import com.puyue.www.qiaoge.activity.mine.login.RegisterMessageActivity;
-import com.puyue.www.qiaoge.activity.mine.order.ConfirmActivity;
+
 import com.puyue.www.qiaoge.activity.mine.order.MyOrdersActivity;
 import com.puyue.www.qiaoge.activity.mine.wallet.MinerIntegralActivity;
 import com.puyue.www.qiaoge.activity.mine.wallet.MyWalletNewActivity;
-import com.puyue.www.qiaoge.activity.mine.wallet.MyWalletPointActivity;
+
 import com.puyue.www.qiaoge.adapter.CommonCouponAdapter;
 import com.puyue.www.qiaoge.adapter.CommonsAdapter;
 import com.puyue.www.qiaoge.adapter.CommonssAdapter;

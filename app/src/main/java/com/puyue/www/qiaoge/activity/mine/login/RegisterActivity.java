@@ -75,7 +75,6 @@ public class RegisterActivity extends BaseSwipeActivity implements View.OnClickL
     private EditText mEditPhone;
     private CheckBox mCb;
     private EditText mEditCode;
-    private TextView mTvSendCode;
     private TextView mTvAgreement;
 //    private ImageView mBtnNext;
     private TextView tv_message;
@@ -148,7 +147,6 @@ public class RegisterActivity extends BaseSwipeActivity implements View.OnClickL
 //        mBtnNext = findViewById(R.id.btn_register_next);
         mTvAgreement = (TextView) findViewById(R.id.tv_register_agreement);
         mEditCode = (EditText) findViewById(R.id.edit_register_code);
-        mTvSendCode = (TextView) findViewById(R.id.tv_input_code_send);//发送验证码
         mEditPasswordOnce = (EditText) findViewById(R.id.edit_input_password_once);//输入密码
         mEditPasswordSecond = (EditText) findViewById(R.id.edit_input_password_second);//确认密码
         mEditAuthorization = (EditText) findViewById(R.id.edit_input_password_authorization);//授权码,可填

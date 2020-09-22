@@ -1,6 +1,8 @@
 package com.puyue.www.qiaoge.activity;
 
 import android.content.Intent;
+import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -132,8 +134,7 @@ public class HomeActivity extends BaseActivity implements CartFragment.FragmentI
     }
 
 
-
-    @Override
+        @Override
     public void setContentView() {
         //showSystemParameter();
         //在使用SDK各组件之前初始化context信息，传入ApplicationContext

@@ -33,7 +33,7 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chinaums.pppay.unify.UnifyPayPlugin;
 import com.chinaums.pppay.unify.UnifyPayRequest;
 import com.puyue.www.qiaoge.R;
-import com.puyue.www.qiaoge.activity.cart.ConfirmOrderActivity;
+
 import com.puyue.www.qiaoge.activity.cart.PayResultActivity;
 import com.puyue.www.qiaoge.activity.mine.account.EditPasswordInputCodeActivity;
 import com.puyue.www.qiaoge.activity.mine.order.MyConfireOrdersActivity;

@@ -15,11 +15,6 @@ import android.widget.TextView;
 
 import com.puyue.www.qiaoge.R;
 import com.puyue.www.qiaoge.activity.home.CommonGoodsDetailActivity;
-import com.puyue.www.qiaoge.activity.home.EquipmentGoodsDetailActivity;
-import com.puyue.www.qiaoge.activity.home.MasterGoodsDetailActivity;
-import com.puyue.www.qiaoge.activity.home.PlaceGoodsDetailActivity;
-import com.puyue.www.qiaoge.activity.home.SpikeGoodsDetailsActivity;
-import com.puyue.www.qiaoge.activity.home.TeamGoodsDetailActivity;
 import com.puyue.www.qiaoge.adapter.mine.MyCollectionAdapter;
 import com.puyue.www.qiaoge.api.mine.collection.DeleteCollectionAPI;
 import com.puyue.www.qiaoge.api.mine.collection.MyCollectionListAPI;

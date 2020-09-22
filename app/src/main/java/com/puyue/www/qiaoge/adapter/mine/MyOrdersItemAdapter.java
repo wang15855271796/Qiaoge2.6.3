@@ -22,7 +22,7 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.puyue.www.qiaoge.R;
 import com.puyue.www.qiaoge.activity.mine.order.NewOrderDetailActivity;
-import com.puyue.www.qiaoge.activity.mine.order.OrderDetailActivity;
+
 import com.puyue.www.qiaoge.activity.mine.order.ReturnGoodDetailActivity;
 import com.puyue.www.qiaoge.activity.mine.order.SelfSufficiencyOrderDetailActivity;
 import com.puyue.www.qiaoge.constant.AppConstant;
@@ -44,7 +44,7 @@ import static com.umeng.socialize.utils.ContextUtil.getContext;
  */
 
 public class MyOrdersItemAdapter extends BaseQuickAdapter<MyOrdersModel.DataBean.ListBean, BaseViewHolder> {
-    private MyOrderListAdapter mAdapterMyOrdersList;
+
     private int orderState;
     private ImageView commodityOne;
     private ImageView commodityTwo;

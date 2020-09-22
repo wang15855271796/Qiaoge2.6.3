@@ -159,8 +159,7 @@
 
         <activity android:name=".activity.mine.login.ShopTypeActivity"
             android:screenOrientation="portrait" ></activity>
-        <activity android:name=".fragment.home.HomeTest"
-            android:screenOrientation="portrait" ></activity>
+
         <activity android:name=".activity.mine.SubAccountActivity"
             android:screenOrientation="portrait" />
         <activity android:name=".activity.mine.SubAccountOrderActivity"
@@ -223,11 +222,8 @@
         <!--  -->
         <activity android:name=".activity.mine.account.EditAccountOrPasswordResultActivity"
             android:screenOrientation="portrait" />
-        <!-- <activity android:name=".activity.mine.wallet.MineWalletActivity" />-->
-        <activity android:name=".activity.mine.wallet.WithDrawActivity"
-            android:screenOrientation="portrait" />
-        <activity android:name=".activity.mine.wallet.RechargeActivity"
-            android:screenOrientation="portrait" />
+
+
         <activity android:name=".activity.mine.MyCollectionActivity"
             android:screenOrientation="portrait" />
         <activity android:name=".activity.mine.order.MyOrdersActivity"
@@ -236,8 +232,7 @@
             android:screenOrientation="portrait" />
         <activity android:name=".activity.home.SpikeGoodsDetailsActivity"
             android:screenOrientation="portrait" />
-        <activity android:name=".activity.mine.EquipmentReturnActivity"
-            android:screenOrientation="portrait" />
+
         <activity android:name=".activity.home.SearchReasultActivity"
             android:screenOrientation="portrait" />
         <activity
@@ -254,8 +249,7 @@
             android:screenOrientation="portrait" />
         <activity android:name=".activity.mine.account.EditAndAddActivity"
             android:screenOrientation="portrait" />
-        <activity android:name=".activity.mine.order.OrderDetailActivity"
-            android:screenOrientation="portrait" />
+
         <activity android:name=".activity.mine.order.ReturnGoodsListActivity"
             android:screenOrientation="portrait" />
         <activity android:name=".activity.mine.order.ReturnReasonActivity"
@@ -264,23 +258,13 @@
             android:screenOrientation="portrait" />
         <activity android:name=".activity.CommonH5Activity"
             android:screenOrientation="portrait" />
-        <activity android:name=".activity.home.TeamGoodsDetailActivity"
-            android:screenOrientation="portrait" />
-        <activity android:name=".activity.home.PlaceGoodsDetailActivity"
-            android:screenOrientation="portrait" />
-        <activity android:name=".activity.home.MasterGoodsDetailActivity"
-            android:screenOrientation="portrait" />
+
         <activity android:name=".activity.home.CommonGoodsDetailActivity"
             android:screenOrientation="portrait" />
         <!--满赠界面-->
         <activity android:name=".activity.home.FullGiftActivity"
             android:screenOrientation="portrait" />
-        <activity android:name=".activity.home.EquipmentGoodsDetailActivity"
-            android:screenOrientation="portrait" />
-        <activity android:name=".activity.home.ScenicListActivity"
-            android:screenOrientation="portrait" />
-        <activity android:name=".activity.cart.ConfirmOrderActivity"
-            android:screenOrientation="portrait" />
+
 
         <activity android:name=".activity.cart.CompetActivity"
             android:screenOrientation="portrait"
@@ -332,8 +316,7 @@
             android:screenOrientation="portrait" />
         <activity android:name=".activity.mine.coupons.UseOrNotUseActivity"
             android:screenOrientation="portrait" />
-        <activity android:name=".activity.mine.wallet.MyWalletActivity"
-            android:screenOrientation="portrait" />
+
         <activity android:name=".activity.mine.wallet.MyWalletDetailActivity"
             android:screenOrientation="portrait" />
         <activity android:name=".activity.mine.coupons.ChooseCouponsActivity"
@@ -383,10 +366,8 @@
             android:screenOrientation="portrait" />
         <activity android:name=".activity.BeizhuActivity"
             android:screenOrientation="portrait" />
-        <activity android:name=".activity.home.NoticeListActivity"
-            android:screenOrientation="portrait" />
-        <activity android:name=".activity.home.HomeUseActivity"
-            android:screenOrientation="portrait" />
+
+
         <activity android:name=".activity.mine.order.MyConfireOrdersActivity"
             android:screenOrientation="portrait" />
         <activity android:name=".activity.mine.wallet.MyWalletNewActivity"
@@ -405,8 +386,7 @@
             android:screenOrientation="portrait" />
         <activity android:name=".activity.home.SpecialGoodDetailActivity"
             android:screenOrientation="portrait" />
-        <activity android:name=".activity.home.SelectionGoodsActivity"
-            android:screenOrientation="portrait" />
+
         <activity android:name=".activity.mine.IntegralPayActivity"
             android:screenOrientation="portrait" />
         <activity android:name=".activity.mine.order.VipPayResultActivity"
@@ -458,10 +438,7 @@
                    android:resource="@xml/custom_filepaths" />
            </provider>-->
 
-        <activity android:name=".activity.mine.wallet.MyWalletPointActivity"
-            android:screenOrientation="portrait" ></activity>
-        <activity android:name=".activity.mine.wallet.WalletResultPointActivity"
-            android:screenOrientation="portrait" ></activity>
+
 
         <activity android:name=".activity.mine.order.ReturnGoodActivity"
             android:screenOrientation="portrait"
@@ -487,8 +464,7 @@
         <activity android:name=".activity.WebDriverActivity"
             android:screenOrientation="portrait" ></activity>
 
-        <activity android:name=".view.scrollview.NestingScrollActivity"
-            android:screenOrientation="portrait" ></activity>
+
         <!--ShopListActivity-->
         <activity android:name=".activity.mine.login.ShopListActivity"
             android:screenOrientation="portrait" />
@@ -507,12 +483,7 @@
             android:screenOrientation="portrait"
             />
 
-        <activity
-            android:name=".activity.mine.order.ConfirmActivity"
-            android:windowSoftInputMode="adjustPan"
-            android:launchMode="singleTop"
-            android:screenOrientation="portrait"
-            />
+
 
         <activity android:name=".activity.mine.order.SelfSufficiencyOrderDetailActivity"
             android:screenOrientation="portrait" ></activity>

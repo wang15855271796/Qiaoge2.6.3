@@ -227,7 +227,7 @@ public class AddSubAccountActivity extends BaseSwipeActivity implements View.OnC
     }
 
     /**
-     * 添加子账户  SubAccountAddAPI.requestAddSubAccount(mContext, phone, name, pwd, yzm, inPonit,inBalance,inGift)
+     * 添加子账户
      */
     private void requestAddSubAccount(String phone, String name, String pwd, String yzm, String inPoint, String inBalance, String inGift,String amount_limit, String amount, String notification, String warn_amount) {
         SubAccountAddAPI.requestAddSubAccount(mContext, phone, name, pwd, yzm, inPoint,inBalance,inGift,amount_limit,amount,notification,warn_amount)

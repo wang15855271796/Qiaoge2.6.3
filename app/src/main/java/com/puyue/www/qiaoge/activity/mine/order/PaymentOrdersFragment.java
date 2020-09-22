@@ -411,12 +411,7 @@ public class PaymentOrdersFragment extends BaseFragment {
         mAdapterMyOrders.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-                //跳转到订单详情页去
-               /* Intent intent = new Intent(getContext(), OrderDetailActivity.class);
-                intent.putExtra(AppConstant.ORDERID, mListResult.get(position).orderId);
-                intent.putExtra(AppConstant.ORDERSTATE, "");
-                intent.putExtra(AppConstant.RETURNPRODUCTMAINID, "");
-                startActivity(intent);*/
+
             }
         });
         mRv.setLayoutManager(new LinearLayoutManager(getContext()));

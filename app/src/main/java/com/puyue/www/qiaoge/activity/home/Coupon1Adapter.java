@@ -23,7 +23,6 @@ import com.puyue.www.qiaoge.model.home.TeamActiveQueryModel;
 import com.puyue.www.qiaoge.utils.DateUtils;
 import com.puyue.www.qiaoge.utils.Utils;
 import com.puyue.www.qiaoge.view.SnapUpCountDownTimerView;
-import com.rey.material.widget.ProgressView;
 
 import java.text.ParseException;
 import java.util.Date;

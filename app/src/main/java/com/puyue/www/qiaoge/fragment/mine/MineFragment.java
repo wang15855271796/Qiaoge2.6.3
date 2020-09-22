@@ -164,7 +164,6 @@ public class MineFragment extends BaseFragment {
     private ImageView iv_message;
 
 
-    private ViewPager mViewPager;
     private SparseArray<RecyclerView> mPageMap = new SparseArray<>();
 
     private List<MyOrderNumModel.DataBean> mListData = new ArrayList<>();
@@ -275,7 +274,6 @@ public class MineFragment extends BaseFragment {
         iv_vip_more = (view.findViewById(R.id.iv_vip_more));
         iv_message = (view.findViewById(R.id.iv_message));
 
-        mViewPager = (view.findViewById(R.id.viewpager));
         ll_deliver_order = (view.findViewById(R.id.ll_deliver_order));
         ll_self_sufficiency = (view.findViewById(R.id.ll_self_sufficiency));
 

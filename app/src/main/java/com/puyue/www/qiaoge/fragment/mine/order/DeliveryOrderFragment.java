@@ -12,7 +12,7 @@ import android.widget.TextView;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.puyue.www.qiaoge.R;
-import com.puyue.www.qiaoge.activity.mine.order.OrderDetailActivity;
+
 import com.puyue.www.qiaoge.activity.mine.order.ReturnGoodActivity;
 import com.puyue.www.qiaoge.adapter.mine.MyOrdersItemAdapter;
 import com.puyue.www.qiaoge.api.mine.order.ConfirmGetGoodsAPI;
@@ -202,12 +202,7 @@ mListResult.clear();
         mAdapterMyOrders.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-                //跳转到订单详情页去
-             /*   Intent intent = new Intent(getContext(), OrderDetailActivity.class);
-                intent.putExtra(AppConstant.ORDERID, mListResult.get(position).orderId);
-                intent.putExtra(AppConstant.ORDERSTATE, "");
-                intent.putExtra(AppConstant.RETURNPRODUCTMAINID, "");
-                startActivity(intent);*/
+
             }
         });
         mRv.setLayoutManager(new LinearLayoutManager(getContext()));

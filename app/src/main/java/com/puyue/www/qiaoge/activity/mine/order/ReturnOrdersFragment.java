@@ -202,11 +202,7 @@ public class ReturnOrdersFragment extends BaseFragment {
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
                 //跳转到订单详情页去
                 //退货列表进入详情,需要在查询订单详情的时候多一个订单状态11,其他的不需要
-             /*   Intent intent = new Intent(getContext(), OrderDetailActivity.class);
-                intent.putExtra(AppConstant.ORDERID, mListResult.get(position).orderId);
-                intent.putExtra(AppConstant.ORDERSTATE, "11");
-                intent.putExtra(AppConstant.RETURNPRODUCTMAINID, mListResult.get(position).returnProductMainId);
-                startActivity(intent);*/
+
             }
         });
         mRv.setLayoutManager(new LinearLayoutManager(getContext()));

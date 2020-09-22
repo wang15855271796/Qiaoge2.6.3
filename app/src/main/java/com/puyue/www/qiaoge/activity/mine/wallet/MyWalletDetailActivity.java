@@ -30,11 +30,9 @@ import com.emilsjolander.components.stickylistheaders.StickyListHeadersListView;
 import com.puyue.www.qiaoge.R;
 import com.puyue.www.qiaoge.activity.view.NormalDecoration;
 import com.puyue.www.qiaoge.adapter.mine.AccountSelectAdapter;
-import com.puyue.www.qiaoge.adapter.mine.BillAdapter;
-import com.puyue.www.qiaoge.adapter.mine.MyWalletDetailAdapter;
+
 import com.puyue.www.qiaoge.adapter.mine.SearchAccountAdapter;
 import com.puyue.www.qiaoge.adapter.mine.StickyListAdapter;
-import com.puyue.www.qiaoge.adapter.mine.WalletAdapter;
 import com.puyue.www.qiaoge.api.home.GetSumPriceAPI;
 import com.puyue.www.qiaoge.api.mine.GetWallertRecordByPageAPI;
 import com.puyue.www.qiaoge.api.mine.subaccount.SearchAccountAPI;
@@ -86,7 +84,7 @@ public class MyWalletDetailActivity extends BaseSwipeActivity {
     private LinearLayout data; // 没有数据的界面
     private TextView textScreen;// 筛选
     private int pageNum = 1;
-    private MyWalletDetailAdapter adapter;
+
     private List<GetWallertRecordByPageModel.DataBean.RecordsBean> mListData;
     private LoadingDailog dialog;
     StickyListHeadersListView lv;
@@ -632,7 +630,7 @@ public class MyWalletDetailActivity extends BaseSwipeActivity {
     }
 
     private void setRecyclerView() {
-//        adapter = new MyWalletDetailAdapter(R.layout.item_my_wallet_detail, mListData);
+
         recyclerView.setLayoutManager(new LinearLayoutManager(mContext));
 //        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
 //            @Override

@@ -32,7 +32,7 @@ import com.puyue.www.qiaoge.activity.flow.TagAdapter;
 import com.puyue.www.qiaoge.activity.flow.TagFlowLayout;
 import com.puyue.www.qiaoge.adapter.HotKeyAdapter;
 import com.puyue.www.qiaoge.adapter.cart.RecommendAdapter;
-import com.puyue.www.qiaoge.adapter.home.SearchHistoryAdapter;
+
 import com.puyue.www.qiaoge.api.cart.RecommendApI;
 import com.puyue.www.qiaoge.api.home.CancleAPI;
 import com.puyue.www.qiaoge.base.BaseSwipeActivity;

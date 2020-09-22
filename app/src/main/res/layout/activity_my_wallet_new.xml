@@ -147,24 +147,6 @@
         android:visibility="gone">
 
 
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:src="@mipmap/ic_my_commission"
-            android:visibility="gone" />
-
-
-        <TextView
-            android:layout_width="@dimen/size_60dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/size_10dp"
-            android:drawableTop="@mipmap/ic_my_commission"
-            android:gravity="center"
-            android:text="@string/myCommission"
-            android:textColor="@color/color_252525"
-            android:textSize="@dimen/size_11dp" />
-
 
         <TextView
             android:id="@+id/myCommissionPrice"

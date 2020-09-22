@@ -39,6 +39,7 @@ public abstract class BaseFragment extends Fragment {
 
     }
 
+
     /**
      * The onCreate method is called when the Fragment instance is being created, or re-created.
      * onCreate for any data initializatio

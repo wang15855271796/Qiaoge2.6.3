@@ -1,11 +1,8 @@
 package com.puyue.www.qiaoge.activity.home;
 
 import android.app.AlertDialog;
-import android.os.Bundle;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
@@ -13,7 +10,6 @@ import com.puyue.www.qiaoge.R;
 import com.puyue.www.qiaoge.api.home.TeamActiveQueryAPI;
 import com.puyue.www.qiaoge.base.BaseFragment;
 import com.puyue.www.qiaoge.event.OnHttpCallBack;
-import com.puyue.www.qiaoge.fragment.home.TeamAdapter;
 import com.puyue.www.qiaoge.helper.AppHelper;
 import com.puyue.www.qiaoge.helper.PublicRequestHelper;
 import com.puyue.www.qiaoge.model.home.GetCustomerPhoneModel;

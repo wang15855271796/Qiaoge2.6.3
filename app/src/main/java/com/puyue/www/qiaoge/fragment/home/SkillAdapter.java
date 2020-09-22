@@ -148,7 +148,7 @@ public class SkillAdapter extends RecyclerView.Adapter<SkillAdapter.BaseViewHold
                 if(onClick!=null) {
                     if(StringHelper.notEmptyAndNull(UserInfoHelper.getUserId(mContext))) {
                         if(SharedPreferencesUtil.getString(mContext,"priceType").equals("1")) {
-                            onClick.shoppingCartOnClick(pos);
+                            onClick.shoppingCartOnClick(position);
                         }else {
                             onClick.tipClick();
                         }

@@ -28,7 +28,7 @@ import java.util.List;
  * Created by ${王涛} on 2020/8/6  （子账户订单列表）
  */
 public class MySubOrdersItemAdapter extends BaseQuickAdapter<MyOrdersModel.DataBean.ListBean, BaseViewHolder> {
-    private MyOrderListAdapter mAdapterMyOrdersList;
+
     private int orderState;
     private ImageView commodityOne;
     private ImageView commodityTwo;

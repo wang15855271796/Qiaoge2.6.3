@@ -3,7 +3,6 @@ package com.puyue.www.qiaoge.model.mine.address;
 import android.util.Log;
 
 import com.chad.library.adapter.base.entity.MultiItemEntity;
-import com.puyue.www.qiaoge.adapter.ChooseAddressAdapter;
 import com.puyue.www.qiaoge.base.BaseModel;
 
 import java.util.List;
@@ -179,18 +178,6 @@ public class AddressModel extends BaseModel {
                     '}';
         }
 
-//        @Override
-//        public int getItemType() {
-//            if(sendType==1) {
-//                //可配送
-//                return ChooseAddressAdapter.CONTENT;
-//            }else if(sendType==0){
-//                //不可配送
-//                return ChooseAddressAdapter.HEAD;
-//            }else {
-//                return -1;
-//            }
-//
-//        }
+
     }
 }

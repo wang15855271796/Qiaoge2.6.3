@@ -22,7 +22,7 @@ import com.puyue.www.qiaoge.R;
 import com.puyue.www.qiaoge.activity.mine.account.EditPasswordInputCodeActivity;
 import com.puyue.www.qiaoge.activity.mine.order.MyOrdersActivity;
 import com.puyue.www.qiaoge.activity.mine.order.NewOrderDetailActivity;
-import com.puyue.www.qiaoge.activity.mine.order.OrderDetailActivity;
+
 import com.puyue.www.qiaoge.activity.mine.order.SelfSufficiencyOrderDetailActivity;
 import com.puyue.www.qiaoge.api.cart.CheckPayPwdAPI;
 import com.puyue.www.qiaoge.api.cart.GetPayResultAPI;

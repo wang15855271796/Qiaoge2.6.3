@@ -19,8 +19,8 @@ import com.flyco.tablayout.SlidingTabLayout;
 import com.puyue.www.qiaoge.R;
 import com.puyue.www.qiaoge.activity.CartActivity;
 import com.puyue.www.qiaoge.activity.mine.login.LoginActivity;
-import com.puyue.www.qiaoge.adapter.home.SpecialGoodAdapter;
-import com.puyue.www.qiaoge.adapter.home.TeamActiveQueryAdapter;
+
+
 import com.puyue.www.qiaoge.api.cart.AddCartAPI;
 import com.puyue.www.qiaoge.api.cart.GetCartNumAPI;
 import com.puyue.www.qiaoge.api.home.GetMoreSpecialAPI;

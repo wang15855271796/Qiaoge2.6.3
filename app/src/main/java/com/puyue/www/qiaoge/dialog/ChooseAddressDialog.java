@@ -27,7 +27,7 @@ import com.puyue.www.qiaoge.activity.mine.account.AddressListActivity;
 import com.puyue.www.qiaoge.activity.mine.account.AddressListsActivity;
 import com.puyue.www.qiaoge.activity.mine.account.EditAddressActivity;
 import com.puyue.www.qiaoge.activity.mine.account.EditAndAddActivity;
-import com.puyue.www.qiaoge.adapter.ChooseAddressAdapter;
+
 import com.puyue.www.qiaoge.adapter.ChooseAddresssAdapter;
 import com.puyue.www.qiaoge.adapter.ChooseAddressssAdapter;
 import com.puyue.www.qiaoge.api.home.IndexHomeAPI;

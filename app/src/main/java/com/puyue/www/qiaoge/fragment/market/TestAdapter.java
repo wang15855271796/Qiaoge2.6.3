@@ -19,7 +19,7 @@ import com.puyue.www.qiaoge.R;
 import com.puyue.www.qiaoge.activity.home.CommonGoodsDetailActivity;
 import com.puyue.www.qiaoge.activity.home.SpecialGoodDetailActivity;
 import com.puyue.www.qiaoge.activity.home.SpikeGoodsDetailsActivity;
-import com.puyue.www.qiaoge.activity.home.TeamGoodsDetailActivity;
+
 import com.puyue.www.qiaoge.adapter.FullGiftAdapter;
 import com.puyue.www.qiaoge.adapter.GivensAdapter;
 import com.puyue.www.qiaoge.adapter.cart.CartAdapter;

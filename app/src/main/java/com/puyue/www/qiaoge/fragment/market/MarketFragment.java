@@ -39,7 +39,7 @@ package com.puyue.www.qiaoge.fragment.market;//package com.puyue.www.qiaoge.frag
 //import com.puyue.www.qiaoge.activity.home.SearchStartActivity;
 //import com.puyue.www.qiaoge.activity.mine.MessageCenterActivity;
 //import com.puyue.www.qiaoge.activity.mine.login.LoginActivity;
-//import com.puyue.www.qiaoge.activity.mine.wallet.MyWalletActivity;
+
 //import com.puyue.www.qiaoge.adapter.home.CommonProductAdapter;
 //import com.puyue.www.qiaoge.adapter.home.RegisterShopAdapterTwo;
 //import com.puyue.www.qiaoge.adapter.market.MarketGoodBrandAdapter;
@@ -833,7 +833,7 @@ package com.puyue.www.qiaoge.fragment.market;//package com.puyue.www.qiaoge.frag
 //                startActivity(intent);
 //
 //            } else if (toPage.equals("wallet")) {
-//                Intent intent = new Intent(mActivity, MyWalletActivity.class);
+
 //                startActivity(intent);
 //            } else if (toPage.equals("notice")) {
 ////跳转到信息中心

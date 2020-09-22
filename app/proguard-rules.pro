@@ -149,8 +149,8 @@
 -keep class com.sdk.** { *;}
 -keep class cn.com.chinatelecom.account.api.**{*;}
 
--dontwarn com.netease.** 
--keep class com.netease.** {*;}
+#-dontwarn com.netease.** 
+#-keep class com.netease.** {*;}
 
 -dontwarn com.qiyukf.**
 -keep class com.qiyukf.** {*;}
