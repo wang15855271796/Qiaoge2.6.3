@@ -29,20 +29,84 @@
 
             <include layout="@layout/activity_confirm_order_head_three" />
 
+            <TextView
+                android:visibility="gone"
+                android:text="自营商品"
+                android:textColor="#343434"
+                android:textStyle="bold"
+                android:layout_marginTop="@dimen/size_15dp"
+                android:layout_marginLeft="@dimen/size_8dp"
+                android:layout_centerVertical="true"
+                android:textSize="@dimen/sp_14"
+                android:id="@+id/tv_operate_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/recyclerView"
-                android:layout_marginRight="@dimen/size_8dp"
-                android:layout_marginLeft="@dimen/size_8dp"
+                android:layout_margin="@dimen/size_8dp"
                 android:background="@drawable/shape_white1"
-                android:layout_marginTop="@dimen/size_10dp"
                 android:layout_width="match_parent"
-                android:layout_marginBottom="@dimen/size_8dp"
                 android:layout_height="wrap_content">
 
             </android.support.v7.widget.RecyclerView>
 
+            <RelativeLayout
+                android:id="@+id/rl_unOperate"
+                android:visibility="gone"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/size_30dp">
+
+                <TextView
+
+                    android:text="非自营商品"
+                    android:textColor="#343434"
+                    android:textStyle="bold"
+                    android:layout_marginTop="@dimen/size_10dp"
+                    android:layout_marginLeft="@dimen/size_8dp"
+                    android:layout_centerVertical="true"
+                    android:textSize="@dimen/sp_14"
+                    android:id="@+id/tv_unOperate_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+                <TextView
+                    android:text="暂不支持自提"
+                    android:textColor="#F56E24"
+                    android:layout_marginLeft="@dimen/dp_10"
+                    android:layout_centerVertical="true"
+                    android:layout_toRightOf="@+id/tv_unOperate_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+            </RelativeLayout>
+
+
+            <!--<RelativeLayout-->
+                <!--android:background="@drawable/shape_white2"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:alpha="0.5"-->
+                <!--android:layout_marginRight="@dimen/size_8dp"-->
+                <!--android:layout_marginLeft="@dimen/size_8dp"-->
+                <!--android:layout_height="wrap_content">-->
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/recyclerView_un"
+                    android:alpha="0.5"
+                    android:layout_marginRight="@dimen/size_8dp"
+                    android:layout_marginLeft="@dimen/size_8dp"
+                    android:background="@drawable/shape_white2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                </android.support.v7.widget.RecyclerView>
+
+            <!--</RelativeLayout>-->
+
+
             <LinearLayout
-                android:layout_marginTop="@dimen/dp_10"
+                android:layout_marginTop="10dp"
+                android:layout_marginLeft="@dimen/size_8dp"
+                android:layout_marginRight="@dimen/size_8dp"
                 android:background="@drawable/shape_white1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -60,7 +124,6 @@
                         android:text="商品数量"
                         android:textColor="@color/app_black"
                         android:textSize="@dimen/size_12dp" />
-
 
                     <TextView
                         tools:text="20"
@@ -209,6 +272,8 @@
 
             <LinearLayout
                 android:layout_marginTop="@dimen/dp_10"
+                android:layout_marginLeft="@dimen/size_8dp"
+                android:layout_marginRight="@dimen/size_8dp"
                 android:background="@drawable/shape_white1"
                 android:id="@+id/linearLayoutCoupons"
                 android:gravity="center_vertical"
@@ -239,6 +304,8 @@
             <!--备注-->
             <RelativeLayout
                 android:id="@+id/ll_beizhu"
+                android:layout_marginLeft="@dimen/size_8dp"
+                android:layout_marginRight="@dimen/size_8dp"
                 android:layout_marginTop="@dimen/dp_10"
                 android:background="@drawable/shape_white1"
                 android:layout_width="match_parent"

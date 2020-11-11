@@ -131,6 +131,7 @@
 
 
                 <RelativeLayout
+                    android:id="@+id/rl1"
                     android:layout_toRightOf="@+id/rl"
                     android:layout_below="@+id/ll_price"
                     android:layout_toLeftOf="@+id/iv_close"
@@ -142,7 +143,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         tools:text="销量：300"
-                        android:layout_marginTop="3dp"
+                        android:layout_marginTop="6dp"
                         android:layout_marginLeft="@dimen/size_12dp"
                         android:layout_toLeftOf="@+id/iv_close"
                         android:textColor="#666"
@@ -150,7 +151,6 @@
 
                     <RelativeLayout
                         android:id="@+id/rl_spec"
-                        android:visibility="gone"
                         android:layout_alignParentRight="true"
                         android:layout_marginRight="@dimen/size_10dp"
                         android:background="@drawable/shape_orange_radius_11"
@@ -190,7 +190,38 @@
                     </RelativeLayout>
                 </RelativeLayout>
 
+                <!--次日达 隔日送图标-->
 
+                <ImageView
+                    android:id="@+id/iv_next"
+                    android:layout_marginTop="@dimen/size_3dp"
+                    android:layout_toRightOf="@+id/rl"
+                    android:layout_marginLeft="@dimen/sp_12"
+                    android:layout_below="@+id/rl1"
+                    tools:src="@mipmap/icon_next"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+                <ImageView
+                    android:id="@+id/iv_operate"
+                    android:layout_marginTop="@dimen/size_3dp"
+                    android:layout_toRightOf="@+id/iv_next"
+                    android:layout_marginLeft="@dimen/sp_12"
+                    android:layout_below="@+id/rl1"
+                    tools:src="@mipmap/icon_operate"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+                <ImageView
+                    android:visibility="gone"
+                    android:id="@+id/iv_after_next"
+                    android:layout_marginTop="@dimen/size_3dp"
+                    android:layout_toRightOf="@+id/rl"
+                    android:layout_marginLeft="@dimen/sp_12"
+                    android:layout_below="@+id/rl1"
+                    android:src="@mipmap/icon_after_next"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
             </RelativeLayout>
 
             <View

@@ -17,16 +17,7 @@ import rx.Observable;
  */
 
 public class CartListAPI {
-    public interface CartListService {
-        @FormUrlEncoded
-        @POST(AppInterfaceAddress.GET_CART_LIST)
-        Observable<CartListModel> setParams(@Field("pageNum") int pageNum, @Field("pageSize") int pageSize);
-    }
 
-    public static Observable<CartListModel> requestCartList(Context context, int pageNum, int pageSize) {
-        Observable<CartListModel> cartListModelObservable = RestHelper.getBaseRetrofit(context).create(CartListService.class).setParams(pageNum, pageSize);
-        return cartListModelObservable;
-    }
 
 //    public interface CartListService {
 //        @POST(AppInterfaceAddress.GET_CART_LIST)

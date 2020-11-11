@@ -16,6 +16,7 @@ import com.puyue.www.qiaoge.base.BaseFragment;
 import com.puyue.www.qiaoge.helper.AppHelper;
 import com.puyue.www.qiaoge.helper.StringHelper;
 import com.puyue.www.qiaoge.helper.UserInfoHelper;
+import com.puyue.www.qiaoge.model.OrdersModel;
 import com.puyue.www.qiaoge.model.mine.order.CopyToCartModel;
 import com.puyue.www.qiaoge.model.mine.order.MyOrdersModel;
 
@@ -41,8 +42,8 @@ public class ReturnOrdersFragment extends BaseFragment {
     private String mType;
     private int pageNum = 1;
     private ImageView mIvNoData;
-    private MyOrdersModel mModelMyOrders;
-    private List<MyOrdersModel.DataBean.ListBean> mListResult = new ArrayList<>();
+    private OrdersModel mModelMyOrders;
+    private List<OrdersModel.DataBean.ListBean> mListResult = new ArrayList<>();
     private CopyToCartModel mModelCopyToCart;
     String subId;
     private int orderDeliveryType;
@@ -105,13 +106,13 @@ public class ReturnOrdersFragment extends BaseFragment {
 
 
                 @Override
-                public void evaluateNowOnclick(int position) {
+                public void evaluateNowOnclick(int position,String orderId) {
 
                 }
 
                 @Override
                 public void againBayOnclick(int position) {
-                    MyOrdersModel.DataBean.ListBean listBean = mListResult.get(position);
+                    OrdersModel.DataBean.ListBean listBean = mListResult.get(position);
                     requestCopyToCart(listBean.orderId);
                 }
 
@@ -152,13 +153,13 @@ public class ReturnOrdersFragment extends BaseFragment {
 
 
                 @Override
-                public void evaluateNowOnclick(int position) {
+                public void evaluateNowOnclick(int position,String orderId) {
 
                 }
 
                 @Override
                 public void againBayOnclick(int position) {
-                    MyOrdersModel.DataBean.ListBean listBean = mListResult.get(position);
+                    OrdersModel.DataBean.ListBean listBean = mListResult.get(position);
                     requestCopyToCart(listBean.orderId);
                 }
 
@@ -237,7 +238,7 @@ public class ReturnOrdersFragment extends BaseFragment {
         MyOrderListAPI.getList(getContext(), orderStatus, pageNum, 20, orderDeliveryType,subId)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<MyOrdersModel>() {
+                .subscribe(new Subscriber<OrdersModel>() {
                     @Override
                     public void onCompleted() {
 
@@ -249,10 +250,10 @@ public class ReturnOrdersFragment extends BaseFragment {
                     }
 
                     @Override
-                    public void onNext(MyOrdersModel myOrdersModel) {
+                    public void onNext(OrdersModel myOrdersModel) {
                         logoutAndToHome(getContext(), myOrdersModel.code);
                         mPtr.refreshComplete();
-                        mModelMyOrders = myOrdersModel;
+//                        mModelMyOrders = myOrdersModel;
                         if (mModelMyOrders.success) {
                             updateOrderList();
                         } else {

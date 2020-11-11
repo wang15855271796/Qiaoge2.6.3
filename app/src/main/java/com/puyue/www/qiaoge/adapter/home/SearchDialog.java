@@ -78,6 +78,10 @@ public class SearchDialog extends Dialog implements View.OnClickListener {
     TextView tv_free_desc;
     @BindView(R.id.iv_cart)
     ImageView iv_cart;
+    @BindView(R.id.iv_pic)
+    ImageView iv_pic;
+    @BindView(R.id.iv_operate)
+    ImageView iv_operate;
     SearchResultsModel.DataBean.SearchProdBean.ListBean listBean;
     int pos = 0;
     private SearchSpecsAdapter searchSpecAdapter;
@@ -176,6 +180,8 @@ public class SearchDialog extends Dialog implements View.OnClickListener {
                                 tv_desc.setText(exchangeProductModel.getData().getSpecialOffer());
                                 tv_stock.setText(exchangeProductModel.getData().getInventory());
                                 Glide.with(context).load(exchangeProductModel.getData().getDefaultPic()).into(iv_head);
+                                Glide.with(context).load(exchangeProductModel.getData().getSendTimeTpl()).into(iv_pic);
+                                Glide.with(context).load(exchangeProductModel.getData().getSelfProd()).into(iv_operate);
                             }
                         }else {
                             ToastUtil.showSuccessMsg(context,exchangeProductModel.getMessage());

@@ -11,7 +11,9 @@ import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -22,7 +24,12 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.puyue.www.qiaoge.R;
+import com.puyue.www.qiaoge.activity.flow.FlowLayout;
+import com.puyue.www.qiaoge.activity.flow.TagAdapter;
+import com.puyue.www.qiaoge.activity.flow.TagFlowLayout;
+import com.puyue.www.qiaoge.activity.home.SearchReasultActivity;
 import com.puyue.www.qiaoge.activity.mine.order.ConfirmNewOrderActivity;
 import com.puyue.www.qiaoge.adapter.cart.CartUnableAdapter;
 import com.puyue.www.qiaoge.api.cart.CartBalanceAPI;
@@ -33,6 +40,7 @@ import com.puyue.www.qiaoge.api.home.IndexHomeAPI;
 import com.puyue.www.qiaoge.api.mine.order.CartGetReductDescAPI;
 import com.puyue.www.qiaoge.base.BaseModel;
 import com.puyue.www.qiaoge.base.BaseSwipeActivity;
+import com.puyue.www.qiaoge.constant.AppConstant;
 import com.puyue.www.qiaoge.event.AddressEvent;
 import com.puyue.www.qiaoge.event.BackEvent;
 import com.puyue.www.qiaoge.event.GoToMarketEvent;
@@ -44,6 +52,7 @@ import com.puyue.www.qiaoge.fragment.cart.ReduceNumEvent;
 import com.puyue.www.qiaoge.fragment.cart.UpdateEvent;
 import com.puyue.www.qiaoge.fragment.home.CityEvent;
 import com.puyue.www.qiaoge.fragment.home.MustAdapter;
+import com.puyue.www.qiaoge.fragment.market.Test2Adapter;
 import com.puyue.www.qiaoge.fragment.market.TestAdapter;
 import com.puyue.www.qiaoge.helper.AlwaysMarqueeTextViewHelper;
 import com.puyue.www.qiaoge.helper.AppHelper;
@@ -56,11 +65,13 @@ import com.puyue.www.qiaoge.model.cart.CartActivityGoodsModel;
 import com.puyue.www.qiaoge.model.cart.CartBalanceModel;
 import com.puyue.www.qiaoge.model.cart.CartCommonGoodsModel;
 import com.puyue.www.qiaoge.model.cart.CartsListModel;
+import com.puyue.www.qiaoge.model.cart.GetCartNumModel;
 import com.puyue.www.qiaoge.model.home.GetCustomerPhoneModel;
 import com.puyue.www.qiaoge.model.home.MustModel;
 import com.puyue.www.qiaoge.model.mine.order.CartGetReductModel;
 import com.puyue.www.qiaoge.utils.ToastUtil;
 import com.puyue.www.qiaoge.view.Arith;
+import com.puyue.www.qiaoge.view.SlideRecyclerView;
 import com.wang.avi.AVLoadingIndicatorView;
 
 import org.greenrobot.eventbus.EventBus;
@@ -82,7 +93,7 @@ import rx.schedulers.Schedulers;
  * Created by Administrator on 2018/7/9.
  */
 
-public class CartActivity extends BaseSwipeActivity implements View.OnClickListener,TestAdapter.IProductSelectCallback{
+public class CartActivity extends BaseSwipeActivity implements View.OnClickListener,TestAdapter.IProductSelectCallback,Test2Adapter.IProductSelectCallback{
 
     public Unbinder binder;
     @BindView(R.id.tv_delete)
@@ -93,8 +104,12 @@ public class CartActivity extends BaseSwipeActivity implements View.OnClickListe
     Button btn_sure;
     @BindView(R.id.cb_select_all)
     CheckBox cb_select_all;
-    @BindView(R.id.rv_cart)
-    RecyclerView mRv;
+    @BindView(R.id.rv_cart_operate)
+    SlideRecyclerView mRv;
+    @BindView(R.id.rv_cart_unOperate)
+    SlideRecyclerView rv_cart_unOperate;
+    @BindView(R.id.lav_activity_loading)
+    AVLoadingIndicatorView lav_activity_loading;
     @BindView(R.id.ll_select_all)
     LinearLayout ll_select_all;
     @BindView(R.id.linearLayoutButton)
@@ -112,7 +127,9 @@ public class CartActivity extends BaseSwipeActivity implements View.OnClickListe
     @BindView(R.id.tv_price_desc)
     TextView tv_price_desc;
     @BindView(R.id.rv_unable)
-    RecyclerView rv_unable;
+    TagFlowLayout rv_unable;
+    @BindView(R.id.tv_arrow)
+    TextView tv_arrow;
     boolean mSelect;
     @BindView(R.id.ll_NoData)
     LinearLayout ll_NoData;
@@ -122,30 +139,44 @@ public class CartActivity extends BaseSwipeActivity implements View.OnClickListe
     ImageView imageGoBay;
     @BindView(R.id.ll)
     LinearLayout ll;
+    @BindView(R.id.cb_select_operate)
+    CheckBox cb_select_operate;
+    @BindView(R.id.cb_select_unOperate)
+    CheckBox cb_select_unOperate;
     @BindView(R.id.fl)
     FrameLayout fl;
     @BindView(R.id.iv_back)
     ImageView iv_back;
     @BindView(R.id.rv_recommend)
     RecyclerView rv_recommend;
-    @BindView(R.id.lav_activity_loading)
-    AVLoadingIndicatorView lav_activity_loading;
     @BindView(R.id.tv)
     ImageView tv;
-    String cell;
-    String enjoyProduct;
+    @BindView(R.id.ll_operate)
+    LinearLayout ll_operate;
+    @BindView(R.id.ll_unOperate)
+    LinearLayout ll_unOperate;
+    @BindView(R.id.tv_time_operate)
+    TextView tv_time_operate;
+    @BindView(R.id.tv_time_unOperate)
+    TextView tv_time_unOperate;
+    ImageView iv_head;
+    TextView tv_title;
+    TextView tv_search;
     //失效商品的cartId
     List<Integer> unCartsId = new ArrayList<>();
+    List<Integer> CartsIds = new ArrayList<>();
     //点击删除时的cartId存储集合
     List<Integer> cartsId = new ArrayList<>();
     private CartFragment.FragmentInteraction listterner;
     private CartFragment.GoToMarket mlisenter;
     private TestAdapter testAdapter;
+    private Test2Adapter test2Adapter;
     List<CartsListModel.DataBean.ValidListBean> data;
-    private CollapsingToolbarLayoutStateHelper state;
-
+    MustAdapter mustAdapter;
     //可用列表
     private List<CartsListModel.DataBean.ValidListBean> mListCart = new ArrayList<>();
+    private List<CartsListModel.DataBean.ValidListBean> mListUnOperate = new ArrayList<>();
+    private List<CartsListModel.DataBean.ValidListBean> mListOperate = new ArrayList<>();
     private List<CartsListModel.DataBean.InValidListBean> unList = new ArrayList<>();
     //这里创建新的model,存储选中的item的数据来
     CartCommonGoodsModel mModelCartCommonGoods = new CartCommonGoodsModel();
@@ -157,7 +188,14 @@ public class CartActivity extends BaseSwipeActivity implements View.OnClickListe
     private String activityBalanceVOStr = "";
     private String cartListStr;
     private double discribe;
+    private String cell; // 客服电话
 
+    public static CartFragment getInstance() {
+        CartFragment fragment = new CartFragment();
+        Bundle bundle = new Bundle();
+        fragment.setArguments(bundle);
+        return fragment;
+    }
 
     /**
      * 获取滚动数据
@@ -196,30 +234,48 @@ public class CartActivity extends BaseSwipeActivity implements View.OnClickListe
 
 
 
+
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
 
+            case R.id.iv_back:
+                finish();
+                break;
+
+            case R.id.cb_select_operate:
+
+                if(cb_select_operate.isChecked()) {
+                    cb_select_operate.setChecked(true);
+                    testAdapter.setOperateSelect(true,mListOperate);
+                }else {
+                    cb_select_operate.setChecked(false);
+                    testAdapter.setOperateSelect(false,mListOperate);
+                }
+
+                break;
+
+            case R.id.cb_select_unOperate:
+                if(cb_select_unOperate.isChecked()) {
+                    cb_select_unOperate.setChecked(true);
+                    test2Adapter.setUnOperateSelect(true,mListUnOperate);
+                }else {
+                    cb_select_unOperate.setChecked(false);
+                    test2Adapter.setUnOperateSelect(false,mListUnOperate);
+                }
+                break;
             case R.id.imageGoBay:
                 startActivity(new Intent(mContext, HomeActivity.class));
                 EventBus.getDefault().post(new GoToMarketEvent());
                 break;
             case R.id.tv_clear:
-                //清空所有失效的商品
-//                for (int i = 0; i <unList.size() ; i++) {
-//                    List<CartsListModel.DataBean.InValidListBean.SpecProductListBeanX> specProductList = unList.get(i).getSpecProductList();
-//                    for (int j = 0; j <specProductList.size() ; j++) {
-//                        int cartId = specProductList.get(j).getCartId();
-//                        unCartsId.add(cartId);
-//                    }
-//                }
-
                 showClearDialog();
 
                 break;
 
             case R.id.tv_delete:
                 cartsId.clear();
+
                 if(data==null) {
                     for (int i = 0; i <mListCart.size() ; i++) {
                         List<CartsListModel.DataBean.ValidListBean.SpecProductListBean> specProductList = mListCart.get(i).getSpecProductList();
@@ -243,7 +299,6 @@ public class CartActivity extends BaseSwipeActivity implements View.OnClickListe
                         for (int j = 0; j <specProductList.size() ; j++) {
                             if(specProductList.get(j).isSelected()) {
                                 int cartId = specProductList.get(j).getCartId();
-//                                cartsId.clear();
                                 cartsId.add(cartId);
                             }
                         }
@@ -254,6 +309,7 @@ public class CartActivity extends BaseSwipeActivity implements View.OnClickListe
                         showDeleteCartDialog(0,cartsId);
                     }
                 }
+
                 break;
 
             case R.id.btn_sure:
@@ -268,6 +324,7 @@ public class CartActivity extends BaseSwipeActivity implements View.OnClickListe
                 mModelCartActivityGoods.activityIdList.clear();
                 double priceCommonGoods = 0.00;
                 List<Integer> cartIds = new ArrayList<>();
+
                 if(data==null) {
                     for (int i = 0; i <mListCart.size() ; i++) {
                         int businessType = mListCart.get(i).getBusinessType();
@@ -277,32 +334,26 @@ public class CartActivity extends BaseSwipeActivity implements View.OnClickListe
                             for (int j = 0; j < specProductList.size(); j++) {
                                 List<CartsListModel.DataBean.ValidListBean.SpecProductListBean.ProductDescVOListBean> productDescVOList = specProductList.get(j).getProductDescVOList();
                                 List<CartCommonGoodsModel.DetailListBean> commonGoodsDetailList = new ArrayList<>();
-                                int cartId = specProductList.get(j).getCartId();
-                                cartIds.add(cartId);
-                                cartListStr = cartIds.toString();
-//                                Log.d("wodemingzishiss000.....",cartListStr);
-                                for (int k = 0; k < productDescVOList.size(); k++) {
-//                                    CartsListModel.DataBean.ValidListBean.SpecProductListBean.ProductDescVOListBean productDescVOListBean = productDescVOList.get(k);
-//
-//                                    priceCommonGoods = Double.parseDouble(BigDecimalUtils.add(Double.toString(priceCommonGoods), BigDecimalUtils.mul(productDescVOListBean.getPrice(),
-//                                            String.valueOf(productDescVOListBean.getProductNum()), 2), 2));
-//
-//                                    commonGoodsDetailList.add(new CartCommonGoodsModel.DetailListBean(productDescVOListBean.getProductCombinationPriceId(), productDescVOListBean.getProductNum()));
-//                                    mModelCartCommonGoods.amount.add(priceCommonGoods);
-                                    CartsListModel.DataBean.ValidListBean.SpecProductListBean.ProductDescVOListBean productDescVOListBean = productDescVOList.get(k);
-                                    priceCommonGoods = Double.parseDouble(BigDecimalUtils.add(Double.toString(priceCommonGoods), BigDecimalUtils.mul(productDescVOListBean.getPrice(),
-                                            String.valueOf(productDescVOListBean.getProductNum()), 2), 2));
+                                //-----------
+                                if(specProductList.get(j).isSelected()) {
+                                    int cartId = specProductList.get(j).getCartId();
+                                    cartIds.add(cartId);
+                                    cartListStr = cartIds.toString();
+                                    for (int k = 0; k < productDescVOList.size(); k++) {
+                                        CartsListModel.DataBean.ValidListBean.SpecProductListBean.ProductDescVOListBean productDescVOListBean = productDescVOList.get(k);
+                                        priceCommonGoods = Double.parseDouble(BigDecimalUtils.add(Double.toString(priceCommonGoods), BigDecimalUtils.mul(productDescVOListBean.getPrice(),
+                                                String.valueOf(productDescVOListBean.getProductNum()), 2), 2));
 
-                                    commonGoodsDetailList.add(new CartCommonGoodsModel.DetailListBean(productDescVOListBean.getProductCombinationPriceId(), productDescVOListBean.getProductNum()));
-                                    mModelCartCommonGoods.amount.add((Double.parseDouble(BigDecimalUtils.mul(productDescVOList.get(k).getPrice(), String.valueOf(productDescVOList.get(k).getProductNum()), 2))));
+                                        commonGoodsDetailList.add(new CartCommonGoodsModel.DetailListBean(productDescVOListBean.getProductCombinationPriceId(), productDescVOListBean.getProductNum()));
+                                        mModelCartCommonGoods.amount.add((Double.parseDouble(BigDecimalUtils.mul(productDescVOList.get(k).getPrice(), String.valueOf(productDescVOList.get(k).getProductNum()), 2))));
 
+                                    }
+                                    mModelCartCommonGoods.detailList.add(commonGoodsDetailList);
+                                    mModelCartCommonGoods.productIdList.add(specProductList.get(j).getBusinessId());
                                 }
-                                mModelCartCommonGoods.detailList.add(commonGoodsDetailList);
-                                mModelCartCommonGoods.productIdList.add(specProductList.get(j).getBusinessId());
+                                //------
+
                             }
-//                            mModelCartCommonGoods.amount.add(priceCommonGoods);
-
-
 
                         } else if (businessType == 2 || businessType == 3 || businessType == 11) {
                             for (int j = 0; j < specProductList.size(); j++) {
@@ -310,7 +361,6 @@ public class CartActivity extends BaseSwipeActivity implements View.OnClickListe
                                 List<CartCommonGoodsModel.DetailListBean> commonGoodsDetailList = new ArrayList<>();
                                 if (specProductList.get(j).isSelected()) {
                                     int cartId = specProductList.get(j).getCartId();
-//                                    cartIds.clear();
                                     cartIds.add(cartId);
                                     cartListStr = cartIds.toString();
                                     for (int k = 0; k < productDescVOList.size(); k++) {
@@ -326,24 +376,26 @@ public class CartActivity extends BaseSwipeActivity implements View.OnClickListe
                                     mModelCartActivityGoods.activityIdList.add(specProductList.get(j).getBusinessId());
                                 }
                             }
-//                            mModelCartActivityGoods.amount.add(priceCommonGoods);
                         }
                     }
 
                 }
                 else {
-                    for (int i = 0; i <data.size() ; i++) {
-                        int businessType = data.get(i).getBusinessType();
-                        List<CartsListModel.DataBean.ValidListBean.SpecProductListBean> specProductList = data.get(i).getSpecProductList();
+                    for (int i = 0; i <mListCart.size() ; i++) {
+
+                        int businessType = mListCart.get(i).getBusinessType();
+                        List<CartsListModel.DataBean.ValidListBean.SpecProductListBean> specProductList = mListCart.get(i).getSpecProductList();
                         if(businessType == 1) {
                             for (int j = 0; j <specProductList.size() ; j++) {
+
                                 List<CartsListModel.DataBean.ValidListBean.SpecProductListBean.ProductDescVOListBean> productDescVOList = specProductList.get(j).getProductDescVOList();
                                 List<CartCommonGoodsModel.DetailListBean> commonGoodsDetailList = new ArrayList<>();
                                 if(specProductList.get(j).isSelected()) {
+                                    Log.d("wwssssssssssss....",data.size()+"z");
                                     int cartId = specProductList.get(j).getCartId();
-//                                    cartIds.clear();
                                     cartIds.add(cartId);
                                     cartListStr = cartIds.toString();
+
                                     for (int k = 0; k <productDescVOList.size() ; k++) {
                                         CartsListModel.DataBean.ValidListBean.SpecProductListBean.ProductDescVOListBean productDescVOListBean = productDescVOList.get(k);
                                         priceCommonGoods = Double.parseDouble(BigDecimalUtils.add(Double.toString(priceCommonGoods), BigDecimalUtils.mul(productDescVOListBean.getPrice(),
@@ -357,7 +409,6 @@ public class CartActivity extends BaseSwipeActivity implements View.OnClickListe
                                     mModelCartCommonGoods.productIdList.add(specProductList.get(j).getBusinessId());
                                 }
                             }
-//                            mModelCartCommonGoods.amount.add(priceCommonGoods);
                             //活动商品
                         }
                         else if(businessType == 2 || businessType == 3 || businessType == 11) {
@@ -366,7 +417,6 @@ public class CartActivity extends BaseSwipeActivity implements View.OnClickListe
                                 List<CartCommonGoodsModel.DetailListBean> commonGoodsDetailList = new ArrayList<>();
                                 if(specProductList.get(j).isSelected()) {
                                     int cartId = specProductList.get(j).getCartId();
-//                                    cartIds.clear();
                                     cartIds.add(cartId);
                                     cartListStr = cartIds.toString();
                                     for (int k = 0; k <productDescVOList.size() ; k++) {
@@ -383,7 +433,6 @@ public class CartActivity extends BaseSwipeActivity implements View.OnClickListe
                                     mModelCartActivityGoods.activityIdList.add(specProductList.get(j).getBusinessId());
                                 }
                             }
-//                            mModelCartActivityGoods.amount.add(priceCommonGoods);
                         }
                     }
                 }
@@ -413,15 +462,18 @@ public class CartActivity extends BaseSwipeActivity implements View.OnClickListe
                 break;
 
             case R.id.ll_go_market:
-                startActivity(new Intent(mContext, HomeActivity.class));
-                EventBus.getDefault().post(new GoToMarketEvent());
+                mlisenter.jumpMarket();
                 break;
             case R.id.cb_select_all:
                 if (mSelect) {
+                    cb_select_operate.setChecked(false);
                     cb_select_all.setChecked(false);
+                    test2Adapter.setAllselect(false);
                     testAdapter.setAllselect(false);
                 } else {
+                    cb_select_operate.setChecked(true);
                     cb_select_all.setChecked(true);
+                    test2Adapter.setAllselect(true);
                     testAdapter.setAllselect(true);
                 }
 
@@ -434,7 +486,7 @@ public class CartActivity extends BaseSwipeActivity implements View.OnClickListe
      */
     private void showClearDialog() {
         //确认要删除选中的商品吗
-        AlertDialog alertDialog = new AlertDialog.Builder(mContext, R.style.DialogStyle).create();
+        android.app.AlertDialog alertDialog = new android.app.AlertDialog.Builder(mContext, R.style.DialogStyle).create();
         alertDialog.setCanceledOnTouchOutside(true);
         alertDialog.show();
         Window window = alertDialog.getWindow();
@@ -454,9 +506,9 @@ public class CartActivity extends BaseSwipeActivity implements View.OnClickListe
         mTvConfirm.setOnClickListener(new NoDoubleClickListener() {
             @Override
             public void onNoDoubleClick(View view) {
-
                 for (int i = 0; i <unList.size() ; i++) {
                     List<CartsListModel.DataBean.InValidListBean.SpecProductListBeanX> specProductList = unList.get(i).getSpecProductList();
+
                     for (int j = 0; j <specProductList.size() ; j++) {
                         int cartId = specProductList.get(j).getCartId();
                         unCartsId.add(cartId);
@@ -476,7 +528,7 @@ public class CartActivity extends BaseSwipeActivity implements View.OnClickListe
      */
     private void showDeleteCartDialog(int type, List<Integer> cartsId) {
         //确认要删除选中的商品吗
-        AlertDialog alertDialog = new AlertDialog.Builder(mContext, R.style.DialogStyle).create();
+        android.app.AlertDialog alertDialog = new android.app.AlertDialog.Builder(mContext, R.style.DialogStyle).create();
         alertDialog.setCanceledOnTouchOutside(true);
         alertDialog.show();
         Window window = alertDialog.getWindow();
@@ -529,8 +581,7 @@ public class CartActivity extends BaseSwipeActivity implements View.OnClickListe
                         if (mModelDeleteCart.success) {
                             //删除成功,重新请求列表数据
                             ToastUtil.showSuccessMsg(mActivity, "删除商品成功");
-                            state = CollapsingToolbarLayoutStateHelper.EXPANDED;
-
+                            getCartNum();
                             requestCartList();
                         } else {
                             ToastUtil.showSuccessMsg(mActivity,baseModel.message);
@@ -539,6 +590,33 @@ public class CartActivity extends BaseSwipeActivity implements View.OnClickListe
                 });
     }
 
+    /**
+     * 更新购物车角标数量
+     */
+    private void getCartNum() {
+
+        PublicRequestHelper.getCartNum(mActivity, new OnHttpCallBack<GetCartNumModel>() {
+            @Override
+            public void onSuccessful(GetCartNumModel getCartNumModel) {
+                if (getCartNumModel.isSuccess()) {
+                    if (Integer.valueOf(getCartNumModel.getData().getNum()) > 0) {
+                        ((TextView) mActivity.findViewById(R.id.tv_home_car_number)).setText(getCartNumModel.getData().getNum());
+                        findViewById(R.id.tv_home_car_number).setVisibility(View.VISIBLE);
+
+                    } else {
+                        findViewById(R.id.tv_home_car_number).setVisibility(View.GONE);
+                    }
+                } else {
+                    ToastUtil.showSuccessMsg(mActivity, getCartNumModel.getMessage());
+                }
+            }
+
+            @Override
+            public void onFaild(String errorMsg) {
+
+            }
+        });
+    }
 
     /**
      * 结算
@@ -561,7 +639,7 @@ public class CartActivity extends BaseSwipeActivity implements View.OnClickListe
                     @Override
                     public void onNext(CartBalanceModel cartBalanceModel) {
                         if (cartBalanceModel.success) {
-                            Intent intent = new Intent(mContext, ConfirmNewOrderActivity.class);
+                            Intent intent = new Intent(mActivity, ConfirmNewOrderActivity.class);
                             intent.putExtra("normalProductBalanceVOStr", normalProductBalanceVOStr);
                             intent.putExtra("activityBalanceVOStr", activityBalanceVOStr);
                             intent.putExtra("cartListStr", cartListStr);
@@ -569,7 +647,8 @@ public class CartActivity extends BaseSwipeActivity implements View.OnClickListe
                             lav_activity_loading.hide();
                             lav_activity_loading.setVisibility(View.GONE);
                             btn_sure.setEnabled(true);
-                        }else {
+
+                        } else {
                             lav_activity_loading.hide();
                             lav_activity_loading.setVisibility(View.GONE);
                             btn_sure.setEnabled(true);
@@ -577,18 +656,55 @@ public class CartActivity extends BaseSwipeActivity implements View.OnClickListe
                         }
                     }
                 });
-
     }
 
+
+
+
+    @Override
+    public void update(List<CartsListModel.DataBean.ValidListBean> data) {
+        this.data = data;
+        btn_sure.setText("结算");
+    }
 
     //数据更新
-    List<CartsListModel.DataBean.ValidListBean> listAll;
+    boolean isSelect;
     @Override
-    public void update(List<CartsListModel.DataBean.ValidListBean> data,List<CartsListModel.DataBean.ValidListBean> listAll) {
-        this.data = data;
-        this.listAll = listAll;
+    public void update1(List<CartsListModel.DataBean.ValidListBean> data) {
+        for (int i = 0; i < data.size(); i++) {
+            if(!data.get(i).isSelected()){
+                isSelect = false;
+                break;
+            }else{
+                isSelect = true;
+            }
+        }
+        cb_select_operate.setChecked(isSelect);
+        if(cb_select_operate.isChecked()&&cb_select_unOperate.isChecked()) {
+            cb_select_all.setChecked(true);
+        }else if(!cb_select_operate.isChecked()||!cb_select_unOperate.isChecked()) {
+            cb_select_all.setChecked(false);
+        }
     }
 
+    @Override
+    public void update2(List<CartsListModel.DataBean.ValidListBean> data) {
+        for (int i = 0; i < data.size(); i++) {
+            if(!data.get(i).isSelected()){
+                isSelect = false;
+                break;
+            }else{
+                isSelect = true;
+            }
+        }
+        cb_select_unOperate.setChecked(isSelect);
+        if(cb_select_operate.isChecked()&&cb_select_unOperate.isChecked()) {
+            cb_select_all.setChecked(true);
+        }else if(!cb_select_operate.isChecked()||!cb_select_unOperate.isChecked()) {
+            cb_select_all.setChecked(false);
+        }
+
+    }
     // 1 定义了所有activity必须实现的接口方法
     public interface FragmentInteraction {
         void refreshCarNum();
@@ -599,58 +715,12 @@ public class CartActivity extends BaseSwipeActivity implements View.OnClickListe
     }
 
 
+
+
     @Override
     public void onDestroy() {
         super.onDestroy();
         EventBus.getDefault().unregister(this);
-    }
-
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (keyCode == KeyEvent.KEYCODE_BACK) {
-            finish();
-            EventBus.getDefault().post(new NumEvent());
-            return true;
-        }
-        return super.onKeyDown(keyCode, event);
-
-    }
-
-
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void messageEventBuss(ReduceNumEvent event) {
-        //刷新UI
-        requestCartList();
-
-    }
-
-    //这里用了eventBus来进行实时价格的UI更改。
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void messageEventBus(UpdateEvent event) {
-        //刷新UI
-//        requestCartList();
-        discribe = Double.parseDouble(event.getDiscribe());
-
-        tv_total_price.setText("￥"+discribe);
-
-        getScrollData(discribe);
-
-        if(sendAmount> discribe) {
-            double diff = sendAmount - discribe;
-            ll_service.setVisibility(View.VISIBLE);
-            double result = Double.parseDouble(String.format("%.2f", diff));
-            tv_price_desc.setText(""+result);
-        }else {
-            ll_service.setVisibility(View.GONE);
-        }
-        getProductsList();
-    }
-
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void getTotals(UpDateNumEvent1 upDateNumEvent) {
-        requestCartList();
-        getProductsList();
-        Log.d("ddwsssssssssss....","00");
     }
 
 
@@ -662,14 +732,6 @@ public class CartActivity extends BaseSwipeActivity implements View.OnClickListe
     @Override
     public void setContentView() {
         setContentView(R.layout.fragment_cart);
-
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        setTranslucentStatus();
-        requestCartList();
     }
 
     @Override
@@ -677,27 +739,28 @@ public class CartActivity extends BaseSwipeActivity implements View.OnClickListe
         binder = ButterKnife.bind(this);
         EventBus.getDefault().register(this);
         tv_delete.setOnClickListener(this);
+        cb_select_operate.setOnClickListener(this);
+        cb_select_unOperate.setOnClickListener(this);
         cb_select_all.setOnClickListener(this);
         iv_clear.setOnClickListener(this);
         btn_sure.setOnClickListener(this);
         ll_go_market.setOnClickListener(this);
         tv_clear.setOnClickListener(this);
         imageGoBay.setOnClickListener(this);
-        iv_back.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
+        iv_back.setVisibility(View.VISIBLE);
+        iv_back.setOnClickListener(this);
+        Window window = getWindow();
+        window.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+        lav_activity_loading.show();
+        lav_activity_loading.setVisibility(View.VISIBLE);
     }
 
     @Override
     public void setViewData() {
-        requestCartList();
+//        requestCartList();
         getCustomerPhone();
         getProductsList();
-        lav_activity_loading.show();
-        lav_activity_loading.setVisibility(View.VISIBLE);
+
     }
 
     private void getAllPrice(List<CartsListModel.DataBean.ValidListBean> validList) {
@@ -713,7 +776,6 @@ public class CartActivity extends BaseSwipeActivity implements View.OnClickListe
                             BigDecimal interestRate = new BigDecimal(productDescVOList.get(j).getProductNum()); //数量
                             double interest = Arith.mul(Double.parseDouble(productDescVOList.get(j).getPrice()), interestRate);
                             allprice = allprice.add(BigDecimal.valueOf(interest));
-
                         }
                     }
                 }
@@ -744,37 +806,51 @@ public class CartActivity extends BaseSwipeActivity implements View.OnClickListe
      * 购物车列表
      */
     int cartId;
-    List<Integer> CartsIds = new ArrayList<>();
     private void requestCartList() {
-        CartListAPI.requestCartLists(mContext)
+        CartListAPI.requestCartLists(mActivity)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<CartsListModel>() {
                     @Override
                     public void onCompleted() {
-
                     }
 
 
                     @Override
                     public void onError(Throwable e) {
-
                     }
 
                     @Override
                     public void onNext(CartsListModel cartListModel) {
+
                         if(cartListModel.isSuccess()) {
                             mListCart.clear();
+                            mListUnOperate.clear();
+                            mListOperate.clear();
                             unList.clear();
                             sendAmount = Double.parseDouble(cartListModel.getData().getSendAmount());
-                            mRv.setLayoutManager(new LinearLayoutManager(mContext));
+                            mRv.setLayoutManager(new LinearLayoutManager(mActivity));
+
+                            mListCart.addAll(cartListModel.getData().getValidList());
                             //可用列表
                             List<CartsListModel.DataBean.ValidListBean> validList = cartListModel.getData().getValidList();
-                            mListCart.addAll(validList);
-//                            btn_sure.setText("结算"+"("+cartListModel.getData().getValidList().size()+")");
-                            testAdapter = new TestAdapter(R.layout.item_carts, mListCart, CartActivity.this, new TestAdapter.Onclick() {
+                            for (int i = 0; i < validList.size(); i++) {
+                                //0自营
+                                if(validList.get(i).getSelfOrNot().equals("0")) {
+                                    tv_time_operate.setText(cartListModel.getData().getValidList().get(i).getSendTimeStr());
+                                    mListOperate.add(validList.get(i));
+                                }else {
+                                    //非自营
+                                    mListUnOperate.add(validList.get(i));
+                                    tv_time_unOperate.setText(cartListModel.getData().getValidList().get(i).getSendTimeStr());
+
+                                }
+                            }
+
+                            testAdapter = new TestAdapter(R.layout.item_carts, mListOperate,mListCart,CartActivity.this, new TestAdapter.Onclick() {
                                 @Override
                                 public void deteItem(int pos,CartsListModel.DataBean.ValidListBean validListBean) {
+
                                     for (int i = 0; i < validListBean.getSpecProductList().size(); i++) {
                                         cartId = validListBean.getSpecProductList().get(i).getCartId();
                                     }
@@ -782,12 +858,49 @@ public class CartActivity extends BaseSwipeActivity implements View.OnClickListe
                                     CartsIds.clear();
                                     CartsIds.add(cartId);
                                     requestDeleteCart(CartsIds.toString());
+
                                 }
                             });
                             mRv.setAdapter(testAdapter);
+                            mRv.setHasFixedSize(true);
+                            mRv.setNestedScrollingEnabled(true);
+
+                            if(mListOperate.size()>0) {
+                                ll_operate.setVisibility(View.VISIBLE);
+                            }else {
+                                ll_operate.setVisibility(View.GONE);
+                            }
+
+                            if(mListUnOperate.size()>0) {
+                                ll_unOperate.setVisibility(View.VISIBLE);
+                            }else {
+                                ll_unOperate.setVisibility(View.GONE);
+                            }
+
+                            test2Adapter = new Test2Adapter(R.layout.item_carts, mListUnOperate,mListCart,CartActivity.this, new Test2Adapter.Onclick() {
+                                @Override
+                                public void deteItem(int pos,CartsListModel.DataBean.ValidListBean validListBean) {
+
+                                    for (int i = 0; i < validListBean.getSpecProductList().size(); i++) {
+                                        cartId = validListBean.getSpecProductList().get(i).getCartId();
+                                    }
+
+                                    CartsIds.clear();
+                                    CartsIds.add(cartId);
+                                    requestDeleteCart(CartsIds.toString());
+
+                                }
+                            });
+                            rv_cart_unOperate.setAdapter(test2Adapter);
+                            rv_cart_unOperate.setHasFixedSize(true);
+                            rv_cart_unOperate.setNestedScrollingEnabled(true);
+                            rv_cart_unOperate.setLayoutManager(new LinearLayoutManager(mActivity));
+
                             //过期列表
                             List<CartsListModel.DataBean.InValidListBean> inValidList = cartListModel.getData().getInValidList();
                             unList.addAll(inValidList);
+
+
                             if(unList.size()==0) {
                                 rl_unable.setVisibility(View.GONE);
                                 rv_unable.setVisibility(View.GONE);
@@ -795,61 +908,112 @@ public class CartActivity extends BaseSwipeActivity implements View.OnClickListe
                                 rl_unable.setVisibility(View.VISIBLE);
                                 rv_unable.setVisibility(View.VISIBLE);
                             }
+
                             if(mListCart.size()==0&&unList.size()==0) {
                                 ll_NoData.setVisibility(View.VISIBLE);
                                 ll.setVisibility(View.GONE);
                                 tv_delete.setVisibility(View.GONE);
+
                                 ll_service.setVisibility(View.GONE);
                                 getScrollData(0);
                             }else {
                                 tv_delete.setVisibility(View.VISIBLE);
                                 ll_NoData.setVisibility(View.GONE);
                                 ll.setVisibility(View.VISIBLE);
-                                getAllPrice(validList);
 
+                                getAllPrice(validList);
 
                             }
 
                             if(mListCart.size()==0 && unList.size()!=0) {
                                 ll_service.setVisibility(View.GONE);
                                 ll.setVisibility(View.GONE);
-                            }else {
-//                            ll_service.setVisibility(View.VISIBLE);
-//                            ll.setVisibility(View.VISIBLE);
                             }
 
-
-                            if(mListCart.size()==0) {
-//                            ll_service.setVisibility(View.GONE);
-//                            getScrollData(0);
-                            }else {
-//                            getAllPrice(validList);
-                            }
-
-//                        if(unList.size()!=0&&mListCart.size()!=0) {
-//                            ll.setVisibility(View.VISIBLE);
-//                        }else {
-//                            ll.setVisibility(View.GONE);
-//                        }
-
-                            CartUnableAdapter unAbleAdapter = new CartUnableAdapter(R.layout.item_uncarts,unList);
-//
-                            rv_unable.setLayoutManager(new LinearLayoutManager(mContext));
-                            rv_unable.setAdapter(unAbleAdapter);
-
-                            testAdapter.notifyDataSetChanged();
-
-                            testAdapter.setResfreshListener(new TestAdapter.OnResfreshListener() {
+                            rv_unable.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
                                 @Override
-                                public void onResfresh( boolean isSelect) {
-                                    mSelect = isSelect;
-                                    if(isSelect){
-                                        cb_select_all.setChecked(true);
-                                    }else {
-                                        cb_select_all.setChecked(false);
+                                public void onGlobalLayout() {
+                                    boolean isOverFlow = rv_unable.isOverFlow();
+                                    boolean isLimit = rv_unable.isLimit();
+                                    if (isLimit && isOverFlow) {
+                                        tv_arrow.setVisibility(View.VISIBLE);
+                                    } else {
+                                        tv_arrow.setVisibility(View.GONE);
                                     }
                                 }
                             });
+
+                            TagAdapter unAbleAdapter = new TagAdapter<CartsListModel.DataBean.InValidListBean>(unList){
+
+                                @Override
+                                public View getView(com.puyue.www.qiaoge.activity.flow.FlowLayout parent, int position, CartsListModel.DataBean.InValidListBean inValidListBean) {
+                                    View view = LayoutInflater.from(mActivity).inflate(R.layout.item_uncarts,rv_unable, false);
+                                    iv_head = view.findViewById(R.id.iv_head);
+                                    tv_title = view.findViewById(R.id.tv_title);
+                                    tv_search = view.findViewById(R.id.tv_search);
+                                    tv_title.setText(inValidListBean.getProductName());
+                                    Glide.with(mActivity).load(inValidListBean.getDefaultPic()).into(iv_head);
+
+                                    tv_search.setOnClickListener(new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View v) {
+                                            Intent intent = new Intent(mActivity,SearchReasultActivity.class);
+                                            intent.putExtra(AppConstant.SEARCHWORD,inValidListBean.getProductName());
+                                            startActivity(intent);
+                                        }
+                                    });
+
+                                    return view;
+                                }
+                            };
+
+
+                            tv_arrow.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    rv_unable.setLimit(false);
+                                    unAbleAdapter.notifyDataChanged();
+                                }
+                            });
+                            rv_unable.setAdapter(unAbleAdapter);
+                            testAdapter.notifyDataSetChanged();
+                            test2Adapter.notifyDataSetChanged();
+                            Log.d("wdasaassssssssss......","sssss");
+                            test2Adapter.setResfreshListener(new Test2Adapter.OnResfreshListener() {
+                                @Override
+                                public void onResfresh(boolean isSelect) {
+                                    mSelect = isSelect;
+//                                    if(isSelect){
+//                                        cb_select_all.setChecked(true);
+////                                        cb_select_operate.setChecked(true);
+////                                        cb_select_unOperate.setChecked(true);
+//                                    }else {
+//                                        cb_select_all.setChecked(false);
+////                                        cb_select_operate.setChecked(false);
+////                                        cb_select_unOperate.setChecked(false);
+//                                    }
+                                }
+                            });
+
+                            testAdapter.setResfreshListener(new TestAdapter.OnResfreshListener() {
+                                @Override
+                                public void onResfresh(boolean isSelect) {
+                                    mSelect = isSelect;
+                                    Log.d("wadasdssssss....","777");
+//                                    if(isSelect){
+//                                        cb_select_all.setChecked(true);
+////                                        cb_select_operate.setChecked(true);
+////                                        cb_select_unOperate.setChecked(true);
+//                                    }else {
+//                                        cb_select_all.setChecked(false);
+////                                        cb_select_operate.setChecked(false);
+////                                        cb_select_unOperate.setChecked(false);
+//                                    }
+
+
+                                }
+                            });
+
                             lav_activity_loading.hide();
                             lav_activity_loading.setVisibility(View.GONE);
                             btn_sure.setEnabled(true);
@@ -868,7 +1032,7 @@ public class CartActivity extends BaseSwipeActivity implements View.OnClickListe
      * 必买列表(王涛)
      * @param
      */
-    MustAdapter mustAdapter;
+
     private void getProductsList() {
         IndexHomeAPI.getMust(mActivity)
                 .subscribeOn(Schedulers.io())
@@ -887,19 +1051,18 @@ public class CartActivity extends BaseSwipeActivity implements View.OnClickListe
                     @Override
                     public void onNext(MustModel getCommonProductModel) {
                         if (getCommonProductModel.isSuccess()) {
+                            //为您推荐列表
                             if(getCommonProductModel.getData()!=null) {
                                 tv.setVisibility(View.VISIBLE);
 
                             }else {
                                 tv.setVisibility(View.GONE);
                             }
-                            //为您推荐列表
+
                             mustAdapter = new MustAdapter(R.layout.item_team_list, getCommonProductModel.getData(), new MustAdapter.Onclick() {
                                 @Override
                                 public void addDialog() {
-
                                     requestCartList();
-//                                    getProductsList();
                                 }
 
                                 @Override
@@ -907,6 +1070,7 @@ public class CartActivity extends BaseSwipeActivity implements View.OnClickListe
                                     showPhoneDialog(cell);
                                 }
                             });
+
 
                             rv_recommend.setLayoutManager(new GridLayoutManager(mActivity,2));
                             rv_recommend.setAdapter(mustAdapter);
@@ -936,14 +1100,13 @@ public class CartActivity extends BaseSwipeActivity implements View.OnClickListe
         });
     }
 
-
     /**
      * 弹出电话号码
      */
-    private AlertDialog mDialog;
+    private android.app.AlertDialog mDialog;
     TextView tv_phone;
     public void showPhoneDialog(final String cell) {
-        mDialog = new AlertDialog.Builder(mActivity).create();
+        mDialog = new android.app.AlertDialog.Builder(mActivity).create();
         mDialog.show();
         mDialog.getWindow().setContentView(R.layout.dialog_shouye_tip);
         tv_phone = mDialog.getWindow().findViewById(R.id.tv_phone);
@@ -956,42 +1119,46 @@ public class CartActivity extends BaseSwipeActivity implements View.OnClickListe
         });
     }
 
+
+
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void cityEvent(CityEvent event) {
+    public void messageEventBusss(BackEvent event) {
+        //刷新UI
+        lav_activity_loading.setVisibility(View.VISIBLE);
+        lav_activity_loading.show();
         requestCartList();
-        isShow();
+        getCartNum();
+        getProductsList();
         getCustomerPhone();
+
     }
 
-    private void isShow() {
-        CityChangeAPI.isShow(mActivity)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<IsShowModel>() {
-
-                    @Override
-                    public void onCompleted() {
-
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-
-                    }
-
-                    @Override
-                    public void onNext(IsShowModel isShowModel) {
-                        if(isShowModel.isSuccess()) {
-                            if(isShowModel.data!=null) {
-                                enjoyProduct = isShowModel.getData().enjoyProduct;
-                                getProductsList();
-                            }
-                        }else {
-                            AppHelper.showMsg(mActivity,isShowModel.getMessage());
-                        }
-                    }
-                });
+    @Override
+    public void onResume() {
+        super.onResume();
+        cb_select_all.setChecked(true);
+        cb_select_operate.setChecked(true);
+        cb_select_unOperate.setChecked(true);
+        requestCartList();
+        getCartNum();
     }
+
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void getTotals(UpDateNumEvent1 upDateNumEvent) {
+        requestCartList();
+        getProductsList();
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void messageEventBuss(ReduceNumEvent event) {
+        //刷新UI
+        lav_activity_loading.setVisibility(View.VISIBLE);
+        lav_activity_loading.show();
+        requestCartList();
+        getProductsList();
+    }
+
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void upPrice(AddressEvent event) {
@@ -1001,25 +1168,26 @@ public class CartActivity extends BaseSwipeActivity implements View.OnClickListe
         getCustomerPhone();
     }
 
+    //这里用了eventBus来进行实时价格的UI更改。
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void messageEventBusss(BackEvent event) {
+    public void messageEventBus(UpdateEvent event) {
         //刷新UI
-        requestCartList();
-        getCustomerPhone();
-    }
+        discribe = Double.parseDouble(event.getDiscribe());
 
-    protected void setTranslucentStatus() {
-        // 5.0以上系统状态栏透明
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            Window window = getWindow();
-            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-            window.getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                    | View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
-            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-            window.setStatusBarColor(Color.TRANSPARENT);
-        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+        tv_total_price.setText("￥"+discribe);
+        getScrollData(discribe);
+
+        if(sendAmount> discribe) {
+            double diff = sendAmount - discribe;
+            ll_service.setVisibility(View.VISIBLE);
+            double result = Double.parseDouble(String.format("%.2f", diff));
+            tv_price_desc.setText(""+result);
+
+        }else {
+            ll_service.setVisibility(View.GONE);
         }
+
+        getProductsList();
     }
 
 

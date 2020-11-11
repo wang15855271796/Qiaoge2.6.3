@@ -3,6 +3,7 @@ package com.puyue.www.qiaoge.adapter.home;
 
 import android.content.Intent;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -39,6 +40,8 @@ public class SearchResultAdapter extends BaseQuickAdapter<SearchResultsModel.Dat
     private ImageView iv_type;
     Onclick onclick;
     RecommendDialog recommendDialog;
+    ImageView iv_operate;
+    ImageView iv_next;
 
     public SearchResultAdapter(int layoutResId, @Nullable List<SearchResultsModel.DataBean.RecommendProdBean> data, Onclick onclick) {
         super(layoutResId, data);
@@ -48,9 +51,12 @@ public class SearchResultAdapter extends BaseQuickAdapter<SearchResultsModel.Dat
 
     @Override
     protected void convert(BaseViewHolder helper, SearchResultsModel.DataBean.RecommendProdBean item) {
+        iv_next = helper.getView(R.id.iv_next);
+        iv_operate = helper.getView(R.id.iv_operate);
         ImageView iv_no_data = helper.getView(R.id.iv_no_data);
         tv_price_desc = helper.getView(R.id.tv_price_desc);
         iv_type = helper.getView(R.id.iv_type);
+
         if(item.getFlag()==0) {
             Glide.with(mContext).load(item.getTypeUrl()).into(iv_no_data);
             iv_no_data.setVisibility(View.VISIBLE);
@@ -73,6 +79,8 @@ public class SearchResultAdapter extends BaseQuickAdapter<SearchResultsModel.Dat
             }
         });
 
+        Glide.with(mContext).load(item.getSelfProd()).into(iv_operate);
+        Glide.with(mContext).load(item.getSendTimeTpl()).into(iv_next);
         RelativeLayout rl_price = helper.getView(R.id.rl_price);
         TextView tv_price = helper.getView(R.id.tv_price);
         helper.setText(R.id.tv_name,item.getProductName());

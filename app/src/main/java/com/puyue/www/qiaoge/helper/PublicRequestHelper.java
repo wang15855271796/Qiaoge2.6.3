@@ -1,16 +1,13 @@
 package com.puyue.www.qiaoge.helper;
 
 import android.content.Context;
-import android.util.Log;
 
 import com.puyue.www.qiaoge.api.cart.GetCartNumAPI;
 import com.puyue.www.qiaoge.api.home.GetCustomerPhoneAPI;
-import com.puyue.www.qiaoge.api.home.GetProductListAPI;
 import com.puyue.www.qiaoge.api.home.HasCollectAPI;
 import com.puyue.www.qiaoge.event.OnHttpCallBack;
 import com.puyue.www.qiaoge.model.cart.GetCartNumModel;
 import com.puyue.www.qiaoge.model.home.GetCustomerPhoneModel;
-import com.puyue.www.qiaoge.model.home.GetProductListModel;
 import com.puyue.www.qiaoge.model.home.HasCollectModel;
 
 import rx.Subscriber;
@@ -99,29 +96,5 @@ public class PublicRequestHelper {
                 });
     }
 
-    /**
-     * 推荐
-     **/
-    public static void getProductList(Context context, int pageNum, int pageSize, String productType, String productName, String firstId, String classifyID,
-                                      String salesVolume, String priceSorting, final OnHttpCallBack<GetProductListModel> callBack) {
-        GetProductListAPI.requestData(context, pageNum, pageSize, productType, productName, firstId, classifyID, salesVolume, priceSorting)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<GetProductListModel>() {
-                    @Override
-                    public void onCompleted() {
 
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        callBack.onFaild(e.toString());
-                    }
-
-                    @Override
-                    public void onNext(GetProductListModel getProductListModel) {
-                        callBack.onSuccessful(getProductListModel);
-                    }
-                });
-    }
 }

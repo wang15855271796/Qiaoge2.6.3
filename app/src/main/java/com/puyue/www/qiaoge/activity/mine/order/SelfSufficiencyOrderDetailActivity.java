@@ -43,6 +43,7 @@ import com.baidu.mapapi.map.MapStatusUpdate;
 import com.baidu.mapapi.map.MapStatusUpdateFactory;
 import com.baidu.mapapi.map.MarkerOptions;
 import com.baidu.mapapi.map.OverlayOptions;
+import com.baidu.mapapi.map.Text;
 import com.baidu.mapapi.map.TextureMapView;
 import com.baidu.mapapi.map.UiSettings;
 import com.baidu.mapapi.model.LatLng;
@@ -53,6 +54,7 @@ import com.baidu.mapapi.search.geocode.GeoCoder;
 import com.baidu.mapapi.search.geocode.OnGetGeoCoderResultListener;
 import com.baidu.mapapi.search.geocode.ReverseGeoCodeResult;
 import com.puyue.www.qiaoge.R;
+import com.puyue.www.qiaoge.activity.BeizhuActivity;
 import com.puyue.www.qiaoge.activity.CartActivity;
 import com.puyue.www.qiaoge.activity.mine.account.AddressListActivity;
 import com.puyue.www.qiaoge.adapter.OrderFullAdapter;
@@ -63,12 +65,14 @@ import com.puyue.www.qiaoge.api.home.GetOrderDetailAPI;
 import com.puyue.www.qiaoge.api.mine.order.ConfirmOrderSelfAPI;
 import com.puyue.www.qiaoge.api.mine.order.CopyToCartAPI;
 import com.puyue.www.qiaoge.api.mine.order.GetOrderDeliverTimeAPI;
+import com.puyue.www.qiaoge.api.mine.order.MyOrderListAPI;
 import com.puyue.www.qiaoge.api.mine.order.PostModifyMesAPI;
 import com.puyue.www.qiaoge.base.BaseModel;
 import com.puyue.www.qiaoge.base.BaseSwipeActivity;
 import com.puyue.www.qiaoge.constant.AppConstant;
 import com.puyue.www.qiaoge.event.AddressEvent;
 import com.puyue.www.qiaoge.event.BackEvent;
+import com.puyue.www.qiaoge.event.BeizhuEvent;
 import com.puyue.www.qiaoge.fragment.mine.coupons.PaymentFragments;
 import com.puyue.www.qiaoge.helper.AppHelper;
 import com.puyue.www.qiaoge.helper.MapHelper;
@@ -76,6 +80,7 @@ import com.puyue.www.qiaoge.helper.StringHelper;
 import com.puyue.www.qiaoge.listener.NoDoubleClickListener;
 import com.puyue.www.qiaoge.model.cart.CancelOrderModel;
 import com.puyue.www.qiaoge.model.cart.GetOrderDetailModel;
+import com.puyue.www.qiaoge.model.mine.order.CommonModel;
 import com.puyue.www.qiaoge.model.mine.order.ConfirmGetGoodsModel;
 import com.puyue.www.qiaoge.model.mine.order.CopyToCartModel;
 import com.puyue.www.qiaoge.model.mine.order.GetTimeOrderModel;
@@ -87,6 +92,7 @@ import com.puyue.www.qiaoge.view.SnapUpCountDownTimerView;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.Serializable;
 import java.net.URISyntaxException;
@@ -125,7 +131,6 @@ public class SelfSufficiencyOrderDetailActivity extends BaseSwipeActivity {
     private LinearLayout ReturnGoodsLinearLayout;
     private TextView ReturnGoodsTitle; //退货类型
     private TextView ReturnGoodsContent; //退货内容
-    private TextView tvNewOrderCommodityNum;//总件商品
 
     // 非退货订单信息layout 底部
     private LinearLayout newOrderInfoLayout;
@@ -133,8 +138,7 @@ public class SelfSufficiencyOrderDetailActivity extends BaseSwipeActivity {
     private TextView tvNewOrderDistributionFeePrice; // 配送费
     private TextView tvNewOrderVipSubtractionPrice; //会员满减
     private TextView tvNewOrderCoupons;//优惠卷
-    private TextView tvNewOrderCommodity;  //商品数量
-    private TextView tvNewOrderPayMoney; // 商品总价
+
     private TextView tvnormalReduct; // 满减活动
 
     ////退货订单信息layout 底部
@@ -144,15 +148,16 @@ public class SelfSufficiencyOrderDetailActivity extends BaseSwipeActivity {
     //private TextView returnGoodsCommodity; //退货总件商品
     private TextView returnGoodsCommodityPayMoney; // 退货商品总价
     private TextView returnGoodsReason; //退款原因
-
+    TextView tv_beizhu;
 
     //以下是每个订单详情都有的订单信息
     private TextView tvNewOrderAddresseeName;
     private TextView tvNewOrderAddress;
-    private TextView tvNewOrderPhone; //下单号码
     private TextView tvNewOrderTime;//下单时间
-    private ImageView tvNewOrderPay; //下单方式
+    private LinearLayout ll_pay;
     private TextView tvNewOrderRemarks; //备注
+    //备注
+//    RelativeLayout ll_beizhu;
     //付款时间
     private LinearLayout tvNewOrderPayTimeLinearLayout;
     private TextView tvNewOrderPayTime;
@@ -174,7 +179,7 @@ public class SelfSufficiencyOrderDetailActivity extends BaseSwipeActivity {
 
 
     private NewOrderDetailAdapter adapter;
-    private List<GetOrderDetailModel.DataBean.ProductVOListBean> list = new ArrayList<>();
+    private List<GetOrderDetailModel.DataBean.OrderProdsBean> list = new ArrayList<>();
 
     private String returnProductMainId = "";
     private String orderId;
@@ -184,7 +189,7 @@ public class SelfSufficiencyOrderDetailActivity extends BaseSwipeActivity {
     private Dialog mDialog;
 
     private List<OrderEvaluateListModel> mListEvaluate = new ArrayList<>();
-    private List<GetOrderDetailModel.DataBean.ProductVOListBean> mListForReturn = new ArrayList<>();
+    private List<GetOrderDetailModel.DataBean.OrderProdsBean> mListForReturn = new ArrayList<>();
     private GetOrderDetailModel.DataBean getOrderDetailModel;
     private ConfirmGetGoodsModel mModelConfirmGetGoods;
     private TextView tvNewOrderPayMoneyReturn;
@@ -198,8 +203,8 @@ public class SelfSufficiencyOrderDetailActivity extends BaseSwipeActivity {
     private TextView tvDeductDsc;
     private TextView tvNomalReductDesc;
 
-    private TextView tvCopy;
-
+    TextView tv_full_desc;
+    TextView tv_full_price;
     private LinearLayout mLinearLayoutShipped;
 
     private LinearLayout mLinearLayoutEvalute;
@@ -218,9 +223,6 @@ public class SelfSufficiencyOrderDetailActivity extends BaseSwipeActivity {
     private TextView mTvSeeDriverStatus;
     private TextView mTvDriverName;
     private TextView mTvOrderReturn;
-
-    private RelativeLayout mRlReturn;
-    private TextView tv_return_amount;
     private TextView tv_return_reason;
 
     private TextView tv_return_status;
@@ -287,6 +289,12 @@ public class SelfSufficiencyOrderDetailActivity extends BaseSwipeActivity {
     private String account;
     private RecyclerView rv_full;
     OrderFullAdapter orderFullAdapter;
+    TextView tv_amount;
+    //支付方式
+    TextView tv_payWay;
+    TextView tv_total_amount;
+    LinearLayout deliver_linearLayout;
+
     @Override
     public boolean handleExtra(Bundle savedInstanceState) {
         return false;
@@ -299,6 +307,16 @@ public class SelfSufficiencyOrderDetailActivity extends BaseSwipeActivity {
 
     @Override
     public void findViewById() {
+        tv_full_price = (TextView) findViewById(R.id.tv_full_price);
+        tv_full_desc = (TextView) findViewById(R.id.tv_full_desc);
+        tv_payWay = (TextView) findViewById(R.id.tv_payWay);
+        deliver_linearLayout = (LinearLayout) findViewById(R.id.deliver_linearLayout);
+        tv_payWay = (TextView) findViewById(R.id.tv_payWay);
+        tv_total_amount = (TextView) findViewById(R.id.tv_total_amount);
+        tv_amount = (TextView) findViewById(R.id.tv_amount);
+//        ll_beizhu = (RelativeLayout) findViewById(R.id.ll_beizhu);
+        tv_beizhu = (TextView) findViewById(R.id.tv_beizhu);
+        ll_pay = (LinearLayout) findViewById(R.id.ll_pay);
         rv_full =  (RecyclerView) findViewById(R.id.rv_full);
         imageViewBreak = (ImageView) findViewById(R.id.imageViewBreak);
         textViewTitle = (TextView) findViewById(R.id.textViewTitle);
@@ -317,16 +335,13 @@ public class SelfSufficiencyOrderDetailActivity extends BaseSwipeActivity {
         ReturnGoodsLinearLayout = (LinearLayout) findViewById(R.id.ReturnGoodsLinearLayout);
         ReturnGoodsTitle = (TextView) findViewById(R.id.ReturnGoodsTitle);
         ReturnGoodsContent = (TextView) findViewById(R.id.ReturnGoodsContent);
-        tvNewOrderCommodityNum = (TextView) findViewById(R.id.tvNewOrderCommodityNum);
 
         newOrderInfoLayout = (LinearLayout) findViewById(R.id.NewOrderInfoLayout);
         tvNewOrderCommodityAmount = (TextView) findViewById(R.id.tvNewOrderCommodityAmount);
         tvNewOrderDistributionFeePrice = (TextView) findViewById(R.id.tvNewOrderDistributionFeePrice);
         tvNewOrderVipSubtractionPrice = (TextView) findViewById(R.id.tvNewOrderVipSubtractionPrice);
         tvNewOrderCoupons = (TextView) findViewById(R.id.tvNewOrderCoupons);
-        tvNewOrderCommodity = (TextView) findViewById(R.id.tvNewOrderCommodity);
-        tvNewOrderPayMoney = (TextView) findViewById(R.id.tvNewOrderPayMoney);
-        tvnormalReduct = (TextView) findViewById(R.id.tvnormalReduct);
+//        tvnormalReduct = (TextView) findViewById(R.id.tvnormalReduct);
         mTvOrderReturn = findViewById(R.id.tv_order_return);
 
         returnGoodsInfoLayout = (LinearLayout) findViewById(R.id.returnGoodsInfoLayout);
@@ -335,9 +350,8 @@ public class SelfSufficiencyOrderDetailActivity extends BaseSwipeActivity {
         returnGoodsCommodityPayMoney = (TextView) findViewById(R.id.tvNewOrderPayMoneyReturn);
         returnGoodsReason = (TextView) findViewById(R.id.returnGoodsReason);
 
-        tvNewOrderPhone = (TextView) findViewById(R.id.tvNewOrderPhone);
         tvNewOrderTime = (TextView) findViewById(R.id.tvNewOrderTime);
-        tvNewOrderPay = (ImageView) findViewById(R.id.tvNewOrderPay);
+//        tvNewOrderPay = (ImageView) findViewById(R.id.tvNewOrderPay);
         tvNewOrderRemarks = (TextView) findViewById(R.id.tvNewOrderRemarks);
 
         tvNewOrderAddresseeName = (TextView) findViewById(R.id.tvNewOrderAddresseeName);
@@ -363,9 +377,8 @@ public class SelfSufficiencyOrderDetailActivity extends BaseSwipeActivity {
         linearLayoutAddressArrow = findViewById(R.id.linearLayout_address_arrow);
         sendAmountStr = findViewById(R.id.tv_send_amount_str);
         tvDeductDsc = findViewById(R.id.tv_deduct_desc);
-        tvNomalReductDesc = findViewById(R.id.tv_normal_reduct_desc);
+//        tvNomalReductDesc = findViewById(R.id.tv_normal_reduct_desc);
 
-        tvCopy = findViewById(R.id.tv_copy_order_num);
         mLinearLayoutShipped = findViewById(R.id.linearLayout_shipped);
         mLinearLayoutEvalute = findViewById(R.id.linearLayout_evalute);
         mLinearLayoutReciverOrder = findViewById(R.id.linearLayout_get_order);
@@ -379,9 +392,6 @@ public class SelfSufficiencyOrderDetailActivity extends BaseSwipeActivity {
         mTvOrderStatus = findViewById(R.id.tv_order_status);
         mTvSeeDriverStatus = findViewById(R.id.tv_order_driver_message);
         mTvDriverName = findViewById(R.id.tv_driver_name);
-
-        mRlReturn = findViewById(R.id.rl_return);
-        tv_return_amount = findViewById(R.id.tv_return_amount);
         tv_return_reason = findViewById(R.id.tv_return_reason);
         tv_driver_phone = findViewById(R.id.tv_driver_phone);
         tv_normal_vip_desc = findViewById(R.id.tv_normal_vip_desc);
@@ -411,12 +421,11 @@ public class SelfSufficiencyOrderDetailActivity extends BaseSwipeActivity {
     public void setViewData() {
 
         // setTranslucentStatus();
-        EventBus.getDefault().register(this);
+//        EventBus.getDefault().register(this);
 
         mLinearLayoutDeliver.setVisibility(View.GONE);
         newOrderReturnTimeLinearLayout.setVisibility(View.GONE);
         examineTimeLinearLayout.setVisibility(View.GONE);
-        tvNewOrderPayTimeLinearLayout.setVisibility(View.GONE);
         ll_deliver.setVisibility(View.GONE);
 
         subId = getIntent().getStringExtra("subId");
@@ -474,15 +483,13 @@ public class SelfSufficiencyOrderDetailActivity extends BaseSwipeActivity {
             }
         });
 
-        adapter = new NewOrderDetailAdapter(R.layout.new_order_detail, list,orderId);
+        adapter = new NewOrderDetailAdapter(mActivity,R.layout.new_order_detail, list,orderId);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(adapter);
 
         rv_full.setLayoutManager(new LinearLayoutManager(mContext));
         orderFullAdapter = new OrderFullAdapter(R.layout.item_full,list_full);
         rv_full.setAdapter(orderFullAdapter);
-
-        getOrderDetail(orderId, orderState, returnProductMainId);
         // 文字渐变色
         LinearGradient mLinearGradient = new LinearGradient(0, 0, 0, tvInfo.getPaint().getTextSize(), Color.parseColor("#CEA6FF")
                 , Color.parseColor("#6F81FF"), Shader.TileMode.CLAMP);
@@ -491,6 +498,7 @@ public class SelfSufficiencyOrderDetailActivity extends BaseSwipeActivity {
 
     @Override
     public void setClickEvent() {
+//        ll_beizhu.setOnClickListener(noDoubleClickListener);
         imageViewBreak.setOnClickListener(noDoubleClickListener);
         buttonCancelOrder.setOnClickListener(noDoubleClickListener);
         buttonGOPay.setOnClickListener(noDoubleClickListener);
@@ -500,7 +508,6 @@ public class SelfSufficiencyOrderDetailActivity extends BaseSwipeActivity {
         tv_delete.setOnClickListener(noDoubleClickListener);
         tv_buttonAgainBuy.setOnClickListener(noDoubleClickListener);
         linearLayoutAddressArrow.setOnClickListener(noDoubleClickListener);
-        tvCopy.setOnClickListener(noDoubleClickListener);
 
         tvCopyOrderOne.setOnClickListener(noDoubleClickListener);
         tvCopyOrderTwo.setOnClickListener(noDoubleClickListener);
@@ -516,7 +523,6 @@ public class SelfSufficiencyOrderDetailActivity extends BaseSwipeActivity {
         ll_one.setOnClickListener(noDoubleClickListener);
         ll_two.setOnClickListener(noDoubleClickListener);
         tv_evaluate.setOnClickListener(noDoubleClickListener);
-
 
     }
 
@@ -706,7 +712,7 @@ public class SelfSufficiencyOrderDetailActivity extends BaseSwipeActivity {
         mCoder = GeoCoder.newInstance();
         list.clear();
 
-        getOrderDetail(orderId, orderState, returnProductMainId);
+        getOrderDetail(orderId);
         mCoder.setOnGetGeoCodeResultListener(listener);
 
 
@@ -844,12 +850,12 @@ public class SelfSufficiencyOrderDetailActivity extends BaseSwipeActivity {
     public void onEventMainThread(AddressEvent event) {
 
         list.clear();
-        getOrderDetail(orderId, orderState, returnProductMainId);
+        getOrderDetail(orderId);
 
     }
 
-    private void getOrderDetailDialog(String orderId, String orderState, String returnProductMainId) {
-        GetOrderDetailAPI.requestData(mContext, orderId, orderState, returnProductMainId)
+    private void getOrderDetailDialog(String orderId) {
+        GetOrderDetailAPI.requestData(mContext, orderId)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<GetOrderDetailModel>() {
@@ -870,10 +876,9 @@ public class SelfSufficiencyOrderDetailActivity extends BaseSwipeActivity {
                             dialog.dismiss();
                             if (orderDetailModel != null) {
                                 setText(orderDetailModel);
-                                if (orderDetailModel.data.productVOList.size() > 0) {
-                                    // Log.e(TAG, "onNext: " + orderDetailModel.data.productVOList.get(0).productDescVOList.get(0).newDesc);
-                                    list.clear();
-                                    list.addAll(orderDetailModel.data.productVOList);
+                                list.clear();
+                                if (orderDetailModel.data.orderProds.size()>0) {
+                                    list.addAll(orderDetailModel.data.orderProds);
                                 }
                             }
                             adapter.notifyDataSetChanged();
@@ -888,8 +893,8 @@ public class SelfSufficiencyOrderDetailActivity extends BaseSwipeActivity {
     private GetOrderDetailModel mDetailModel;
 
     //获取订单详情
-    private void getOrderDetail(String orderId, String orderState, String returnProductMainId) {
-        GetOrderDetailAPI.requestData(mContext, orderId, orderState, returnProductMainId)
+    private void getOrderDetail(String orderId) {
+        GetOrderDetailAPI.requestData(mContext, orderId)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<GetOrderDetailModel>() {
@@ -920,19 +925,27 @@ public class SelfSufficiencyOrderDetailActivity extends BaseSwipeActivity {
                                 tv_hour.setText(orderDetailModel.data.deliverTimeStart + "-" + orderDetailModel.data.deliverTimeEnd);
                                 et_name.setText(orderDetailModel.data.pickUserName);
                                 et_phone.setText(orderDetailModel.data.pickPhone);
-                                address.setText(orderDetailModel.data.wareName);
+//                                address.setText(orderDetailModel.data.wareName);
                                 tv_address.setText(orderDetailModel.data.wareAddress);
-
-                                if (orderDetailModel.data.productVOList.size() > 0) {
-                                    //  Log.e(TAG, "onNext: " + orderDetailModel.data.productVOList.get(0).productDescVOList.get(0).newDesc);
-                                    list.clear();
-                                    list.addAll(orderDetailModel.data.productVOList);
+                                list.clear();
+                                if (orderDetailModel.data.orderProds.size() > 0) {
+                                    list.addAll(orderDetailModel.data.orderProds);
                                     adapter.notifyDataSetChanged();
-
-                                    list_full.clear();
                                     list_full.addAll(orderDetailModel.data.sendGiftInfo);
                                     orderFullAdapter.notifyDataSetChanged();
+
                                 }
+
+//                                if (orderDetailModel.data.productVOList.size() > 0) {
+//                                    //  Log.e(TAG, "onNext: " + orderDetailModel.data.productVOList.get(0).productDescVOList.get(0).newDesc);
+//                                    list.clear();
+//                                    list.addAll(orderDetailModel.data.productVOList);
+//                                    adapter.notifyDataSetChanged();
+//
+//                                    list_full.clear();
+//                                    list_full.addAll(orderDetailModel.data.sendGiftInfo);
+//                                    orderFullAdapter.notifyDataSetChanged();
+//                                }
                             }
 
 
@@ -951,36 +964,46 @@ public class SelfSufficiencyOrderDetailActivity extends BaseSwipeActivity {
         setViewShow();
         tvOrderTitle.setText(getOrderDetailModel.orderStatusName);
         ReturnGoodsTitle.setText(getOrderDetailModel.orderStatusName);
-
-        tvNewOrderCommodityNum.setText("共" + getOrderDetailModel.totalNum + "件商品");
-        tvNewOrderCommodity.setText("实付金额");
-
+        linearLayoutPay.setVisibility(View.GONE);
         tvNewOrderCommodityAmount.setText("￥" + getOrderDetailModel.prodAmount);
 
-        tvNewOrderVipSubtractionPrice.setText("￥" + getOrderDetailModel.vipReductDesc);
-        tvNewOrderPayMoney.setText("￥" + getOrderDetailModel.totalAmount);
+//        tvNewOrderVipSubtractionPrice.setText("￥" + getOrderDetailModel.vipReductDesc);
         tvNewOrderDistributionFeePrice.setText("￥" + getOrderDetailModel.deliveryFee);
-        tvnormalReduct.setText("￥" + getOrderDetailModel.normalReduct);
-
-        tvNewOrderCoupons.setText("￥" + getOrderDetailModel.offerAmount + "");
-        returnGoodsCommodityNum.setText(getOrderDetailModel.applyReturnDate);
-        returnGoodsReason.setText(getOrderDetailModel.returnReson);
-
-        tv_phone.setText(info.data.customerPhone);
-        //  returnGoodsCommodityPayMoney.setText();
-        tv_return_amount.setText("￥" + getOrderDetailModel.actuallyReturn);
-        returnGoodsCommodityAmount.setText(getOrderDetailModel.checkDate);
-        tv_return_reason.setText(getOrderDetailModel.returnReson);
+        //已取消
+//        if(getOrderDetailModel.orderStatus==7||getOrderDetailModel.orderStatus==1) {
+//            ll_pay.setVisibility(View.GONE);
+//            ll_beizhu.setVisibility(View.GONE);
+//        }else {
+//            ll_pay.setVisibility(View.VISIBLE);
+//            ll_beizhu.setVisibility(View.VISIBLE);
+//        }
+//        tvnormalReduct.setText("￥" + getOrderDetailModel.normalReduct);
+        address.setText(getOrderDetailModel.wareName);
+        tvNewOrderCoupons.setText("￥" + getOrderDetailModel.giftAmount);
+//        returnGoodsCommodityNum.setText(getOrderDetailModel.applyReturnDate);
+//        returnGoodsReason.setText(getOrderDetailModel.returnReson);
+//
+//        tv_phone.setText(info.data.customerPhone);
+//        returnGoodsCommodityAmount.setText(getOrderDetailModel.checkDate);
+//        tv_return_reason.setText(getOrderDetailModel.returnReson);
         //   tvNewOrderPayMoneyReturn.setText("￥" + getOrderDetailModel.actuallyReturn);
         // tvReturnGoodsCommodity.setText("共" + getOrderDetailModel.returnProductNum + "件商品");
+        deliver_linearLayout.setVisibility(View.GONE);
+//        ll_beizhu.setVisibility(View.GONE);
+        tv_total_amount.setText("￥"+info.data.totalAmount);
+        tv_payWay.setText(info.data.payChannel);
+        tv_amount.setText(info.data.prodNum+"");
         sendAmountStr.setText(getOrderDetailModel.sendAmountStr);
-        tvNewOrderPhone.setText(getOrderDetailModel.orderId);
         tvNewOrderTime.setText(getOrderDetailModel.gmtCreate);
-        tv_normal_vip_desc.setText(getOrderDetailModel.vipReductDesc);
+        tv_normal_vip_desc.setText(getOrderDetailModel.vipReductStr);
+        tv_full_desc.setText(getOrderDetailModel.normalReductStr);
+        tv_full_price.setText(getOrderDetailModel.normalReduct);
+        tvNewOrderCommodityAmount.setText("￥" + getOrderDetailModel.prodAmount);
 
-        tvDeductDsc.setText(getOrderDetailModel.deductDesc);
+        tvNewOrderVipSubtractionPrice.setText("￥" + getOrderDetailModel.vipReductStr);
 
-        tvNomalReductDesc.setText(getOrderDetailModel.normalReductDesc);
+//        tvDeductDsc.setText(getOrderDetailModel.deductDesc);
+//        tvNomalReductDesc.setText(getOrderDetailModel.normalReductDesc);
     /*    if (getOrderDetailModel.deliverTimeStart == null) {
             mLinearLayoutDeliver.setVisibility(View.GONE);
         } else {
@@ -988,6 +1011,9 @@ public class SelfSufficiencyOrderDetailActivity extends BaseSwipeActivity {
             mTvDeliverTime.setText(getOrderDetailModel.deliverTimeName + "  " + getOrderDetailModel.deliverTimeStart + " - " + getOrderDetailModel.deliverTimeEnd);
         }*/
 
+        //优惠券描述
+        tvDeductDsc.setText(getOrderDetailModel.giftName);
+        tvNewOrderPayTime.setText(getOrderDetailModel.payDate);
         mTvDriverName.setText(getOrderDetailModel.driverName);
         tv_driver_phone.setText(getOrderDetailModel.driverPhone);
         tvNewOrderAddresseeName.setText(getOrderDetailModel.addressVO.userName + "    "
@@ -997,17 +1023,6 @@ public class SelfSufficiencyOrderDetailActivity extends BaseSwipeActivity {
         tvNewOrderVipSubtractionPrice.setText(" ￥ " + getOrderDetailModel.vipReduct);
         tvNewOrderRemarks.setText(getOrderDetailModel.remark);
         //  examineTimeLinearLayout.setVisibility(orderStatusRequest == 11 ? View.VISIBLE : View.GONE);
-        if (getOrderDetailModel.payChannelType == 1) { //余额支付"=1 , 支付宝=2 微信支付=3
-            tvNewOrderPay.setImageResource(R.mipmap.ic_balance_pay);
-        } else if (getOrderDetailModel.payChannelType == 2) {
-            tvNewOrderPay.setImageResource(R.mipmap.ic_pay_alipay);
-        } else if (getOrderDetailModel.payChannelType == 3) {
-            tvNewOrderPay.setImageResource(R.mipmap.ic_we_chat_icon);
-        }else if(getOrderDetailModel.payChannelType == 14) {
-            tvNewOrderPay.setImageResource(R.mipmap.ic_pay_alipay);
-        }else if(getOrderDetailModel.payChannelType == 16) {
-            tvNewOrderPay.setImageResource(R.mipmap.icon_yun);
-        }
 
 
         if (orderStatusRequest == 2) {
@@ -1034,7 +1049,7 @@ public class SelfSufficiencyOrderDetailActivity extends BaseSwipeActivity {
         orderTimerView.changeTypeColor(Color.WHITE);
         orderTimerView.start();
      /*   if (!TextUtils.isEmpty(getOrderDetailModel.payDate)) {// 付款时间
-            tvNewOrderPayTime.setText(getOrderDetailModel.payDate);
+
             tvNewOrderPayTimeLinearLayout.setVisibility(View.VISIBLE);
         } else {
             tvNewOrderPayTimeLinearLayout.setVisibility(View.GONE);
@@ -1057,181 +1072,17 @@ public class SelfSufficiencyOrderDetailActivity extends BaseSwipeActivity {
 
     //返回上个页面
     private void backEvent() {
-
         if(account.equals("0")) {
-            if (goAccount != null && StringHelper.notEmptyAndNull(goAccount)) {
-                finish();
-            } else {
-                if (orderStatusRequest == 1) {
-                    //待付款
-                    Intent intent = new Intent(mContext, MyOrdersActivity.class);
-                    intent.putExtra("type", AppConstant.PAYMENT);
-                    intent.putExtra("orderDeliveryType", 1);
-                    startActivity(intent);
-                    //   UserInfoHelper.saveDeliverType(mContext,"1");
-                    //   startActivity(MyOrdersActivity.getIntent(mContext, MyOrdersActivity.class, AppConstant.PAYMENT));
-                    overridePendingTransition(R.anim.slide_in_from_right,
-                            R.anim.slide_out_from_left);
-                } else if (orderStatusRequest == 2) {
-                    //待发货
-                    Intent intent = new Intent(mContext, MyOrdersActivity.class);
-                    intent.putExtra("type", AppConstant.DELIVERY);
-                    intent.putExtra("orderDeliveryType", 1);
-                    startActivity(intent);
-                    //  UserInfoHelper.saveDeliverType(mContext,"1");
-                    //  startActivity(MyOrdersActivity.getIntent(mContext, MyOrdersActivity.class, AppConstant.DELIVERY));
-                    overridePendingTransition(R.anim.slide_in_from_right,
-                            R.anim.slide_out_from_left);
-                } /*else if (orderStatusRequest == 3) {
-            //待收货
-            startActivity(MyOrdersActivity.getIntent(mContext, MyOrdersActivity.class, AppConstant.RECEIVED));
-            overridePendingTransition(R.anim.slide_in_from_right,
-                    R.anim.slide_out_from_left);
-        }*/ else if (orderStatusRequest == 4) {
-                    //已完成
-                    Intent intent = new Intent(mContext, MyOrdersActivity.class);
-                    intent.putExtra("type", AppConstant.ALL);
-                    intent.putExtra("orderDeliveryType", 1);
-                    startActivity(intent);
-                    // UserInfoHelper.saveDeliverType(mContext,"1");
-                    //  startActivity(MyOrdersActivity.getIntent(mContext, MyOrdersActivity.class, AppConstant.ALL));
-                    overridePendingTransition(R.anim.slide_in_from_right,
-                            R.anim.slide_out_from_left);
-                } else if (orderStatusRequest == 5) {
-                    //待评价
-                    Intent intent = new Intent(mContext, MyOrdersActivity.class);
-                    intent.putExtra("type", AppConstant.EVALUATED);
-                    intent.putExtra("orderDeliveryType", 1);
-                    startActivity(intent);
-                    //  UserInfoHelper.saveDeliverType(mContext,"1");
-                    //  startActivity(MyOrdersActivity.getIntent(mContext, MyOrdersActivity.class, AppConstant.EVALUATED));
-                    overridePendingTransition(R.anim.slide_in_from_right,
-                            R.anim.slide_out_from_left);
-                } else if (orderStatusRequest == 6) {
-                    //已评价
-                    Intent intent = new Intent(mContext, MyOrdersActivity.class);
-                    intent.putExtra("type", AppConstant.ALL);
-                    intent.putExtra("orderDeliveryType", 1);
-                    startActivity(intent);
-                    //   UserInfoHelper.saveDeliverType(mContext,"1");
-                    //  startActivity(MyOrdersActivity.getIntent(mContext, MyOrdersActivity.class, AppConstant.ALL));
-                    overridePendingTransition(R.anim.slide_in_from_right,
-                            R.anim.slide_out_from_left);
-                } else if (orderStatusRequest == 7) {
-                    //已取消(订单关闭)
-                    Intent intent = new Intent(mContext, MyOrdersActivity.class);
-                    intent.putExtra("type", AppConstant.ALL);
-                    intent.putExtra("orderDeliveryType", 1);
-                    startActivity(intent);
-                    // UserInfoHelper.saveDeliverType(mContext,"1");
-                    //  startActivity(MyOrdersActivity.getIntent(mContext, MyOrdersActivity.class, AppConstant.ALL));
-                    overridePendingTransition(R.anim.slide_in_from_right,
-                            R.anim.slide_out_from_left);
-                } else if (orderStatusRequest == 11) {
-                    //退货
-                    Intent intent = new Intent(mContext, MyOrdersActivity.class);
-                    intent.putExtra("type", AppConstant.RETURN);
-                    intent.putExtra("orderDeliveryType", 1);
-                    startActivity(intent);
-                    //  UserInfoHelper.saveDeliverType(mContext,"1");
-                    // startActivity(MyOrdersActivity.getIntent(mContext, MyOrdersActivity.class, AppConstant.RETURN));
-                    overridePendingTransition(R.anim.slide_in_from_right,
-                            R.anim.slide_out_from_left);
-                }
-                finish();
-            }
-        }else {
-            if (goAccount != null && StringHelper.notEmptyAndNull(goAccount)) {
-                finish();
-            } else {
-                if (orderStatusRequest == 1) {
-                    //待付款
-                    Intent intent = new Intent(mContext, MySubOrderActivity.class);
-                    intent.putExtra("type", AppConstant.PAYMENT);
-                    intent.putExtra("orderDeliveryType", 1);
-                    intent.putExtra("subId",subId);
-                    startActivity(intent);
-                    //   UserInfoHelper.saveDeliverType(mContext,"1");
-                    //   startActivity(MyOrdersActivity.getIntent(mContext, MyOrdersActivity.class, AppConstant.PAYMENT));
-                    overridePendingTransition(R.anim.slide_in_from_right,
-                            R.anim.slide_out_from_left);
-                } else if (orderStatusRequest == 2) {
-                    //待发货
-                    Intent intent = new Intent(mContext, MySubOrderActivity.class);
-                    intent.putExtra("type", AppConstant.DELIVERY);
-                    intent.putExtra("orderDeliveryType", 1);
-                    intent.putExtra("subId",subId);
-                    startActivity(intent);
-                    //  UserInfoHelper.saveDeliverType(mContext,"1");
-                    //  startActivity(MyOrdersActivity.getIntent(mContext, MyOrdersActivity.class, AppConstant.DELIVERY));
-                    overridePendingTransition(R.anim.slide_in_from_right,
-                            R.anim.slide_out_from_left);
-                } /*else if (orderStatusRequest == 3) {
-            //待收货
-            startActivity(MyOrdersActivity.getIntent(mContext, MyOrdersActivity.class, AppConstant.RECEIVED));
-            overridePendingTransition(R.anim.slide_in_from_right,
-                    R.anim.slide_out_from_left);
-        }*/ else if (orderStatusRequest == 4) {
-                    //已完成
-                    Intent intent = new Intent(mContext, MySubOrderActivity.class);
-                    intent.putExtra("type", AppConstant.ALL);
-                    intent.putExtra("orderDeliveryType", 1);
-                    intent.putExtra("subId",subId);
-                    startActivity(intent);
-                    // UserInfoHelper.saveDeliverType(mContext,"1");
-                    //  startActivity(MyOrdersActivity.getIntent(mContext, MyOrdersActivity.class, AppConstant.ALL));
-                    overridePendingTransition(R.anim.slide_in_from_right,
-                            R.anim.slide_out_from_left);
-                } else if (orderStatusRequest == 5) {
-                    //待评价
-                    Intent intent = new Intent(mContext, MySubOrderActivity.class);
-                    intent.putExtra("type", AppConstant.EVALUATED);
-                    intent.putExtra("subId",subId);
-                    intent.putExtra("orderDeliveryType", 1);
-                    startActivity(intent);
-                    //  UserInfoHelper.saveDeliverType(mContext,"1");
-                    //  startActivity(MyOrdersActivity.getIntent(mContext, MyOrdersActivity.class, AppConstant.EVALUATED));
-                    overridePendingTransition(R.anim.slide_in_from_right,
-                            R.anim.slide_out_from_left);
-                } else if (orderStatusRequest == 6) {
-                    //已评价
-                    Intent intent = new Intent(mContext, MySubOrderActivity.class);
-                    intent.putExtra("type", AppConstant.ALL);
-                    intent.putExtra("subId",subId);
-                    intent.putExtra("orderDeliveryType", 1);
-                    startActivity(intent);
-                    //   UserInfoHelper.saveDeliverType(mContext,"1");
-                    //  startActivity(MyOrdersActivity.getIntent(mContext, MyOrdersActivity.class, AppConstant.ALL));
-                    overridePendingTransition(R.anim.slide_in_from_right,
-                            R.anim.slide_out_from_left);
-                } else if (orderStatusRequest == 7) {
-                    //已取消(订单关闭)
-                    Intent intent = new Intent(mContext, MySubOrderActivity.class);
-                    intent.putExtra("type", AppConstant.ALL);
-                    intent.putExtra("subId",subId);
-                    intent.putExtra("orderDeliveryType", 1);
-                    startActivity(intent);
-                    // UserInfoHelper.saveDeliverType(mContext,"1");
-                    //  startActivity(MyOrdersActivity.getIntent(mContext, MyOrdersActivity.class, AppConstant.ALL));
-                    overridePendingTransition(R.anim.slide_in_from_right,
-                            R.anim.slide_out_from_left);
-                } else if (orderStatusRequest == 11) {
-                    //退货
-                    Intent intent = new Intent(mContext, MySubOrderActivity.class);
-                    intent.putExtra("type", AppConstant.RETURN);
-                    intent.putExtra("subId",subId);
-                    intent.putExtra("orderDeliveryType", 1);
-                    startActivity(intent);
-                    //  UserInfoHelper.saveDeliverType(mContext,"1");
-                    // startActivity(MyOrdersActivity.getIntent(mContext, MyOrdersActivity.class, AppConstant.RETURN));
-                    overridePendingTransition(R.anim.slide_in_from_right,
-                            R.anim.slide_out_from_left);
-                }
-                finish();
-            }
+            finish();
+        }else if(account.equals("2")){
+            Intent intent = new Intent(mContext, MyOrdersActivity.class);
+            intent.putExtra("type", AppConstant.PAYMENT);
+            intent.putExtra("orderDeliveryType", 0);
+            startActivity(intent);
+            finish();
+        }else if(account.equals("1")) {
+            finish();
         }
-
-
     }
 
     // 不同的状态显示不同的layout
@@ -1305,7 +1156,7 @@ public class SelfSufficiencyOrderDetailActivity extends BaseSwipeActivity {
        // mRlReturn.setVisibility(orderStatusRequest == 11 ? View.VISIBLE : View.GONE);
 
 
-        setOrderContent(getOrderDetailModel.checkStatus);
+        setOrderContent(getOrderDetailModel.orderStatus);
 
     }
 
@@ -1338,7 +1189,7 @@ public class SelfSufficiencyOrderDetailActivity extends BaseSwipeActivity {
                     ReturnGoodsContent.setText("欢迎再次使用翘歌烧烤");
                     relativeLayoutCommodityReturn.setVisibility(View.VISIBLE);
                 } else {
-                    ReturnGoodsContent.setText(getOrderDetailModel.feedbackReson);
+//                    ReturnGoodsContent.setText(getOrderDetailModel.feedbackReson);
                     relativeLayoutCommodityReturn.setVisibility(View.GONE);
                 }
                 break;
@@ -1397,7 +1248,7 @@ public class SelfSufficiencyOrderDetailActivity extends BaseSwipeActivity {
                             //取消成功
                             AppHelper.showMsg(mContext, "取消订单成功");
 
-                            getOrderDetail(orderId, orderState, returnProductMainId);
+                            getOrderDetail(orderId);
                         } else {
                             AppHelper.showMsg(mContext, cancelOrderModel.message);
                         }
@@ -1414,7 +1265,7 @@ public class SelfSufficiencyOrderDetailActivity extends BaseSwipeActivity {
         window.setContentView(R.layout.dialog_can_not_return_reason);
         TextView mTvReason = (TextView) window.findViewById(R.id.tv_dialog_cannot_return_reason);
         Button mBtnConfirm = (Button) window.findViewById(R.id.btn_dialog_cannot_return_confirm);
-        mTvReason.setText(getOrderDetailModel.cannotReturnGoodsMsg);
+//        mTvReason.setText(getOrderDetailModel.cannotReturnGoodsMsg);
         mBtnConfirm.setOnClickListener(new NoDoubleClickListener() {
             @Override
             public void onNoDoubleClick(View view) {
@@ -1424,14 +1275,14 @@ public class SelfSufficiencyOrderDetailActivity extends BaseSwipeActivity {
     }
 
     //立即评价
-    private void requestEvaluate() {
+    private void requestEvaluate(List<CommonModel.DataBean> data, String orderId) {
         //去评价需要将订单里面的商品列表中的商品的商品名,商品ID组成list,传到评价的界面
         mListEvaluate.clear();
-        if (getOrderDetailModel.productVOList != null && getOrderDetailModel.productVOList.size() > 0) {
-            for (int i = 0; i < getOrderDetailModel.productVOList.size(); i++) {
-                mListEvaluate.add(new OrderEvaluateListModel(getOrderDetailModel.productVOList.get(i).productId,
-                        getOrderDetailModel.productVOList.get(i).businessType,
-                        getOrderDetailModel.productVOList.get(i).name, getOrderDetailModel.productVOList.get(i).picUrl, 5 + "", ""));
+        if (data != null && data.size() > 0) {
+            for (int i = 0; i < data.size(); i++) {
+                mListEvaluate.add(new OrderEvaluateListModel(data.get(i).getProductId(),
+                        data.get(i).getBusinessType(),
+                        data.get(i).getName(), data.get(i).getPicUrl(), 5 + "", ""));
             }
         } else {
             AppHelper.showMsg(mContext, "订单商品数据错误!");
@@ -1441,6 +1292,35 @@ public class SelfSufficiencyOrderDetailActivity extends BaseSwipeActivity {
         intentPut.putExtra("orderId", orderId);
         intentPut.putExtra("orderDeliveryType", 1);
         startActivityForResult(intentPut, 12);
+    }
+
+    /**
+     * 点击去评价
+     * @param orderId
+     */
+    private void getComment(String orderId) {
+        MyOrderListAPI.getComment(mActivity,orderId)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<CommonModel>() {
+                    @Override
+                    public void onCompleted() {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                    }
+
+                    @Override
+                    public void onNext(CommonModel commonModel) {
+                        if(commonModel.isSuccess()) {
+                            if(commonModel.getData()!=null) {
+                                requestEvaluate(commonModel.getData(),orderId);
+                            }
+                        }
+                    }
+                });
     }
 
     // 再次购买
@@ -1496,7 +1376,7 @@ public class SelfSufficiencyOrderDetailActivity extends BaseSwipeActivity {
                             //确认收货成功
                             AppHelper.showMsg(mContext, "确认提货成功");
                             //刷新订单状态
-                            getOrderDetail(orderId, orderState, returnProductMainId);
+                            getOrderDetail(orderId);
                         } else {
                             AppHelper.showMsg(mContext, baseModel.message);
                         }
@@ -1511,6 +1391,11 @@ public class SelfSufficiencyOrderDetailActivity extends BaseSwipeActivity {
                 case R.id.imageViewBreak: //返回按钮
                     backEvent();
                     break;
+//                case R.id.ll_beizhu:
+//                    Intent intents = new Intent(mActivity,BeizhuActivity.class);
+//                    intents.putExtra("beizhu",tv_beizhu.getText().toString()+"");
+//                    startActivity(intents);
+//                    break;
                 case R.id.buttonCancelOrder:// 取消订单
                     showCancleOrder();
                     break;
@@ -1526,62 +1411,31 @@ public class SelfSufficiencyOrderDetailActivity extends BaseSwipeActivity {
                     paymentFragment.setArguments(bundle);
                     paymentFragment.setCancelable(false);
                     paymentFragment.show(getSupportFragmentManager(),"paymentFragment");
-//                    Intent intent = new Intent(mContext, MyConfireOrdersActivity.class);
-//                    intent.putExtra("remark", getOrderDetailModel.remark);
-//                    // Log.i("wwb", "onNoDoubleClick: "+getOrderDetailModel.remark);
-//                    intent.putExtra("payAmount", Double.parseDouble(getOrderDetailModel.totalAmount));
-//                    intent.putExtra("orderId", orderId);
-//                    intent.putExtra("flag", true);
-//                    intent.putExtra("orderDeliveryType", 1);
-//                    finish();
-//                    startActivity(intent);
                     break;
 
                 case R.id.buttonReturnGood_two:
                     if (getOrderDetailModel.canReturnGoods) {
-                      /*  mListForReturn.clear();
-                        mListForReturn.addAll(getOrderDetailModel.productVOList);
-                        Intent intentReturnGoods = new Intent(mContext, ReturnGoodsListActivity.class);
-                        intentReturnGoods.putExtra("goodsList", (Serializable) mListForReturn);
-                        intentReturnGoods.putExtra("orderId", orderId);
-                        intentReturnGoods.putExtra("orderType", getOrderDetailModel.orderType);
-                        intentReturnGoods.putExtra("returnProductMainId", returnProductMainId);
-                        startActivity(intentReturnGoods);*/
-                        mListForReturn.clear();
-                        mListForReturn.addAll(getOrderDetailModel.productVOList);
                         Intent intent1 = new Intent(mContext, ReturnGoodActivity.class);
                         intent1.putExtra("orderStatus", orderStatusRequest + "");
                         intent1.putExtra("orderId", orderId);
                         intent1.putExtra("orderDeliveryType", 1);
                         startActivity(intent1);
-
+//
                     } else {
-                        //不能退货,弹框提示消息
+//                        //不能退货,弹框提示消息
                         showCannotReturnDialog();
                     }
 
                     break;
                 case R.id.buttonReturnGoods: //退货
-
                     if (getOrderDetailModel.canReturnGoods) {
-                      /*  mListForReturn.clear();
-                        mListForReturn.addAll(getOrderDetailModel.productVOList);
-                        Intent intentReturnGoods = new Intent(mContext, ReturnGoodsListActivity.class);
-                        intentReturnGoods.putExtra("goodsList", (Serializable) mListForReturn);
-                        intentReturnGoods.putExtra("orderId", orderId);
-                        intentReturnGoods.putExtra("orderType", getOrderDetailModel.orderType);
-                        intentReturnGoods.putExtra("returnProductMainId", returnProductMainId);
-                        startActivity(intentReturnGoods);*/
-                        mListForReturn.clear();
-                        mListForReturn.addAll(getOrderDetailModel.productVOList);
                         Intent intent1 = new Intent(mContext, ReturnGoodActivity.class);
                         intent1.putExtra("orderStatus", orderStatusRequest+"");
                         intent1.putExtra("orderId", orderId);
                         intent1.putExtra("orderDeliveryType", 1);
                         startActivity(intent1);
-
                     } else {
-                        //不能退货,弹框提示消息
+//                        //不能退货,弹框提示消息
                         showCannotReturnDialog();
                     }
 
@@ -1589,24 +1443,14 @@ public class SelfSufficiencyOrderDetailActivity extends BaseSwipeActivity {
 
                 case R.id.tv_order_return:
                     if (getOrderDetailModel.canReturnGoods) {
-                      /*  mListForReturn.clear();
-                        mListForReturn.addAll(getOrderDetailModel.productVOList);
-                        Intent intentReturnGoods = new Intent(mContext, ReturnGoodsListActivity.class);
-                        intentReturnGoods.putExtra("goodsList", (Serializable) mListForReturn);
-                        intentReturnGoods.putExtra("orderId", orderId);
-                        intentReturnGoods.putExtra("orderType", getOrderDetailModel.orderType);
-                        intentReturnGoods.putExtra("returnProductMainId", returnProductMainId);
-                        startActivity(intentReturnGoods);*/
-                        mListForReturn.clear();
-                        mListForReturn.addAll(getOrderDetailModel.productVOList);
                         Intent intent1 = new Intent(mContext, ReturnGoodActivity.class);
                         intent1.putExtra("orderStatus", orderStatusRequest+"");
                         intent1.putExtra("orderId", orderId);
                         intent1.putExtra("orderDeliveryType", 1);
                         startActivity(intent1);
-
+//
                     } else {
-                        //不能退货,弹框提示消息
+//                        //不能退货,弹框提示消息
                         showCannotReturnDialog();
                     }
 
@@ -1625,7 +1469,7 @@ public class SelfSufficiencyOrderDetailActivity extends BaseSwipeActivity {
                     }*/
 
                     if (orderStatusRequest == 5) {
-                        requestEvaluate();
+                        getComment(orderId);
                     }
                     break;
                 case R.id.buttonAgainBuy: // 再次购买
@@ -1645,15 +1489,6 @@ public class SelfSufficiencyOrderDetailActivity extends BaseSwipeActivity {
                     intent_.putExtra("orderId", orderId);
                     intent_.putExtra("type", 1);
                     startActivity(intent_);
-                    break;
-                case R.id.tv_copy_order_num:
-//获取剪贴板管理器：
-                    ClipboardManager cm = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
-// 创建普通字符型ClipData
-                    ClipData mClipData = ClipData.newPlainText("Label", tvNewOrderPhone.getText().toString());
-// 将ClipData内容放到系统剪贴板里。
-                    cm.setPrimaryClip(mClipData);
-                    AppHelper.showMsg(mContext, "复制成功");
                     break;
 
 
@@ -1675,7 +1510,7 @@ public class SelfSufficiencyOrderDetailActivity extends BaseSwipeActivity {
                             .setCancelOutside(true);
                     dialog = loadBuilder.create();
                     dialog.show();
-                    getOrderDetailDialog(orderId, orderState, returnProductMainId);
+                    getOrderDetailDialog(orderId);
                     break;
 
                 //查看物流信息
@@ -1888,7 +1723,7 @@ public class SelfSufficiencyOrderDetailActivity extends BaseSwipeActivity {
 
         super.onDestroy();
         mMapView.onDestroy();
-        EventBus.getDefault().unregister(this);
+//        EventBus.getDefault().unregister(this);
     }
 
 
@@ -2001,6 +1836,15 @@ public class SelfSufficiencyOrderDetailActivity extends BaseSwipeActivity {
         }
 
     }
+
+
+
+//    BeizhuEvent beizhuEvent;
+//    @Subscribe(threadMode = ThreadMode.MAIN)
+//    public void getBeizhu(BeizhuEvent beizhuEvent) {
+//        this.beizhuEvent = beizhuEvent;
+//        tv_beizhu.setText(beizhuEvent.getBeizhu());
+//    }
 
     /**
      * 打开腾讯地图网页版

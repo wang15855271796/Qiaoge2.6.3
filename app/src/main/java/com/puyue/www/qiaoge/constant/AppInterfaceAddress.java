@@ -16,6 +16,21 @@ public class AppInterfaceAddress {
 //    queryReturnProdIsContainFullGift
 
     /**
+     *订单列表-去评价获取订单商品信息
+     */
+    public static final String Order_Comment = "commonOrder/queryOrderCommentProdList";
+
+    /**
+     *新订单列表
+     */
+    public static final String Order_List = "commonOrder/queryUserOrderPage";
+
+    /**
+     * 查看供应商资质信息
+     */
+    public static final String Query_Detail_Info = "common/getAppSupplierInfo";
+
+    /**
      *查看优惠券指定商品
      */
     public static final String Query_Prod = "gift/queryGiftUseInProds";
@@ -116,7 +131,6 @@ public class AppInterfaceAddress {
      */
     public static final String IntellGency = "common/getCompanyQualification";
 
-    public static final String SEARCHEQUIPMENT = " equipment/searchEquipment?";
     public static final String CHECKMESSAGE = "auth/checkRegisterCode";
     /**
      *用户注销
@@ -156,11 +170,6 @@ public class AppInterfaceAddress {
      */
     public static final String Coupon_List = "common/getUserPopups";
 
-
-    public static final String HOMENEW = "common/prodHomeIndexInfo";
-    public static final String GETPRODUCTLIST = "common/product/getProductList?";
-    public static final String GETSELLPLACELISTBYIDANDDATE = "place/getSellPlaceListByIdAndDate?";
-    public static final String SEARCHSCENICSPOT = "place/searchScenicSpot?";
     /**
      * 活动订阅取消
      */
@@ -175,17 +184,7 @@ public class AppInterfaceAddress {
      * 团购列表
      */
     public static final String TEAMACTIVEQUERY = "common/getActiveInfoList";
-    public static final String SPIKEACTIVEQUERYBYID = "auth/spikeActiveQueryById?";
-    public static final String COMMENTORDERQUERY = "auth/commentOrderQuery?";
-    public static final String SEARCHMASTERWORKDER = "master/searchMasterWorkder?";
-    public static final String GETCOMMONPRODUCT = "product/getCommonProduct?";
-    public static final String GETMASTERWORKERBYIDANDDATE = "master/getMasterWorkerByIdAndDate?";
-    public static final String GETMASTERWORKERDETAIL = "master/getMasterWorkerDetailPicByMasterWorkerId?";
-    public static final String GETCOMMENTLISTBYPAGE = "master/getCommentListByPage?";
-    public static final String COLLET = "common/collect?";
-    public static final String MARKET_GOODS_CLASSIFY = "common/product/getAllProduct";
-    public static final String MARKET_GOODS = "common/product/getProductByClassifyId";
-    public static final String DISABLE_SUB_USER = "user/disableSubUser";
+
     public static final String CHECK_COMMON_CODE = "auth/CommonCheckResetPwd";
     /**
      * 添加子账户
@@ -223,7 +222,6 @@ public class AppInterfaceAddress {
      */
     public static final String Sub_Account_Message = "user/allSubMessageRead";
 
-    public static final String RECOVER_SUB_USER = "user/recoverSubUser";
     /**
      * 获取地址列表
      */
@@ -237,12 +235,11 @@ public class AppInterfaceAddress {
      */
     public static final String GET_ENABLEAREA_LIST = "common/area/getEnableAreaList";
     public static final String GET_COLLECTION_LIST = "commonCollect/myCollectProd";
-    public static final String GET_ORDER_LIST = "commonOrder/getCommonOrderListByPage";
     /**
      *子账户订单列表
      *
      */
-    public static final String Sub_Account_List = "user/querySubAllOrderPage";
+    public static final String Sub_Account_List = "user/querySupSubAllOrderPage";
 
     public static final String FEEDBACK = "feedback/addFeedBack";
     public static final String EDIT_ADDRESS = "address/updateAddress";
@@ -251,18 +248,10 @@ public class AppInterfaceAddress {
      * 设置默认地址
      */
     public static final String EDIT_DEFAULT_ADDRESS = "address/setDefaultAddressById";
-    public static final String TEAMACTIVEQUERYBYID = "auth/teamActiveQueryById?";
     public static final String MESSAGE_CENTER = "notice/getNoticeInfoVOPage";
     public static final String MESSAGE_DETAIL = "notice/getNoticeInfoDetail";
-    public static final String GETSCENICSPOTDETAILBYIDANDDATE = "place/getScenicSpotDetailByIdAndDate?";
-    public static final String GETSELLPLACEDETAILBYSELLPLACEID = "place/getSellPlaceDetailBySellPlaceId?";
-    public static final String GETSELLPLACEDETAILPICBYSELLPLACEID = "place/getSellPlaceDetailPicBySellPlaceId?";
-    public static final String GETPLACECOMMENTLISTBYPAGE = "place/getCommentListByPage?";
-    public static final String GETEQUIPMENTBYIDANDDATE = "equipment/getEquipmentByIdAndDate?";
-    public static final String GETEQUIPMENTDETAILPICBYEQUIPMENTID = "equipment/getEquipmentDetailPicByEquipmentId?";
-    public static final String GETEQUIPMENTCOMMENTLISTBYPAGE = "equipment/getCommentListByPage?";
+
     public static final String GETPRODUCTDETAIL = "common/querySpecProductDetail";
-    public static final String COMMENTORDER = "commonOrder/commentOrder?";
     /**
      * 切换商品规格
      */
@@ -274,13 +263,11 @@ public class AppInterfaceAddress {
     public static final String HASCOLLECT = "commonCollect/hasCollect?";
     public static final String CLICKCOLLECTION = "commonCollect/collectOrCancel?";
     public static final String ADDCART = "cart/addCart?";
-    public static final String BUYPRODUCT = "product/buyProduct?";
 
-    public static final String GETORDERDETAIL = "commonOrder/getOrderDetail?";
-    public static final String SECKILLORTEAMPRODUCT = "product/secKillOrTeamProduct?";
-    public static final String MASTERWORKERRESERVE = "masterWorker/masterWorkerReserve?";
-    public static final String SELLPLACERESERVE = " sellPlace/sellPlaceReserve?";
-    public static final String EQUIPMENTRESERVE = "equipmentProduct/equipmentReserve?";
+    /**
+     * 获取订单详情
+     */
+    public static final String GETORDERDETAIL = "commonOrder/queryUserOrderDetail";
     /**
      * 去支付
      */
@@ -300,29 +287,19 @@ public class AppInterfaceAddress {
      */
     public static final String DELETEORDER = "commonOrder/deleteOrder";
 
-    public static final String APPLAYRETURNGOODS = "commonOrder/applayReturnGoods?";
-    public static final String RECHARGE = "pay/recharge?";
-    public static final String APPLYWITHDRAW = "pay/applyWithdraw?";
-    public static final String GETSUBUSERLIST = "user/getSubUserList?";
     public static final String GETWALLETAMOUNT = "wallet/getWalletAmount?";
     /**
      * 我的账单列表
      */
     public static final String GETWALLERTRECORDBYPAGE = "wallet/queryWalletRecordMonth";
 
-
-    public static final String GET_CART_LIST = "cart/getMyCartList?";
     public static final String DELETE_CART = "cart/deleteByCartIds";
     public static final String CART_BALANCE = "cart/cartToBalance";
-    public static final String GET_ORDER_STATUS_NUM = "notice/getOrderStatusNum";
 
     /**
      * 我的
      */
     public static final String USER_MY_COUNTER = "user/myCenter";
-
-
-    public static final String RETURNEQUIPMENTORDERLISTBYID = "equipmentProduct/returnEquipmentOrderListById";
     /**
      * 商品评价
      */
@@ -338,19 +315,17 @@ public class AppInterfaceAddress {
     public static final String CHECK_CODE = "auth/validateUserInvitation";
     public static final String CONFIRM_GET_GOODS = "commonOrder/confirmGetGoods";
     public static final String APPLAY_RETURN_GOODS = "commonOrder/applayReturnGoods";
-    public static final String CHANGE_ANOTHER_ADDRESS = "commonOrder/changeAnotherAddress";
+
     public static final String COPY_TO_CART = "cart/copyToCart";
     public static final String UPDATE_BIND_PHONE = "user/updateBindPhone";
     public static final String UPDATE_MESSAGE_STATE = "notice/updateNoticeLookStatus";
     //版本升级
     public static final String AND_VERSION = "auth/andVersion";
-    public static final String GET_INDEX_NOTICE_PAGE = "auth/getIndexNoticePage";
     public static final String GETCARTNUM = "cart/getCartNum";
     public static final String GETCUSTOMERPHONE = "auth/getCustomerPhone";
     public static final String DELETE_COMMON_COLLECT = "commonCollect/deleteCommonCollect";
     public static final String UPDATEUSERINVITATION = "auth/updateUserInvitation";
     public static final String QUERY_USER_DEDUCTBYSTATE = "gift/queryUserDeductByState";
-    public static final String GET_WALLET_INFO = "wallet/getWalletInfo";
     public static final String USER_CHOOSE_DEDUCT = "gift/queryAppOrderChooseGiftList";//gift/userChooseDeduct
     /**
      * 生成订单
@@ -365,10 +340,7 @@ public class AppInterfaceAddress {
     public static final String VIPPAYRESULT = "vip/payResult";
     public static final String CARTGETREDUCTDESC = "cart/getReductDesc";
     public static final String CARTPOSTCHANGEORDERDETAIL = "cart/cartNumChange";
-    /**
-     * 特惠专区更多
-     */
-    public static final String SPECIALGOOD = "auth/specialOfferMore";
+
     /**
      * 公用详情
      */
@@ -377,10 +349,6 @@ public class AppInterfaceAddress {
      * 秒杀-更多-顶部
      */
     public static final String SECKILLMORE = "auth/secKillMore";
-    /**
-     * 结算温馨提示
-     */
-    public static final String POINT = "cart/checkIsToRecharge";
 
     /**
      * 获取热门店铺类型
@@ -414,10 +382,7 @@ public class AppInterfaceAddress {
      * 退货理由
      */
     public static final String QUERYORDERRETURNTYPE = "order/queryOrderReturnType";
-    /**
-     * 商品分类banner
-     */
-    public static final String CLASSIFYBANNER = "common/product/queryClassifyBanner";
+
     /**
      * 获取分类筛选商品名字
      */
@@ -427,15 +392,10 @@ public class AppInterfaceAddress {
      * 购买过的商品
      */
     public static final String GETALREADYPRODUCT = "common/product/getAlreadyBuyProduct";
-    /**
-     * 新分类筛选确定
-     */
-    public static final String QUERYCLASSIFYPRODUCT = "common/product/queryClassifyProductPage";
+
     /**
      * 单位改变
      */
-
-
     public static final String ONLINEPRODUCTAMOUTN = "order/sumOnlineProductAmount";
 
     /**
@@ -493,10 +453,6 @@ public class AppInterfaceAddress {
 
     public static final String DRIVERSCANORDER = "common/scanOrderToCar";
 
-    /**
-     * 分类购物车加减
-     */
-    public static final String CARTADDPRODUCT = "cart/addClassifyProdToCart";
     /**
      * 获取分类新接口
      */

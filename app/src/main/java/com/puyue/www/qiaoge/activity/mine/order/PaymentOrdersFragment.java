@@ -18,9 +18,11 @@ import com.puyue.www.qiaoge.api.cart.CancelOrderAPI;
 import com.puyue.www.qiaoge.api.cart.DeleteOrderAPI;
 import com.puyue.www.qiaoge.api.mine.order.MyOrderListAPI;
 import com.puyue.www.qiaoge.base.BaseFragment;
+import com.puyue.www.qiaoge.fragment.mine.coupons.PaymentFragments;
 import com.puyue.www.qiaoge.helper.AppHelper;
 import com.puyue.www.qiaoge.helper.StringHelper;
 import com.puyue.www.qiaoge.helper.UserInfoHelper;
+import com.puyue.www.qiaoge.model.OrdersModel;
 import com.puyue.www.qiaoge.model.cart.CancelOrderModel;
 import com.puyue.www.qiaoge.model.cart.GetOrderDetailModel;
 import com.puyue.www.qiaoge.model.mine.order.MyOrdersModel;
@@ -49,17 +51,17 @@ public class PaymentOrdersFragment extends BaseFragment {
     private String mType;
     private ImageView mIvNoData;
     private int pageNum = 1;
-    private MyOrdersModel mModelMyOrders;
+    private OrdersModel mModelMyOrders;
 
     private NewOrderDetailAdapter adapter;
     private GetOrderDetailModel.DataBean getOrderDetailModel;
-    private List<MyOrdersModel.DataBean.ListBean> mListResult = new ArrayList<>();
+    private List<OrdersModel.DataBean.ListBean> mListResult = new ArrayList<>();
     private String returnProductMainId = "";
     private String orderId;
     private String orderState = "";
     private int orderStatusRequest;
     String subId;
-    private List<GetOrderDetailModel.DataBean.ProductVOListBean> list = new ArrayList<>();
+    private List<GetOrderDetailModel.DataBean.OrderProdsBean> list = new ArrayList<>();
 
     private int orderDeliveryType;
 
@@ -119,7 +121,7 @@ public class PaymentOrdersFragment extends BaseFragment {
             mAdapterMyOrders = new MyOrdersItemAdapter(R.layout.item_my_order, mListResult, 1,orderDeliveryType, new MyOrdersItemAdapter.OnClick() {
 
                 @Override
-                public void evaluateNowOnclick(int position) {
+                public void evaluateNowOnclick(int position,String orderId) {
 
                 }
 
@@ -188,14 +190,24 @@ public class PaymentOrdersFragment extends BaseFragment {
 
                 @Override
                 public void imageGo(String orderId, String payAmount) {
-                    Intent intent = new Intent(getActivity(), MyConfireOrdersActivity.class);
-                    intent.putExtra("orderId", orderId);
-                    intent.putExtra("remark", "");
-
-                    intent.putExtra("payAmount", Double.parseDouble(payAmount));
-                    intent.putExtra("flag", true);
-
-                    startActivity(intent);
+//                    Intent intent = new Intent(getActivity(), MyConfireOrdersActivity.class);
+//                    intent.putExtra("orderId", orderId);
+//                    intent.putExtra("remark", "");
+//
+//                    intent.putExtra("payAmount", Double.parseDouble(payAmount));
+//                    intent.putExtra("flag", true);
+//
+//                    startActivity(intent);
+                    PaymentFragments paymentFragment = new PaymentFragments();
+                    Bundle bundle = new Bundle();
+                    bundle.putString("total", payAmount);
+                    bundle.putString("remark","");
+                    bundle.putString("payAmount",payAmount);
+                    bundle.putString("orderId",orderId);
+                    bundle.putString("orderDeliveryType",orderDeliveryType+"");
+                    paymentFragment.setArguments(bundle);
+                    paymentFragment.setCancelable(false);
+                    paymentFragment.show(getFragmentManager(),"paymentFragment");
                 }
 
                 @Override
@@ -219,7 +231,7 @@ public class PaymentOrdersFragment extends BaseFragment {
             mAdapterMyOrders = new MyOrdersItemAdapter(R.layout.item_my_order_self, mListResult, 1,orderDeliveryType, new MyOrdersItemAdapter.OnClick() {
 
                 @Override
-                public void evaluateNowOnclick(int position) {
+                public void evaluateNowOnclick(int position,String orderId) {
 
                 }
 
@@ -288,14 +300,24 @@ public class PaymentOrdersFragment extends BaseFragment {
 
                 @Override
                 public void imageGo(String orderId, String payAmount) {
-                    Intent intent = new Intent(getActivity(), MyConfireOrdersActivity.class);
-                    intent.putExtra("orderId", orderId);
-                    intent.putExtra("remark", "");
-
-                    intent.putExtra("payAmount", Double.parseDouble(payAmount));
-                    intent.putExtra("flag", true);
-
-                    startActivity(intent);
+//                    Intent intent = new Intent(getActivity(), MyConfireOrdersActivity.class);
+//                    intent.putExtra("orderId", orderId);
+//                    intent.putExtra("remark", "");
+//
+//                    intent.putExtra("payAmount", Double.parseDouble(payAmount));
+//                    intent.putExtra("flag", true);
+//
+//                    startActivity(intent);
+                    PaymentFragments paymentFragment = new PaymentFragments();
+                    Bundle bundle = new Bundle();
+                    bundle.putString("total", payAmount);
+                    bundle.putString("remark","");
+                    bundle.putString("payAmount",payAmount);
+                    bundle.putString("orderId",orderId);
+                    bundle.putString("orderDeliveryType",orderDeliveryType+"");
+                    paymentFragment.setArguments(bundle);
+                    paymentFragment.setCancelable(false);
+                    paymentFragment.show(getFragmentManager(),"paymentFragment");
                 }
 
                 @Override
@@ -446,7 +468,7 @@ public class PaymentOrdersFragment extends BaseFragment {
         MyOrderListAPI.getList(getContext(), orderStatus, pageNum, 20, orderDeliveryType,subId)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<MyOrdersModel>() {
+                .subscribe(new Subscriber<OrdersModel>() {
                     @Override
                     public void onCompleted() {
 
@@ -458,10 +480,10 @@ public class PaymentOrdersFragment extends BaseFragment {
                     }
 
                     @Override
-                    public void onNext(MyOrdersModel myOrdersModel) {
+                    public void onNext(OrdersModel myOrdersModel) {
                         mPtr.refreshComplete();
                         logoutAndToHome(getContext(), myOrdersModel.code);
-                        mModelMyOrders = myOrdersModel;
+//                        mModelMyOrders = MyOrdersModel;
                         if (mModelMyOrders.success) {
                             updateOrderList();
                         } else {

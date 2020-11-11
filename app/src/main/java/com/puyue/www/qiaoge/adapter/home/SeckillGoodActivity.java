@@ -615,9 +615,6 @@ public class SeckillGoodActivity extends BaseSwipeActivity {
                             startTime = model.getData().getStartTime();
                             endTime = model.getData().getEndTime();
                             warnMe = model.getData().getWarnMe();
-
-
-
                             if(num.equals("-1")) {
                                 if(currentTime>startTime) {
                                     //秒杀开始
@@ -625,6 +622,7 @@ public class SeckillGoodActivity extends BaseSwipeActivity {
                                         mTvAddCar.setEnabled(false);
                                         mTvAddCar.setText("     已售罄     ");
                                         mTvAddCar.setBackgroundResource(R.drawable.app_car);
+                                        Log.d("wsaassssss.....","000");
                                     } else {
                                         mTvAddCar.setEnabled(true);
                                         mTvAddCar.setText("加入购物车");
@@ -657,7 +655,7 @@ public class SeckillGoodActivity extends BaseSwipeActivity {
                                 } catch (ParseException e) {
                                     e.printStackTrace();
                                 }
-                                Log.d("dwdddddddddd.....","dwddddddd");
+
                                 boolean exceed24 = DateUtils.isExceed24(currents, starts);
                                 if(exceed24) {
                                     //大于24
@@ -679,7 +677,7 @@ public class SeckillGoodActivity extends BaseSwipeActivity {
                                     }
                                 }
 
-                                mTvAddCar.setBackgroundResource(R.drawable.app_car_orange);
+//                                mTvAddCar.setBackgroundResource(R.drawable.app_car_orange);
                             }else {
                                 mTvAddCar.setBackgroundResource(R.drawable.app_car);
                             }
@@ -771,7 +769,7 @@ public class SeckillGoodActivity extends BaseSwipeActivity {
                                     AppHelper.showPhotoDetailDialog(mContext, images, position);
                                 }
                             });
-                            mTvAddCar.setEnabled(true);
+//                            mTvAddCar.setEnabled(true);
 
 
                         } else {

@@ -106,8 +106,6 @@ public class MyOrdersActivity extends BaseActivity {
 
     @Override
     public void setViewData() {
-        Sofia.with(mActivity).statusBarDarkFont()
-                .statusBarBackground(Color.parseColor("#ffffff"));
         UserInfoHelper.saveDeliverType(mActivity, orderDeliveryType + "");
         if (orderDeliveryType == 0) {
             tv_deliver_order.setTextColor(Color.parseColor("#FF000000"));
@@ -183,20 +181,13 @@ public class MyOrdersActivity extends BaseActivity {
     }
 
     private void initViewSelf() {
-
         mTab.removeAllTabs();
         mListTitles.clear();
         mListFragment.clear();
         mViewPager.removeAllViews();
         mListType.clear();
-
-
-
         mListTitles.addAll(Arrays.asList("全部", "待付款", "待提货", "待评价", "退货"));
-
         mListType.addAll(Arrays.asList(AppConstant.ALL, AppConstant.PAYMENT, AppConstant.DELIVERY, AppConstant.EVALUATED, AppConstant.RETURN));
-
-
         mListFragment.add(new AllOrderFragment());
         mListFragment.add(new PaymentOrderFragment());
         mListFragment.add(new DeliveryOrderFragment());
@@ -204,9 +195,6 @@ public class MyOrdersActivity extends BaseActivity {
         mListFragment.add(new ReturnOrderFragment());
 
         mAdapterViewPager = new MyOrdersViewPagerAdapter(getSupportFragmentManager(), mListTitles, mListFragment);
-
-
-
         mViewPager.setOffscreenPageLimit(5);
         mAdapterViewPager.clear(mViewPager);
 
@@ -253,6 +241,7 @@ public class MyOrdersActivity extends BaseActivity {
                     tv_order_sufficiency.setTextColor(Color.parseColor("#FFA1A1A1"));
                     orderDeliveryType = 0;
                     UserInfoHelper.saveDeliverType(mActivity, orderDeliveryType + "");
+
                     initView();
                 }
 
@@ -269,6 +258,7 @@ public class MyOrdersActivity extends BaseActivity {
                     tv_line_one.setVisibility(View.GONE);
                     tv_deliver_order.setTextColor(Color.parseColor("#FFA1A1A1"));
                     UserInfoHelper.saveDeliverType(mActivity, orderDeliveryType + "");
+
                     initViewSelf();
                 }
 

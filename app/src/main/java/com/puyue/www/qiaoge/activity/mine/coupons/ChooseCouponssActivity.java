@@ -134,7 +134,7 @@ public class ChooseCouponssActivity extends BaseSwipeActivity {
 
     UserChooseDeductModel models;
     private void userChooseDeduct() {
-        userChooseDeductAPI.requestData(mContext, activityBalanceVOStr, normalProductBalanceVOStr)
+        userChooseDeductAPI.requestData(mContext, "1",activityBalanceVOStr, normalProductBalanceVOStr)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<UserChooseDeductModel>() {

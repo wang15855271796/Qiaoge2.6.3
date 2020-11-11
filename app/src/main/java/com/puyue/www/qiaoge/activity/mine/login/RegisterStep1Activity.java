@@ -602,6 +602,7 @@ public class RegisterStep1Activity extends BaseSwipeActivity implements View.OnC
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void getCartNum(ShopEvent event) {
         tv_shop_style.setText(event.name);
+        shopTypeId = event.id;
     }
 
 

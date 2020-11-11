@@ -109,7 +109,7 @@ public class CancleResultActivity extends BaseSwipeActivity {
 
                 if (StringHelper.notEmptyAndNull(et_pwd.getText().toString()) && !TextUtils.isEmpty(phone) && StringHelper.notEmptyAndNull(et_yzm.getText().toString())&& StringHelper.notEmptyAndNull(reason)) {
                         getData(phone,et_yzm.getText().toString(),et_pwd.getText().toString(),reason);
-                        Log.d("dfffffff....",reason);
+
                 }else {
                     AppHelper.showMsg(mContext,"请填写正确信息");
                 }

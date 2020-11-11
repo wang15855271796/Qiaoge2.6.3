@@ -11,6 +11,7 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.puyue.www.qiaoge.R;
 
 import com.puyue.www.qiaoge.activity.mine.order.ReturnGoodActivity;
+import com.puyue.www.qiaoge.adapter.ReturnOrdersItemAdapter;
 import com.puyue.www.qiaoge.adapter.mine.MyOrdersItemAdapter;
 import com.puyue.www.qiaoge.api.mine.order.CopyToCartAPI;
 import com.puyue.www.qiaoge.api.mine.order.MyOrderListAPI;
@@ -19,8 +20,8 @@ import com.puyue.www.qiaoge.constant.AppConstant;
 import com.puyue.www.qiaoge.helper.AppHelper;
 import com.puyue.www.qiaoge.helper.StringHelper;
 import com.puyue.www.qiaoge.helper.UserInfoHelper;
+import com.puyue.www.qiaoge.model.OrdersModel;
 import com.puyue.www.qiaoge.model.mine.order.CopyToCartModel;
-import com.puyue.www.qiaoge.model.mine.order.MyOrdersModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,8 +45,8 @@ public class ReturnOrderFragment extends BaseFragment {
     private String mType;
     private int pageNum = 1;
     private ImageView mIvNoData;
-    private MyOrdersModel mModelMyOrders;
-    private List<MyOrdersModel.DataBean.ListBean> mListResult = new ArrayList<>();
+    private OrdersModel mModelMyOrders;
+    private List<OrdersModel.DataBean.ListBean> mListResult = new ArrayList<>();
     private CopyToCartModel mModelCopyToCart;
 
     private int orderDeliveryType;
@@ -69,7 +70,8 @@ public class ReturnOrderFragment extends BaseFragment {
 
     @Override
     public void setViewData() {
-mListResult.clear();
+        mListResult.clear();
+//        requestOrdersList(11);
         if (UserInfoHelper.getDeliverType(mActivity) != null && StringHelper.notEmptyAndNull(UserInfoHelper.getDeliverType(mActivity))) {
             orderDeliveryType = Integer.parseInt(UserInfoHelper.getDeliverType(mActivity));
         }
@@ -91,13 +93,13 @@ mListResult.clear();
 
 
                 @Override
-                public void evaluateNowOnclick(int position) {
+                public void evaluateNowOnclick(int position,String orderId) {
 
                 }
 
                 @Override
                 public void againBayOnclick(int position) {
-                    MyOrdersModel.DataBean.ListBean listBean = mListResult.get(position);
+                    OrdersModel.DataBean.ListBean listBean = mListResult.get(position);
                     requestCopyToCart(listBean.orderId);
                 }
 
@@ -138,13 +140,13 @@ mListResult.clear();
 
 
                 @Override
-                public void evaluateNowOnclick(int position) {
+                public void evaluateNowOnclick(int position,String orderId) {
 
                 }
 
                 @Override
                 public void againBayOnclick(int position) {
-                    MyOrdersModel.DataBean.ListBean listBean = mListResult.get(position);
+                    OrdersModel.DataBean.ListBean listBean = mListResult.get(position);
                     requestCopyToCart(listBean.orderId);
                 }
 
@@ -182,13 +184,6 @@ mListResult.clear();
             });
         }
 
-
-        mAdapterMyOrders.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-
-            }
-        });
         mRv.setLayoutManager(new LinearLayoutManager(getContext()));
         mRv.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
@@ -221,7 +216,7 @@ mListResult.clear();
         MyOrderListAPI.requestOrderList(getContext(), orderStatus, pageNum, 10, orderDeliveryType)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<MyOrdersModel>() {
+                .subscribe(new Subscriber<OrdersModel>() {
                     @Override
                     public void onCompleted() {
 
@@ -233,7 +228,7 @@ mListResult.clear();
                     }
 
                     @Override
-                    public void onNext(MyOrdersModel myOrdersModel) {
+                    public void onNext(OrdersModel myOrdersModel) {
                         logoutAndToHome(getContext(), myOrdersModel.code);
                         mPtr.refreshComplete();
                         mModelMyOrders = myOrdersModel;
@@ -309,11 +304,7 @@ mListResult.clear();
     public void onResume() {
         super.onResume();
         if (getUserVisibleHint()) {
-            mPtr.autoRefresh();
-            pageNum = 1;
             requestOrdersList(11);
-
-
         }
 
     }

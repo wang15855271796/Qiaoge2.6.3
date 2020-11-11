@@ -171,21 +171,24 @@
                         android:src="@mipmap/address_arrow" />
                 </LinearLayout>
             </LinearLayout>
-            <RelativeLayout
 
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
                 android:layout_marginTop="15dp"
                 android:layout_marginRight="10dp"
+                android:orientation="vertical"
+                android:layout_marginBottom="@dimen/size_10dp"
                 android:background="@drawable/confirm_order_three">
-                <com.puyue.www.qiaoge.view.MaxHeightRecyclerView
+
+                <android.support.v7.widget.RecyclerView
                     android:id="@+id/recyclerView"
                     android:background="@drawable/confirm_order_three"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:maxHeight="360dp">
-                </com.puyue.www.qiaoge.view.MaxHeightRecyclerView>
+                    android:layout_height="wrap_content">
+
+                </android.support.v7.widget.RecyclerView>
 
                 <android.support.v7.widget.RecyclerView
                     android:layout_below="@+id/recyclerView"
@@ -196,7 +199,7 @@
 
                 </android.support.v7.widget.RecyclerView>
 
-            </RelativeLayout>
+            </LinearLayout>
             <include layout="@layout/activity_new_order_foot" />
         </LinearLayout>
     </android.support.v4.widget.NestedScrollView>

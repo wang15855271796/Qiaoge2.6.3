@@ -49,7 +49,8 @@ public class SelectionAdapter extends BaseQuickAdapter<MarketRightModel.DataBean
     String enjoyProduct;
     private TextView tv_desc;
     TextView tv_price;
-
+    ImageView iv_operate;
+    ImageView iv_next;
     public SelectionAdapter(String enjoyProduct,int layoutResId, @Nullable List<MarketRightModel.DataBean.ProdClassifyBean.ListBean> data,Onclick onclick) {
         super(layoutResId, data);
         this.onclick = onclick;
@@ -59,7 +60,8 @@ public class SelectionAdapter extends BaseQuickAdapter<MarketRightModel.DataBean
 
     @Override
     protected void convert(BaseViewHolder helper, MarketRightModel.DataBean.ProdClassifyBean.ListBean item) {
-
+        iv_next = helper.getView(R.id.iv_next);
+        iv_operate = helper.getView(R.id.iv_operate);
         tv_desc = helper.getView(R.id.tv_desc);
         tv_price = helper.getView(R.id.tv_price);
         iv_pic = helper.getView(R.id.iv_pic);
@@ -67,6 +69,8 @@ public class SelectionAdapter extends BaseQuickAdapter<MarketRightModel.DataBean
         iv_add = helper.getView(R.id.iv_add);
         rl_group = helper.getView(R.id.rl_group);
         tv_sale = helper.getView(R.id.tv_sale);
+        Glide.with(mContext).load(item.getSelfProd()).into(iv_operate);
+        Glide.with(mContext).load(item.getSendTimeTpl()).into(iv_next);
         Glide.with(mContext).load(item.getDefaultPic()).into(iv_pic);
         helper.setText(R.id.tv_name,item.getProductName());
 

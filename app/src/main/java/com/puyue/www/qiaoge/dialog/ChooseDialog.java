@@ -73,6 +73,7 @@ public class ChooseDialog extends Dialog implements View.OnClickListener {
     FlowLayout fl_container;
     @BindView(R.id.iv_close)
     ImageView iv_close;
+
     @BindView(R.id.tv_stock)
     TextView tv_stock;
     @BindView(R.id.tv_price_total)
@@ -86,6 +87,10 @@ public class ChooseDialog extends Dialog implements View.OnClickListener {
     int pos = 0;
     @BindView(R.id.tv_num)
     TextView tv_num;
+    @BindView(R.id.iv_pic)
+    ImageView iv_pic;
+    @BindView(R.id.iv_operate)
+    ImageView iv_operate;
     @BindView(R.id.tv_free_desc)
     TextView tv_free_desc;
     @BindView(R.id.iv_cart)
@@ -152,6 +157,8 @@ public class ChooseDialog extends Dialog implements View.OnClickListener {
                                 tv_stock.setText(exchangeProductModel.getData().getInventory());
                                 tv_name.setText(exchangeProductModel.getData().getProductName());
                                 Glide.with(context).load(exchangeProductModel.getData().getDefaultPic()).into(iv_head);
+                                Glide.with(context).load(exchangeProductModel.getData().getSendTimeTpl()).into(iv_pic);
+                                Glide.with(context).load(exchangeProductModel.getData().getSelfProd()).into(iv_operate);
                             }
                         }else {
                             ToastUtil.showErroMsg(context,exchangeProductModel.getMessage());

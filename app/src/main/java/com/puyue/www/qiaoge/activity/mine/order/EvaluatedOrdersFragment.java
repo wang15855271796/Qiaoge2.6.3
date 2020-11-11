@@ -17,6 +17,8 @@ import com.puyue.www.qiaoge.base.BaseFragment;
 import com.puyue.www.qiaoge.helper.AppHelper;
 import com.puyue.www.qiaoge.helper.StringHelper;
 import com.puyue.www.qiaoge.helper.UserInfoHelper;
+import com.puyue.www.qiaoge.model.OrdersModel;
+import com.puyue.www.qiaoge.model.mine.order.CommonModel;
 import com.puyue.www.qiaoge.model.mine.order.CopyToCartModel;
 import com.puyue.www.qiaoge.model.mine.order.MyOrdersModel;
 import com.puyue.www.qiaoge.model.mine.order.OrderEvaluateListModel;
@@ -44,8 +46,8 @@ public class EvaluatedOrdersFragment extends BaseFragment {
     private String mType;
     private int pageNum = 1;
     private ImageView mIvNoData;
-    private MyOrdersModel mModelMyOrders;
-    private List<MyOrdersModel.DataBean.ListBean> mListResult = new ArrayList<>();
+    private OrdersModel mModelMyOrders;
+    private List<OrdersModel.DataBean.ListBean> mListResult = new ArrayList<>();
     private CopyToCartModel mModelCopyToCart;
     private List<OrderEvaluateListModel> mListEvaluate = new ArrayList<>();
     String subId;
@@ -108,14 +110,13 @@ public class EvaluatedOrdersFragment extends BaseFragment {
 
 
                 @Override
-                public void evaluateNowOnclick(int position) { // 立即评价
-                    MyOrdersModel.DataBean.ListBean listBean = mListResult.get(position);
-                    requestEvaluate(listBean);
+                public void evaluateNowOnclick(int position,String orderId) { // 立即评价
+                    getComment(orderId);
                 }
 
                 @Override
                 public void againBayOnclick(int position) { // 在次购买
-                    MyOrdersModel.DataBean.ListBean listBean = mListResult.get(position);
+                    OrdersModel.DataBean.ListBean listBean = mListResult.get(position);
                     requestCopyToCart(listBean.orderId);
                 }
 
@@ -156,14 +157,13 @@ public class EvaluatedOrdersFragment extends BaseFragment {
 
 
                 @Override
-                public void evaluateNowOnclick(int position) { // 立即评价
-                    MyOrdersModel.DataBean.ListBean listBean = mListResult.get(position);
-                    requestEvaluate(listBean);
+                public void evaluateNowOnclick(int position,String orderId) { // 立即评价
+                    getComment(orderId);
                 }
 
                 @Override
                 public void againBayOnclick(int position) { // 在次购买
-                    MyOrdersModel.DataBean.ListBean listBean = mListResult.get(position);
+                    OrdersModel.DataBean.ListBean listBean = mListResult.get(position);
                     requestCopyToCart(listBean.orderId);
                 }
 
@@ -237,11 +237,40 @@ public class EvaluatedOrdersFragment extends BaseFragment {
 //        requestOrdersList(5);
     }
 
+    /**
+     * 点击去评价
+     * @param orderId
+     */
+    private void getComment(String orderId) {
+        MyOrderListAPI.getComment(getContext(),orderId)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<CommonModel>() {
+                    @Override
+                    public void onCompleted() {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                    }
+
+                    @Override
+                    public void onNext(CommonModel commonModel) {
+                        if(commonModel.isSuccess()) {
+                            if(commonModel.getData()!=null) {
+                                requestEvaluate(commonModel.getData(),orderId);
+                            }
+                        }
+                    }
+                });
+    }
+
     private void requestOrdersList(int orderStatus) {
         MyOrderListAPI.getList(getContext(), orderStatus, pageNum, 20,orderDeliveryType,subId)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<MyOrdersModel>() {
+                .subscribe(new Subscriber<OrdersModel>() {
                     @Override
                     public void onCompleted() {
 
@@ -253,10 +282,10 @@ public class EvaluatedOrdersFragment extends BaseFragment {
                     }
 
                     @Override
-                    public void onNext(MyOrdersModel myOrdersModel) {
+                    public void onNext(OrdersModel myOrdersModel) {
                         logoutAndToHome(getContext(), myOrdersModel.code);
                         mPtr.refreshComplete();
-                        mModelMyOrders = myOrdersModel;
+//                        mModelMyOrders = myOrdersModel;
                         if (mModelMyOrders.success) {
                             updateOrderList();
                         } else {
@@ -349,21 +378,23 @@ public class EvaluatedOrdersFragment extends BaseFragment {
     }
 
     //立即评价
-    private void requestEvaluate(MyOrdersModel.DataBean.ListBean getOrderDetailModel) {
+    private void requestEvaluate(List<CommonModel.DataBean> data,String orderId) {
+        //去评价需要将订单里面的商品列表中的商品的商品名,商品ID组成list,传到评价的界面
         //去评价需要将订单里面的商品列表中的商品的商品名,商品ID组成list,传到评价的界面
         mListEvaluate.clear();
-        if (getOrderDetailModel.productVOList != null && getOrderDetailModel.productVOList.size() > 0) {
-            for (int i = 0; i < getOrderDetailModel.productVOList.size(); i++) {
-                mListEvaluate.add(new OrderEvaluateListModel(getOrderDetailModel.productVOList.get(i).productId,
-                        getOrderDetailModel.productVOList.get(i).businessType,
-                        getOrderDetailModel.productVOList.get(i).name,getOrderDetailModel.productVOList.get(i).picUrl,5+"",""));
+        if (data != null && data.size() > 0) {
+            for (int i = 0; i < data.size(); i++) {
+                mListEvaluate.add(new OrderEvaluateListModel(data.get(i).getProductId(),
+                        data.get(i).getBusinessType(),
+                        data.get(i).getName(),data.get(i).getPicUrl(),5+"",""));
+
             }
         } else {
-            AppHelper.showMsg(mActivity, "订单商品数据错误!");
+            AppHelper.showMsg(getActivity(), "订单商品数据错误!");
         }
         Intent intentPut = new Intent(mActivity, OrderEvaluateActivity.class);
         intentPut.putExtra("evaluateList", (Serializable) mListEvaluate);
-        intentPut.putExtra("orderId", getOrderDetailModel.orderId);
+        intentPut.putExtra("orderId",orderId);
         intentPut.putExtra("orderDeliveryType",orderDeliveryType);
         startActivityForResult(intentPut, 12);
     }

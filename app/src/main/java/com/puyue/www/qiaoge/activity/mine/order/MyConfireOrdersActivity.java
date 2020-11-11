@@ -175,11 +175,6 @@ public class MyConfireOrdersActivity extends BaseSwipeActivity {
                     intent.putExtra(AppConstant.ORDERSTATE, "1");
                     startActivity(intent);
                 }
-
-
-                // startActivity(MyOrdersActivity.getIntent(getContext(), MyOrdersActivity.class, AppConstant.ALL));
-                overridePendingTransition(R.anim.slide_in_from_right,
-                        R.anim.slide_out_from_left);
                 finish();
             }
         });
@@ -778,7 +773,7 @@ public class MyConfireOrdersActivity extends BaseSwipeActivity {
 //        intent.putExtra(AppConstant.RETURNPRODUCTMAINID, "");
 //        startActivity(intent);
         startActivity(MyOrdersActivity.getIntent(mContext, MyOrdersActivity.class, AppConstant.ALL));
-        overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_from_left);
+
         finish();
         return true;
     }

@@ -4,6 +4,8 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.drawable.AnimationDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -159,6 +161,7 @@ import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 import com.taobao.library.VerticalBannerView;
 import com.wang.avi.AVLoadingIndicatorView;
+import com.weavey.loading.lib.LoadingLayout;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -306,11 +309,16 @@ public class HomeFragmentsss extends BaseFragment implements View.OnClickListene
     TextView tv_times;
     @BindView(R.id.tv_amount)
     TextView tv_amount;
+//    @BindView(R.id.loading)
+//    LoadingLayout loading;
+//    @BindView(R.id.iv_normal)
+//    ImageView iv_normal;
     CouponDialog couponDialog;
     private String cell; // 客服电话
     private PrivacyDialog privacyDialog;
     ChooseHomeDialog chooseAddressDialog;
     CommonsssAdapter commonsssAdapter;
+//    AnimationDrawable drawable;
     //司机信息
     List<DriverInfo.DataBean> driverList = new ArrayList<>();
     //八个icon集合
@@ -432,7 +440,7 @@ public class HomeFragmentsss extends BaseFragment implements View.OnClickListene
 
                         } else {
                             AppHelper.showMsg(mActivity, mModelMyOrderNum.message);
-                        }
+                           }
                     }
                 });
     }
@@ -1579,6 +1587,9 @@ public class HomeFragmentsss extends BaseFragment implements View.OnClickListene
 
     @Override
     public void setViewData() {
+//        loading.setStatus(LoadingLayout.Loading);
+//        drawable = (AnimationDrawable) iv_normal.getDrawable();
+//        drawable.start();
         rl_address.setOnClickListener(null);
         requestUpdate();
         refreshLayout.autoRefresh();
@@ -1923,6 +1934,14 @@ public class HomeFragmentsss extends BaseFragment implements View.OnClickListene
                     @Override
                     public void onError(Throwable e) {
                         lav_activity_loading.hide();
+//                        loading.setStatus(LoadingLayout.No_Network);
+//                        loading.setOnReloadListener(new LoadingLayout.OnReloadListener() {
+//                            @Override
+//                            public void onReload(View v) {
+//                                loading.setStatus(LoadingLayout.Loading);
+//                                getBaseLists();
+//                            }
+//                        });
                     }
 
                     @Override
@@ -1998,82 +2017,154 @@ public class HomeFragmentsss extends BaseFragment implements View.OnClickListene
                             teamNum = indexInfoModel.getData().getTeamNum();
                             specialNum = indexInfoModel.getData().getSpecialNum();
                             fullGiftNum = indexInfoModel.getData().getFullGiftNum();
-                            if(spikeNum!=0) {
+//                            if(spikeNum!=0) {
+//                                rb_1.setVisibility(View.VISIBLE);
+//                                rb_1.setChecked(true);
+//                                getSpikeList(2);
+//                            }else {
+//                                rb_1.setChecked(false);
+//                                rb_1.setVisibility(View.GONE);
+//
+//                            }
+//
+//                            if(spikeNum==0) {
+//                                if(specialNum!=0) {
+//                                    rb_2.setChecked(true);
+//                                    getSpikeList(11);
+//                                    rb_2.setVisibility(View.VISIBLE);
+//                                    rl_coupon.setVisibility(View.VISIBLE);
+//                                }else {
+//                                    rb_2.setChecked(false);
+//                                    rb_2.setVisibility(View.GONE);
+//                                    rl_coupon.setVisibility(View.GONE);
+//
+//                                    if(fullGiftNum==0) {
+//                                        rb_4.setVisibility(View.GONE);
+//                                    }else {
+//                                        rb_4.setVisibility(View.VISIBLE);
+//                                        rb_4.setChecked(true);
+//                                        getSpikeList(12);
+//                                    }
+//                                }
+//
+//                                if(specialNum==0) {
+//                                    if(teamNum!=0) {
+//                                        getSpikeList(3);
+//
+//                                        rb_3.setVisibility(View.VISIBLE);
+//                                        rb_3.setChecked(true);
+//                                    }else {
+//                                        rb_3.setChecked(false);
+//                                        rb_3.setVisibility(View.GONE);
+//                                    }
+//                                }
+//                            }
+//
+//                            if(teamNum==0) {
+//                                rb_3.setVisibility(View.GONE);
+//
+//                            }else {
+//                                rb_3.setVisibility(View.VISIBLE);
+//                            }
+//
+//                            if(fullGiftNum==0) {
+//                                rb_4.setVisibility(View.GONE);
+//
+//                            }else {
+//                                rb_4.setVisibility(View.VISIBLE);
+//                            }
+//
+//                            if(spikeNum==0) {
+//                                rb_1.setVisibility(View.GONE);
+//
+//                            }else {
+//                                rb_1.setVisibility(View.VISIBLE);
+//                            }
+//
+//                            if(specialNum==0) {
+//                                rb_2.setVisibility(View.GONE);
+//                                rl_coupon.setVisibility(View.GONE);
+//                            }else {
+//                                rb_2.setVisibility(View.VISIBLE);
+//                                rl_coupon.setVisibility(View.VISIBLE);
+//                            }
+//
+//                            if(teamNum==0&&specialNum==0&&spikeNum==0&&fullGiftNum==0) {
+//                                ll_active.setVisibility(View.GONE);
+//                            }else {
+//                                ll_active.setVisibility(View.VISIBLE);
+//                            }
+
+                            if(spikeNum>0) {
                                 rb_1.setVisibility(View.VISIBLE);
-                                rb_1.setChecked(true);
-                                getSpikeList(2);
+
                             }else {
-                                rb_1.setChecked(false);
                                 rb_1.setVisibility(View.GONE);
-
                             }
 
-                            if(spikeNum==0) {
-                                if(specialNum!=0) {
-                                    rb_2.setChecked(true);
-                                    getSpikeList(11);
-                                    rb_2.setVisibility(View.VISIBLE);
-                                    rl_coupon.setVisibility(View.VISIBLE);
-                                }else {
-                                    rb_2.setChecked(false);
-                                    rb_2.setVisibility(View.GONE);
-                                    rl_coupon.setVisibility(View.GONE);
-
-                                    if(fullGiftNum==0) {
-                                        rb_4.setVisibility(View.GONE);
-                                    }else {
-                                        rb_4.setVisibility(View.VISIBLE);
-                                        rb_4.setChecked(true);
-                                        getSpikeList(12);
-                                    }
-                                }
-
-                                if(specialNum==0) {
-                                    if(teamNum!=0) {
-                                        getSpikeList(3);
-
-                                        rb_3.setVisibility(View.VISIBLE);
-                                        rb_3.setChecked(true);
-                                    }else {
-                                        rb_3.setChecked(false);
-                                        rb_3.setVisibility(View.GONE);
-                                    }
-                                }
-                            }
-
-                            if(teamNum==0) {
-                                rb_3.setVisibility(View.GONE);
-
-                            }else {
-                                rb_3.setVisibility(View.VISIBLE);
-                            }
-
-                            if(fullGiftNum==0) {
-                                rb_4.setVisibility(View.GONE);
-
-                            }else {
-                                rb_4.setVisibility(View.VISIBLE);
-                            }
-
-                            if(spikeNum==0) {
-                                rb_1.setVisibility(View.GONE);
-
-                            }else {
-                                rb_1.setVisibility(View.VISIBLE);
-                            }
-
-                            if(specialNum==0) {
-                                rb_2.setVisibility(View.GONE);
-                                rl_coupon.setVisibility(View.GONE);
-                            }else {
-                                rb_2.setVisibility(View.VISIBLE);
+                            if(specialNum>0) {
                                 rl_coupon.setVisibility(View.VISIBLE);
+                            }else {
+                                rl_coupon.setVisibility(View.GONE);
+                            }
+
+                            if(fullGiftNum>0) {
+                                rb_4.setVisibility(View.VISIBLE);
+                            }else {
+                                rb_4.setVisibility(View.GONE);
+                            }
+
+                            if(teamNum>0) {
+                                rb_3.setVisibility(View.VISIBLE);
+                            }else {
+                                rb_3.setVisibility(View.GONE);
                             }
 
                             if(teamNum==0&&specialNum==0&&spikeNum==0&&fullGiftNum==0) {
                                 ll_active.setVisibility(View.GONE);
                             }else {
                                 ll_active.setVisibility(View.VISIBLE);
+                            }
+
+
+
+
+                            rb_1.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    getSpikeList(2);
+                                }
+                            });
+
+                            rb_2.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    getSpikeList(11);
+                                }
+                            });
+
+                            rb_3.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    getSpikeList(3);
+                                }
+                            });
+
+                            rb_4.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    getSpikeList(12);
+                                }
+                            });
+
+                            if(spikeNum>0) {
+                                getSpikeList(2);
+                            }else if(specialNum>0) {
+                                getSpikeList(11);
+                            }else if(fullGiftNum>0) {
+                                getSpikeList(12);
+                            }else {
+                                getSpikeList(3);
                             }
 
                             rvIconAdapter.notifyDataSetChanged();
@@ -2115,7 +2206,11 @@ public class HomeFragmentsss extends BaseFragment implements View.OnClickListene
 
                             }
                             lav_activity_loading.hide();
+//                            loading.setStatus(LoadingLayout.Success);
+//                            drawable.stop();
                         }else {
+//                            loading.setStatus(LoadingLayout.Error);
+//                            drawable.stop();
                             AppHelper.showMsg(mActivity, indexInfoModel.getMessage());
                             lav_activity_loading.hide();
                         }

@@ -5,7 +5,9 @@ package com.puyue.www.qiaoge.activity.mine.login;
  */
 public class ShopEvent {
     String name;
-    public ShopEvent(String name) {
+    int id;
+    public ShopEvent(String name,int id) {
         this.name = name;
+        this.id = id;
     }
 }

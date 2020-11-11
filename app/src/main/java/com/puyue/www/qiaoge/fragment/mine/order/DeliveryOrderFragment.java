@@ -25,6 +25,7 @@ import com.puyue.www.qiaoge.constant.AppConstant;
 import com.puyue.www.qiaoge.helper.AppHelper;
 import com.puyue.www.qiaoge.helper.StringHelper;
 import com.puyue.www.qiaoge.helper.UserInfoHelper;
+import com.puyue.www.qiaoge.model.OrdersModel;
 import com.puyue.www.qiaoge.model.mine.order.ConfirmGetGoodsModel;
 import com.puyue.www.qiaoge.model.mine.order.CopyToCartModel;
 import com.puyue.www.qiaoge.model.mine.order.MyOrdersModel;
@@ -50,11 +51,10 @@ public class DeliveryOrderFragment extends BaseFragment {
     private PtrClassicFrameLayout mPtr;
     private RecyclerView mRv;
     private MyOrdersItemAdapter mAdapterMyOrders;
-    private String mType;
     private ImageView mIvNoData;
     private int pageNum = 1;
-    private MyOrdersModel mModelMyOrders;
-    private List<MyOrdersModel.DataBean.ListBean> mListResult = new ArrayList<>();
+    private OrdersModel mModelMyOrders;
+    private List<OrdersModel.DataBean.ListBean> mListResult = new ArrayList<>();
     private CopyToCartModel mModelCopyToCart;
     private int orderDeliveryType;
     @Override
@@ -76,7 +76,8 @@ public class DeliveryOrderFragment extends BaseFragment {
 
     @Override
     public void setViewData() {
-mListResult.clear();
+        mListResult.clear();
+//        requestOrdersList(2);
         if (UserInfoHelper.getDeliverType(mActivity)!=null&&StringHelper.notEmptyAndNull(UserInfoHelper.getDeliverType(mActivity))){
             orderDeliveryType=Integer.parseInt(UserInfoHelper.getDeliverType(mActivity));
         }
@@ -98,14 +99,14 @@ mListResult.clear();
             mAdapterMyOrders = new MyOrdersItemAdapter(R.layout.item_my_order, mListResult, 2,orderDeliveryType, new MyOrdersItemAdapter.OnClick() {
 
                 @Override
-                public void evaluateNowOnclick(int position) { // 立即评价
+                public void evaluateNowOnclick(int position,String orderId) { // 立即评价
 
 
                 }
 
                 @Override
                 public void againBayOnclick(int position) { // 再次购买
-                    MyOrdersModel.DataBean.ListBean listBean=mListResult.get(position);
+                    OrdersModel.DataBean.ListBean listBean=mListResult.get(position);
                     requestCopyToCart(listBean.orderId);
                 }
 
@@ -145,14 +146,14 @@ mListResult.clear();
             mAdapterMyOrders = new MyOrdersItemAdapter(R.layout.item_my_order_self, mListResult, 2,orderDeliveryType, new MyOrdersItemAdapter.OnClick() {
 
                 @Override
-                public void evaluateNowOnclick(int position) { // 立即评价
+                public void evaluateNowOnclick(int position,String orderId) { // 立即评价
 
 
                 }
 
                 @Override
                 public void againBayOnclick(int position) { // 再次购买
-                    MyOrdersModel.DataBean.ListBean listBean=mListResult.get(position);
+                    OrdersModel.DataBean.ListBean listBean=mListResult.get(position);
                     requestCopyToCart(listBean.orderId);
                 }
 
@@ -299,7 +300,7 @@ mListResult.clear();
         MyOrderListAPI.requestOrderList(getContext(), orderStatus, pageNum, 10,orderDeliveryType)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<MyOrdersModel>() {
+                .subscribe(new Subscriber<OrdersModel>() {
                     @Override
                     public void onCompleted() {
                         mPtr.refreshComplete();
@@ -311,14 +312,12 @@ mListResult.clear();
                     }
 
                     @Override
-                    public void onNext(MyOrdersModel myOrdersModel) {
+                    public void onNext(OrdersModel myOrdersModel) {
 
                         mPtr.refreshComplete();
                         logoutAndToHome(getContext(), myOrdersModel.code);
                         mModelMyOrders = myOrdersModel;
                         if (mModelMyOrders.success) {
-
-
                             updateOrderList();
                         } else {
                             AppHelper.showMsg(getActivity(), mModelMyOrders.message);
@@ -391,9 +390,8 @@ mListResult.clear();
     public void onResume() {
         super.onResume();
         if (getUserVisibleHint()){
-            mPtr.autoRefresh();
-            pageNum=1;
             requestOrdersList(2);
+
         }
 
     }

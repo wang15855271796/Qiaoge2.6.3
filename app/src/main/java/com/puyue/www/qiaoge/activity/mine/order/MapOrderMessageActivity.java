@@ -432,7 +432,7 @@ public class MapOrderMessageActivity extends BaseSwipeActivity {
             points.add(new LatLng(Double.parseDouble(listBeans.get(i).getLatitude()), Double.parseDouble(listBeans.get(i).getLongitude())));
         }
 
-        Log.i("wwbb", "setViewData: " + points.size());
+//        Log.i("wwbb", "setViewData: " + points.size());
 
         List<Integer> colors = new ArrayList<>();
 
@@ -451,15 +451,14 @@ public class MapOrderMessageActivity extends BaseSwipeActivity {
         colors.add(Integer.valueOf(Color.YELLOW));*/
 
 
-        OverlayOptions mOverlayOptions = new PolylineOptions()
-                .width(10)
-                .color(0xAAFF0000)
-                .points(points)
-                .colorsValues(colors);//设置每段折线的颜色
-
+//        OverlayOptions mOverlayOptions = new PolylineOptions()
+//                .width
+//                .color(0xAAFF0000)
+//                .points(points)
+//                .colorsValues(colors);//设置每段折线的颜色
 //在地图上绘制折线
 //mPloyline 折线对象
-        Overlay mPolyline = mBaiduMap.addOverlay(mOverlayOptions);
+//        Overlay mPolyline = mBaiduMap.addOverlay(mOverlayOptions);
 
 
         if (listBeans.size() > 0) {

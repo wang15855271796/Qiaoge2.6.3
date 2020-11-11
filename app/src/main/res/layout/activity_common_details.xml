@@ -57,7 +57,58 @@
 
                     </FrameLayout>
 
+                    <RelativeLayout
+                        android:id="@+id/rl_coupon"
+                        android:visibility="gone"
+                        android:background="@mipmap/bg_common"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
 
+                        <TextView
+                            android:text="优惠促销"
+                            android:textColor="#ffffff"
+                            android:layout_marginLeft="@dimen/size_15dp"
+                            android:paddingBottom="@dimen/size_4dp"
+                            android:paddingTop="@dimen/size_4dp"
+                            android:paddingLeft="@dimen/size_15dp"
+                            android:paddingRight="@dimen/size_15dp"
+                            android:background="@drawable/shape_white_common"
+                            android:textSize="@dimen/sp_12"
+                            android:layout_marginTop="@dimen/size_15dp"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content" />
+
+
+                        <TextView
+                            android:id="@+id/tv_detail"
+                            android:text="查看详情"
+                            android:textColor="#FE612F"
+                            android:paddingBottom="@dimen/size_4dp"
+                            android:paddingTop="@dimen/size_4dp"
+                            android:paddingLeft="@dimen/size_15dp"
+                            android:paddingRight="@dimen/size_15dp"
+                            android:background="@drawable/shape_yellow"
+                            android:textSize="@dimen/sp_12"
+                            android:layout_marginRight="@dimen/size_15dp"
+                            android:layout_marginTop="@dimen/size_15dp"
+                            android:layout_alignParentRight="true"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content" />
+
+                        <TextView
+                            android:id="@+id/tv_full_desc"
+                            android:textColor="#ffffff"
+                            android:textSize="@dimen/sp_12"
+                            android:singleLine="true"
+                            android:ellipsize="end"
+                            android:maxLines="1"
+                            android:layout_marginLeft="@dimen/size_15dp"
+                            android:layout_marginTop="@dimen/size_48dp"
+                            tools:text="购买【翘歌】猪肉蔬菜蒸饺（500g/包*2箱）3箱，赠送【翘歌】..."
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content" />
+
+                    </RelativeLayout>
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -242,45 +293,83 @@
                                 android:layout_height="8dp"
                                 android:background="@color/app_bg_gray" />
 
-                            <!--商品活动-->
+
+                            <!--自营产品-->
                             <RelativeLayout
-                                android:id="@+id/rl_business"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content">
+                                android:visibility="gone"
+                                android:id="@+id/rl_operate"
+                                android:gravity="center_vertical"
+                                android:layout_width="match_parent"
+                                android:layout_height="@dimen/size_48dp">
+
+                                <ImageView
+                                    android:id="@+id/iv"
+                                    android:src="@mipmap/icon_next"
+                                    android:layout_marginLeft="@dimen/size_15dp"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content" />
+
+                                <ImageView
+                                    android:id="@+id/iv2"
+                                    android:layout_toRightOf="@+id/iv"
+                                    android:src="@mipmap/icon_operate"
+                                    android:layout_marginLeft="@dimen/size_5dp"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content" />
 
                                 <TextView
-                                    android:id="@+id/tv2"
+                                    android:textSize="@dimen/sp_12"
+                                    android:id="@+id/tv_operate_date"
+                                    android:textColor="#292621"
+                                    android:layout_marginLeft="@dimen/size_5dp"
+                                    android:layout_toRightOf="@+id/iv2"
+                                    android:text="现在下单，预计明天(9月20日)开始配送"
                                     android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:text="商品活动："
+                                    android:layout_height="wrap_content" />
+
+                            </RelativeLayout>
+
+                            <!--非自营产品-->
+                            <RelativeLayout
+                                android:id="@+id/rl_unOperate"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content">
+
+                                <ImageView
+                                    android:id="@+id/iv3"
                                     android:layout_marginTop="@dimen/size_15dp"
-                                    android:textStyle="bold"
-                                    android:layout_marginLeft="15dp"
-                                    android:textColor="#333333"
-                                    android:textSize="14dp" />
+                                    android:layout_marginBottom="@dimen/size_15dp"
+                                    android:src="@mipmap/icon_after_next"
+                                    android:layout_marginLeft="@dimen/size_15dp"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content" />
 
-                                <!--<TextView-->
-                                    <!--android:textColor="#F42828"-->
-                                    <!--android:textSize="@dimen/sp_12"-->
-                                    <!--android:text="该商品2.5kg*4包/箱规格满200元赠送本规格一包"-->
-                                    <!--android:id="@+id/tv_given"-->
-                                    <!--android:ellipsize="end"-->
-                                    <!--android:layout_marginRight="@dimen/size_20dp"-->
-                                    <!--android:singleLine="true"-->
-                                    <!--android:maxLines="1"-->
-                                    <!--android:layout_centerVertical="true"-->
-                                    <!--android:layout_toRightOf="@+id/tv2"-->
-                                    <!--android:layout_width="match_parent"-->
-                                    <!--android:layout_height="wrap_content"/>-->
-                                <android.support.v7.widget.RecyclerView
-                                    android:id="@+id/recyclerView"
-                                    android:layout_marginRight="@dimen/size_20dp"
-                                    android:layout_toRightOf="@+id/tv2"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content">
+                                <TextView
+                                    android:id="@+id/tv_date"
+                                    android:layout_marginTop="@dimen/size_15dp"
+                                    android:textSize="@dimen/sp_12"
+                                    android:textColor="#292621"
+                                    android:layout_marginLeft="@dimen/size_5dp"
+                                    android:layout_toRightOf="@+id/iv3"
+                                    android:text="现在下单，预计明天(9月20日)开始配送"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content" />
 
-                                </android.support.v7.widget.RecyclerView>
-
+                                <TextView
+                                    android:id="@+id/tv_address"
+                                    android:layout_below="@+id/iv3"
+                                    android:textColor="#666666"
+                                    android:visibility="gone"
+                                    android:layout_marginBottom="@dimen/size_10dp"
+                                    android:layout_marginRight="@dimen/size_18dp"
+                                    android:layout_marginLeft="@dimen/size_5dp"
+                                    android:layout_toRightOf="@+id/iv3"
+                                    android:textSize="@dimen/sp_12"
+                                    android:layout_alignParentRight="true"
+                                    android:drawableRight="@mipmap/ic_order_more"
+                                    tools:text="杭州翘歌网络科技有限公司"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content" />
 
                             </RelativeLayout>
 

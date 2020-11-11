@@ -4,6 +4,7 @@ import android.content.Context;
 
 import com.puyue.www.qiaoge.constant.AppInterfaceAddress;
 import com.puyue.www.qiaoge.helper.RestHelper;
+import com.puyue.www.qiaoge.model.IntelliModel;
 import com.puyue.www.qiaoge.model.home.GetProductDetailModel;
 import com.puyue.www.qiaoge.model.home.SpecialGoodModel;
 
@@ -25,5 +26,16 @@ public class GetSpecialDetailAPI {
     public static Observable<SpecialGoodModel> requestData(Context context, int activeId) {
         getSpecialDetail service = RestHelper.getBaseRetrofit(context).create(getSpecialDetail.class);
         return service.getData(activeId);
+    }
+
+    private interface getIntelliInfo {
+        @FormUrlEncoded
+        @POST(AppInterfaceAddress.Query_Detail_Info)
+        Observable<IntelliModel> getData(@Field("supplierId") String supplierId);
+    }
+
+    public static Observable<IntelliModel> getIntelliInfo(Context context, String supplierId) {
+        getIntelliInfo service = RestHelper.getBaseRetrofit(context).create(getIntelliInfo.class);
+        return service.getData(supplierId);
     }
 }

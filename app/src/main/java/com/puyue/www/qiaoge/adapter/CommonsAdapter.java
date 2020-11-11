@@ -79,15 +79,6 @@ public class CommonsAdapter extends RecyclerView.Adapter<CommonsAdapter.BaseView
 
         }
 
-        if(activesBean.getSendGiftType()!=null) {
-            if(activesBean.getSendGiftType().equals("")) {
-                holder.tv_given_des.setVisibility(View.GONE);
-            }else {
-                holder.tv_given_des.setVisibility(View.VISIBLE);
-                holder.tv_given_des.setText(activesBean.getSendGiftType());
-            }
-        }
-
 
         holder.tv_name.setText(activesBean.getProductName());
         Glide.with(mContext).load(activesBean.getDefaultPic()).into(holder.iv_pic);
@@ -215,7 +206,6 @@ public class CommonsAdapter extends RecyclerView.Adapter<CommonsAdapter.BaseView
         private TextView tv_given_des;
         public BaseViewHolder(View view) {
             super(view);
-            tv_given_des = (TextView) view.findViewById(R.id.tv_given_des);
             tv_full_desc = (TextView) view.findViewById(R.id.tv_full_desc);
             rl_group = (RelativeLayout) view.findViewById(R.id.rl_group);
             rl_coupon = (RelativeLayout) view.findViewById(R.id.rl_coupon);

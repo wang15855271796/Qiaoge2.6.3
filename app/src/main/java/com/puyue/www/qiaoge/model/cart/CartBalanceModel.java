@@ -120,12 +120,30 @@ public class CartBalanceModel extends BaseModel {
         private boolean isVip;
         public boolean addressOk;
         int giftNum;
+        String selfSendTimeStr;
+        String unSelfSendTimeStr;
         public boolean isAddressOk() {
             return addressOk;
         }
 
         public void setAddressOk(boolean addressOk) {
             this.addressOk = addressOk;
+        }
+
+        public String getSelfSendTimeStr() {
+            return selfSendTimeStr;
+        }
+
+        public void setSelfSendTimeStr(String selfSendTimeStr) {
+            this.selfSendTimeStr = selfSendTimeStr;
+        }
+
+        public String getUnSelfSendTimeStr() {
+            return unSelfSendTimeStr;
+        }
+
+        public void setUnSelfSendTimeStr(String unSelfSendTimeStr) {
+            this.unSelfSendTimeStr = unSelfSendTimeStr;
         }
 
         @Override
@@ -849,6 +867,8 @@ public class CartBalanceModel extends BaseModel {
             public List<AdditionProductVOListBean> cartAdditionProductVOList;
             private List<AdditionVOList> additionVOList;
             private String buySendAdditionInfo;
+            private int selfOrNot;
+            String sendTimeTpl;
             public static class AdditionProductVOListBean {
                 public String picUrl;
                 public String name;//赠品名称
@@ -858,6 +878,22 @@ public class CartBalanceModel extends BaseModel {
                 public int additionFlag;//1，正常赠送，2，已赠完
                 public String flagUrl;
                 public String finishUrl;
+            }
+
+            public String getSendTimeTpl() {
+                return sendTimeTpl;
+            }
+
+            public void setSendTimeTpl(String sendTimeTpl) {
+                this.sendTimeTpl = sendTimeTpl;
+            }
+
+            public int getSelfOrNot() {
+                return selfOrNot;
+            }
+
+            public void setSelfOrNot(int selfOrNot) {
+                this.selfOrNot = selfOrNot;
             }
 
             public String getBuySendAdditionInfo() {

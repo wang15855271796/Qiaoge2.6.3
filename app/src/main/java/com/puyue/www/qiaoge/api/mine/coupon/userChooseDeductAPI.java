@@ -2,11 +2,9 @@ package com.puyue.www.qiaoge.api.mine.coupon;
 
 import android.content.Context;
 
-import com.puyue.www.qiaoge.api.home.GetCommentListByPageAPI;
 import com.puyue.www.qiaoge.constant.AppInterfaceAddress;
 import com.puyue.www.qiaoge.helper.RestHelper;
 import com.puyue.www.qiaoge.model.QueryProdModel;
-import com.puyue.www.qiaoge.model.home.GetCommentListByPageModel;
 import com.puyue.www.qiaoge.model.mine.coupons.UserChooseDeductModel;
 
 import retrofit2.http.Field;
@@ -25,16 +23,16 @@ public class userChooseDeductAPI {
         @FormUrlEncoded
         @POST(AppInterfaceAddress.USER_CHOOSE_DEDUCT)
         Observable<UserChooseDeductModel> getData(
+                @Field("orderDeliveryType") String orderDeliveryType,
                 @Field("activityBalanceVOStr") String activityBalanceVOStr,
                 @Field("normalProductBalanceVOStr") String normalProductBalanceVOStr
 
         );
     }
 
-    public static Observable<UserChooseDeductModel> requestData(Context context,String activityBalanceVOStr,
-                                                                String normalProductBalanceVOStr) {
+    public static Observable<UserChooseDeductModel> requestData(Context context,String orderDeliveryType,String activityBalanceVOStr, String normalProductBalanceVOStr) {
         userChooseDeductService service = RestHelper.getBaseRetrofit(context).create(userChooseDeductService.class);
-        return service.getData(activityBalanceVOStr, normalProductBalanceVOStr);
+        return service.getData(orderDeliveryType,activityBalanceVOStr, normalProductBalanceVOStr);
     }
 
     private interface QueryProdsService {

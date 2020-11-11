@@ -8,11 +8,13 @@
     android:layout_marginBottom="@dimen/size_15dp"
     android:orientation="horizontal">
 
+
+
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-
+        <!--滑动删除模块-->
         <LinearLayout
             android:visibility="gone"
             android:id="@+id/ll_delete"
@@ -28,14 +30,64 @@
 
         </LinearLayout>
 
+        <!--大列表模块-->
         <LinearLayout
             android:id="@+id/ll_cart"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-
-            android:background="@drawable/cart_item_good_bg"
             android:orientation="vertical">
 
+            <!--标题头模块-->
+
+
+            <RelativeLayout
+                android:visibility="gone"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/size_50dp">
+
+                <CheckBox
+                    android:id="@+id/cb_choose"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginTop="@dimen/size_15dp"
+                    android:background="@drawable/app_equipment_all_select"
+                    android:button="@null" />
+
+                <TextView
+                    android:text="自营商品"
+                    android:layout_toRightOf="@+id/cb_choose"
+                    android:textColor="#343434"
+                    android:textStyle="bold"
+                    android:layout_marginLeft="@dimen/size_10dp"
+                    android:layout_centerVertical="true"
+                    android:textSize="@dimen/sp_14"
+                    android:id="@+id/tv_big_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+                <ImageView
+                    android:id="@+id/iv_operate_pic"
+                    android:layout_toRightOf="@+id/tv_big_title"
+                    tools:src="@mipmap/icon_next"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="@dimen/dp_10"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+                <TextView
+                    android:id="@+id/tv_operate"
+                    android:layout_marginLeft="@dimen/size_42dp"
+                    android:layout_alignParentBottom="true"
+                    android:textColor="#F56E24"
+                    android:textSize="@dimen/dp_10"
+                    tools:text="现在下单，预计明天日(9月19日)开始配送"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+            </RelativeLayout>
+
+            <!--商品列表模块-->
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
@@ -85,11 +137,19 @@
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/recyclerView"
-                android:layout_marginLeft="@dimen/size_44dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
             </android.support.v7.widget.RecyclerView>
+
+            <View
+                android:background="#F2F3F6"
+                android:id="@+id/v1"
+                android:visibility="gone"
+                android:layout_marginLeft="@dimen/size_44dp"
+                android:layout_marginRight="@dimen/size_15dp"
+                android:layout_width="match_parent"
+                android:layout_height="0.5dp"/>
 
             <TextView
                 android:id="@+id/tv_full_desc"
@@ -107,19 +167,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
 
-
-            <!--满赠商品赠品-->
+            <!--商品赠品-->
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/rv_given"
-                android:layout_marginLeft="@dimen/size_44dp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-            </android.support.v7.widget.RecyclerView>
-
-            <!--普通商品赠品-->
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/rv_givens"
                 android:layout_marginLeft="@dimen/size_44dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
@@ -138,15 +188,10 @@
 
         </LinearLayout>
 
-        <!--<android.support.v7.widget.RecyclerView-->
-            <!--android:id="@+id/rv_given"-->
-            <!--android:layout_marginLeft="@dimen/size_44dp"-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="wrap_content">-->
-
-        <!--</android.support.v7.widget.RecyclerView>-->
-
     </LinearLayout>
+
+
+
 
     <TextView
         android:id="@+id/tv_delete"

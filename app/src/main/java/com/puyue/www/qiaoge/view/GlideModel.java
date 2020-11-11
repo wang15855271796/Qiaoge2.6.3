@@ -42,7 +42,6 @@ public class GlideModel {
 
     public static void disPlayPlaceHolder(Context context, String url, ImageView view) {
         RequestOptions options = new RequestOptions()
-                .centerCrop()
                 .placeholder(R.mipmap.icon_default_rec)
                 .diskCacheStrategy(DiskCacheStrategy.ALL);
         Glide.with(context)

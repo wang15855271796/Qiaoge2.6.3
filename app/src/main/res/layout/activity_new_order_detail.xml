@@ -3,7 +3,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-  android:background="@color/white"
     android:layout_height="match_parent"
     android:orientation="vertical">
 
@@ -47,13 +46,14 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
+
                 <include layout="@layout/activity_new_order_head" />
+
                 <RelativeLayout
                     android:id="@+id/relativeLayout_driver"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="10dp"
-                    android:layout_marginTop="3dp"
                     android:layout_marginRight="10dp"
                     android:background="@drawable/new_order_bg"
                     android:paddingBottom="5dp">
@@ -118,6 +118,7 @@
                         android:textSize="15dp"
                         android:visibility="gone" />
                 </RelativeLayout>
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="60dp"
@@ -168,31 +169,102 @@
                             android:scaleType="fitXY"
                             android:src="@mipmap/address_arrow" />
                     </LinearLayout>
+
                 </LinearLayout>
-                <RelativeLayout
+
+                <!--自营模块-->
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="10dp"
-                    android:layout_marginTop="5dp"
+                    android:orientation="vertical"
+                    android:layout_marginBottom="@dimen/dp_10"
                     android:layout_marginRight="10dp"
-                    android:background="@drawable/new_order_bg">
-                    <com.puyue.www.qiaoge.view.MaxHeightRecyclerView
+                 >
+
+                    <!--自营-->
+                    <RelativeLayout
+                        android:visibility="gone"
+                        android:id="@+id/rl_operate"
+                        android:layout_marginLeft="@dimen/size_16dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/size_50dp">
+
+                        <TextView
+                            android:text="自营商品"
+                            android:textColor="#343434"
+                            android:textStyle="bold"
+                            android:layout_centerVertical="true"
+                            android:textSize="@dimen/sp_14"
+                            android:id="@+id/tv_operate_title"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content" />
+
+                        <TextView
+                            android:textColor="#F56E24"
+                            android:id="@+id/tv_time_operate"
+                            android:layout_marginTop="@dimen/size_5dp"
+                            android:layout_below="@+id/tv_operate_title"
+                            android:textSize="@dimen/dp_10"
+                            tools:text="现在下单，预计明天日(9月19日)开始配送"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content" />
+
+                        <ImageView
+                            android:id="@+id/iv_operate_pic"
+                            android:layout_toRightOf="@+id/tv_operate_title"
+                            tools:src="@mipmap/icon_next"
+                            android:layout_centerVertical="true"
+                            android:layout_marginLeft="@dimen/dp_10"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content" />
+
+                        <TextView
+                                tools:text="订单编号："
+                                android:textSize="@dimen/dp_10"
+                                android:layout_toRightOf="@+id/iv_operate_pic"
+                                android:id="@+id/tv_operate_num"
+                                android:layout_marginLeft="@dimen/size_15dp"
+                                android:layout_centerVertical="true"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content" />
+
+                        <TextView
+                            android:id="@+id/tv_copy_operate"
+                            android:layout_width="@dimen/size_35dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginRight="@dimen/size_10dp"
+                            android:background="@drawable/copy_order_num"
+                            android:gravity="center"
+                            android:layout_alignParentRight="true"
+                            android:layout_centerVertical="true"
+                            android:padding="2dp"
+                            android:text="复制"
+                            android:textColor="#F6551A"
+                            android:textSize="11dp" />
+
+                    </RelativeLayout>
+
+                    <android.support.v7.widget.RecyclerView
                         android:id="@+id/recyclerView"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        app:maxHeight="360dp">
-                    </com.puyue.www.qiaoge.view.MaxHeightRecyclerView>
+                    />
 
+                    <!--自营赠品-->
                     <android.support.v7.widget.RecyclerView
                         android:layout_below="@+id/recyclerView"
                         android:id="@+id/rv_full"
-                        android:layout_marginLeft="@dimen/dp_10"
+                        android:layout_marginTop="@dimen/dp_10"
+                        android:background="@drawable/new_order_bg"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
+                        android:layout_height="wrap_content"/>
 
-                    </android.support.v7.widget.RecyclerView>
-                </RelativeLayout>
+                </LinearLayout>
+
+                <!--底部信息-->
                 <include layout="@layout/activity_new_order_foot" />
+
             </LinearLayout>
 
             <com.wang.avi.AVLoadingIndicatorView

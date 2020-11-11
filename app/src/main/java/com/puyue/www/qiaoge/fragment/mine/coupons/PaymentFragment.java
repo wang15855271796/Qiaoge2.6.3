@@ -149,17 +149,19 @@ public class PaymentFragment extends DialogFragment {
                     intent.putExtra("orderDeliveryType", orderDeliveryType);
                     intent.setClass(getContext(), NewOrderDetailActivity.class);
                     intent.putExtra("orderId",orderId);
-                    intent.putExtra("account","0");
+                    intent.putExtra("account","2");
                     intent.putExtra(AppConstant.ORDERSTATE, "1");
                     startActivity(intent);
+                    SharedPreferencesUtil.saveString(getContext(),"account","2");
                 }else if (orderDeliveryType.equals("1")){
                     Intent intent = new Intent(getContext(), SelfSufficiencyOrderDetailActivity.class);
                     intent.putExtra("orderDeliveryType", orderDeliveryType);
-                    intent.putExtra("account","0");
+                    intent.putExtra("account","2");
                     intent.setClass(getContext(), SelfSufficiencyOrderDetailActivity.class);
                     intent.putExtra("orderId",orderId);
                     intent.putExtra(AppConstant.ORDERSTATE, "1");
                     startActivity(intent);
+                    SharedPreferencesUtil.saveString(getContext(),"account","2");
                 }
                 dismiss();
                 getActivity().finish();

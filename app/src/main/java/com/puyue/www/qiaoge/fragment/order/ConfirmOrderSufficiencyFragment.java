@@ -1,6 +1,7 @@
 package com.puyue.www.qiaoge.fragment.order;
 
 
+import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
@@ -49,7 +50,9 @@ import com.puyue.www.qiaoge.activity.BeizhuActivity;
 
 import com.puyue.www.qiaoge.activity.mine.coupons.ChooseCouponsActivity;
 import com.puyue.www.qiaoge.activity.mine.coupons.ChooseCouponssActivity;
+import com.puyue.www.qiaoge.activity.mine.order.ConfirmNewOrderActivity;
 import com.puyue.www.qiaoge.activity.mine.order.MyConfireOrdersActivity;
+import com.puyue.www.qiaoge.adapter.UnOperateAdapter;
 import com.puyue.www.qiaoge.adapter.mine.ChooseCouponsAdapter;
 import com.puyue.www.qiaoge.adapter.mine.ConfirmOrderNewAdapter;
 import com.puyue.www.qiaoge.api.cart.CartBalanceAPI;
@@ -58,12 +61,15 @@ import com.puyue.www.qiaoge.api.mine.order.GenerateOrderAPI;
 import com.puyue.www.qiaoge.api.mine.order.GetOrderDeliverTimeAPI;
 import com.puyue.www.qiaoge.base.BaseFragment;
 import com.puyue.www.qiaoge.constant.AppConstant;
+import com.puyue.www.qiaoge.dialog.OperateDialog;
 import com.puyue.www.qiaoge.event.AddressEvent;
 import com.puyue.www.qiaoge.event.BeizhuEvent;
 import com.puyue.www.qiaoge.event.ChooseCoupon1Event;
 import com.puyue.www.qiaoge.event.ChooseCoupon2Event;
 import com.puyue.www.qiaoge.event.ChooseCouponEvent;
 import com.puyue.www.qiaoge.event.ChooseCouponsEvent;
+import com.puyue.www.qiaoge.event.RefreshEvent;
+import com.puyue.www.qiaoge.fragment.cart.CartFragment;
 import com.puyue.www.qiaoge.fragment.mine.coupons.PaymentFragment;
 import com.puyue.www.qiaoge.helper.ActivityResultHelper;
 import com.puyue.www.qiaoge.helper.AppHelper;
@@ -101,6 +107,7 @@ import rx.schedulers.Schedulers;
 public class ConfirmOrderSufficiencyFragment extends BaseFragment {
     private Toolbar toolbar;
     private RecyclerView recyclerView;
+    RecyclerView recyclerView_un;
     private LinearLayout linearLayoutAddressHead;
     private TextView userName;
     private TextView userPhone;
@@ -124,10 +131,14 @@ public class ConfirmOrderSufficiencyFragment extends BaseFragment {
 
     private LinearLayout linearLayoutCoupons;// 优惠券xml
     private String orderId;
-
+    //自营
     private ConfirmOrderNewAdapter adapter;
-    private List<CartBalanceModel.DataBean.ProductVOListBean>
-            list = new ArrayList<>();
+    //非自营
+    private UnOperateAdapter unOperateAdapter;
+    //自营
+    private List<CartBalanceModel.DataBean.ProductVOListBean> list = new ArrayList<>();
+    //非自营
+    private List<CartBalanceModel.DataBean.ProductVOListBean> listUnOperate = new ArrayList<>();
     // 获取想去的参数 和获取订单的参数
     private String normalProductBalanceVOStr;
     private String activityBalanceVOStr;
@@ -172,7 +183,8 @@ public class ConfirmOrderSufficiencyFragment extends BaseFragment {
     private String deliverTimeEnd = "";
 
     private String deliverTimeName = "";
-
+    TextView tv_unOperate;
+    TextView tv_operate;
     private LinearLayout ll_collect_bills;
     private LinearLayout ll_go_market;
     private TextView tv_amount_spec;
@@ -204,7 +216,8 @@ public class ConfirmOrderSufficiencyFragment extends BaseFragment {
     private BottomSheetDialog mDialogMap;
     private String title;
     private String content;
-
+    private TextView tv_operate_title;
+    private RelativeLayout rl_unOperate;
 
     private LinearLayout iv_time_arrow;
     private TextView tv_year;
@@ -233,10 +246,15 @@ public class ConfirmOrderSufficiencyFragment extends BaseFragment {
     @Override
     public void findViewById(View view) {
         //  toolbar = (Toolbar) view.findViewById(R.id.toolbar);
+        rl_unOperate = (RelativeLayout) view.findViewById(R.id.rl_unOperate);
+        tv_operate_title = (TextView) view.findViewById(R.id.tv_operate_title);
+        tv_unOperate = (TextView) view.findViewById(R.id.tv_unOperate);
+        tv_operate = (TextView) view.findViewById(R.id.tv_operate);
         tv_beizhu = (TextView) view.findViewById(R.id.tv_beizhu);
         tv_full_price = (TextView) view.findViewById(R.id.tv_full_price);
         lav_activity_loading = (AVLoadingIndicatorView) view.findViewById(R.id.lav_activity_loading);
         recyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
+        recyclerView_un = (RecyclerView) view.findViewById(R.id.recyclerView_un);
         userName = (TextView) view.findViewById(R.id.userName);
         userPhone = (TextView) view.findViewById(R.id.userPhone);
         address = (TextView) view.findViewById(R.id.address);
@@ -324,14 +342,15 @@ public class ConfirmOrderSufficiencyFragment extends BaseFragment {
         mUiSettings.setAllGesturesEnabled(false);
 
         adapter = new ConfirmOrderNewAdapter(R.layout.item_confirm_order_new, list);
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(mActivity, LinearLayoutManager.VERTICAL, false) {
-            @Override
-            public boolean canScrollVertically() {
-                return false;
-            }
-        };
-        recyclerView.setLayoutManager(linearLayoutManager);
+        unOperateAdapter = new UnOperateAdapter(R.layout.item_confirm_order_new, listUnOperate);
+
+        recyclerView.setLayoutManager(new LinearLayoutManager(mActivity));
         recyclerView.setAdapter(adapter);
+
+        //
+        recyclerView_un.setLayoutManager(new LinearLayoutManager(mActivity));
+        recyclerView_un.setAdapter(unOperateAdapter);
+
 
         iv_time_arrow.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -738,16 +757,38 @@ public class ConfirmOrderSufficiencyFragment extends BaseFragment {
                             if (cartBalanceModel != null) {
                                 setText(cartBalanceModel);
                                 if (requestCount == 0) {
-//                                    userChooseDeduct();
                                     requestCount++;
                                 }
 
+                                list.clear();
+                                listUnOperate.clear();
+
                                 if (cartBalanceModel.getData().getProductVOList().size() > 0) {
-                                    list.clear();
-                                    list.addAll(cartBalanceModel.getData().getProductVOList());
+                                    for (int i = 0; i < cartBalanceModel.getData().getProductVOList().size(); i++) {
+                                        if(cartBalanceModel.getData().getProductVOList().get(i).getSelfOrNot()==0) {
+                                            list.add(cartBalanceModel.getData().getProductVOList().get(i));
+                                            adapter.notifyDataSetChanged();
+
+                                        }else {
+                                            listUnOperate.add(cartBalanceModel.getData().getProductVOList().get(i));
+                                            unOperateAdapter.notifyDataSetChanged();
+                                        }
+                                    }
                                 }
                             }
-                            adapter.notifyDataSetChanged();
+
+                            if(list.size()>0) {
+                                tv_operate_title.setVisibility(View.VISIBLE);
+                            }else {
+                                tv_operate_title.setVisibility(View.GONE);
+                            }
+
+                            if(listUnOperate.size()>0) {
+                                rl_unOperate.setVisibility(View.VISIBLE);
+                            }else {
+                                rl_unOperate.setVisibility(View.GONE);
+                            }
+
                             mCoder.geocode(new GeoCodeOption()
                                     .city("杭州")
                                     .address(cartBalanceModel.getData().wareAddress));
@@ -923,6 +964,7 @@ public class ConfirmOrderSufficiencyFragment extends BaseFragment {
 
 
     // 去支付
+    OperateDialog operateDialog;
     private void requestOrderNum() {
         GenerateOrderAPI.requestGenerateOrder(mActivity, activityBalanceVOStr, normalProductBalanceVOStr, cartListStr, NewgiftDetailNo, messageEditText.getText().toString(),
                 deliverTimeStart, deliverTimeEnd, deliverTimeName, 1, et_name.getText().toString(), et_phone.getText().toString(), mYear)//NewgiftDetailNo
@@ -943,18 +985,52 @@ public class ConfirmOrderSufficiencyFragment extends BaseFragment {
                     public void onNext(GenerateOrderModel generateOrderModel) {
                         if (generateOrderModel.success) {
                             orderId = generateOrderModel.getData();
-                            PaymentFragment paymentFragment = new PaymentFragment();
-                            Bundle bundle = new Bundle();
-                            bundle.putString("total", payAmount);
-                            bundle.putString("payAmount",payAmount);
-                            bundle.putString("remark","");
-                            bundle.putString("orderId",orderId);
-                            bundle.putString("orderDeliveryType","1");
-                            paymentFragment.setArguments(bundle);
-                            paymentFragment.setCancelable(false);
-                            paymentFragment.show(getFragmentManager(),"paymentFragment");
-                            lav_activity_loading.hide();
-                            lav_activity_loading.setVisibility(View.GONE);
+                            if(listUnOperate.size()>0) {
+                                operateDialog = new OperateDialog(mActivity,listUnOperate) {
+                                    @Override
+                                    public void Confirm() {
+                                        EventBus.getDefault().post(new RefreshEvent());
+                                        operateDialog.dismiss();
+                                        lav_activity_loading.hide();
+                                        buttonPay.setEnabled(true);
+                                    }
+
+                                    @Override
+                                    public void Cancle() {
+                                        lav_activity_loading.hide();
+                                        operateDialog.dismiss();
+                                        buttonPay.setEnabled(true);
+
+                                        PaymentFragment paymentFragment = new PaymentFragment();
+                                        Bundle bundle = new Bundle();
+                                        bundle.putString("total", payAmount);
+                                        bundle.putString("payAmount",payAmount);
+                                        bundle.putString("remark","");
+                                        bundle.putString("orderId",orderId);
+                                        bundle.putString("orderDeliveryType","1");
+                                        paymentFragment.setArguments(bundle);
+                                        paymentFragment.setCancelable(false);
+                                        paymentFragment.show(getFragmentManager(),"paymentFragment");
+
+                                    }
+                                };
+                                operateDialog.show();
+                            }else {
+                                orderId = generateOrderModel.getData();
+                                PaymentFragment paymentFragment = new PaymentFragment();
+                                Bundle bundle = new Bundle();
+                                bundle.putString("total", payAmount);
+                                bundle.putString("payAmount",payAmount);
+                                bundle.putString("remark","");
+                                bundle.putString("orderId",orderId);
+                                bundle.putString("orderDeliveryType","1");
+                                paymentFragment.setArguments(bundle);
+                                paymentFragment.setCancelable(false);
+                                paymentFragment.show(getFragmentManager(),"paymentFragment");
+                                lav_activity_loading.hide();
+                                lav_activity_loading.setVisibility(View.GONE);
+                            }
+
 
                         } else {
                             AppHelper.showMsg(mActivity, generateOrderModel.message);
@@ -966,6 +1042,30 @@ public class ConfirmOrderSufficiencyFragment extends BaseFragment {
                     }
                 });
     }
+    GoToConfirmDeliver mlisenter;
+    public interface GoToConfirmDeliver {
+        void jumpConfirmDeliver();
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+
+        if (activity instanceof GoToConfirmDeliver) {
+            mlisenter = (GoToConfirmDeliver) activity; // 2.2 获取到宿主activity并赋值
+        } else {
+            throw new IllegalArgumentException("activity must implements GoToMarket");
+        }
+
+    }
+
+    //把传递进来的activity对象释放掉
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mlisenter = null;
+    }
+
 
     @Subscribe
     public void onEventMainThread(AddressEvent event) {
@@ -1008,7 +1108,6 @@ public class ConfirmOrderSufficiencyFragment extends BaseFragment {
     public void getBeizhu(BeizhuEvent beizhuEvent) {
         this.beizhuEvent = beizhuEvent;
         tv_beizhu.setText(beizhuEvent.getBeizhu());
-        Log.d("sdaddsdd.........",beizhuEvent.getBeizhu());
     }
 
 

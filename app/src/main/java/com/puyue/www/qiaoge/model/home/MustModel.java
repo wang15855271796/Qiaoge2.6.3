@@ -99,7 +99,20 @@ public class MustModel {
         private String deductAmount;
         private List<ProdSpecsBean> prodSpecs;
         private List<ProdPricesBean> prodPrices;
+        String sendTimeTpl;
+        String selfProd;
 
+        public String getSendTimeTpl() {
+            return sendTimeTpl;
+        }
+
+        public void setSendTimeTpl(String sendTimeTpl) {
+            this.sendTimeTpl = sendTimeTpl;
+        }
+
+        public String getSelfProd() {
+            return selfProd;
+        }
         public String getType() {
             return type;
         }

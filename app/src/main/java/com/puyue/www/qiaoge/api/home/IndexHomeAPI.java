@@ -47,34 +47,6 @@ public class IndexHomeAPI {
     }
 
 
-    private interface IndexHomeServices {
-        @FormUrlEncoded
-        @POST(AppInterfaceAddress.INDEXHOME)
-        Observable<HomeBaseModel> getData(
-                @Field("version") String version,
-                @Field("clientType") String clientType);
-    }
-
-    public static Observable<HomeBaseModel> getBaseList(Context context, String version, String clientType) {
-        IndexHomeServices service = RestHelper.getBaseRetrofit(context).create(IndexHomeServices.class);
-        return service.getData(version, clientType);
-    }
-
-
-
-    private interface IndexRecommendService {
-        @FormUrlEncoded
-        @POST(AppInterfaceAddress.HOMENEW)
-        Observable<HomeNewRecommendModel> getData(
-                @Field("pageNum") String pageNum,
-                @Field("pageSize") String pageSize);
-    }
-
-    public static Observable<HomeNewRecommendModel> getRecommendData(Context context,  String pageNum, String pageSize) {
-        IndexRecommendService service = RestHelper.getBaseRetrofit(context).create(IndexRecommendService.class);
-        return service.getData(pageNum, pageSize);
-    }
-
     /**
      * 首页banner
      */

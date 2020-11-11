@@ -79,6 +79,10 @@ public class MarketGialog extends Dialog implements View.OnClickListener{
     TextView tv_price_total;
     @BindView(R.id.tv_free_desc)
     TextView tv_free_desc;
+    @BindView(R.id.iv_pic)
+    ImageView iv_pic;
+    @BindView(R.id.iv_operate)
+    ImageView iv_operate;
     private SpecAdapter specAdapter;
     MarketRightModel.DataBean.ProdClassifyBean.ListBean listBean;
     int pos = 0;
@@ -128,6 +132,8 @@ public class MarketGialog extends Dialog implements View.OnClickListener{
                                 tv_price.setText(exchangeProductModel.getData().getMinMaxPrice());
                                 tv_desc.setText(exchangeProductModel.getData().getSpecialOffer());
                                 tv_stock.setText(exchangeProductModel.getData().getInventory());
+                                Glide.with(context).load(exchangeProductModel.getData().getSendTimeTpl()).into(iv_pic);
+                                Glide.with(context).load(exchangeProductModel.getData().getSelfProd()).into(iv_operate);
                                 Glide.with(context).load(exchangeProductModel.getData().getDefaultPic()).into(iv_head);
                                 if(businessType==11) {
                                     marketItemAdapter = new MarketItemAdapter(businessType, exchangeProductModel.getData().getActiveId(), R.layout.item_choose_content, exchangeProductModel.getData().getProdPrices());

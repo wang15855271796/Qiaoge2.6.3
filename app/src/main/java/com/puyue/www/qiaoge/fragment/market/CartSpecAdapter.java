@@ -53,7 +53,6 @@ public class CartSpecAdapter extends BaseQuickAdapter<CartsListModel.DataBean.Va
         CheckBox cb_item_in = helper.getView(R.id.cb_item_in);
         cb_item_in.setOnCheckedChangeListener(null);
         //读取实体内存储的选中状态
-//        cb_item_in.setChecked(isCheck.get(helper.getAdapterPosition()));
         cb_item_in.setChecked(item.isSelected());
         helper.setText(R.id.tv_spec,"规格："+item.getSpec());
         helper.setText(R.id.tv_stock,item.getInventory());
@@ -69,11 +68,6 @@ public class CartSpecAdapter extends BaseQuickAdapter<CartsListModel.DataBean.Va
                 //更改item选中状态同时进行实体内的选中状态改变
                 item.setSelected(isChecked);
                 listAll.clear();
-
-//                if(getStat()) {
-//
-//                }
-
                 boolean noSelect = false;
                 //内层item选中状态改变后要遍历判断是否全选，以改变外层item的选中状态
                 for (CartsListModel.DataBean.ValidListBean.SpecProductListBean validListBean : data) {
@@ -95,16 +89,6 @@ public class CartSpecAdapter extends BaseQuickAdapter<CartsListModel.DataBean.Va
 //                iProductSelectCallback.update(validListBeans,listAll);
             }
         });
-    }
-
-    private boolean getStat() {
-        for (int i = 0; i < data.size(); i++) {
-            if(data.get(i).isSelected()==false) {
-                return false;
-            }
-        }
-
-        return true;
     }
 
     public interface IProductSelectCallback {

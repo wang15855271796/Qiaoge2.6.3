@@ -3,6 +3,7 @@ package com.puyue.www.qiaoge.adapter.home;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.drawable.AnimationDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -51,6 +52,7 @@ import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnLoadMoreListener;
 import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
+import com.weavey.loading.lib.LoadingLayout;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -72,6 +74,11 @@ import rx.schedulers.Schedulers;
 public class CommonProductActivity extends BaseSwipeActivity implements View.OnClickListener {
     @BindView(R.id.recyclerView)
     RecyclerView recyclerView;
+    @BindView(R.id.loading)
+    LoadingLayout loading;
+    AnimationDrawable drawable;
+    @BindView(R.id.iv_normal)
+    ImageView iv_normal;
     CommonProductAdapter commonProductAdapter;
     int pageNum = 1;
     int pageSize = 10;
@@ -159,8 +166,8 @@ public class CommonProductActivity extends BaseSwipeActivity implements View.OnC
             public void onLoadMore(@NonNull RefreshLayout refreshLayout) {
                 if (productNormalModel.getData()!=null) {
                     if(productNormalModel.getData().isHasNextPage()) {
-                        PageNum++;
-                        getProductsList(PageNum, 10,"commonBuy");
+                        pageNum++;
+                        getProductsList(pageNum, 10,"commonBuy");
                         refreshLayout.finishLoadMore();
                     }else {
                         refreshLayout.finishLoadMoreWithNoMoreData();
@@ -244,14 +251,21 @@ public class CommonProductActivity extends BaseSwipeActivity implements View.OnC
 
                     @Override
                     public void onError(Throwable e) {
-
+                        loading.setStatus(LoadingLayout.No_Network);
+                        loading.setOnReloadListener(new LoadingLayout.OnReloadListener() {
+                            @Override
+                            public void onReload(View v) {
+                                loading.setStatus(LoadingLayout.Loading);
+                                getProductsList(1,pageSize,"commonBuy");
+                            }
+                        });
                     }
 
                     @Override
                     public void onNext(ProductNormalModel getCommonProductModel) {
                         if (getCommonProductModel.isSuccess()) {
                             productNormalModel = getCommonProductModel;
-                            if (getCommonProductModel.getData().getList().size() > 0) {
+                            if (getCommonProductModel.getData().getList().size()>0) {
                                 list.addAll(getCommonProductModel.getData().getList());
                                 commonProductAdapter.notifyDataSetChanged();
                                 List<ProductNormalModel.DataBean.ListBean> list = getCommonProductModel.getData().getList();
@@ -260,10 +274,23 @@ public class CommonProductActivity extends BaseSwipeActivity implements View.OnC
                                 } else {
                                     commonProductAdapter.addData(list);
                                 }
+                                loading.setStatus(LoadingLayout.Success);
+                                drawable.stop();
+                            }else {
+                                loading.setStatus(LoadingLayout.Empty);
+                                loading.setOnReloadListener(new LoadingLayout.OnReloadListener() {
+                                    @Override
+                                    public void onReload(View v) {
+                                        loading.setStatus(LoadingLayout.Loading);
+                                        getProductsList(1,pageSize,"commonBuy");
+                                    }
+                                });
                             }
                             refreshLayout.setEnableLoadMore(true);
+
                         } else {
                             AppHelper.showMsg(mActivity, getCommonProductModel.getMessage());
+                            loading.setStatus(LoadingLayout.Error);
                         }
                     }
                 });
@@ -272,6 +299,9 @@ public class CommonProductActivity extends BaseSwipeActivity implements View.OnC
     @Override
     public void setViewData() {
         refreshLayout.autoRefresh();
+        loading.setStatus(LoadingLayout.Loading);
+        drawable = (AnimationDrawable) iv_normal.getDrawable();
+        drawable.start();
         getCartNum();
     }
 

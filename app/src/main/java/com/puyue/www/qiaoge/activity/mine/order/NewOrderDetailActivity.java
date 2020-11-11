@@ -25,11 +25,14 @@ import android.widget.TextView;
 
 import com.android.tu.loadingdialog.LoadingDailog;
 
+import com.bumptech.glide.Glide;
 import com.puyue.www.qiaoge.R;
+import com.puyue.www.qiaoge.activity.BeizhuActivity;
 import com.puyue.www.qiaoge.activity.CartActivity;
 import com.puyue.www.qiaoge.activity.HomeActivity;
 import com.puyue.www.qiaoge.activity.mine.account.AddressListActivity;
 import com.puyue.www.qiaoge.activity.mine.account.AddressListsActivity;
+import com.puyue.www.qiaoge.adapter.NewOrderUnOperateAdapter;
 import com.puyue.www.qiaoge.adapter.OrderFullAdapter;
 
 import com.puyue.www.qiaoge.adapter.mine.NewOrderDetailAdapter;
@@ -39,12 +42,14 @@ import com.puyue.www.qiaoge.api.home.GetOrderDetailAPI;
 import com.puyue.www.qiaoge.api.mine.order.ConfirmGetGoodsAPI;
 import com.puyue.www.qiaoge.api.mine.order.CopyToCartAPI;
 import com.puyue.www.qiaoge.api.mine.order.GetDeliverTimeOrderAPI;
+import com.puyue.www.qiaoge.api.mine.order.MyOrderListAPI;
 import com.puyue.www.qiaoge.api.mine.order.NotifyDeliverTimeOrderAPI;
 import com.puyue.www.qiaoge.base.BaseModel;
 import com.puyue.www.qiaoge.base.BaseSwipeActivity;
 import com.puyue.www.qiaoge.constant.AppConstant;
 import com.puyue.www.qiaoge.event.AddressEvent;
 import com.puyue.www.qiaoge.event.BackEvent;
+import com.puyue.www.qiaoge.event.BeizhuEvent;
 import com.puyue.www.qiaoge.event.GoToCartFragmentEvent;
 import com.puyue.www.qiaoge.fragment.mine.coupons.PaymentFragment;
 import com.puyue.www.qiaoge.fragment.mine.coupons.PaymentFragments;
@@ -54,6 +59,7 @@ import com.puyue.www.qiaoge.listener.NoDoubleClickListener;
 import com.puyue.www.qiaoge.model.cart.CancelOrderModel;
 import com.puyue.www.qiaoge.model.cart.GetOrderDetailModel;
 import com.puyue.www.qiaoge.model.home.GetDeliverTimeModel;
+import com.puyue.www.qiaoge.model.mine.order.CommonModel;
 import com.puyue.www.qiaoge.model.mine.order.ConfirmGetGoodsModel;
 import com.puyue.www.qiaoge.model.mine.order.CopyToCartModel;
 import com.puyue.www.qiaoge.model.mine.order.OrderEvaluateListModel;
@@ -63,6 +69,7 @@ import com.wang.avi.AVLoadingIndicatorView;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -82,13 +89,24 @@ import rx.schedulers.Schedulers;
  */
 public class NewOrderDetailActivity extends BaseSwipeActivity {
 
-    private static final String TAG = NewOrderDetailActivity.class.getSimpleName();
     private ImageView imageViewBreak;
-    private TextView textViewTitle;
     private RecyclerView recyclerView;
+    RelativeLayout rl_unOperate;
+    RelativeLayout rl_operate;
     RecyclerView rv_full;
+    TextView tv_unOperate_num;
+    TextView tv_operate_num;
     // 非退货订单layout 头部
     private LinearLayout orderLinearLayout;
+    //支付方式
+    LinearLayout ll_payWay;
+    //底部支付信息
+    LinearLayout ll_order_info;
+    //备注
+//    RelativeLayout ll_beizhu;
+    //关联订单
+    LinearLayout linearLayoutPay;
+    TextView tv_beizhu;
     private TextView tvOrderTitle; //订单类型
     private SnapUpCountDownTimerView orderTimerView; //倒计时
     private TextView tvOrderContent; //订单内容
@@ -105,31 +123,24 @@ public class NewOrderDetailActivity extends BaseSwipeActivity {
     private LinearLayout ReturnGoodsLinearLayout;
     private TextView ReturnGoodsTitle; //退货类型
     private TextView ReturnGoodsContent; //退货内容
-    private TextView tvNewOrderCommodityNum;//总件商品
-
-    // 非退货订单信息layout 底部
-    private LinearLayout newOrderInfoLayout;
+    TextView tv_full_price;
+    TextView tv_full_desc;
+    LinearLayout ll_full_activies;
     private TextView tvNewOrderCommodityAmount; //商品金额
     private TextView tvNewOrderDistributionFeePrice; // 配送费
     private TextView tvNewOrderVipSubtractionPrice; //会员满减
     private TextView tvNewOrderCoupons;//优惠卷
-    private TextView tvNewOrderCommodity;  //商品数量
-    private TextView tvNewOrderPayMoney; // 商品总价
-    private TextView tvnormalReduct; // 满减活动
 
-    ////退货订单信息layout 底部
-    private LinearLayout returnGoodsInfoLayout;
     private TextView returnGoodsCommodityNum;//退货数量
     private TextView returnGoodsCommodityAmount; // 退货金额
-    //private TextView returnGoodsCommodity; //退货总件商品
-    private TextView returnGoodsCommodityPayMoney; // 退货商品总价
     private TextView returnGoodsReason; //退款原因
 
 
     //以下是每个订单详情都有的订单信息
     private TextView tvNewOrderAddresseeName;
     private TextView tvNewOrderAddress;
-    private TextView tvNewOrderPhone; //下单号码
+    //关联id
+    TextView tv_connect_id;
     private TextView tvNewOrderTime;//下单时间
     private ImageView tvNewOrderPay; //下单方式
     private TextView tvNewOrderRemarks; //备注
@@ -142,19 +153,24 @@ public class NewOrderDetailActivity extends BaseSwipeActivity {
     //审核时间
     private TextView tvExamineTime;
     private LinearLayout examineTimeLinearLayout;
-    //下单时间
-    private LinearLayout tvNewOrderTimeLinearLayout;
+
+    //支付方式
+    TextView tv_payWay;
+    //支付金额
+    TextView tv_total_amount;
     private GradientColorTextView tvInfo;
 
-    private LinearLayout linearLayoutPay;
     //删除订单
     private LinearLayout deleteButtonLayout;
     private TextView tv_delete;
     private TextView tv_buttonAgainBuy;
 
-
+    ImageView iv_operate_pic;
+    //自营
     private NewOrderDetailAdapter adapter;
-    private List<GetOrderDetailModel.DataBean.ProductVOListBean> list = new ArrayList<>();
+    //自营
+    private List<GetOrderDetailModel.DataBean.OrderProdsBean> list = new ArrayList<>();
+
     private List<GetOrderDetailModel.DataBean.SendGiftInfo> list_full = new ArrayList<>();
     private String returnProductMainId = "";
     private String orderId;
@@ -163,21 +179,16 @@ public class NewOrderDetailActivity extends BaseSwipeActivity {
     private Dialog mDialog;
 
     private List<OrderEvaluateListModel> mListEvaluate = new ArrayList<>();
-    private List<GetOrderDetailModel.DataBean.ProductVOListBean> mListForReturn = new ArrayList<>();
     private GetOrderDetailModel.DataBean getOrderDetailModel;
     private ConfirmGetGoodsModel mModelConfirmGetGoods;
-    private TextView tvNewOrderPayMoneyReturn;
     private RelativeLayout relativeLayoutCommodityReturn;
-    private TextView tvReturnGoodsCommodity;
 
     private TextView mTvDeliverTime;
     private LinearLayout mLinearLayoutDeliver;
     private LinearLayout linearLayoutAddressArrow;
     private TextView sendAmountStr;
     private TextView tvDeductDsc;
-    private TextView tvNomalReductDesc;
-
-    private TextView tvCopy;
+    private LinearLayout ll_pay;
 
     private LinearLayout mLinearLayoutShipped;
 
@@ -194,41 +205,28 @@ public class NewOrderDetailActivity extends BaseSwipeActivity {
     private TextView mTvDriverDeliverTime;
     private ImageView mFreshDriverStatus;
     private TextView mTvOrderStatus;
+    private LinearLayout ll_beizhu_desc;
     private TextView mTvSeeDriverStatus;
     private TextView mTvDriverName;
     private TextView mTvOrderReturn;
-
-    private RelativeLayout mRlReturn;
-    private TextView tv_return_amount;
     private TextView tv_return_reason;
-
-    private TextView tv_return_status;
     private TextView tv_driver_phone;
     private TextView tv_normal_vip_desc;
     private LoadingDailog dialog;
     private TextView buttonReturnGood_two;
-
-
     private TextView tv_notify_time;//修改配送时间
-
-
     private String deliverTimeStart = "";
     private String deliverTimeEnd = "";
-
     private String deliverTimeName = "";
     List<String> mlist = new ArrayList<>();
-
-
     private String goAccount;
-
     private TextView tv_evaluate;
-
-
     private int returnCode;
     private boolean isShowed = false;
     private String account;
     private String subId;
     OrderFullAdapter orderFullAdapter;
+    TextView tv_amount;
     @Override
     public boolean handleExtra(Bundle savedInstanceState) {
         return false;
@@ -241,9 +239,26 @@ public class NewOrderDetailActivity extends BaseSwipeActivity {
 
     @Override
     public void findViewById() {
+        ll_full_activies = (LinearLayout) findViewById(R.id.ll_full_activies);
+        tv_full_price =  (TextView) findViewById(R.id.tv_full_price);
+        tv_full_desc =  (TextView) findViewById(R.id.tv_full_desc);
+        ll_beizhu_desc = (LinearLayout) findViewById(R.id.ll_beizhu_desc);
+        linearLayoutPay = (LinearLayout) findViewById(R.id.linearLayoutPay);
+        ll_pay = (LinearLayout) findViewById(R.id.ll_pay);
+        tv_beizhu = (TextView) findViewById(R.id.tv_beizhu);
+        ll_order_info = (LinearLayout) findViewById(R.id.ll_order_info);
+//        ll_beizhu = (RelativeLayout) findViewById(R.id.ll_beizhu);
+        ll_payWay = (LinearLayout) findViewById(R.id.ll_payWay);
+        tv_operate_num = (TextView) findViewById(R.id.tv_operate_num);
+        rl_unOperate = (RelativeLayout) findViewById(R.id.rl_unOperate);
+        rl_operate = (RelativeLayout) findViewById(R.id.rl_operate);
+        iv_operate_pic = (ImageView) findViewById(R.id.iv_operate_pic);
+        tv_connect_id = (TextView) findViewById(R.id.tv_connect_id);
+        tv_payWay = (TextView) findViewById(R.id.tv_payWay);
+        tv_total_amount = (TextView) findViewById(R.id.tv_total_amount);
+        tv_amount = (TextView) findViewById(R.id.tv_amount);
         rv_full = (RecyclerView) findViewById(R.id.rv_full);
         imageViewBreak = (ImageView) findViewById(R.id.imageViewBreak);
-        textViewTitle = (TextView) findViewById(R.id.textViewTitle);
         recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
         orderLinearLayout = (LinearLayout) findViewById(R.id.orderLinearLayout);
         tvOrderTitle = (TextView) findViewById(R.id.tvOrderTitle);
@@ -259,27 +274,19 @@ public class NewOrderDetailActivity extends BaseSwipeActivity {
         ReturnGoodsLinearLayout = (LinearLayout) findViewById(R.id.ReturnGoodsLinearLayout);
         ReturnGoodsTitle = (TextView) findViewById(R.id.ReturnGoodsTitle);
         ReturnGoodsContent = (TextView) findViewById(R.id.ReturnGoodsContent);
-        tvNewOrderCommodityNum = (TextView) findViewById(R.id.tvNewOrderCommodityNum);
-
-        newOrderInfoLayout = (LinearLayout) findViewById(R.id.NewOrderInfoLayout);
         tvNewOrderCommodityAmount = (TextView) findViewById(R.id.tvNewOrderCommodityAmount);
         tvNewOrderDistributionFeePrice = (TextView) findViewById(R.id.tvNewOrderDistributionFeePrice);
         tvNewOrderVipSubtractionPrice = (TextView) findViewById(R.id.tvNewOrderVipSubtractionPrice);
         tvNewOrderCoupons = (TextView) findViewById(R.id.tvNewOrderCoupons);
-        tvNewOrderCommodity = (TextView) findViewById(R.id.tvNewOrderCommodity);
-        tvNewOrderPayMoney = (TextView) findViewById(R.id.tvNewOrderPayMoney);
-        tvnormalReduct = (TextView) findViewById(R.id.tvnormalReduct);
+//        tvnormalReduct = (TextView) findViewById(R.id.tvnormalReduct);
         mTvOrderReturn = findViewById(R.id.tv_order_return);
-
-        returnGoodsInfoLayout = (LinearLayout) findViewById(R.id.returnGoodsInfoLayout);
         returnGoodsCommodityNum = (TextView) findViewById(R.id.returnGoodsCommodityNum);
         returnGoodsCommodityAmount = (TextView) findViewById(R.id.returnGoodsCommodityAmount);
-        returnGoodsCommodityPayMoney = (TextView) findViewById(R.id.tvNewOrderPayMoneyReturn);
+
         returnGoodsReason = (TextView) findViewById(R.id.returnGoodsReason);
 
-        tvNewOrderPhone = (TextView) findViewById(R.id.tvNewOrderPhone);
         tvNewOrderTime = (TextView) findViewById(R.id.tvNewOrderTime);
-        tvNewOrderPay = (ImageView) findViewById(R.id.tvNewOrderPay);
+//        tvNewOrderPay = (ImageView) findViewById(R.id.tvNewOrderPay);
         tvNewOrderRemarks = (TextView) findViewById(R.id.tvNewOrderRemarks);
 
         tvNewOrderAddresseeName = (TextView) findViewById(R.id.tvNewOrderAddresseeName);
@@ -290,12 +297,8 @@ public class NewOrderDetailActivity extends BaseSwipeActivity {
         tvNewOrderReturnTime = (TextView) findViewById(R.id.tvNewOrderReturnTime);
         tvExamineTime = (TextView) findViewById(R.id.tvExamineTime);
         examineTimeLinearLayout = (LinearLayout) findViewById(R.id.examineTimeLinearLayout);
-        tvNewOrderTimeLinearLayout = (LinearLayout) findViewById(R.id.tvNewOrderTimeLinearLayout);
         tvInfo = (GradientColorTextView) findViewById(R.id.tvInfo);
-        linearLayoutPay = (LinearLayout) findViewById(R.id.linearLayoutPay);
-        tvNewOrderPayMoneyReturn = (TextView) findViewById(R.id.tvNewOrderPayMoneyReturn);
         relativeLayoutCommodityReturn = (RelativeLayout) findViewById(R.id.relativeLayoutCommodityReturn);
-        tvReturnGoodsCommodity = (TextView) findViewById(R.id.tvReturnGoodsCommodity);
         //删除订单
         deleteButtonLayout = (LinearLayout) findViewById(R.id.deleteButtonLayout);
         tv_delete = (TextView) findViewById(R.id.tv_delete);
@@ -305,9 +308,8 @@ public class NewOrderDetailActivity extends BaseSwipeActivity {
         linearLayoutAddressArrow = findViewById(R.id.linearLayout_address_arrow);
         sendAmountStr = findViewById(R.id.tv_send_amount_str);
         tvDeductDsc = findViewById(R.id.tv_deduct_desc);
-        tvNomalReductDesc = findViewById(R.id.tv_normal_reduct_desc);
+//        tvNomalReductDesc = findViewById(R.id.tv_normal_reduct_desc);
         lav_activity_loading = findViewById(R.id.lav_activity_loading);
-        tvCopy = findViewById(R.id.tv_copy_order_num);
         mLinearLayoutShipped = findViewById(R.id.linearLayout_shipped);
         mLinearLayoutEvalute = findViewById(R.id.linearLayout_evalute);
         mLinearLayoutReciverOrder = findViewById(R.id.linearLayout_get_order);
@@ -321,9 +323,6 @@ public class NewOrderDetailActivity extends BaseSwipeActivity {
         mTvOrderStatus = findViewById(R.id.tv_order_status);
         mTvSeeDriverStatus = findViewById(R.id.tv_order_driver_message);
         mTvDriverName = findViewById(R.id.tv_driver_name);
-
-        mRlReturn = findViewById(R.id.rl_return);
-        tv_return_amount = findViewById(R.id.tv_return_amount);
         tv_return_reason = findViewById(R.id.tv_return_reason);
         tv_driver_phone = findViewById(R.id.tv_driver_phone);
         tv_normal_vip_desc = findViewById(R.id.tv_normal_vip_desc);
@@ -335,10 +334,11 @@ public class NewOrderDetailActivity extends BaseSwipeActivity {
 
     @Override
     public void setViewData() {
-        EventBus.getDefault().register(this);
+
+//        EventBus.getDefault().register(this);
         orderId = getIntent().getStringExtra(AppConstant.ORDERID);
         subId = getIntent().getStringExtra("subId");
-        //账号标识 1子账号点击进来的   0“我的界面”点击进来的
+        //账号标识 1子账号点击进来的   0“我的界面”点击进来的 2订单确认界面进来的
         account = getIntent().getStringExtra("account");
         orderState = getIntent().getStringExtra(AppConstant.ORDERSTATE);
         returnProductMainId = getIntent().getStringExtra(AppConstant.RETURNPRODUCTMAINID);
@@ -353,14 +353,15 @@ public class NewOrderDetailActivity extends BaseSwipeActivity {
             }
         });
 
-        adapter = new NewOrderDetailAdapter(R.layout.new_order_detail, list,orderId);
+        adapter = new NewOrderDetailAdapter(mActivity,R.layout.new_order_detail, list,orderId);
+        //自营
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(adapter);
 
         rv_full.setLayoutManager(new LinearLayoutManager(mContext));
-        orderFullAdapter = new OrderFullAdapter(R.layout.item_full,list_full);
+        orderFullAdapter = new OrderFullAdapter(R.layout.item_full_order,list_full);
         rv_full.setAdapter(orderFullAdapter);
-        getOrderDetail(orderId, orderState, returnProductMainId);
+
         // 文字渐变色
         LinearGradient mLinearGradient = new LinearGradient(0, 0, 0, tvInfo.getPaint().getTextSize(), Color.parseColor("#CEA6FF")
                 , Color.parseColor("#6F81FF"), Shader.TileMode.CLAMP);
@@ -369,6 +370,8 @@ public class NewOrderDetailActivity extends BaseSwipeActivity {
 
     @Override
     public void setClickEvent() {
+//        ll_beizhu.setOnClickListener(noDoubleClickListener);
+        tv_connect_id.setOnClickListener(noDoubleClickListener);
         imageViewBreak.setOnClickListener(noDoubleClickListener);
         buttonCancelOrder.setOnClickListener(noDoubleClickListener);
         buttonGOPay.setOnClickListener(noDoubleClickListener);
@@ -378,7 +381,6 @@ public class NewOrderDetailActivity extends BaseSwipeActivity {
         tv_delete.setOnClickListener(noDoubleClickListener);
         tv_buttonAgainBuy.setOnClickListener(noDoubleClickListener);
         linearLayoutAddressArrow.setOnClickListener(noDoubleClickListener);
-        tvCopy.setOnClickListener(noDoubleClickListener);
 
         tvCopyOrderOne.setOnClickListener(noDoubleClickListener);
         tvCopyOrderTwo.setOnClickListener(noDoubleClickListener);
@@ -390,21 +392,28 @@ public class NewOrderDetailActivity extends BaseSwipeActivity {
         buttonReturnGood_two.setOnClickListener(noDoubleClickListener);
         tv_notify_time.setOnClickListener(noDoubleClickListener);
         tv_evaluate.setOnClickListener(noDoubleClickListener);
-
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         list.clear();
-        getOrderDetail(orderId, orderState, returnProductMainId);
+        getOrderDetail(orderId);
 
     }
+
+//    BeizhuEvent beizhuEvent;
+//    @Subscribe(threadMode = ThreadMode.MAIN)
+//    public void getBeizhu(BeizhuEvent beizhuEvent) {
+//        this.beizhuEvent = beizhuEvent;
+//        tv_beizhu.setText(beizhuEvent.getBeizhu());
+//    }
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
             backEvent();
+            //暂且注释
             EventBus.getDefault().post(new BackEvent());
 //            finish();
             return true;
@@ -413,16 +422,9 @@ public class NewOrderDetailActivity extends BaseSwipeActivity {
 
     }
 
-    @Subscribe
-    public void onEventMainThread(AddressEvent event) {
 
-        //   list.clear();
-        //  getOrderDetail(orderId, orderState, returnProductMainId);
-
-    }
-
-    private void getOrderDetailDialog(String orderId, String orderState, String returnProductMainId) {
-        GetOrderDetailAPI.requestData(mContext, orderId, orderState, returnProductMainId)
+    private void getOrderDetailDialog(String orderId) {
+        GetOrderDetailAPI.requestData(mContext, orderId)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<GetOrderDetailModel>() {
@@ -443,12 +445,10 @@ public class NewOrderDetailActivity extends BaseSwipeActivity {
                             dialog.dismiss();
                             if (orderDetailModel != null) {
                                 setText(orderDetailModel);
-                                if (orderDetailModel.data.productVOList.size() > 0) {
-                                    Log.e(TAG, "onNext: " + orderDetailModel.data.productVOList.get(0).productDescVOList.get(0).newDesc);
-                                    list.clear();
-//                                    list_full.clear();
-                                    list.addAll(orderDetailModel.data.productVOList);
-//                                    list_full.addAll(orderDetailModel.data.sendGiftInfo);
+                                list.clear();
+
+                                if (orderDetailModel.data.orderProds.size()>0) {
+                                    list.addAll(orderDetailModel.data.orderProds);
                                 }
                             }
                             adapter.notifyDataSetChanged();
@@ -461,8 +461,8 @@ public class NewOrderDetailActivity extends BaseSwipeActivity {
     }
 
     //获取订单详情
-    private void getOrderDetail(String orderId, String orderState, String returnProductMainId) {
-        GetOrderDetailAPI.requestData(mContext, orderId, orderState, returnProductMainId)
+    private void getOrderDetail(String orderId) {
+        GetOrderDetailAPI.requestData(mContext, orderId)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<GetOrderDetailModel>() {
@@ -482,14 +482,20 @@ public class NewOrderDetailActivity extends BaseSwipeActivity {
                         if (orderDetailModel.success) {
                             if (orderDetailModel != null) {
                                 setText(orderDetailModel);
-                                if (orderDetailModel.data.productVOList.size() > 0) {
+                                list.clear();
+                                list_full.clear();
+                                if (orderDetailModel.data.orderProds.size() > 0) {
 
-                                    list.clear();
-                                    list.addAll(orderDetailModel.data.productVOList);
+                                    list.addAll(orderDetailModel.data.orderProds);
                                     adapter.notifyDataSetChanged();
-                                    list_full.clear();
-                                    list_full.addAll(orderDetailModel.data.sendGiftInfo);
-                                    orderFullAdapter.notifyDataSetChanged();
+                                    if(orderDetailModel.data.sendGiftInfo!=null) {
+                                        list_full.addAll(orderDetailModel.data.sendGiftInfo);
+                                        orderFullAdapter.notifyDataSetChanged();
+                                        rv_full.setVisibility(View.VISIBLE);
+                                    }else {
+                                        rv_full.setVisibility(View.GONE);
+                                    }
+
                                 }
                             }
 
@@ -514,39 +520,47 @@ public class NewOrderDetailActivity extends BaseSwipeActivity {
         tvOrderTitle.setText(getOrderDetailModel.orderStatusName);
         orderStatusRequest = getOrderDetailModel.orderStatus;
         setViewShow();
+        //关联id
+        if(info.data.connectOrderId!=null) {
+            tv_connect_id.setText(info.data.connectOrderId);
+            linearLayoutPay.setVisibility(View.VISIBLE);
+        }else {
+            linearLayoutPay.setVisibility(View.GONE);
+        }
 
-
-        tvNewOrderCommodityNum.setText("共" + getOrderDetailModel.totalNum + "件商品");
-        tvNewOrderCommodity.setText("支付金额");
-
+        tv_payWay.setText(info.data.payChannel);
+        tv_total_amount.setText("￥"+info.data.totalAmount);
+        tv_amount.setText(info.data.prodNum+"");
         tvNewOrderCommodityAmount.setText("￥" + getOrderDetailModel.prodAmount);
 
-        tvNewOrderVipSubtractionPrice.setText("￥" + getOrderDetailModel.vipReductDesc);
-        tvNewOrderPayMoney.setText("￥" + getOrderDetailModel.totalAmount);
+        tvNewOrderVipSubtractionPrice.setText("￥" + getOrderDetailModel.vipReductStr);
         tvNewOrderDistributionFeePrice.setText("￥" + getOrderDetailModel.deliveryFee);
-        tvnormalReduct.setText("￥" + getOrderDetailModel.normalReduct);
-
-        tvNewOrderCoupons.setText("￥" + getOrderDetailModel.offerAmount + "");
-        returnGoodsCommodityNum.setText(getOrderDetailModel.applyReturnDate);
-        returnGoodsReason.setText(getOrderDetailModel.returnReson);
 
 
-        //  returnGoodsCommodityPayMoney.setText();
-        tv_return_amount.setText("￥" + getOrderDetailModel.actuallyReturn);
-        returnGoodsCommodityAmount.setText(getOrderDetailModel.checkDate);
-        tv_return_reason.setText(getOrderDetailModel.returnReson);
-        //   tvNewOrderPayMoneyReturn.setText("￥" + getOrderDetailModel.actuallyReturn);
-        // tvReturnGoodsCommodity.setText("共" + getOrderDetailModel.returnProductNum + "件商品");
+//        tvNewOrderCoupons.setText("￥" + getOrderDetailModel.offerAmount + "");
+//        returnGoodsCommodityNum.setText(getOrderDetailModel.applyReturnDate);
+//        returnGoodsReason.setText(getOrderDetailModel.returnReson);
+
+//        returnGoodsCommodityAmount.setText(getOrderDetailModel.date);
+//        tv_return_reason.setText(getOrderDetailModel.returnReson);
+        //配送费
         sendAmountStr.setText(getOrderDetailModel.sendAmountStr);
-        tvNewOrderPhone.setText(getOrderDetailModel.orderId);
         tvNewOrderTime.setText(getOrderDetailModel.gmtCreate);
-        tv_normal_vip_desc.setText(getOrderDetailModel.vipReductDesc);
-
-        tvDeductDsc.setText(getOrderDetailModel.deductDesc);
-
-        tvNomalReductDesc.setText(getOrderDetailModel.normalReductDesc);
-
-
+        tv_normal_vip_desc.setText(getOrderDetailModel.vipReductStr);
+        //优惠券金额
+        tvNewOrderCoupons.setText("￥"+getOrderDetailModel.giftAmount);
+        //优惠券描述
+        tvDeductDsc.setText(getOrderDetailModel.giftName);
+        tv_full_desc.setText(getOrderDetailModel.normalReductStr);
+        tv_full_price.setText(getOrderDetailModel.normalReduct);
+        //已取消
+//        if(getOrderDetailModel.orderStatus==7||getOrderDetailModel.orderStatus==1) {
+//            ll_pay.setVisibility(View.GONE);
+//            ll_beizhu.setVisibility(View.GONE);
+//        }else {
+//            ll_pay.setVisibility(View.VISIBLE);
+//            ll_beizhu.setVisibility(View.GONE);
+//        }
         if (getOrderDetailModel.deliverTimeStart == null) {
             mLinearLayoutDeliver.setVisibility(View.GONE);
         } else {
@@ -563,19 +577,6 @@ public class NewOrderDetailActivity extends BaseSwipeActivity {
         tvNewOrderVipSubtractionPrice.setText(" ￥ " + getOrderDetailModel.vipReduct);
         tvNewOrderRemarks.setText(getOrderDetailModel.remark);
         examineTimeLinearLayout.setVisibility(orderStatusRequest == 11 ? View.VISIBLE : View.GONE);
-        if (getOrderDetailModel.payChannelType == 1) { //余额支付"=1 , 支付宝=2 微信支付=3
-            tvNewOrderPay.setImageResource(R.mipmap.ic_balance_pay);
-        } else if (getOrderDetailModel.payChannelType == 2) {
-            tvNewOrderPay.setImageResource(R.mipmap.ic_pay_alipay);
-        } else if (getOrderDetailModel.payChannelType == 3) {
-            tvNewOrderPay.setImageResource(R.mipmap.ic_we_chat_icon);
-        }else if(getOrderDetailModel.payChannelType == 14){
-            tvNewOrderPay.setImageResource(R.mipmap.ic_pay_alipay);
-        }else if(getOrderDetailModel.payChannelType == 16){
-            tvNewOrderPay.setImageResource(R.mipmap.icon_yun);
-        }
-
-
 
         if (orderStatusRequest == 2) {
             mTvDriverDeliverTime.setText(getOrderDetailModel.payDate);
@@ -593,6 +594,12 @@ public class NewOrderDetailActivity extends BaseSwipeActivity {
             mTvOrderStatus.setText("装车完成-已发货");
         }
 
+        //订单状态
+        if(info.data.orderStatus==1||info.data.orderStatus==7) {
+            ll_payWay.setVisibility(View.GONE);
+        }else {
+            ll_payWay.setVisibility(View.VISIBLE);
+        }
 
         //倒计时设置
         orderTimerView.SnapUpCountDownTimerViewType(mContext, 1);
@@ -623,7 +630,7 @@ public class NewOrderDetailActivity extends BaseSwipeActivity {
             if (info.data.deliverTimeStart == null || info.data.deliverTimeEnd == null || !StringHelper.notEmptyAndNull(info.data.deliverTimeStart) || !StringHelper.notEmptyAndNull(info.data.deliverTimeEnd)) {
                 tv_notify_time.setVisibility(View.GONE);
             } else {
-                tv_notify_time.setVisibility(View.VISIBLE);
+                tv_notify_time.setVisibility(View.GONE);
             }
         }
 
@@ -632,193 +639,16 @@ public class NewOrderDetailActivity extends BaseSwipeActivity {
     //返回上个页面
     private void backEvent() {
         if(account.equals("0")) {
-            if (goAccount != null && StringHelper.notEmptyAndNull(goAccount)) {
-                finish();
-            } else {
-                if (orderStatusRequest == 1) {
-                    //待付款
-                    Intent intent = new Intent(mContext, MyOrdersActivity.class);
-                    intent.putExtra("type", AppConstant.PAYMENT);
-                    intent.putExtra("orderDeliveryType", 0);
-                    startActivity(intent);
-                    // UserInfoHelper.saveDeliverType(mContext, "0");
-                    //   startActivity(MyOrdersActivity.getIntent(mContext, MyOrdersActivity.class, AppConstant.PAYMENT));
-                    overridePendingTransition(R.anim.slide_in_from_right,
-                            R.anim.slide_out_from_left);
-                } else if (orderStatusRequest == 2) {
-                    //待发货
-                    Intent intent = new Intent(mContext, MyOrdersActivity.class);
-                    intent.putExtra("type", AppConstant.DELIVERY);
-                    intent.putExtra("orderDeliveryType", 0);
-                    startActivity(intent);
-                    // UserInfoHelper.saveDeliverType(mContext, "0");
-                    //  startActivity(MyOrdersActivity.getIntent(mContext, MyOrdersActivity.class, AppConstant.DELIVERY));
-                    overridePendingTransition(R.anim.slide_in_from_right,
-                            R.anim.slide_out_from_left);
-                } else if (orderStatusRequest == 3) {
-                    //待收货
-                    Intent intent = new Intent(mContext, MyOrdersActivity.class);
-                    intent.putExtra("type", AppConstant.RECEIVED);
-                    intent.putExtra("orderDeliveryType", 0);
-                    startActivity(intent);
-
-
-                    //UserInfoHelper.saveDeliverType(mContext, "0");
-                    //   startActivity(MyOrdersActivity.getIntent(mContext, MyOrdersActivity.class, AppConstant.RECEIVED));
-                    overridePendingTransition(R.anim.slide_in_from_right,
-                            R.anim.slide_out_from_left);
-                } else if (orderStatusRequest == 4) {
-                    //已完成
-                    Intent intent = new Intent(mContext, MyOrdersActivity.class);
-                    intent.putExtra("type", AppConstant.ALL);
-                    intent.putExtra("orderDeliveryType", 0);
-                    startActivity(intent);
-                    // UserInfoHelper.saveDeliverType(mContext, "0");
-                    // startActivity(MyOrdersActivity.getIntent(mContext, MyOrdersActivity.class, AppConstant.ALL));
-                    overridePendingTransition(R.anim.slide_in_from_right,
-                            R.anim.slide_out_from_left);
-                } else if (orderStatusRequest == 5) {
-                    //待评价
-                    Intent intent = new Intent(mContext, MyOrdersActivity.class);
-                    intent.putExtra("type", AppConstant.EVALUATED);
-                    intent.putExtra("orderDeliveryType", 0);
-                    startActivity(intent);
-                    //UserInfoHelper.saveDeliverType(mContext, "0");
-                    //   startActivity(MyOrdersActivity.getIntent(mContext, MyOrdersActivity.class, AppConstant.EVALUATED));
-                    overridePendingTransition(R.anim.slide_in_from_right,
-                            R.anim.slide_out_from_left);
-                } else if (orderStatusRequest == 6) {
-                    //已评价
-                    Intent intent = new Intent(mContext, MyOrdersActivity.class);
-                    intent.putExtra("type", AppConstant.ALL);
-                    intent.putExtra("orderDeliveryType", 1);
-                    startActivity(intent);
-                    // UserInfoHelper.saveDeliverType(mContext, "0");
-                    //  startActivity(MyOrdersActivity.getIntent(mContext, MyOrdersActivity.class, AppConstant.ALL));
-                    overridePendingTransition(R.anim.slide_in_from_right,
-                            R.anim.slide_out_from_left);
-                } else if (orderStatusRequest == 7) {
-                    //已取消(订单关闭)
-                    Intent intent = new Intent(mContext, MyOrdersActivity.class);
-                    intent.putExtra("type", AppConstant.ALL);
-                    intent.putExtra("orderDeliveryType", 0);
-                    startActivity(intent);
-                    //  UserInfoHelper.saveDeliverType(mContext, "0");
-                    //   startActivity(MyOrdersActivity.getIntent(mContext, MyOrdersActivity.class, AppConstant.ALL));
-                    overridePendingTransition(R.anim.slide_in_from_right,
-                            R.anim.slide_out_from_left);
-                } else if (orderStatusRequest == 11) {
-                    //退货
-                    Intent intent = new Intent(mContext, MyOrdersActivity.class);
-                    intent.putExtra("type", AppConstant.RETURN);
-                    intent.putExtra("orderDeliveryType", 0);
-                    startActivity(intent);
-                    // UserInfoHelper.saveDeliverType(mContext, "0");
-                    // startActivity(MyOrdersActivity.getIntent(mContext, MyOrdersActivity.class, AppConstant.RETURN));
-                    overridePendingTransition(R.anim.slide_in_from_right,
-                            R.anim.slide_out_from_left);
-                }
-                finish();
-            }
-        }else {
-            if (goAccount != null && StringHelper.notEmptyAndNull(goAccount)) {
-                finish();
-            } else {
-                if (orderStatusRequest == 1) {
-                    //待付款
-                    Intent intent = new Intent(mContext, MySubOrderActivity.class);
-                    intent.putExtra("type", AppConstant.PAYMENT);
-                    intent.putExtra("orderDeliveryType", 0);
-                    intent.putExtra("subId",subId);
-                    startActivity(intent);
-                    // UserInfoHelper.saveDeliverType(mContext, "0");
-                    //   startActivity(MyOrdersActivity.getIntent(mContext, MyOrdersActivity.class, AppConstant.PAYMENT));
-                    overridePendingTransition(R.anim.slide_in_from_right,
-                            R.anim.slide_out_from_left);
-                } else if (orderStatusRequest == 2) {
-                    //待发货
-                    Intent intent = new Intent(mContext, MySubOrderActivity.class);
-                    intent.putExtra("type", AppConstant.DELIVERY);
-                    intent.putExtra("orderDeliveryType", 0);
-                    intent.putExtra("subId",subId);
-                    startActivity(intent);
-                    // UserInfoHelper.saveDeliverType(mContext, "0");
-                    //  startActivity(MyOrdersActivity.getIntent(mContext, MyOrdersActivity.class, AppConstant.DELIVERY));
-                    overridePendingTransition(R.anim.slide_in_from_right,
-                            R.anim.slide_out_from_left);
-                } else if (orderStatusRequest == 3) {
-                    //待收货
-                    Intent intent = new Intent(mContext, MySubOrderActivity.class);
-                    intent.putExtra("type", AppConstant.RECEIVED);
-                    intent.putExtra("subId",subId);
-                    intent.putExtra("orderDeliveryType", 0);
-                    startActivity(intent);
-
-
-                    //UserInfoHelper.saveDeliverType(mContext, "0");
-                    //   startActivity(MyOrdersActivity.getIntent(mContext, MyOrdersActivity.class, AppConstant.RECEIVED));
-                    overridePendingTransition(R.anim.slide_in_from_right,
-                            R.anim.slide_out_from_left);
-                } else if (orderStatusRequest == 4) {
-                    //已完成
-                    Intent intent = new Intent(mContext, MySubOrderActivity.class);
-                    intent.putExtra("type", AppConstant.ALL);
-                    intent.putExtra("subId",subId);
-                    intent.putExtra("orderDeliveryType", 0);
-                    startActivity(intent);
-                    // UserInfoHelper.saveDeliverType(mContext, "0");
-                    // startActivity(MyOrdersActivity.getIntent(mContext, MyOrdersActivity.class, AppConstant.ALL));
-                    overridePendingTransition(R.anim.slide_in_from_right,
-                            R.anim.slide_out_from_left);
-                } else if (orderStatusRequest == 5) {
-                    //待评价
-                    Intent intent = new Intent(mContext, MySubOrderActivity.class);
-                    intent.putExtra("type", AppConstant.EVALUATED);
-                    intent.putExtra("subId",subId);
-                    intent.putExtra("orderDeliveryType", 0);
-                    startActivity(intent);
-                    //UserInfoHelper.saveDeliverType(mContext, "0");
-                    //   startActivity(MyOrdersActivity.getIntent(mContext, MyOrdersActivity.class, AppConstant.EVALUATED));
-                    overridePendingTransition(R.anim.slide_in_from_right,
-                            R.anim.slide_out_from_left);
-                } else if (orderStatusRequest == 6) {
-                    //已评价
-                    Intent intent = new Intent(mContext, MySubOrderActivity.class);
-                    intent.putExtra("type", AppConstant.ALL);
-                    intent.putExtra("subId",subId);
-                    intent.putExtra("orderDeliveryType", 1);
-                    startActivity(intent);
-                    // UserInfoHelper.saveDeliverType(mContext, "0");
-                    //  startActivity(MyOrdersActivity.getIntent(mContext, MyOrdersActivity.class, AppConstant.ALL));
-                    overridePendingTransition(R.anim.slide_in_from_right,
-                            R.anim.slide_out_from_left);
-                } else if (orderStatusRequest == 7) {
-                    //已取消(订单关闭)
-                    Intent intent = new Intent(mContext, MySubOrderActivity.class);
-                    intent.putExtra("type", AppConstant.ALL);
-                    intent.putExtra("subId",subId);
-                    intent.putExtra("orderDeliveryType", 0);
-                    startActivity(intent);
-                    //  UserInfoHelper.saveDeliverType(mContext, "0");
-                    //   startActivity(MyOrdersActivity.getIntent(mContext, MyOrdersActivity.class, AppConstant.ALL));
-                    overridePendingTransition(R.anim.slide_in_from_right,
-                            R.anim.slide_out_from_left);
-                } else if (orderStatusRequest == 11) {
-                    //退货
-                    Intent intent = new Intent(mContext, MySubOrderActivity.class);
-                    intent.putExtra("type", AppConstant.RETURN);
-                    intent.putExtra("subId",subId);
-                    intent.putExtra("orderDeliveryType", 0);
-                    startActivity(intent);
-                    // UserInfoHelper.saveDeliverType(mContext, "0");
-                    // startActivity(MyOrdersActivity.getIntent(mContext, MyOrdersActivity.class, AppConstant.RETURN));
-                    overridePendingTransition(R.anim.slide_in_from_right,
-                            R.anim.slide_out_from_left);
-                }
-                finish();
-            }
+            finish();
+        }else if(account.equals("2")){
+            Intent intent = new Intent(mContext, MyOrdersActivity.class);
+            intent.putExtra("type", AppConstant.PAYMENT);
+            intent.putExtra("orderDeliveryType", 0);
+            startActivity(intent);
+            finish();
+        }else if(account.equals("1")) {
+            finish();
         }
-
     }
 
     // 不同的状态显示不同的layout
@@ -884,7 +714,7 @@ public class NewOrderDetailActivity extends BaseSwipeActivity {
         //  mRlReturn.setVisibility(orderStatusRequest == 11 ? View.VISIBLE : View.GONE);
 
 
-        setOrderContent(getOrderDetailModel.checkStatus);
+        setOrderContent(getOrderDetailModel.orderStatus);
 
     }
 
@@ -900,7 +730,7 @@ public class NewOrderDetailActivity extends BaseSwipeActivity {
                 tvOrderContent.setText("收到商品后，可以来评价试试");
                 break;
             case 5:
-                tvOrderContent.setText("确认收货后，限2天内申请售后");
+                tvOrderContent.setText("收到商品后，可以来评价试试");
                 break;  // 0审核 1 成功 2 失败
             case 7:
                 tvOrderContent.setText("您的订单已取消");
@@ -917,7 +747,7 @@ public class NewOrderDetailActivity extends BaseSwipeActivity {
                     ReturnGoodsContent.setText("欢迎再次使用翘歌烧烤");
                     relativeLayoutCommodityReturn.setVisibility(View.VISIBLE);
                 } else {
-                    ReturnGoodsContent.setText(getOrderDetailModel.feedbackReson);
+//                    ReturnGoodsContent.setText(getOrderDetailModel.feedbackReson);
                     relativeLayoutCommodityReturn.setVisibility(View.GONE);
                 }
                 break;
@@ -977,7 +807,7 @@ public class NewOrderDetailActivity extends BaseSwipeActivity {
                             lav_activity_loading.hide();
                             AppHelper.showMsg(NewOrderDetailActivity.this, "取消订单成功");
 
-                            getOrderDetail(orderId, orderState, returnProductMainId);
+                            getOrderDetail(orderId);
                         } else {
                             lav_activity_loading.hide();
                             AppHelper.showMsg(NewOrderDetailActivity.this, cancelOrderModel.message);
@@ -1005,14 +835,14 @@ public class NewOrderDetailActivity extends BaseSwipeActivity {
     }
 
     //立即评价
-    private void requestEvaluate() {
+    private void requestEvaluate(List<CommonModel.DataBean> data, String orderId) {
         //去评价需要将订单里面的商品列表中的商品的商品名,商品ID组成list,传到评价的界面
         mListEvaluate.clear();
-        if (getOrderDetailModel.productVOList != null && getOrderDetailModel.productVOList.size() > 0) {
-            for (int i = 0; i < getOrderDetailModel.productVOList.size(); i++) {
-                mListEvaluate.add(new OrderEvaluateListModel(getOrderDetailModel.productVOList.get(i).productId,
-                        getOrderDetailModel.productVOList.get(i).businessType,
-                        getOrderDetailModel.productVOList.get(i).name, getOrderDetailModel.productVOList.get(i).picUrl, 5 + "", ""));
+        if (data != null && data.size() > 0) {
+            for (int i = 0; i < data.size(); i++) {
+                mListEvaluate.add(new OrderEvaluateListModel(data.get(i).getProductId(),
+                        data.get(i).getBusinessType(),
+                        data.get(i).getName(), data.get(i).getPicUrl(), 5 + "", ""));
             }
         } else {
             AppHelper.showMsg(mContext, "订单商品数据错误!");
@@ -1023,6 +853,35 @@ public class NewOrderDetailActivity extends BaseSwipeActivity {
         intentPut.putExtra("orderDeliveryType", 0);
         startActivityForResult(intentPut, 12);
 
+    }
+
+    /**
+     * 点击去评价
+     * @param orderId
+     */
+    private void getComment(String orderId) {
+        MyOrderListAPI.getComment(mActivity,orderId)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<CommonModel>() {
+                    @Override
+                    public void onCompleted() {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                    }
+
+                    @Override
+                    public void onNext(CommonModel commonModel) {
+                        if(commonModel.isSuccess()) {
+                            if(commonModel.getData()!=null) {
+                                requestEvaluate(commonModel.getData(),orderId);
+                            }
+                        }
+                    }
+                });
     }
 
     // 再次购买
@@ -1080,7 +939,7 @@ public class NewOrderDetailActivity extends BaseSwipeActivity {
                             //确认收货成功
                             AppHelper.showMsg(mContext, "确认收货成功");
                             //刷新订单状态
-                            getOrderDetail(orderId, orderState, returnProductMainId);
+                            getOrderDetail(orderId);
                         } else {
                             AppHelper.showMsg(mContext, mModelConfirmGetGoods.message);
                         }
@@ -1096,6 +955,18 @@ public class NewOrderDetailActivity extends BaseSwipeActivity {
                     backEvent();
 //                    finish();
                     break;
+
+
+                case R.id.ll_beizhu:
+                    Intent intents = new Intent(mActivity,BeizhuActivity.class);
+                    intents.putExtra("beizhu",tv_beizhu.getText().toString()+"");
+                    startActivity(intents);
+                    break;
+                    //关联订单
+                case R.id.tv_connect_id:
+                    getOrderDetail(tv_connect_id.getText().toString());
+                    break;
+
                 case R.id.buttonCancelOrder:// 取消订单
                     showCancleOrder();
                     break;
@@ -1122,16 +993,6 @@ public class NewOrderDetailActivity extends BaseSwipeActivity {
 
                 case R.id.buttonReturnGood_two:
                     if (getOrderDetailModel.canReturnGoods) {
-                      /*  mListForReturn.clear();
-                        mListForReturn.addAll(getOrderDetailModel.productVOList);
-                        Intent intentReturnGoods = new Intent(mContext, ReturnGoodsListActivity.class);
-                        intentReturnGoods.putExtra("goodsList", (Serializable) mListForReturn);
-                        intentReturnGoods.putExtra("orderId", orderId);
-                        intentReturnGoods.putExtra("orderType", getOrderDetailModel.orderType);
-                        intentReturnGoods.putExtra("returnProductMainId", returnProductMainId);
-                        startActivity(intentReturnGoods);*/
-                        mListForReturn.clear();
-                        mListForReturn.addAll(getOrderDetailModel.productVOList);
                         Intent intent1 = new Intent(mContext, ReturnGoodActivity.class);
                         intent1.putExtra("orderStatus", orderStatusRequest + "");
                         intent1.putExtra("orderId", orderId);
@@ -1147,16 +1008,6 @@ public class NewOrderDetailActivity extends BaseSwipeActivity {
                 case R.id.buttonReturnGoods: //退货
 
                     if (getOrderDetailModel.canReturnGoods) {
-                      /*  mListForReturn.clear();
-                        mListForReturn.addAll(getOrderDetailModel.productVOList);
-                        Intent intentReturnGoods = new Intent(mContext, ReturnGoodsListActivity.class);
-                        intentReturnGoods.putExtra("goodsList", (Serializable) mListForReturn);
-                        intentReturnGoods.putExtra("orderId", orderId);
-                        intentReturnGoods.putExtra("orderType", getOrderDetailModel.orderType);
-                        intentReturnGoods.putExtra("returnProductMainId", returnProductMainId);
-                        startActivity(intentReturnGoods);*/
-                        mListForReturn.clear();
-                        mListForReturn.addAll(getOrderDetailModel.productVOList);
                         Intent intent1 = new Intent(mContext, ReturnGoodActivity.class);
                         intent1.putExtra("orderStatus", orderStatusRequest + "");
                         intent1.putExtra("orderId", orderId);
@@ -1172,16 +1023,6 @@ public class NewOrderDetailActivity extends BaseSwipeActivity {
 
                 case R.id.tv_order_return:
                     if (getOrderDetailModel.canReturnGoods) {
-                      /*  mListForReturn.clear();
-                        mListForReturn.addAll(getOrderDetailModel.productVOList);
-                        Intent intentReturnGoods = new Intent(mContext, ReturnGoodsListActivity.class);
-                        intentReturnGoods.putExtra("goodsList", (Serializable) mListForReturn);
-                        intentReturnGoods.putExtra("orderId", orderId);
-                        intentReturnGoods.putExtra("orderType", getOrderDetailModel.orderType);
-                        intentReturnGoods.putExtra("returnProductMainId", returnProductMainId);
-                        startActivity(intentReturnGoods);*/
-                        mListForReturn.clear();
-                        mListForReturn.addAll(getOrderDetailModel.productVOList);
                         Intent intent1 = new Intent(mContext, ReturnGoodActivity.class);
                         intent1.putExtra("orderStatus", orderStatusRequest + "");
                         intent1.putExtra("orderId", orderId);
@@ -1207,7 +1048,7 @@ public class NewOrderDetailActivity extends BaseSwipeActivity {
                     }*/
 
                     if (orderStatusRequest == 5) {
-                        requestEvaluate();
+                        getComment(orderId);
                     }
                     break;
                 case R.id.buttonAgainBuy: // 再次购买
@@ -1231,16 +1072,6 @@ public class NewOrderDetailActivity extends BaseSwipeActivity {
                     // startActivity(intent_);
                     startActivityForResult(intent_, 42);
                     break;
-                case R.id.tv_copy_order_num:
-//获取剪贴板管理器：
-                    ClipboardManager cm = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
-// 创建普通字符型ClipData
-                    ClipData mClipData = ClipData.newPlainText("Label", tvNewOrderPhone.getText().toString());
-// 将ClipData内容放到系统剪贴板里。
-                    cm.setPrimaryClip(mClipData);
-                    AppHelper.showMsg(mContext, "复制成功");
-                    break;
-
 
                 case R.id.copy_order:
                     requestCopyToCart();
@@ -1260,7 +1091,7 @@ public class NewOrderDetailActivity extends BaseSwipeActivity {
                             .setCancelOutside(true);
                     dialog = loadBuilder.create();
                     dialog.show();
-                    getOrderDetailDialog(orderId, orderState, returnProductMainId);
+                    getOrderDetailDialog(orderId);
                     break;
 
                 //查看物流信息
@@ -1331,16 +1162,6 @@ public class NewOrderDetailActivity extends BaseSwipeActivity {
                                 alertDialog.setContentView(R.layout.change_deliver_time);
 
                                 TextView tv_ok = alertDialog.getWindow().findViewById(R.id.tv_ok);
-                                //      TextView tv_cancel = alertDialog.getWindow().findViewById(R.id.tv_cancel);
-
-                          /*      tv_cancel.setOnClickListener(new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View v) {
-                                        alertDialog.dismiss();
-                                        getOrderDetail(orderId, orderState, returnProductMainId);
-                                    }
-                                });*/
-
                                 tv_ok.setOnClickListener(new View.OnClickListener() {
                                     @Override
                                     public void onClick(View v) {
@@ -1363,7 +1184,7 @@ public class NewOrderDetailActivity extends BaseSwipeActivity {
                                     @Override
                                     public void onClick(View v) {
                                         alertDialog1.dismiss();
-                                        getOrderDetail(orderId, orderState, returnProductMainId);
+                                        getOrderDetail(orderId);
                                     }
                                 });
 
@@ -1464,7 +1285,7 @@ public class NewOrderDetailActivity extends BaseSwipeActivity {
                     public void onNext(BaseModel baseModel) {
 
                         if (baseModel.success) {
-                            getOrderDetail(orderId, orderState, returnProductMainId);
+                            getOrderDetail(orderId);
                         } else {
                             AppHelper.showMsg(mContext, baseModel.message);
                         }
@@ -1521,7 +1342,7 @@ public class NewOrderDetailActivity extends BaseSwipeActivity {
     protected void onDestroy() {
 
         super.onDestroy();
-        EventBus.getDefault().unregister(this);
+//        EventBus.getDefault().unregister(this);
     }
 
 

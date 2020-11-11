@@ -81,7 +81,7 @@ public class StickyListAdapter extends BaseAdapter implements StickyListHeadersA
 	@Override
 	public View getHeaderView(int position, View convertView, ViewGroup parent) {
 		Log.e("rgh","getHeaderView");
-		Log.d("wdsssssssss....",position+"aa");
+
 		View headView = LayoutInflater.from(mActivity).inflate(R.layout.item_wallet_header, null);
 		TextView tv_month_select = headView.findViewById(R.id.tv_month_select);
 		TextView tv_expenditure = headView.findViewById(R.id.tv_expenditure);

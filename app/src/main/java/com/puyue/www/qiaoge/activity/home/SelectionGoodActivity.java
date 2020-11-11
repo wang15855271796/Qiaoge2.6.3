@@ -3,6 +3,7 @@ package com.puyue.www.qiaoge.activity.home;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.drawable.AnimationDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -54,6 +55,7 @@ import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnLoadMoreListener;
 import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
+import com.weavey.loading.lib.LoadingLayout;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -74,6 +76,11 @@ import rx.schedulers.Schedulers;
 public class SelectionGoodActivity extends BaseSwipeActivity implements View.OnClickListener{
     @BindView(R.id.recyclerView)
     RecyclerView recyclerView;
+    @BindView(R.id.loading)
+    LoadingLayout loading;
+    AnimationDrawable drawable;
+    @BindView(R.id.iv_normal)
+    ImageView iv_normal;
     @BindView(R.id.smart)
     SmartRefreshLayout refreshLayout;
     @BindView(R.id.tv_num)
@@ -123,7 +130,6 @@ public class SelectionGoodActivity extends BaseSwipeActivity implements View.OnC
         ButterKnife.bind(this);
         initStatusBarWhiteColor();
         getCustomerPhone();
-        getProductsList(1,pageSize,productId);
         EventBus.getDefault().register(this);
         enjoyProduct = SharedPreferencesUtil.getString(mActivity, "priceType");
         productId = getIntent().getIntExtra("productId",0);
@@ -144,8 +150,6 @@ public class SelectionGoodActivity extends BaseSwipeActivity implements View.OnC
             }
         });
 
-//        emptyView = View.inflate(mActivity, R.layout.layout_empty, null);
-//        selectionAdapter.setEmptyView(emptyView);
         refreshLayout.setEnableLoadMore(false);
         recyclerView.setLayoutManager(new GridLayoutManager(mContext,2));
         recyclerView.setAdapter(selectionAdapter);
@@ -268,15 +272,65 @@ public class SelectionGoodActivity extends BaseSwipeActivity implements View.OnC
 
                     @Override
                     public void onError(Throwable e) {
-
+                        loading.setStatus(LoadingLayout.No_Network);
+                        loading.setOnReloadListener(new LoadingLayout.OnReloadListener() {
+                            @Override
+                            public void onReload(View v) {
+                                loading.setStatus(LoadingLayout.Loading);
+                                getProductsList(1,pageSize,productId);
+                            }
+                        });
                     }
 
                     @Override
                     public void onNext(MarketRightModel marketGoodSelectModel) {
-                        marketRightModel = marketGoodSelectModel;
-                        list.addAll(marketRightModel.getData().getProdClassify().getList());
-                        selectionAdapter.notifyDataSetChanged();
-                        refreshLayout.setEnableLoadMore(true);
+//                        if(marketGoodSelectModel.isSuccess()) {
+//                            marketRightModel = marketGoodSelectModel;
+//                            if(marketGoodSelectModel.getData().getProdClassify()!=null) {
+//                                if(marketGoodSelectModel.getData().getProdClassify().getList().size()>0) {
+//                                    list.addAll(marketRightModel.getData().getProdClassify().getList());
+//                                    selectionAdapter.notifyDataSetChanged();
+//                                    loading.setStatus(LoadingLayout.Success);
+//                                    drawable.stop();
+//                                }else {
+//                                    loading.setStatus(LoadingLayout.Empty);
+//                                }
+//                            }
+//                            refreshLayout.setEnableLoadMore(true);
+//                        }else {
+//                            loading.setStatus(LoadingLayout.Error);
+//                        }
+
+                        if (marketGoodSelectModel.isSuccess()) {
+                            marketRightModel = marketGoodSelectModel;
+                            if (marketGoodSelectModel.getData().getProdClassify().getList().size() > 0) {
+                                list.addAll(marketRightModel.getData().getProdClassify().getList());
+                                selectionAdapter.notifyDataSetChanged();
+                                List<MarketRightModel.DataBean.ProdClassifyBean.ListBean> list = marketGoodSelectModel.getData().getProdClassify().getList();
+                                if (pageNum == 1) {
+                                    selectionAdapter.setNewData(list);
+                                } else {
+                                    selectionAdapter.addData(list);
+                                }
+                                loading.setStatus(LoadingLayout.Success);
+                                drawable.stop();
+                            }else {
+                                loading.setStatus(LoadingLayout.Empty);
+
+                            }
+                            //判断是否有下一页
+                            if (!marketRightModel.getData().getProdClassify().isHasNextPage()) {
+                                selectionAdapter.loadMoreEnd(false);
+                            } else {
+                                selectionAdapter.loadMoreComplete();
+                            }
+                            refreshLayout.setEnableLoadMore(true);
+                        } else {
+                            AppHelper.showMsg(mActivity, marketRightModel.getMessage());
+                            loading.setStatus(LoadingLayout.Error);
+                        }
+
+
                     }
                 });
     }
@@ -284,6 +338,9 @@ public class SelectionGoodActivity extends BaseSwipeActivity implements View.OnC
     @Override
     public void setViewData() {
         refreshLayout.autoRefresh();
+        loading.setStatus(LoadingLayout.Loading);
+        drawable = (AnimationDrawable) iv_normal.getDrawable();
+        drawable.start();
         getCartNum();
 
     }

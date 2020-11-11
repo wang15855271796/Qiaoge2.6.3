@@ -84,6 +84,10 @@ public class HotDialog extends Dialog implements View.OnClickListener{
     int productId;
     @BindView(R.id.tv_price_total)
     TextView tv_price_total;
+    @BindView(R.id.iv_pic)
+    ImageView iv_pic;
+    @BindView(R.id.iv_operate)
+    ImageView iv_operate;
     public List<GetProductDetailModel.DataBean.ProdSpecsBean> prodSpecs;
     private ChooseSpecAdapters chooseSpecAdapter;
     ProductNormalModel.DataBean.ListBean item;
@@ -175,6 +179,8 @@ public class HotDialog extends Dialog implements View.OnClickListener{
                                 tv_desc.setText(exchangeProductModel.getData().getSpecialOffer());
                                 tv_stock.setText(exchangeProductModel.getData().getInventory());
                                 Glide.with(context).load(exchangeProductModel.getData().getDefaultPic()).into(iv_head);
+                                Glide.with(context).load(exchangeProductModel.getData().getSendTimeTpl()).into(iv_pic);
+                                Glide.with(context).load(exchangeProductModel.getData().getSelfProd()).into(iv_operate);
                                 HotItemAdapter hotItemAdapter = new HotItemAdapter(1, productId, R.layout.item_choose_content, exchangeProductModel.getData().getProdPrices());
                                 recyclerView.setLayoutManager(new LinearLayoutManager(context));
                                 recyclerView.setAdapter(hotItemAdapter);

@@ -78,14 +78,6 @@ public class CommonssAdapter extends RecyclerView.Adapter<CommonssAdapter.BaseVi
 //
 //        }
         CouponModel.DataBean.ActivesBean activesBean = actives.get(position);
-        if(activesBean.getSendGiftType()!=null) {
-            if(activesBean.getSendGiftType().equals("")) {
-                holder.tv_given_des.setVisibility(View.GONE);
-            }else {
-                holder.tv_given_des.setVisibility(View.VISIBLE);
-                holder.tv_given_des.setText(activesBean.getSendGiftType());
-            }
-        }
 
         Glide.with(mContext).load(activesBean.getDefaultPic()).into(holder.iv_pic);
         if(activesBean.getSendGiftInfo()!=null) {
@@ -221,7 +213,6 @@ public class CommonssAdapter extends RecyclerView.Adapter<CommonssAdapter.BaseVi
         private TextView tv_given_des;
         public BaseViewHolder(View view) {
             super(view);
-            tv_given_des = (TextView) view.findViewById(R.id.tv_given_des);
             tv_full_desc = (TextView) view.findViewById(R.id.tv_full_desc);
             rl_group = (RelativeLayout) view.findViewById(R.id.rl_group);
             rl_coupon = (RelativeLayout) view.findViewById(R.id.rl_coupon);

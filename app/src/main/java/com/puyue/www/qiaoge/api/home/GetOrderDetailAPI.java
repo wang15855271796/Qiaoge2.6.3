@@ -23,15 +23,12 @@ public class GetOrderDetailAPI {
     private interface GetOrderDetailService {
         @FormUrlEncoded
         @POST(AppInterfaceAddress.GETORDERDETAIL)
-        Observable<GetOrderDetailModel> getData(@Field("orderId") String orderId,
-                                                @Field("orderStatus") String orderState,
-                                                @Field("returnProductMainId") String returnProductMainId
-        );
+        Observable<GetOrderDetailModel> getData(@Field("orderId") String orderId);
     }
 
-    public static Observable<GetOrderDetailModel> requestData(Context context, String orderId, String orderState, String returnProductMainId) {
+    public static Observable<GetOrderDetailModel> requestData(Context context, String orderId) {
         GetOrderDetailService service = RestHelper.getBaseRetrofit(context).create(GetOrderDetailService.class);
-        return service.getData(orderId, orderState, returnProductMainId);
+        return service.getData(orderId);
     }
 
 

@@ -2,6 +2,7 @@ package com.puyue.www.qiaoge.adapter.home;
 
 import android.app.AlertDialog;
 import android.content.Intent;
+import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.GridLayoutManager;
@@ -47,6 +48,7 @@ import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnLoadMoreListener;
 import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
+import com.weavey.loading.lib.LoadingLayout;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -70,6 +72,8 @@ public class HotProductActivity extends BaseSwipeActivity implements View.OnClic
     RecyclerView recyclerView;
     @BindView(R.id.refreshLayout)
     SmartRefreshLayout refreshLayout;
+    @BindView(R.id.loading)
+    LoadingLayout loading;
     HotAdapter hotAdapter;
     int pageNum = 1;
     int pageSize = 10;
@@ -79,6 +83,8 @@ public class HotProductActivity extends BaseSwipeActivity implements View.OnClic
     RelativeLayout rl_num;
     @BindView(R.id.tv_num)
     TextView tv_num;
+    @BindView(R.id.iv_normal)
+    ImageView iv_normal;
     @BindView(R.id.tv_title)
     TextView tv_title;
     @BindView(R.id.iv_carts)
@@ -88,6 +94,7 @@ public class HotProductActivity extends BaseSwipeActivity implements View.OnClic
     String flag = "hot";
     String cell;
     private String enjoyProduct;
+    AnimationDrawable drawable;
     //热销集合
     private List<ProductNormalModel.DataBean.ListBean> list = new ArrayList<>();
 
@@ -237,6 +244,14 @@ public class HotProductActivity extends BaseSwipeActivity implements View.OnClic
 
                     @Override
                     public void onError(Throwable e) {
+                        loading.setStatus(LoadingLayout.No_Network);
+                        loading.setOnReloadListener(new LoadingLayout.OnReloadListener() {
+                            @Override
+                            public void onReload(View v) {
+                                loading.setStatus(LoadingLayout.Loading);
+                                getProductsList(1,pageSize,"hot");
+                            }
+                        });
                     }
 
                     @Override
@@ -252,6 +267,11 @@ public class HotProductActivity extends BaseSwipeActivity implements View.OnClic
                                 } else {
                                     hotAdapter.addData(list);
                                 }
+                                loading.setStatus(LoadingLayout.Success);
+                                drawable.stop();
+                            }else {
+                                loading.setStatus(LoadingLayout.Empty);
+
                             }
                             //判断是否有下一页
                             if (!getCommonProductModel.getData().isHasNextPage()) {
@@ -260,9 +280,9 @@ public class HotProductActivity extends BaseSwipeActivity implements View.OnClic
                                 hotAdapter.loadMoreComplete();
                             }
                             refreshLayout.setEnableLoadMore(true);
-
                         } else {
                             AppHelper.showMsg(mActivity, getCommonProductModel.getMessage());
+                            loading.setStatus(LoadingLayout.Error);
                         }
                     }
                 });
@@ -288,6 +308,9 @@ public class HotProductActivity extends BaseSwipeActivity implements View.OnClic
     @Override
     public void setViewData() {
         refreshLayout.autoRefresh();
+        loading.setStatus(LoadingLayout.Loading);
+        drawable = (AnimationDrawable) iv_normal.getDrawable();
+        drawable.start();
         getCartNum();
         mTypedialog = new AlertDialog.Builder(mActivity, R.style.DialogStyle).create();
         mTypedialog.setCancelable(false);
@@ -320,6 +343,9 @@ public class HotProductActivity extends BaseSwipeActivity implements View.OnClic
                                 tv_num.setVisibility(View.VISIBLE);
                                 tv_num.setText(getCartNumModel.getData().getNum());
                             }
+
+
+
                         } else {
                             AppHelper.showMsg(mContext, getCartNumModel.getMessage());
                         }

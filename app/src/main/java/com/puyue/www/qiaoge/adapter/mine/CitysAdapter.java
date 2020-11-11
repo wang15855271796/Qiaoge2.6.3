@@ -86,7 +86,8 @@ public class CitysAdapter extends BaseAdapter {
             holder = (Holder) convertView.getTag();
         }
         holder.tv_city.setText(prodSpecs.get(position).getCityName());
-        prodSpecs.get(position).getAreaNames().get(position);
+//        prodSpecs.get(position).getAreaNames().get(position);
+        prodSpecs.get(position).getAreaNames();
         if(mOnEventClickListener != null) {
             holder.tv_city.setOnClickListener(new View.OnClickListener() {
                 @Override

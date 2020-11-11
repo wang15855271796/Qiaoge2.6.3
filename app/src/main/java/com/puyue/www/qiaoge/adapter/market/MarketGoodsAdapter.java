@@ -40,7 +40,9 @@ public class MarketGoodsAdapter extends BaseQuickAdapter<MarketRightModel.DataBe
     Onclick onclick;
     MarketGialog marketGialog;
     private TextView tv_price;
-
+    ImageView iv_after_next;
+    ImageView iv_operate;
+    ImageView iv_next;
     public MarketGoodsAdapter( int layoutResId, @Nullable List<MarketRightModel.DataBean.ProdClassifyBean.ListBean> data, Onclick onclick) {
         super(layoutResId, data);
         this.onclick = onclick;
@@ -50,6 +52,9 @@ public class MarketGoodsAdapter extends BaseQuickAdapter<MarketRightModel.DataBe
     @Override
     protected void convert(BaseViewHolder helper, MarketRightModel.DataBean.ProdClassifyBean.ListBean item) {
         int businessType = item.getBusinessType();
+        iv_after_next = helper.getView(R.id.iv_after_next);
+        iv_next = helper.getView(R.id.iv_next);
+        iv_operate = helper.getView(R.id.iv_operate);
         RelativeLayout rl_price = helper.getView(R.id.rl_price);
         TextView tv_desc = helper.getView(R.id.tv_desc);
         ImageView iv_no_data = helper.getView(R.id.iv_no_data);
@@ -134,6 +139,10 @@ public class MarketGoodsAdapter extends BaseQuickAdapter<MarketRightModel.DataBe
                 }
             }
         });
+
+
+        Glide.with(mContext).load(item.getSelfProd()).into(iv_operate);
+        Glide.with(mContext).load(item.getSendTimeTpl()).into(iv_next);
         tv_choose_spec.setText("选规格");
         iv_head = helper.getView(R.id.iv_head);
         Glide.with(mContext)

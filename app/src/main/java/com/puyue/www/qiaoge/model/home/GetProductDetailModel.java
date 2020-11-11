@@ -106,6 +106,10 @@ public class GetProductDetailModel {
         String bannerDetailUrl;
         String bannerUrl;
         String divFullGiftSendInfo;
+        String companyName;
+        String sendTimeStr;
+        String supplierId;
+        String sendTimeTpl;
         @Override
         public String toString() {
             return "DataBean{" +
@@ -127,6 +131,38 @@ public class GetProductDetailModel {
                     ", detailPic=" + detailPic +
                     ", topPic=" + topPic +
                     '}';
+        }
+
+        public String getSendTimeTpl() {
+            return sendTimeTpl;
+        }
+
+        public void setSendTimeTpl(String sendTimeTpl) {
+            this.sendTimeTpl = sendTimeTpl;
+        }
+
+        public String getSupplierId() {
+            return supplierId;
+        }
+
+        public void setSupplierId(String supplierId) {
+            this.supplierId = supplierId;
+        }
+
+        public String getSendTimeStr() {
+            return sendTimeStr;
+        }
+
+        public void setSendTimeStr(String sendTimeStr) {
+            this.sendTimeStr = sendTimeStr;
+        }
+
+        public String getCompanyName() {
+            return companyName;
+        }
+
+        public void setCompanyName(String companyName) {
+            this.companyName = companyName;
         }
 
         public String getDivFullGiftSendInfo() {

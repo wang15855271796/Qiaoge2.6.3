@@ -21,16 +21,7 @@ import rx.Observable;
  */
 
 public class GetScenicSpotDetailByIdAndDateAPI {
-    private interface GetScenicSpotDetailByIdAndDateService {
-        @FormUrlEncoded
-        @POST(AppInterfaceAddress.GETSCENICSPOTDETAILBYIDANDDATE)
-        Observable<GetScenicSpotDetailByIdAndDateModel> getData(@Field("spotId") int spotId, @Field("startDate") String startDate, @Field("endDate") String endDate);
-    }
 
-    public static Observable<GetScenicSpotDetailByIdAndDateModel> requestData(Context context, int spotId, String startDate, String endDate) {
-        GetScenicSpotDetailByIdAndDateService service = RestHelper.getBaseRetrofit(context).create(GetScenicSpotDetailByIdAndDateService.class);
-        return service.getData(spotId, startDate, endDate);
-    }
 
     public interface ShopListService{
 

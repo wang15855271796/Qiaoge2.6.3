@@ -62,7 +62,7 @@
     <string name="chooseCoupons">选择优惠券</string>
     <string name="firmOrder">确认订单</string>
     <string name="commodityAmount">商品金额</string>
-    <string name="distributionFee">配送费:</string>
+    <string name="distributionFee">配送费</string>
     <string name="vipSubtraction">会员满减</string>
     <string name="vipSubtractionActivity">满减活动</string>
     <string name="message">买家留言</string>
@@ -88,8 +88,8 @@
     <string name="groupTitle">团购特惠</string>
     <string name="inputCommodityName">请输入商品名称</string>
     <string name="mineIntegralDetailed">积分明细</string>
-    <string name="newOrderPhone">订单编号：</string>
-    <string name="newOrderTime">下单时间：</string>
+    <string name="newOrderPhone">订单编号</string>
+    <string name="newOrderTime">下单时间</string>
     <string name="newOrderPay">支付方式：</string>
     <string name="newOrderRemarks">订单备注：</string>
     <string name="newOrderReason">退款原因：</string>

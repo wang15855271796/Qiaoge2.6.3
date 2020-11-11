@@ -2,10 +2,8 @@ package com.puyue.www.qiaoge.api.mine.coupon;
 
 import android.content.Context;
 
-import com.puyue.www.qiaoge.api.home.NoticeAPI;
 import com.puyue.www.qiaoge.constant.AppInterfaceAddress;
 import com.puyue.www.qiaoge.helper.RestHelper;
-import com.puyue.www.qiaoge.model.home.NoticeListModel;
 import com.puyue.www.qiaoge.model.mine.coupons.queryUserDeductByStateModel;
 
 import retrofit2.http.Field;

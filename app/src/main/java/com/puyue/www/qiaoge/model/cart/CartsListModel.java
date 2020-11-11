@@ -117,9 +117,36 @@ public class CartsListModel {
             private int businessType;
             public int businessId;
             int productMainId;
+            String sendTimeStr;
+            String sendTimeTpl;
+            String selfOrNot;
             private List<AdditionProductVOList> additionProductVOList;
             private boolean valid;
             private List<SpecProductListBean> specProductList;
+
+            public String getSendTimeStr() {
+                return sendTimeStr;
+            }
+
+            public void setSendTimeStr(String sendTimeStr) {
+                this.sendTimeStr = sendTimeStr;
+            }
+
+            public String getSendTimeTpl() {
+                return sendTimeTpl;
+            }
+
+            public void setSendTimeTpl(String sendTimeTpl) {
+                this.sendTimeTpl = sendTimeTpl;
+            }
+
+            public String getSelfOrNot() {
+                return selfOrNot;
+            }
+
+            public void setSelfOrNot(String selfOrNot) {
+                this.selfOrNot = selfOrNot;
+            }
 
             public int getProductMainId() {
                 return productMainId;

@@ -78,6 +78,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
 
+
+
         <TextView
             android:text="15.0"
             android:visibility="gone"
@@ -88,6 +90,32 @@
             android:textSize="@dimen/size_16dp"
             android:layout_below="@+id/tv_name"
             android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <ImageView
+            tools:src="@mipmap/icon_next"
+            android:id="@+id/iv_next"
+            android:layout_marginLeft="@dimen/dp_10"
+            android:layout_below="@+id/iv_add"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <ImageView
+            android:id="@+id/iv_operate"
+            tools:src="@mipmap/icon_operate"
+            android:layout_toRightOf="@+id/iv_next"
+            android:layout_marginLeft="@dimen/dp_10"
+            android:layout_below="@+id/iv_add"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <ImageView
+            android:visibility="gone"
+            android:src="@mipmap/icon_after_next"
+            android:id="@+id/iv_after_next"
+            android:layout_marginLeft="@dimen/dp_10"
+            android:layout_below="@+id/iv_add"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
 
         <TextView
@@ -112,13 +140,6 @@
             android:layout_alignParentRight="true"
             android:layout_width="@dimen/size_32dp"
             android:layout_height="@dimen/size_32dp" />
-
-        <ImageView
-            android:id="@+id/iv_icon"
-            android:layout_marginTop="@dimen/dp_10"
-            android:layout_marginLeft="@dimen/dp_10"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
 
     </RelativeLayout>
 </LinearLayout>

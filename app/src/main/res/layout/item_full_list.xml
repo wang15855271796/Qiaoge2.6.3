@@ -71,17 +71,6 @@
             android:layout_width="@dimen/size_92dp"
             android:layout_height="@dimen/size_92dp" />
 
-        <TextView
-            tools:text="赠礼赠礼"
-            android:id="@+id/tv_given_des"
-            android:textColor="#ffffff"
-            android:textSize="@dimen/sp_12"
-            android:background="@drawable/shape_full_orange"
-            android:layout_width="wrap_content"
-            android:layout_marginTop="@dimen/public_space_value_80"
-            android:layout_marginRight="@dimen/dp_10"
-            android:layout_marginLeft="@dimen/size_50dp"
-            android:layout_height="wrap_content" />
 
         <TextView
             tools:text="销量1000"

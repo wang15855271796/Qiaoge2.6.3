@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -14,16 +15,22 @@ import android.widget.TextView;
 
 import com.puyue.www.qiaoge.R;
 import com.puyue.www.qiaoge.base.BaseSwipeActivity;
+import com.puyue.www.qiaoge.event.LogoutEvent;
+import com.puyue.www.qiaoge.event.RefreshEvent;
 import com.puyue.www.qiaoge.fragment.order.ConfirmOrderDeliverFragment;
 import com.puyue.www.qiaoge.fragment.order.ConfirmOrderSufficiencyFragment;
 import com.puyue.www.qiaoge.listener.NoDoubleClickListener;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 /**
  * Created by ${王文博} on 2019/7/18
  * 最新版确认订单，增加门店自提
  */
 
-public class ConfirmNewOrderActivity extends BaseSwipeActivity {
+public class ConfirmNewOrderActivity extends BaseSwipeActivity implements ConfirmOrderSufficiencyFragment.GoToConfirmDeliver{
 
     private static final String TAB_DELIVER = "tab_deliver";
     private static final String TAB_SUFFICIENCY = "tab_sufficiency";
@@ -49,6 +56,7 @@ public class ConfirmNewOrderActivity extends BaseSwipeActivity {
 
     @Override
     public void findViewById() {
+
         toolbar = (Toolbar) findViewById(R.id.toolbar);
 
         fr_confirm_oder = findViewById(R.id.fr_confirm_oder);
@@ -60,8 +68,15 @@ public class ConfirmNewOrderActivity extends BaseSwipeActivity {
 
     @Override
     public void setViewData() {
+        EventBus.getDefault().register(this);
         switchTab(TAB_DELIVER);
         setTranslucentStatus();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        EventBus.getDefault().unregister(this);
     }
 
     @Override
@@ -173,5 +188,27 @@ public class ConfirmNewOrderActivity extends BaseSwipeActivity {
         } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
         }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void getMessageEvent(RefreshEvent refreshEvent) {
+        tv_sufficiency_order.setVisibility(View.VISIBLE);
+        tv_deliver_order.setVisibility(View.VISIBLE);
+        tv_deliver_order_two.setVisibility(View.GONE);
+        tv_sufficiency_order_two.setVisibility(View.GONE);
+        switchTab(TAB_DELIVER);
+    }
+
+    @Override
+    public void jumpConfirmDeliver() {
+
+//        if (mFragmentDeliver == null) {
+//            mFragmentDeliver = new ConfirmOrderDeliverFragment();
+//            mFragmentTransaction.add(R.id.fr_confirm_oder, mFragmentDeliver);
+//
+//        } else {
+//            mFragmentTransaction.show(mFragmentDeliver);
+//
+//        }
     }
 }

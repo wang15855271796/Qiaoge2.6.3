@@ -30,7 +30,6 @@
 
             <ImageView
                 android:id="@+id/imageIcon"
-
                 android:layout_marginTop="2dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -52,12 +51,12 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/textTitle"
-                android:layout_marginTop="@dimen/size_15dp"
                 android:layout_marginRight="@dimen/size_50dp"
                 android:ellipsize="end"
+                android:layout_marginTop="@dimen/dp_10"
                 android:maxLines="2"
-                android:text="1xiang/5包"
-                android:textColor="@color/app_black"
+                android:text="1/5包"
+                android:textColor="#000000"
                 android:textSize="@dimen/size_11dp" />
 
 
@@ -96,7 +95,6 @@
                     tools:text="3.0"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
                     android:layout_marginRight="@dimen/size_10dp"
                     android:layout_toLeftOf="@+id/Price"
                     android:padding="@dimen/size_5dp"

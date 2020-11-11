@@ -81,6 +81,7 @@ import com.puyue.www.qiaoge.constant.AppConstant;
 import com.puyue.www.qiaoge.dialog.CouponDialog;
 import com.puyue.www.qiaoge.dialog.LoadingDialog;
 import com.puyue.www.qiaoge.event.AddressEvent;
+import com.puyue.www.qiaoge.event.GoToMarketEvent;
 import com.puyue.www.qiaoge.event.LogoutEvent;
 import com.puyue.www.qiaoge.event.OnHttpCallBack;
 import com.puyue.www.qiaoge.event.UpDateNumEvent;
@@ -484,14 +485,12 @@ public class MarketsFragment extends BaseFragment {
 
                     @Override
                     public void onError(Throwable e) {
-//                        ptr.refreshComplete();
                         lav_activity_loading.hide();
 
                     }
 
                     @Override
                     public void onNext(MarketRightModel marketGoodSelectModel) {
-
                         if (marketGoodSelectModel.isSuccess()) {
                             flag = true;
                             mModelMarketGoods = marketGoodSelectModel;
@@ -672,6 +671,13 @@ public class MarketsFragment extends BaseFragment {
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
+    public void getMessages(GoToMarketEvent goToMarketEvent) {
+        requestGoodsList();
+        requestBanner();
+        sendSelectGood("", "", "", "", "", "");
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
     public void cityEvent(CityEvent event) {
         //刷新UI
         lav_activity_loading.show();
@@ -846,7 +852,8 @@ public class MarketsFragment extends BaseFragment {
                 @Override
                 public void onItemClick(View view, int position) {
                     //在点击二级列表的时候,需要将样式修改过来,然后刷新三级详情列表数据
-//
+                    minPrice = "";
+                    maxPrice = "";
                     selectBrandName = "";
                         if (flag) {
                             flag = false;
@@ -907,6 +914,8 @@ public class MarketsFragment extends BaseFragment {
             public void onEventClick(int position, int secondId) {
                 dialog.show();
                 pageNum = 1;
+                minPrice = "";
+                maxPrice = "";
                 mSecondCode = secondId;
                 selectBrandName = "";
                 if (isCheck) {
@@ -923,7 +932,6 @@ public class MarketsFragment extends BaseFragment {
             public void addDialog() {
                 if (StringHelper.notEmptyAndNull(UserInfoHelper.getUserId(context))) {
                     if(UserInfoHelper.getUserType(getActivity()).equals(AppConstant.USER_TYPE_RETAIL)) {
-
 
                     }
                 }else {

@@ -38,7 +38,8 @@ public class MustAdapter extends BaseQuickAdapter<MustModel.DataBean, BaseViewHo
     ImageView iv_flag;
     private TextView tv_desc;
     private TextView tv_price;
-
+    ImageView iv_operate;
+    ImageView iv_next;
     public MustAdapter( int layoutResId, @Nullable List<MustModel.DataBean> activeList, Onclick onclick) {
         super(layoutResId, activeList);
         this.activesBean = activeList;
@@ -49,6 +50,8 @@ public class MustAdapter extends BaseQuickAdapter<MustModel.DataBean, BaseViewHo
 
     @Override
     protected void convert(BaseViewHolder helper, MustModel.DataBean item) {
+        iv_next = helper.getView(R.id.iv_next);
+        iv_operate = helper.getView(R.id.iv_operate);
         tv_desc = helper.getView(R.id.tv_desc);
         iv_pic = helper.getView(R.id.iv_pic);
         iv_flag = helper.getView(R.id.iv_flag);
@@ -57,7 +60,8 @@ public class MustAdapter extends BaseQuickAdapter<MustModel.DataBean, BaseViewHo
         tv_sale = helper.getView(R.id.tv_sale);
         tv_price = helper.getView(R.id.tv_price);
         helper.setText(R.id.tv_name,item.getProductName());
-
+        Glide.with(mContext).load(item.getSelfProd()).into(iv_operate);
+        Glide.with(mContext).load(item.getSendTimeTpl()).into(iv_next);
         Glide.with(mContext).load(item.getDefaultPic()).into(iv_pic);
         tv_sale.setVisibility(View.GONE);
         iv_flag.setVisibility(View.GONE);

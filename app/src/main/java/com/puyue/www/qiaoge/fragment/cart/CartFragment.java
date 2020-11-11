@@ -121,7 +121,6 @@ public class CartFragment extends BaseFragment implements View.OnClickListener,T
     TagFlowLayout rv_unable;
     @BindView(R.id.tv_arrow)
     TextView tv_arrow;
-
     boolean mSelect;
     @BindView(R.id.ll_NoData)
     LinearLayout ll_NoData;
@@ -261,34 +260,24 @@ public class CartFragment extends BaseFragment implements View.OnClickListener,T
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.cb_select_operate:
-                if(cb_select_operate.isChecked()&&cb_select_unOperate.isChecked()) {
-                    Log.d("wadasdssssss....","000000");
-                    cb_select_all.setChecked(true);
+
+                if(cb_select_operate.isChecked()) {
+                    cb_select_operate.setChecked(true);
                     testAdapter.setOperateSelect(true,mListOperate);
-                }else if(cb_select_operate.isChecked()||!cb_select_unOperate.isChecked()){
-                    Log.d("wadasdssssss....","11111");
-                    cb_select_all.setChecked(false);
-                    testAdapter.setOperateSelect(true,mListOperate);
-                }else if(!cb_select_operate.isChecked()||cb_select_unOperate.isChecked()) {
-                    Log.d("wadasdssssss....","22222");
-                    cb_select_all.setChecked(false);
+                }else {
+                    cb_select_operate.setChecked(false);
                     testAdapter.setOperateSelect(false,mListOperate);
                 }
+
                 break;
 
             case R.id.cb_select_unOperate:
-                if(cb_select_unOperate.isChecked()&&cb_select_operate.isChecked()) {
-                    Log.d("wadasdssssss....","3333");
-                    cb_select_all.setChecked(true);
+                if(cb_select_unOperate.isChecked()) {
+                    cb_select_unOperate.setChecked(true);
                     test2Adapter.setUnOperateSelect(true,mListUnOperate);
-                }else if(!cb_select_unOperate.isChecked()||cb_select_operate.isChecked()){
-                    Log.d("wadasdssssss....","444");
-                    cb_select_all.setChecked(false);
+                }else {
+                    cb_select_unOperate.setChecked(false);
                     test2Adapter.setUnOperateSelect(false,mListUnOperate);
-                }else if(cb_select_unOperate.isChecked()||!cb_select_operate.isChecked()) {
-                    Log.d("wadasdssssss....","555");
-                    cb_select_all.setChecked(false);
-                    test2Adapter.setUnOperateSelect(true,mListUnOperate);
                 }
                 break;
             case R.id.imageGoBay:
@@ -351,6 +340,7 @@ public class CartFragment extends BaseFragment implements View.OnClickListener,T
                 mModelCartActivityGoods.activityIdList.clear();
                 double priceCommonGoods = 0.00;
                 List<Integer> cartIds = new ArrayList<>();
+
                 if(data==null) {
                     for (int i = 0; i <mListCart.size() ; i++) {
                         int businessType = mListCart.get(i).getBusinessType();
@@ -407,17 +397,21 @@ public class CartFragment extends BaseFragment implements View.OnClickListener,T
 
                 }
                 else {
-                    for (int i = 0; i <data.size() ; i++) {
-                        int businessType = data.get(i).getBusinessType();
-                        List<CartsListModel.DataBean.ValidListBean.SpecProductListBean> specProductList = data.get(i).getSpecProductList();
+                    for (int i = 0; i <mListCart.size() ; i++) {
+
+                        int businessType = mListCart.get(i).getBusinessType();
+                        List<CartsListModel.DataBean.ValidListBean.SpecProductListBean> specProductList = mListCart.get(i).getSpecProductList();
                         if(businessType == 1) {
                             for (int j = 0; j <specProductList.size() ; j++) {
+
                                 List<CartsListModel.DataBean.ValidListBean.SpecProductListBean.ProductDescVOListBean> productDescVOList = specProductList.get(j).getProductDescVOList();
                                 List<CartCommonGoodsModel.DetailListBean> commonGoodsDetailList = new ArrayList<>();
                                 if(specProductList.get(j).isSelected()) {
+                                    Log.d("wwssssssssssss....",data.size()+"z");
                                     int cartId = specProductList.get(j).getCartId();
                                     cartIds.add(cartId);
                                     cartListStr = cartIds.toString();
+
                                     for (int k = 0; k <productDescVOList.size() ; k++) {
                                         CartsListModel.DataBean.ValidListBean.SpecProductListBean.ProductDescVOListBean productDescVOListBean = productDescVOList.get(k);
                                         priceCommonGoods = Double.parseDouble(BigDecimalUtils.add(Double.toString(priceCommonGoods), BigDecimalUtils.mul(productDescVOListBean.getPrice(),
@@ -686,7 +680,6 @@ public class CartFragment extends BaseFragment implements View.OnClickListener,T
     @Override
     public void update(List<CartsListModel.DataBean.ValidListBean> data) {
         this.data = data;
-        Log.d("wdssssssdssss....",data.size()+"aa");
         btn_sure.setText("结算");
     }
 

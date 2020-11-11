@@ -34,6 +34,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.baidu.location.LocationClientOption;
+
 import com.chuanglan.shanyan_sdk.OneKeyLoginManager;
 import com.chuanglan.shanyan_sdk.listener.OneKeyLoginListener;
 import com.chuanglan.shanyan_sdk.listener.OpenLoginAuthListener;
@@ -242,6 +243,7 @@ public class LoginActivity extends BaseSwipeActivity {
 //                startActivity(RegisterActivity.getIntent(mContext, RegisterActivity.class));
                 OneKeyLoginManager.getInstance().setAuthThemeConfig(ConfigUtils.getCJSConfig(getApplicationContext()));
                 openLoginActivity();
+
             }
             else if (view == mIvBack) {
                 Intent intent = new Intent(mContext, HomeActivity.class);

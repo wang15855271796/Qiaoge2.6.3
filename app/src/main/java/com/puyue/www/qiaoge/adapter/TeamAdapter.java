@@ -28,25 +28,13 @@ import java.util.List;
  * Created by ${王涛} on 2020/9/19
  */
 public class TeamAdapter extends RecyclerView.Adapter<TeamAdapter.BaseViewHolder> implements View.OnClickListener  {
-    private ImageView iv_pic;
-    private ImageView iv_add;
-    private RelativeLayout rl_group;
     //根据flag 判断返回集合大小还是最大值 0返回最大值 1，返回集合大小
     String flag;
-    ImageView iv_flag;
-    private TextView tv_old_price;
-    private TextView tv_coupon;
-    RelativeLayout rl_coupon;
     String style;
     Context mContext;
     public OnClick onClick;
-    ImageView iv_sale_done;
-    TextView tv_price;
-    TextView tv_desc;
     int layoutResId;
     List<CouponModel.DataBean.ActivesBean> actives;
-    private int pos;
-//    private CouponModel.DataBean.ActivesBean activesBean;
 
     public TeamAdapter(Context context, String style, int layoutResId, List<CouponModel.DataBean.ActivesBean> actives, String flag, OnClick onClick) {
         this.mContext = context;

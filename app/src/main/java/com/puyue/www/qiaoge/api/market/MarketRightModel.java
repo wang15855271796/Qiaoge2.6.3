@@ -95,7 +95,6 @@ public class MarketRightModel {
             private boolean hasNextPage;
             private List<ListBeanX> list;
 
-
             public int getPageNum() {
                 return pageNum;
             }
@@ -289,6 +288,24 @@ public class MarketRightModel {
                         private Object prodSpecs;
                         private Object inventory;
                         private Object prodPrices;
+                        String sendTimeTpl;
+                        String selfProd;
+
+                        public String getSendTimeTpl() {
+                            return sendTimeTpl;
+                        }
+
+                        public void setSendTimeTpl(String sendTimeTpl) {
+                            this.sendTimeTpl = sendTimeTpl;
+                        }
+
+                        public String getSelfProd() {
+                            return selfProd;
+                        }
+
+                        public void setSelfProd(String selfProd) {
+                            this.selfProd = selfProd;
+                        }
 
                         public String getType() {
                             return type;
@@ -567,7 +584,24 @@ public class MarketRightModel {
                 private String inventory;
                 private List<ProdPricesBean> prodPrices;
                 private List<ProdSpecsBean> prodSpecs;
+                String sendTimeTpl;
+                String selfProd;
 
+                public String getSendTimeTpl() {
+                    return sendTimeTpl;
+                }
+
+                public void setSendTimeTpl(String sendTimeTpl) {
+                    this.sendTimeTpl = sendTimeTpl;
+                }
+
+                public String getSelfProd() {
+                    return selfProd;
+                }
+
+                public void setSelfProd(String selfProd) {
+                    this.selfProd = selfProd;
+                }
                 public int getActiveId() {
                     return activeId;
                 }

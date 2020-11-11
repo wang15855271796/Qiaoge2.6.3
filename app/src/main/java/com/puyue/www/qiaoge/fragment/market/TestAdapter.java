@@ -66,6 +66,8 @@ public class TestAdapter extends BaseQuickAdapter<CartsListModel.DataBean.ValidL
 
     @Override
     protected void convert(BaseViewHolder helper, CartsListModel.DataBean.ValidListBean item) {
+        CheckBox cb_choose = helper.getView(R.id.cb_choose);
+        TextView tv_big_title =  helper.getView(R.id.tv_big_title);
         ImageView iv_icon = helper.getView(R.id.iv_icon);
         v1 = helper.getView(R.id.v1);
         rv_full = helper.getView(R.id.rv_full);
@@ -76,6 +78,7 @@ public class TestAdapter extends BaseQuickAdapter<CartsListModel.DataBean.ValidL
         rv_given = helper.getView(R.id.rv_given);
         CheckBox cb_item_out = helper.getView(R.id.cb_item_out);
         ImageView iv_head = helper.getView(R.id.iv_head);
+//        tv_big_title.setText(item.getSendTimeStr());
 
         additionVOList1 = new ArrayList<>();
         additionVOList2 = new ArrayList<>();
@@ -106,12 +109,15 @@ public class TestAdapter extends BaseQuickAdapter<CartsListModel.DataBean.ValidL
             if(item.getSpecProductList().get(i).getBuySendAdditionInfo()!=null) {
                 if(item.getSpecProductList().get(i).getBuySendAdditionInfo().equals("")) {
                     tv_full_desc.setVisibility(View.GONE);
+                    v1.setVisibility(View.GONE);
                 }else {
                     tv_full_desc.setText(item.getSpecProductList().get(i).getBuySendAdditionInfo());
                     tv_full_desc.setVisibility(View.VISIBLE);
+                    v1.setVisibility(View.VISIBLE);
                 }
             }else {
                 tv_full_desc.setVisibility(View.GONE);
+                v1.setVisibility(View.GONE);
             }
         }
 
@@ -164,8 +170,9 @@ public class TestAdapter extends BaseQuickAdapter<CartsListModel.DataBean.ValidL
         CartSpecAdapter cartSpecAdapter = new CartSpecAdapter(iProductSelectCallback,data,R.layout.item_cart_spec, item.getSpecProductList(),item,
                 this,item.getBusinessType(),item.getBusinessId());
         cb_item_out.setOnCheckedChangeListener(null);
+//        cb_choose.setOnCheckedChangeListener(null);
         cb_item_out.setChecked(item.isSelected());
-
+//        cb_choose.setChecked(item.isSelected());
         if(mOnResfreshListener != null){
             boolean isSelect = false;
 
@@ -189,6 +196,26 @@ public class TestAdapter extends BaseQuickAdapter<CartsListModel.DataBean.ValidL
                 }
             }
         });
+
+//        cb_choose.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+//            @Override
+//            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+//                cb_item_out.setChecked(isChecked);
+//
+//                for (CartsListModel.DataBean.ValidListBean validListBean: data) {
+//                    validListBean.setSelected(isChecked);
+//                    notifyDataSetChanged();
+//                }
+//
+//                for (CartsListModel.DataBean.ValidListBean.SpecProductListBean specProductList: item.getSpecProductList()) {
+//                    specProductList.setSelected(isChecked);
+//                    notifyDataSetChanged();
+//                }
+//
+//                EventBus.getDefault().post(new UpdateEvent(getAllPrice()));
+//                iProductSelectCallback.update(mListCart);
+//            }
+//        });
 
         cb_item_out.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override

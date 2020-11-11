@@ -67,7 +67,7 @@ public class ProdAdapter extends BaseQuickAdapter<MarketRightModel.DataBean.Bran
                     }else {
                         if(list.size()%3==0) {
                             lp.height = DensityUtil.dip2px(145 *(list.size()/3),mContext);
-                            Log.d("woshiwangt..",lp.height+"");
+
                             tv_expand.setText("收起");
                             open = true;
                             recyclerViewProd.setLayoutManager(new GridLayoutManager(mContext,3));
@@ -76,7 +76,7 @@ public class ProdAdapter extends BaseQuickAdapter<MarketRightModel.DataBean.Bran
 
                         }else if(list.size()%3==1) {
                             lp.height = DensityUtil.dip2px(145 *(list.size()/2),mContext);
-                            Log.d("woshiwangt..",lp.height+"");
+
                             tv_expand.setText("收起");
                             open = true;
                             recyclerViewProd.setLayoutManager(new GridLayoutManager(mContext,3));
@@ -85,7 +85,7 @@ public class ProdAdapter extends BaseQuickAdapter<MarketRightModel.DataBean.Bran
 
                         }else if(list.size()%3==2) {
                             lp.height = DensityUtil.dip2px(145 *(list.size()/2),mContext);
-                            Log.d("woshiwangt..",lp.height+"");
+
                             tv_expand.setText("收起");
                             open = true;
                             recyclerViewProd.setLayoutManager(new GridLayoutManager(mContext,3));

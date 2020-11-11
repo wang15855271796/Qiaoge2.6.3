@@ -44,7 +44,7 @@
                     android:layout_height="wrap_content"
                     tools:text="热狗香肠真棒热狗香肠"
                     android:layout_marginLeft="15dp"
-                    android:layout_marginTop="47dp"
+                    android:layout_marginTop="30dp"
                     android:layout_toRightOf="@+id/iv_head"
                     android:ellipsize="end"
                     android:maxLines="1"
@@ -58,7 +58,7 @@
                     android:layout_below="@+id/tv_name"
                     android:layout_marginLeft="15dp"
                     android:layout_marginRight="-5dp"
-                    android:layout_marginTop="9dp"
+                    android:layout_marginTop="5dp"
                     android:layout_toLeftOf="@+id/iv_close"
                     android:layout_toRightOf="@+id/iv_head"
                     android:textColor="#666"
@@ -72,14 +72,31 @@
                     android:layout_below="@+id/tv_sale"
                     android:layout_marginLeft="15dp"
                     android:layout_marginRight="-5dp"
-                    android:layout_marginTop="7dp"
+                    android:layout_marginTop="5dp"
                     android:layout_toLeftOf="@+id/iv_close"
                     android:layout_toRightOf="@+id/iv_head"
                     android:textColor="#FF703C"
                     android:textSize="16sp" />
 
+                <ImageView
+                    android:layout_marginLeft="15dp"
+                    android:id="@+id/iv_pic"
+                    android:layout_marginTop="@dimen/size_7dp"
+                    android:layout_toRightOf="@+id/iv_head"
+                    android:layout_below="@+id/tv_price"
+                    tools:src="@mipmap/icon_next"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
 
-
+                <ImageView
+                    android:layout_marginLeft="10dp"
+                    android:id="@+id/iv_operate"
+                    android:layout_marginTop="@dimen/size_7dp"
+                    android:layout_toRightOf="@+id/iv_pic"
+                    android:layout_below="@+id/tv_price"
+                    tools:src="@mipmap/icon_next"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
 
                 <ImageView
                     android:id="@+id/iv_close"

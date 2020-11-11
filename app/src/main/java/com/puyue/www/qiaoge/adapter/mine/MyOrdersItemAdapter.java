@@ -15,6 +15,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -31,9 +32,12 @@ import com.puyue.www.qiaoge.helper.GlideRoundTransform;
 import com.puyue.www.qiaoge.helper.StringHelper;
 import com.puyue.www.qiaoge.helper.UserInfoHelper;
 import com.puyue.www.qiaoge.listener.NoDoubleClickListener;
+import com.puyue.www.qiaoge.model.OrdersModel;
 import com.puyue.www.qiaoge.model.mine.order.MyOrdersModel;
 import com.puyue.www.qiaoge.view.GlideModel;
 import com.puyue.www.qiaoge.view.GradientColorTextView;
+
+import org.w3c.dom.Text;
 
 import java.util.List;
 
@@ -43,7 +47,7 @@ import static com.umeng.socialize.utils.ContextUtil.getContext;
  * Created by Administrator on 2018/4/10.
  */
 
-public class MyOrdersItemAdapter extends BaseQuickAdapter<MyOrdersModel.DataBean.ListBean, BaseViewHolder> {
+public class MyOrdersItemAdapter extends BaseQuickAdapter<OrdersModel.DataBean.ListBean, BaseViewHolder> {
 
     private int orderState;
     private ImageView commodityOne;
@@ -51,7 +55,7 @@ public class MyOrdersItemAdapter extends BaseQuickAdapter<MyOrdersModel.DataBean
     private ImageView commodityThree;
     private ImageView commodityFour;
     private ImageView commodityMore;
-    private GradientColorTextView orderType;
+    private TextView tv_status;
     private ImageView imageGo;//立即付款
     private ImageView evaluateNow; // 立即评价
     private ImageView againBay;  // 再次购买
@@ -60,13 +64,15 @@ public class MyOrdersItemAdapter extends BaseQuickAdapter<MyOrdersModel.DataBean
     private ImageView cancelOrder;//取消订单
     private ImageView deleteOrder;//删除订单
     private ImageView confirmOrder;//确认收货
-    private ImageView iv_order_self_return;//待提货售后
-    private ImageView iv_confirm_order_self;//待提货确认收货
-    private boolean isCheck = true;
-
+//    private ImageView iv_order_self_return;//待提货售后
+//    private ImageView iv_confirm_order_self;//待提货确认收货
     private int orderDeliveryType;
-
-    public MyOrdersItemAdapter(int layoutResId, @Nullable List<MyOrdersModel.DataBean.ListBean> data, int orderState, int orderDeliveryType, OnClick onClick) {
+    TextView tv_title;
+    TextView tv_product_name;
+    TextView tv_time;
+    TextView tv_subUserBuy;
+    RelativeLayout rl;
+    public MyOrdersItemAdapter(int layoutResId, @Nullable List<OrdersModel.DataBean.ListBean> data, int orderState, int orderDeliveryType, OnClick onClick) {
         super(layoutResId, data);
         this.orderState = orderState;
         this.onClick = onClick;
@@ -75,60 +81,64 @@ public class MyOrdersItemAdapter extends BaseQuickAdapter<MyOrdersModel.DataBean
 
 
     @Override
-    protected void convert(final BaseViewHolder helper, final MyOrdersModel.DataBean.ListBean item) {
-
+    protected void convert(final BaseViewHolder helper, final OrdersModel.DataBean.ListBean item) {
         helper.setIsRecyclable(false);
+        rl = helper.getView(R.id.rl);
+        tv_title = helper.getView(R.id.tv_title);
+        tv_subUserBuy = helper.getView(R.id.tv_subUserBuy);
+        tv_time = helper.getView(R.id.tv_time);
+        tv_product_name = helper.getView(R.id.tv_product_name);
         againBay = helper.getView(R.id.againBay);
         commodityOne = helper.getView(R.id.commodityOne);
         commodityTwo = helper.getView(R.id.commodityTwo);
         commodityThree = helper.getView(R.id.commodityThree);
         commodityFour = helper.getView(R.id.commodityFour);
         commodityMore = helper.getView(R.id.commodityMore);
-        orderType = helper.getView(R.id.tv_item_my_order_type);
+        tv_status = helper.getView(R.id.tv_status);
         imageGo = helper.getView(R.id.imageGo);
         deleteOrder = helper.getView(R.id.iv_delete_order);
         cancelOrder = helper.getView(R.id.iv_cancel_order);
         evaluateNow = helper.getView(R.id.evaluateNow);
         linearLayoutItem = helper.getView(R.id.linearLayoutItem);
         confirmOrder = helper.getView(R.id.iv_confirm_order);
+        tv_product_name.setText(item.prodName);
+        tv_time.setText(item.orderTime);
+        tv_subUserBuy.setText(item.subBuyPhone);
+        //判断自营还是非自营
+        if(item.selfOrNot.equals("0")) {
+            tv_title.setText("自营商品");
+        }else {
+            tv_title.setText("非自营商品");
+        }
 
         if (orderDeliveryType == 0) {
 
         } else if (orderDeliveryType == 1) {
-            iv_order_self_return = helper.getView(R.id.iv_order_self_return);
-            iv_confirm_order_self = helper.getView(R.id.iv_confirm_order_self);
+//            iv_order_self_return = helper.getView(R.id.iv_order_self_return);
+//            iv_confirm_order_self = helper.getView(R.id.iv_confirm_order_self);
         }
 
 
-        helper.setText(R.id.tv_item_my_order_all_price, item.totalAmount);//总价
-        if (item.productVOList.size() >= 1) {
+        helper.setText(R.id.tv_item_my_order_all_price, "合计￥"+item.totalAmount);//总价
 
-            helper.setText(R.id.tv_item_my_order_final_text, item.productVOList.get(0).name + "等" + item.totalNum + "件商品");
-        } else {
-            helper.setText(R.id.tv_item_my_order_final_text, "等" + item.totalNum + "件商品");
-
-        }
-
-        helper.setText(R.id.subUserBuy, item.subUserBuy);
         // orderState 0全部 orderState 2 待发货订单 orderState 5 待评价订单
         // 1待付款订单 3待收货订单 11退货订单 7 已取消
 
-
-
-
         if (orderState == 11) { //退货订单 不显示按钮
             Log.d("weeeesss..............","00000");
+            rl.setVisibility(View.VISIBLE);
             imageGo.setVisibility(View.GONE);
             againBay.setVisibility(View.VISIBLE);
             evaluateNow.setVisibility(View.GONE);
             confirmOrder.setVisibility(View.GONE);
             deleteOrder.setVisibility(View.GONE);
             cancelOrder.setVisibility(View.GONE);
-            orderType.setText(item.returnOrderState);
+//            orderType.setText(item.returnOrderState);
         } else {
             if (item.orderStatusName.equals("待付款")) {
                 // 待付款不显示 再次购买 其他的显示，取消的显示
                 Log.d("weeeesss..............","11111");
+                rl.setVisibility(View.GONE);
                 imageGo.setVisibility(View.VISIBLE);
                 cancelOrder.setVisibility(View.VISIBLE);
                 againBay.setVisibility(View.GONE);
@@ -137,6 +147,7 @@ public class MyOrdersItemAdapter extends BaseQuickAdapter<MyOrdersModel.DataBean
                 deleteOrder.setVisibility(View.GONE);
             } else if (item.orderStatusName.equals("已取消")) {
                 Log.d("weeeesss..............","22222");
+                rl.setVisibility(View.VISIBLE);
                 imageGo.setVisibility(View.GONE);
                 deleteOrder.setVisibility(View.VISIBLE);
                 againBay.setVisibility(View.VISIBLE);
@@ -145,6 +156,7 @@ public class MyOrdersItemAdapter extends BaseQuickAdapter<MyOrdersModel.DataBean
                 confirmOrder.setVisibility(View.GONE);
             } else if (item.orderStatusName.equals("待发货")) {
                 Log.d("weeeesss..............","33333");
+                rl.setVisibility(View.VISIBLE);
                 againBay.setVisibility(View.VISIBLE);
                 cancelOrder.setVisibility(View.GONE);
                 evaluateNow.setVisibility(View.GONE);
@@ -153,6 +165,7 @@ public class MyOrdersItemAdapter extends BaseQuickAdapter<MyOrdersModel.DataBean
                 confirmOrder.setVisibility(View.GONE);
             } else if (item.orderStatusName.equals("待收货")) {
                 Log.d("weeeesss..............","44444");
+                rl.setVisibility(View.VISIBLE);
                 confirmOrder.setVisibility(View.VISIBLE);
                 againBay.setVisibility(View.VISIBLE);
                 imageGo.setVisibility(View.GONE);
@@ -163,6 +176,7 @@ public class MyOrdersItemAdapter extends BaseQuickAdapter<MyOrdersModel.DataBean
 
 
             if (item.orderStatusName.equals("待评价")) {   // 待评价显示 立即评价 和再次购买
+                rl.setVisibility(View.VISIBLE);
                 evaluateNow.setVisibility(View.VISIBLE);
                 againBay.setVisibility(View.VISIBLE);
                 deleteOrder.setVisibility(View.GONE);
@@ -173,20 +187,24 @@ public class MyOrdersItemAdapter extends BaseQuickAdapter<MyOrdersModel.DataBean
                 evaluateNow.setVisibility(View.GONE);
 
             }
-            orderType.setText(item.orderStatusName);
         }
 
-        helper.setText(R.id.orderTime, item.gmtCreate);
+        if(orderState==11) {
+            tv_status.setText(item.returnOrderStatusStr);
+        }else {
+            tv_status.setText(item.orderStatusName);
+        }
+//        helper.setText(R.id.orderTime, item.gmtCreate);
         // 文字渐变色
-        LinearGradient mLinearGradient = new LinearGradient(0, 0, 0, orderType.getPaint().getTextSize(), Color.parseColor("#CEA6FF")
+        LinearGradient mLinearGradient = new LinearGradient(0, 0, 0, tv_status.getPaint().getTextSize(), Color.parseColor("#CEA6FF")
                 , Color.parseColor("#6F81FF"), Shader.TileMode.CLAMP);
-        orderType.getPaint().setShader(mLinearGradient);
+        tv_status.getPaint().setShader(mLinearGradient);
 
 
         /**显示4张图*/
-        if (item.productVOList.size() >= 1) {
-            if (item.productVOList.get(0).picUrl != null) {
-                GlideModel.disPlayError(mContext, item.productVOList.get(0).picUrl, commodityOne);
+        if (item.pics.size() >= 1) {
+            if (item.pics.get(0)!= null) {
+                GlideModel.disPlayError(mContext, item.pics.get(0), commodityOne);
                 //  Glide.with(mContext).load(item.productVOList.get(0).picUrl).transform(new GlideRoundTransform(mContext, 3)).into(commodityOne);
             }
 
@@ -196,9 +214,9 @@ public class MyOrdersItemAdapter extends BaseQuickAdapter<MyOrdersModel.DataBean
             commodityOne.setVisibility(View.GONE);
             commodityOne.setImageResource(R.mipmap.ic_launcher_round);
         }
-        if (item.productVOList.size() >= 2) {
-            if (item.productVOList.get(1).picUrl != null) {
-                GlideModel.disPlayError(mContext, item.productVOList.get(1).picUrl, commodityTwo);
+        if (item.pics.size() >= 2) {
+            if (item.pics.get(1) != null) {
+                GlideModel.disPlayError(mContext, item.pics.get(1), commodityTwo);
                 //  Glide.with(mContext).load(item.productVOList.get(1).picUrl).transform(new GlideRoundTransform(mContext, 3)).into(commodityTwo);
             }
 
@@ -207,9 +225,9 @@ public class MyOrdersItemAdapter extends BaseQuickAdapter<MyOrdersModel.DataBean
             commodityTwo.setVisibility(View.GONE);
             commodityTwo.setImageResource(R.mipmap.ic_launcher_round);
         }
-        if ((item.productVOList.size() >= 3)) {
-            if (item.productVOList.get(2).picUrl != null) {
-                GlideModel.disPlayError(mContext, item.productVOList.get(2).picUrl, commodityThree);
+        if ((item.pics.size() >= 3)) {
+            if (item.pics.get(2) != null) {
+                GlideModel.disPlayError(mContext, item.pics.get(2), commodityThree);
                 //Glide.with(mContext).load(item.productVOList.get(2).picUrl).transform(new GlideRoundTransform(mContext, 3)).into(commodityThree);
             }
 
@@ -219,9 +237,9 @@ public class MyOrdersItemAdapter extends BaseQuickAdapter<MyOrdersModel.DataBean
             commodityThree.setVisibility(View.GONE);
             commodityThree.setImageResource(R.mipmap.ic_launcher_round);
         }
-        if (item.productVOList.size() >= 4) {
-            if (item.productVOList.get(3).picUrl != null) {
-                GlideModel.disPlayError(mContext, item.productVOList.get(3).picUrl, commodityFour);
+        if (item.pics.size() >= 4) {
+            if (item.pics.get(3) != null) {
+                GlideModel.disPlayError(mContext, item.pics.get(3), commodityFour);
                 //  Glide.with(mContext).load(item.productVOList.get(3).picUrl).transform(new GlideRoundTransform(mContext, 3)).into(commodityFour);
             }
 
@@ -230,7 +248,7 @@ public class MyOrdersItemAdapter extends BaseQuickAdapter<MyOrdersModel.DataBean
             commodityFour.setVisibility(View.GONE);
             commodityFour.setImageResource(R.mipmap.ic_launcher_round);
         }
-        if (item.productVOList.size() >= 4) {
+        if (item.pics.size() >= 4) {
             commodityMore.setVisibility(View.VISIBLE);
         } else {
             commodityMore.setVisibility(View.GONE);
@@ -284,7 +302,7 @@ public class MyOrdersItemAdapter extends BaseQuickAdapter<MyOrdersModel.DataBean
         evaluateNow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                onClick.evaluateNowOnclick(helper.getLayoutPosition());
+                onClick.evaluateNowOnclick(helper.getLayoutPosition(),item.orderId);
             }
         });
         againBay.setOnClickListener(new View.OnClickListener() {
@@ -324,24 +342,24 @@ public class MyOrdersItemAdapter extends BaseQuickAdapter<MyOrdersModel.DataBean
 
         if (orderDeliveryType == 1) {
             if (item.orderStatus == 2) {
-                iv_order_self_return.setVisibility(View.VISIBLE);
-                iv_confirm_order_self.setVisibility(View.VISIBLE);
-                iv_order_self_return.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        onClick.confirmSelfReturnOrder(item.orderId,helper.getLayoutPosition());
-                    }
-                });
-                iv_confirm_order_self.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        onClick.confirmSelfOrder(item.orderId);
-                    }
-                });
+//                iv_order_self_return.setVisibility(View.VISIBLE);
+//                iv_confirm_order_self.setVisibility(View.VISIBLE);
+//                iv_order_self_return.setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View v) {
+//                        onClick.confirmSelfReturnOrder(item.orderId,helper.getLayoutPosition());
+//                    }
+//                });
+//                iv_confirm_order_self.setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View v) {
+//                        onClick.confirmSelfOrder(item.orderId);
+//                    }
+//                });
 
             } else {
-                iv_order_self_return.setVisibility(View.GONE);
-                iv_confirm_order_self.setVisibility(View.GONE);
+//                iv_order_self_return.setVisibility(View.GONE);
+//                iv_confirm_order_self.setVisibility(View.GONE);
             }
         }
 
@@ -352,7 +370,7 @@ public class MyOrdersItemAdapter extends BaseQuickAdapter<MyOrdersModel.DataBean
     public interface OnClick {
 
 
-        void evaluateNowOnclick(int position);
+        void evaluateNowOnclick(int position,String orderId);
 
         void againBayOnclick(int position);
 

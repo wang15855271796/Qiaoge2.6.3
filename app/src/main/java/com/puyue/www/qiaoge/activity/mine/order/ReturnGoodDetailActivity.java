@@ -131,9 +131,9 @@ public class ReturnGoodDetailActivity extends BaseActivity {
         imageViewBreak.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = MyOrdersActivity.getIntent(mContext, MyOrdersActivity.class, AppConstant.DELIVERY);
-                intent.putExtra("orderDeliveryType",orderDeliveryType);
-                startActivity(intent);
+//                Intent intent = MyOrdersActivity.getIntent(mContext, MyOrdersActivity.class, AppConstant.DELIVERY);
+//                intent.putExtra("orderDeliveryType",orderDeliveryType);
+//                startActivity(intent);
                 finish();
             }
         });

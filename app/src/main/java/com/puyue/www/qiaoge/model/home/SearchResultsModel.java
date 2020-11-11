@@ -145,6 +145,24 @@ public class SearchResultsModel {
             private String inventory;
             private List<ProdSpecsBean> prodSpecs;
             private List<ProdPricesBean> prodPrices;
+            String sendTimeTpl;
+            String selfProd;
+
+            public String getSendTimeTpl() {
+                return sendTimeTpl;
+            }
+
+            public void setSendTimeTpl(String sendTimeTpl) {
+                this.sendTimeTpl = sendTimeTpl;
+            }
+
+            public String getSelfProd() {
+                return selfProd;
+            }
+
+            public void setSelfProd(String selfProd) {
+                this.selfProd = selfProd;
+            }
 
             public String getType() {
                 return type;
@@ -457,7 +475,23 @@ public class SearchResultsModel {
                 private String inventory;
                 private List<ProdSpecsBean> prodSpecs;
                 private List<ProdPricesBean> prodPrices;
+                String sendTimeTpl;
+                String selfProd;
 
+                public String getSendTimeTpl() {
+                    return sendTimeTpl;
+                }
+
+                public void setSendTimeTpl(String sendTimeTpl) {
+                    this.sendTimeTpl = sendTimeTpl;
+                }
+
+                public String getSelfProd() {
+                    return selfProd;
+                }
+                public void setSelfProd(String selfProd) {
+                    this.selfProd = selfProd;
+                }
                 public String getType() {
                     return type;
                 }

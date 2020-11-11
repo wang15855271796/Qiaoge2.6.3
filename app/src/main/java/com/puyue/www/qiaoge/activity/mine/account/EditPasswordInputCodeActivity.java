@@ -295,8 +295,6 @@ public class EditPasswordInputCodeActivity extends BaseSwipeActivity {
 
 
                     startActivity(intent);
-                    overridePendingTransition(R.anim.slide_in_from_right,
-                            R.anim.slide_out_from_left);
                     finish();
                 } else {
                     finish();

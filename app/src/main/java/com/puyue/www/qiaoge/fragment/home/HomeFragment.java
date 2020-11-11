@@ -15,6 +15,7 @@ import android.support.v7.widget.PagerSnapHelper;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.view.animation.Animation;
@@ -50,9 +51,18 @@ import com.puyue.www.qiaoge.adapter.CommonCouponAdapter;
 import com.puyue.www.qiaoge.adapter.CommonTestAdapter;
 import com.puyue.www.qiaoge.adapter.CommonsAdapter;
 import com.puyue.www.qiaoge.adapter.CommonssAdapter;
+import com.puyue.www.qiaoge.adapter.Coupon2Adapter;
+import com.puyue.www.qiaoge.adapter.Coupon3Adapter;
+import com.puyue.www.qiaoge.adapter.CouponAdapter;
 import com.puyue.www.qiaoge.adapter.CouponListAdapter;
+import com.puyue.www.qiaoge.adapter.Full2Adapter;
+import com.puyue.www.qiaoge.adapter.Full3Adapter;
+import com.puyue.www.qiaoge.adapter.FullActivitesAdapter;
+import com.puyue.www.qiaoge.adapter.FullAdapter;
 import com.puyue.www.qiaoge.adapter.Skill2Adapter;
 import com.puyue.www.qiaoge.adapter.Skill3Adapter;
+import com.puyue.www.qiaoge.adapter.Team3Adapter;
+import com.puyue.www.qiaoge.adapter.Team4Adapter;
 import com.puyue.www.qiaoge.adapter.TeamAdapter;
 import com.puyue.www.qiaoge.adapter.home.CommonAdapter;
 import com.puyue.www.qiaoge.adapter.home.CommonProductActivity;
@@ -304,7 +314,15 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener, 
     private CommonCouponAdapter commonCouponAdapter;
     private CommonsAdapter commonsAdapter;
     private CommonAdapter commonAdapter;
+    CouponAdapter couponAdapter;
+    Coupon2Adapter coupon2Adapter;
+    Coupon3Adapter coupon3Adapter;
+    FullAdapter fullAdapter;
+    Full2Adapter full2Adapter;
+    Full3Adapter full3Adapter;
     TeamAdapter teamAdapter;
+    Team3Adapter team3Adapter;
+    Team4Adapter team4Adapter;
     private int spikeNum;
     private int teamNum;
     private int specialNum;
@@ -342,6 +360,11 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener, 
     public int setLayoutId() {
         return R.layout.test3;
 
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        return super.onOptionsItemSelected(item);
     }
 
     private void requestOrderNumTwo() {
@@ -405,7 +428,6 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener, 
                             lav_activity_loading.hide();
                             lav_activity_loading.setVisibility(View.GONE);
                             List<CouponModel.DataBean.ActivesBean> actives = couponModel.getData().getActives();
-
                             if(type==2) {
                                 rb_1.setBackgroundResource(R.drawable.shape_orange);
                                 rb_2.setBackgroundResource(R.drawable.shape_white_home);
@@ -434,8 +456,12 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener, 
                                             initDialog();
                                         }
                                     });
+                                    recyclerView.setVisibility(View.VISIBLE);
+                                    recyclerViewTest.setVisibility(View.GONE);
+                                    recyclerView.setAdapter(skillAdapter);
+                                    recyclerView.setLayoutManager(new LinearLayoutManager(mActivity, LinearLayoutManager.HORIZONTAL, false));
                                 }else if(actives.size()==2){
-                                    skillAdapter = new SkillAdapter(mActivity,R.layout.item_skill_lists, actives,"0", new SkillAdapter.OnClick() {
+                                    skill2Adapter = new Skill2Adapter(mActivity,R.layout.item_skill_lists, actives,"0", new Skill2Adapter.OnClick() {
                                         @Override
                                         public void shoppingCartOnClick(int position) {
                                             int activeId = actives.get(position).getActiveId();
@@ -452,14 +478,18 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener, 
                                             initDialog();
                                         }
                                     });
+                                    recyclerView.setVisibility(View.GONE);
+                                    recyclerViewTest.setVisibility(View.VISIBLE);
+                                    recyclerViewTest.setAdapter(skill2Adapter);
+                                    snapHelper.attachToRecyclerView(recyclerViewTest);
+                                    initRecycle();
 
                                 }else if(actives.size()==3){
                                     List<CouponModel.DataBean.ActivesBean> actives1 = couponModel.getData().getActives();
-                                    skillAdapter = new SkillAdapter(mActivity,R.layout.item_skill_list, actives1,"1", new SkillAdapter.OnClick() {
+                                    skill3Adapter = new Skill3Adapter(mActivity,R.layout.item_skill_list, actives1,"1", new Skill3Adapter.OnClick() {
                                         @Override
                                         public void shoppingCartOnClick(int position) {
                                             int activeId = actives1.get(position).getActiveId();
-
                                             addCar(activeId, "", 2, "1");
                                         }
 
@@ -473,10 +503,11 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener, 
                                             initDialog();
                                         }
                                     });
-
+                                    recyclerView.setVisibility(View.VISIBLE);
+                                    recyclerViewTest.setVisibility(View.GONE);
+                                    recyclerView.setAdapter(skill3Adapter);
+                                    recyclerView.setLayoutManager(new LinearLayoutManager(mActivity, LinearLayoutManager.HORIZONTAL, false));
                                 }
-
-                                recyclerView.setAdapter(skillAdapter);
 
                             }else if(type==11) {
                                 rb_1.setBackgroundResource(R.drawable.shape_white_home);
@@ -490,7 +521,7 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener, 
                                 rb_4.setTextColor(Color.parseColor("#FF680A"));
 
                                 if(actives.size()==1) {
-                                    commonAdapter = new CommonAdapter(mActivity, 11 + "", R.layout.item_common_lists, actives, "1", new CommonAdapter.OnClick() {
+                                    couponAdapter = new CouponAdapter(mActivity, 11 + "", R.layout.item_common_lists, actives, "1", new CouponAdapter.OnClick() {
                                         @Override
                                         public void shoppingCartOnClick(int position) {
                                             int activeId = actives.get(position).getActiveId();
@@ -507,11 +538,13 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener, 
                                             initDialog();
                                         }
                                     });
-
-
+                                    recyclerView.setVisibility(View.VISIBLE);
+                                    recyclerViewTest.setVisibility(View.GONE);
+                                    recyclerView.setAdapter(couponAdapter);
+                                    recyclerView.setLayoutManager(new LinearLayoutManager(mActivity, LinearLayoutManager.HORIZONTAL, false));
 
                                 }else if(actives.size()==2){
-                                    commonAdapter = new CommonAdapter(mActivity, 11 + "", R.layout.item_common_lists, actives, "0", new CommonAdapter.OnClick() {
+                                    coupon2Adapter = new Coupon2Adapter(mActivity, 11 + "", R.layout.item_common_lists, actives, "0", new Coupon2Adapter.OnClick() {
                                         @Override
                                         public void shoppingCartOnClick(int position) {
                                             int activeId = actives.get(position).getActiveId();
@@ -528,8 +561,13 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener, 
                                             initDialog();
                                         }
                                     });
+                                    recyclerView.setVisibility(View.GONE);
+                                    recyclerViewTest.setVisibility(View.VISIBLE);
+                                    recyclerViewTest.setAdapter(coupon2Adapter);
+                                    snapHelper.attachToRecyclerView(recyclerViewTest);
+                                    initRecycle();
                                 }else {
-                                    commonAdapter = new CommonAdapter(mActivity, 11 + "", R.layout.item_commons_list, actives, "1", new CommonAdapter.OnClick() {
+                                    coupon3Adapter = new Coupon3Adapter(mActivity, 11 + "", R.layout.item_commons_list, actives, "1", new Coupon3Adapter.OnClick() {
                                         @Override
                                         public void shoppingCartOnClick(int position) {
                                             int activeId = actives.get(position).getActiveId();
@@ -546,12 +584,12 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener, 
                                             initDialog();
                                         }
                                     });
+                                    recyclerView.setVisibility(View.VISIBLE);
+                                    recyclerViewTest.setVisibility(View.GONE);
+                                    recyclerView.setAdapter(coupon3Adapter);
+                                    recyclerView.setLayoutManager(new LinearLayoutManager(mActivity, LinearLayoutManager.HORIZONTAL, false));
                                 }
-
-                                PagerSnapHelper snapHelper = new PagerSnapHelper();
-                                snapHelper.attachToRecyclerView(recyclerView);
-                                recyclerView.setAdapter(commonAdapter);
-                                initRecycle();
+//
                             }else if(type==12) {
                                 rb_1.setBackgroundResource(R.drawable.shape_white_home);
                                 rb_2.setBackgroundResource(R.drawable.shape_white_home);
@@ -564,11 +602,10 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener, 
                                 rb_4.setTextColor(Color.parseColor("#ffffff"));
 
                                 if(actives.size()==1) {
-                                    commonssAdapter = new CommonssAdapter(mActivity, 12 + "", R.layout.item_full_list, actives, "1", new CommonssAdapter.OnClick() {
+                                    fullAdapter = new FullAdapter(mActivity, 12 + "", R.layout.item_full_list, actives, "1", new FullAdapter.OnClick() {
                                         @Override
                                         public void shoppingCartOnClick(int position) {
-//                                                Intent intent = new Intent(mActivity,CommonGoodsDetailActivity.class);
-//                                                startActivity(intent);
+
                                         }
 
                                         @Override
@@ -581,12 +618,14 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener, 
                                             initDialog();
                                         }
                                     });
+                                    recyclerView.setVisibility(View.VISIBLE);
+                                    recyclerViewTest.setVisibility(View.GONE);
+                                    recyclerView.setAdapter(fullAdapter);
+                                    recyclerView.setLayoutManager(new LinearLayoutManager(mActivity, LinearLayoutManager.HORIZONTAL, false));
                                 }else if(actives.size()==2) {
-                                    commonssAdapter = new CommonssAdapter(mActivity, 12 + "", R.layout.item_full_list, actives, "1", new CommonssAdapter.OnClick() {
+                                    full2Adapter = new Full2Adapter(mActivity, 12 + "", R.layout.item_full_list, actives, "0", new Full2Adapter.OnClick() {
                                         @Override
                                         public void shoppingCartOnClick(int position) {
-//                                                Intent intent = new Intent(mActivity,CommonGoodsDetailActivity.class);
-//                                                startActivity(intent);
                                         }
 
                                         @Override
@@ -599,12 +638,16 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener, 
                                             initDialog();
                                         }
                                     });
+                                    recyclerView.setVisibility(View.GONE);
+                                    recyclerViewTest.setVisibility(View.VISIBLE);
+                                    recyclerViewTest.setAdapter(full2Adapter);
+                                    snapHelper.attachToRecyclerView(recyclerViewTest);
+                                    initRecycle();
+
                                 }else if(actives.size()==3) {
-                                    commonssAdapter = new CommonssAdapter(mActivity, 12 + "", R.layout.item_full_list, actives, "1", new CommonssAdapter.OnClick() {
+                                    full3Adapter = new Full3Adapter(mActivity, 12 + "", R.layout.item_full_list, actives, "1", new Full3Adapter.OnClick() {
                                         @Override
                                         public void shoppingCartOnClick(int position) {
-//                                                Intent intent = new Intent(mActivity,CommonGoodsDetailActivity.class);
-//                                                startActivity(intent);
                                         }
 
                                         @Override
@@ -617,8 +660,12 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener, 
                                             initDialog();
                                         }
                                     });
+                                    recyclerView.setVisibility(View.VISIBLE);
+                                    recyclerViewTest.setVisibility(View.GONE);
+                                    recyclerView.setAdapter(full3Adapter);
+                                    recyclerView.setLayoutManager(new LinearLayoutManager(mActivity, LinearLayoutManager.HORIZONTAL, false));
                                 }
-                                recyclerView.setAdapter(commonssAdapter);
+
                             }else {
                                 rb_1.setBackgroundResource(R.drawable.shape_white_home);
                                 rb_2.setBackgroundResource(R.drawable.shape_white_home);
@@ -648,8 +695,12 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener, 
                                             initDialog();
                                         }
                                     });
+                                    recyclerView.setVisibility(View.VISIBLE);
+                                    recyclerViewTest.setVisibility(View.GONE);
+                                    recyclerView.setAdapter(teamAdapter);
+                                    recyclerView.setLayoutManager(new LinearLayoutManager(mActivity, LinearLayoutManager.HORIZONTAL, false));
                                 }else if(actives.size()==2) {
-                                    teamAdapter = new TeamAdapter(mActivity, 3 + "", R.layout.item_skill_lists, actives, "1", new TeamAdapter.OnClick() {
+                                    team3Adapter = new Team3Adapter(mActivity, 3 + "", R.layout.item_skill_lists, actives, "1", new Team3Adapter.OnClick() {
                                         @Override
                                         public void shoppingCartOnClick(int position) {
                                             int activeId = actives.get(position).getActiveId();
@@ -666,8 +717,17 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener, 
                                             initDialog();
                                         }
                                     });
+
+                                    recyclerViewTest.setAdapter(team3Adapter);
+                                    recyclerView.setVisibility(View.GONE);
+                                    recyclerViewTest.setVisibility(View.VISIBLE);
+                                    team3Adapter.notifyDataSetChanged();
+                                    PagerSnapHelper snapHelper = new PagerSnapHelper();
+                                    snapHelper.attachToRecyclerView(recyclerViewTest);
+                                    initRecycle();
+
                                 }else if(actives.size()==3) {
-                                    teamAdapter = new TeamAdapter(mActivity, 3 + "", R.layout.item_skill_lists, actives, "1", new TeamAdapter.OnClick() {
+                                    team4Adapter = new Team4Adapter(mActivity, 3 + "", R.layout.item_skill_lists, actives, "1", new Team4Adapter.OnClick() {
                                         @Override
                                         public void shoppingCartOnClick(int position) {
                                             int activeId = actives.get(position).getActiveId();
@@ -684,9 +744,11 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener, 
                                             initDialog();
                                         }
                                     });
+                                    recyclerView.setVisibility(View.VISIBLE);
+                                    recyclerViewTest.setVisibility(View.GONE);
+                                    recyclerView.setAdapter(team4Adapter);
+                                    recyclerView.setLayoutManager(new LinearLayoutManager(mActivity, LinearLayoutManager.HORIZONTAL, false));
                                 }
-
-                                recyclerView.setAdapter(teamAdapter);
                             }
                         }
                     }

@@ -77,6 +77,10 @@ public class MustDialog extends Dialog implements View.OnClickListener {
     TextView tv_free_desc;
     @BindView(R.id.tv_price_total)
     TextView tv_price_total;
+    @BindView(R.id.iv_pic)
+    ImageView iv_pic;
+    @BindView(R.id.iv_operate)
+    ImageView iv_operate;
     MustModel.DataBean listBean;
     int pos = 0;
     private NewSpecAdapter searchSpecAdapter;
@@ -177,7 +181,8 @@ public class MustDialog extends Dialog implements View.OnClickListener {
                                 tv_desc.setText(data.getSpecialOffer());
                                 tv_stock.setText(data.getInventory());
                                 Glide.with(context).load(data.getDefaultPic()).into(iv_head);
-
+                                Glide.with(context).load(exchangeProductModel.getData().getSendTimeTpl()).into(iv_pic);
+                                Glide.with(context).load(exchangeProductModel.getData().getSelfProd()).into(iv_operate);
                                 mustItemAdapter = new MustItemAdapter(1,prodSpecs.get(pos).getProductId(),R.layout.item_choose_content, prodPrices);
                                 recyclerView.setLayoutManager(new LinearLayoutManager(context));
                                 recyclerView.setAdapter(mustItemAdapter);

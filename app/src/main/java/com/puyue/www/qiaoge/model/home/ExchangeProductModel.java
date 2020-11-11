@@ -94,7 +94,24 @@ public class ExchangeProductModel {
         private List<ProdSpecsBean> prodSpecs;
         private String inventory;
         private List<ProdPricesBean> prodPrices;
+        String sendTimeTpl;
+        String selfProd;
 
+        public String getSendTimeTpl() {
+            return sendTimeTpl;
+        }
+
+        public void setSendTimeTpl(String sendTimeTpl) {
+            this.sendTimeTpl = sendTimeTpl;
+        }
+
+        public String getSelfProd() {
+            return selfProd;
+        }
+
+        public void setSelfProd(String selfProd) {
+            this.selfProd = selfProd;
+        }
         @Override
         public String toString() {
             return "DataBean{" +

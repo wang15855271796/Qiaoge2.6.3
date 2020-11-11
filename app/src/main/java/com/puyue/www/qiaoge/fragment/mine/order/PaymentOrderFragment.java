@@ -32,9 +32,9 @@ import com.puyue.www.qiaoge.fragment.mine.coupons.PaymentFragments;
 import com.puyue.www.qiaoge.helper.AppHelper;
 import com.puyue.www.qiaoge.helper.StringHelper;
 import com.puyue.www.qiaoge.helper.UserInfoHelper;
+import com.puyue.www.qiaoge.model.OrdersModel;
 import com.puyue.www.qiaoge.model.cart.CancelOrderModel;
 import com.puyue.www.qiaoge.model.cart.GetOrderDetailModel;
-import com.puyue.www.qiaoge.model.mine.order.MyOrdersModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -60,17 +60,17 @@ public class PaymentOrderFragment extends BaseFragment {
     private String mType;
     private ImageView mIvNoData;
     private int pageNum = 1;
-    private MyOrdersModel mModelMyOrders;
+    private OrdersModel mModelMyOrders;
 
     private NewOrderDetailAdapter adapter;
     private GetOrderDetailModel.DataBean getOrderDetailModel;
-    private List<MyOrdersModel.DataBean.ListBean> mListResult = new ArrayList<>();
+    private List<OrdersModel.DataBean.ListBean> mListResult = new ArrayList<>();
     private String returnProductMainId = "";
     private String orderId;
     private String orderState = "";
     private int orderStatusRequest;
 
-    private List<GetOrderDetailModel.DataBean.ProductVOListBean> list = new ArrayList<>();
+//    private List<GetOrderDetailModel.DataBean.ProductVOListBean> list = new ArrayList<>();
 
 
     private int orderDeliveryType;
@@ -95,6 +95,7 @@ public class PaymentOrderFragment extends BaseFragment {
     @Override
     public void setViewData() {
         mListResult.clear();
+//        requestOrdersList(1);
         if (UserInfoHelper.getDeliverType(mActivity) != null && StringHelper.notEmptyAndNull(UserInfoHelper.getDeliverType(mActivity))) {
             orderDeliveryType = Integer.parseInt(UserInfoHelper.getDeliverType(mActivity));
         }
@@ -114,7 +115,7 @@ public class PaymentOrderFragment extends BaseFragment {
             mAdapterMyOrders = new MyOrdersItemAdapter(R.layout.item_my_order, mListResult, 1,orderDeliveryType, new MyOrdersItemAdapter.OnClick() {
 
                 @Override
-                public void evaluateNowOnclick(int position) {
+                public void evaluateNowOnclick(int position,String orderId) {
 
                 }
 
@@ -224,7 +225,7 @@ public class PaymentOrderFragment extends BaseFragment {
             mAdapterMyOrders = new MyOrdersItemAdapter(R.layout.item_my_order_self, mListResult, 1,orderDeliveryType, new MyOrdersItemAdapter.OnClick() {
 
                 @Override
-                public void evaluateNowOnclick(int position) {
+                public void evaluateNowOnclick(int position,String orderId) {
 
                 }
 
@@ -463,7 +464,7 @@ public class PaymentOrderFragment extends BaseFragment {
         MyOrderListAPI.requestOrderList(getContext(), orderStatus, pageNum, 10, orderDeliveryType)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<MyOrdersModel>() {
+                .subscribe(new Subscriber<OrdersModel>() {
                     @Override
                     public void onCompleted() {
 
@@ -475,7 +476,7 @@ public class PaymentOrderFragment extends BaseFragment {
                     }
 
                     @Override
-                    public void onNext(MyOrdersModel myOrdersModel) {
+                    public void onNext(OrdersModel myOrdersModel) {
                         mPtr.refreshComplete();
                         logoutAndToHome(getContext(), myOrdersModel.code);
                         mModelMyOrders = myOrdersModel;
@@ -587,9 +588,6 @@ public class PaymentOrderFragment extends BaseFragment {
     public void onResume() {
         super.onResume();
         if (getUserVisibleHint()) {
-
-            mPtr.autoRefresh();
-            pageNum = 1;
             requestOrdersList(1);
         }
 

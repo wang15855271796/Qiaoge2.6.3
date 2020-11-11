@@ -66,7 +66,6 @@ public class ShopListActivity extends BaseSwipeActivity {
             @Override
             public void onClick(View v) {
                 ToastUtil.showSuccessMsg(mContext,"请选择具体店铺类型");
-//                finish();
             }
         });
         iv_back.setOnClickListener(new View.OnClickListener() {
@@ -144,7 +143,7 @@ public class ShopListActivity extends BaseSwipeActivity {
             });
 
             cascadingMenuFragment = null;
-            EventBus.getDefault().post(new ShopEvent(area.getName()));
+            EventBus.getDefault().post(new ShopEvent(area.getName(),area.getId()));
         }
 
         @Override
@@ -162,7 +161,7 @@ public class ShopListActivity extends BaseSwipeActivity {
             });
 
             cascadingMenuFragment = null;
-            EventBus.getDefault().post(new ShopEvent(area.getName()));
+            EventBus.getDefault().post(new ShopEvent(area.getName(),area.getId()));
         }
 
         @Override
@@ -181,7 +180,7 @@ public class ShopListActivity extends BaseSwipeActivity {
             });
 
             cascadingMenuFragment = null;
-            EventBus.getDefault().post(new ShopEvent(area.getName()));
+            EventBus.getDefault().post(new ShopEvent(area.getName(),area.getId()));
         }
 
         @Override

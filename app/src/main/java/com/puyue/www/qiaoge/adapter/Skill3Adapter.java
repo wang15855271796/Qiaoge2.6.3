@@ -126,7 +126,7 @@ public class Skill3Adapter extends RecyclerView.Adapter<Skill3Adapter.BaseViewHo
                     if(onClick!=null) {
                         if(StringHelper.notEmptyAndNull(UserInfoHelper.getUserId(mContext))) {
                             if(SharedPreferencesUtil.getString(mContext,"priceType").equals("1")) {
-                                onClick.shoppingCartOnClick(pos);
+                                onClick.shoppingCartOnClick(position);
                             }else {
                                 onClick.tipClick();
                             }

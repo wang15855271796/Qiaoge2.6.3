@@ -39,7 +39,8 @@ public class HotAdapter extends BaseQuickAdapter<ProductNormalModel.DataBean.Lis
     String enjoyProduct;
     private TextView tv_desc;
     TextView tv_price;
-
+    ImageView iv_operate;
+    ImageView iv_next;
     public HotAdapter(String enjoyProduct,String flag, int layoutResId, @Nullable List<ProductNormalModel.DataBean.ListBean> activeList, Onclick onclick) {
         super(layoutResId, activeList);
         this.activesBean = activeList;
@@ -50,6 +51,9 @@ public class HotAdapter extends BaseQuickAdapter<ProductNormalModel.DataBean.Lis
 
     @Override
     protected void convert(BaseViewHolder helper, ProductNormalModel.DataBean.ListBean item) {
+
+        iv_next = helper.getView(R.id.iv_next);
+        iv_operate = helper.getView(R.id.iv_operate);
         tv_desc = helper.getView(R.id.tv_desc);
         tv_price = helper.getView(R.id.tv_price);
         iv_pic = helper.getView(R.id.iv_pic);
@@ -57,6 +61,8 @@ public class HotAdapter extends BaseQuickAdapter<ProductNormalModel.DataBean.Lis
         iv_add = helper.getView(R.id.iv_add);
         rl_group = helper.getView(R.id.rl_group);
         tv_sale = helper.getView(R.id.tv_sale);
+        Glide.with(mContext).load(item.getSelfProd()).into(iv_operate);
+        Glide.with(mContext).load(item.getSendTimeTpl()).into(iv_next);
         Glide.with(mContext).load(item.getDefaultPic()).into(iv_pic);
         helper.setText(R.id.tv_name,item.getProductName());
         if(flag.equals("hot")&&!item.getSalesVolume().equals("")) {

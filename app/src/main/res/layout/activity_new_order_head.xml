@@ -239,7 +239,6 @@
                 android:id="@+id/twoButtonLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/size_25dp"
                 android:gravity="center"
                 android:orientation="horizontal"
                 android:visibility="gone">

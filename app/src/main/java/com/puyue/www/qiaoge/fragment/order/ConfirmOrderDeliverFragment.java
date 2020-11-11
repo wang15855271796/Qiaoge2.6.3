@@ -24,6 +24,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.lljjcoder.style.citylist.Toast.ToastUtils;
 import com.puyue.www.qiaoge.NewWebViewActivity;
 import com.puyue.www.qiaoge.R;
@@ -34,6 +35,7 @@ import com.puyue.www.qiaoge.activity.mine.account.AddressListsActivity;
 import com.puyue.www.qiaoge.activity.mine.coupons.ChooseCouponsActivity;
 import com.puyue.www.qiaoge.activity.mine.order.MyConfireOrdersActivity;
 import com.puyue.www.qiaoge.adapter.PayListAdapter;
+import com.puyue.www.qiaoge.adapter.UnOperateAdapter;
 import com.puyue.www.qiaoge.adapter.mine.ChooseCouponsAdapter;
 import com.puyue.www.qiaoge.adapter.mine.ConfirmOrderNewAdapter;
 import com.puyue.www.qiaoge.api.cart.CartBalanceAPI;
@@ -90,6 +92,7 @@ import rx.schedulers.Schedulers;
 public class ConfirmOrderDeliverFragment extends BaseFragment {
     private Toolbar toolbar;
     private RecyclerView recyclerView;
+    private RecyclerView recyclerView1;
     private LinearLayout linearLayoutAddressHead;
     private TextView userName;
     private TextView userPhone;
@@ -113,9 +116,14 @@ public class ConfirmOrderDeliverFragment extends BaseFragment {
     private LinearLayout linearLayoutCoupons;// 优惠券xml
     private String orderId;
     TextView tv_beizhu;
+    //自营
     private ConfirmOrderNewAdapter adapter;
-    private List<CartBalanceModel.DataBean.ProductVOListBean>
-            list = new ArrayList<>();
+    //非自营
+    private UnOperateAdapter unOperateAdapter;
+    //自营
+    private List<CartBalanceModel.DataBean.ProductVOListBean> list = new ArrayList<>();
+    //非自营
+    private List<CartBalanceModel.DataBean.ProductVOListBean> listUnOperate = new ArrayList<>();
     // 获取想去的参数 和获取订单的参数
     private String normalProductBalanceVOStr;
     private String activityBalanceVOStr;
@@ -179,6 +187,12 @@ public class ConfirmOrderDeliverFragment extends BaseFragment {
     AlwaysMarqueeTextViewHelper sc;
     StatModel statModel;
     TextView tv_full_price;
+    LinearLayout ll_operate;
+    LinearLayout ll_unOperate;
+    TextView tv_unOperate;
+    TextView tv_operate;
+    ImageView iv_operate_pic;
+    ImageView iv_pic;
     @Override
     public int setLayoutId() {
         return R.layout.fragment_confirm_deliver_order;
@@ -191,11 +205,18 @@ public class ConfirmOrderDeliverFragment extends BaseFragment {
     @Override
     public void findViewById(View view) {
         //  toolbar = (Toolbar) view.findViewById(R.id.toolbar);
+        iv_operate_pic = (ImageView) view.findViewById(R.id.iv_operate_pic);
+        iv_pic = (ImageView) view.findViewById(R.id.iv_pic);
+        ll_operate = (LinearLayout) view.findViewById(R.id.ll_operate);
+        ll_unOperate = (LinearLayout) view.findViewById(R.id.ll_unOperate);
+        tv_operate = (TextView) view.findViewById(R.id.tv_operate);
+        tv_unOperate = (TextView) view.findViewById(R.id.tv_unOperate);
         tv_full_price = (TextView) view.findViewById(R.id.tv_full_price);
         ll_beizhu = (RelativeLayout) view.findViewById(R.id.ll_beizhu);
         ll_info = (LinearLayout) view.findViewById(R.id.ll_info);
         lav_activity_loading = (AVLoadingIndicatorView) view.findViewById(R.id.lav_activity_loading);
         recyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
+        recyclerView1 = (RecyclerView) view.findViewById(R.id.recyclerView1);
         userName = (TextView) view.findViewById(R.id.userName);
         userPhone = (TextView) view.findViewById(R.id.userPhone);
         address = (TextView) view.findViewById(R.id.address);
@@ -243,7 +264,6 @@ public class ConfirmOrderDeliverFragment extends BaseFragment {
 
     @Override
     public void setViewData() {
-
         EventBus.getDefault().register(this);
         final Calendar mCalendar = Calendar.getInstance();
         long time = System.currentTimeMillis();
@@ -255,6 +275,7 @@ public class ConfirmOrderDeliverFragment extends BaseFragment {
         equipmentBalanceVOStr = mActivity.getIntent().getStringExtra("equipmentBalanceVOStr");
         cartListStr = mActivity.getIntent().getStringExtra("cartListStr");
         adapter = new ConfirmOrderNewAdapter(R.layout.item_confirm_order_new, list);
+        unOperateAdapter = new UnOperateAdapter(R.layout.item_confirm_order_new, listUnOperate);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(mActivity, LinearLayoutManager.VERTICAL, false) {
             @Override
             public boolean canScrollVertically() {
@@ -264,6 +285,9 @@ public class ConfirmOrderDeliverFragment extends BaseFragment {
 
         recyclerView.setLayoutManager(linearLayoutManager);
         recyclerView.setAdapter(adapter);
+        //非自营
+        recyclerView1.setLayoutManager(new LinearLayoutManager(mActivity));
+        recyclerView1.setAdapter(unOperateAdapter);
         requestCartBalance(NewgiftDetailNo, 0);//NewgiftDetailNo
     }
 
@@ -326,7 +350,6 @@ public class ConfirmOrderDeliverFragment extends BaseFragment {
                                     public void onNext(GetDeliverTimeModel getDeliverTimeModel) {
 
                                         if (getDeliverTimeModel.success) {
-
                                             if (getDeliverTimeModel.data != null) {
                                                 mlist.clear();
                                                 try {
@@ -334,12 +357,10 @@ public class ConfirmOrderDeliverFragment extends BaseFragment {
                                                     for (int i = 0; i < jsonArray.length(); i++) {
                                                         JSONObject jsonObject = jsonArray.getJSONObject(i);
                                                         mlist.add(jsonObject.getString("name") + " " + jsonObject.getString("start") + "-" + jsonObject.getString("end"));
-
                                                     }
-
-
                                                     popView = View.inflate( getActivity(), R.layout.cztest_popwin, null);
                                                     popWin = new PopupWindow(popView, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT, true); //实例化PopupWindow
+
                                                     //设置背景灰掉
                                                     backgroundAlpha(0.4f);
                                                     // 设置PopupWindow的弹出和消失效果
@@ -383,6 +404,8 @@ public class ConfirmOrderDeliverFragment extends BaseFragment {
                                             } else {
                                                 requestOrderNum();
                                             }
+                                            buttonPay.setEnabled(true);
+                                            lav_activity_loading.hide();
                                         } else {
                                             AppHelper.showMsg(mActivity, getDeliverTimeModel.message);
                                             lav_activity_loading.hide();
@@ -478,17 +501,38 @@ public class ConfirmOrderDeliverFragment extends BaseFragment {
                             if (cartBalanceModel != null) {
                                 setText(cartBalanceModel);
                                 if (requestCount == 0) {
-//                                    userChooseDeduct();
                                     requestCount++;
                                 }
 
+                                list.clear();
+                                listUnOperate.clear();
                                 if (cartBalanceModel.getData().getProductVOList().size() > 0) {
-                                    list.clear();
-                                    list.addAll(cartBalanceModel.getData().getProductVOList());
+                                    for (int i = 0; i < cartBalanceModel.getData().getProductVOList().size(); i++) {
+                                        if(cartBalanceModel.getData().getProductVOList().get(i).getSelfOrNot()==0) {
+                                            list.add(cartBalanceModel.getData().getProductVOList().get(i));
+                                            tv_operate.setText(cartBalanceModel.getData().getSelfSendTimeStr());
+                                        }else {
+                                            listUnOperate.add(cartBalanceModel.getData().getProductVOList().get(i));
+                                            tv_unOperate.setText(cartBalanceModel.getData().getUnSelfSendTimeStr());
+
+                                        }
+                                    }
+                                }
+
+                                if(list.size() > 0) {
+                                    ll_operate.setVisibility(View.VISIBLE);
+                                }else {
+                                    ll_operate.setVisibility(View.GONE);
+                                }
+
+                                if(listUnOperate.size() > 0) {
+                                    ll_unOperate.setVisibility(View.VISIBLE);
+                                }else {
+                                    ll_unOperate.setVisibility(View.GONE);
                                 }
                             }
                             adapter.notifyDataSetChanged();
-
+                            unOperateAdapter.notifyDataSetChanged();
                         } else {
                             AppHelper.showMsg(mActivity, cartBalanceModel.message);
                         }
@@ -527,6 +571,13 @@ public class ConfirmOrderDeliverFragment extends BaseFragment {
         commodityAmount.setText("¥" + info.getProdAmount() + "");
 
         distributionFee.setText("满" + info.getSendAmount() + "元免配送费");
+        for (int i = 0; i < info.getProductVOList().size(); i++) {
+            if(info.getProductVOList().get(i).getSelfOrNot()==0) {
+                Glide.with(mActivity).load(info.getProductVOList().get(i).getSendTimeTpl()).into(iv_operate_pic);
+            }else {
+                Glide.with(mActivity).load(info.getProductVOList().get(i).getSendTimeTpl()).into(iv_pic);
+            }
+        }
 
         if (info.getAddressVO().getContactPhone() != null && info.getAddressVO().getUserName() != null &&
                 info.getAddressVO().getProvinceName() != null && info.getAddressVO().getCityName() != null &&
@@ -573,7 +624,7 @@ public class ConfirmOrderDeliverFragment extends BaseFragment {
             textCoupons.setTextColor(Color.parseColor("#F25E0E"));
             linearLayoutCoupons.setEnabled(true);
         }else {
-            textCoupons.setText("暂无优惠券使用");
+            textCoupons.setText("暂无优惠券可使用");
             textCoupons.setTextColor(Color.parseColor("#999999"));
             linearLayoutCoupons.setEnabled(false);
 

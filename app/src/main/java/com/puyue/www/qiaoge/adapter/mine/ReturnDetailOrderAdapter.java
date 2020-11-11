@@ -53,6 +53,7 @@ public class ReturnDetailOrderAdapter extends BaseQuickAdapter<NewReturnOrderMod
     ReturnGivenAdapter returnGivenAdapter;
     ReturnFullAdapter returnFullAdapter;
     LinearLayout ll;
+    TextView tv_return_amount;
     public ReturnDetailOrderAdapter(int layoutResId, @Nullable List<NewReturnOrderModel.DataBean.ProductsBean> data, int returnState, String orderId) {
         super(layoutResId, data);
         this.returnState = returnState;
@@ -64,6 +65,7 @@ public class ReturnDetailOrderAdapter extends BaseQuickAdapter<NewReturnOrderMod
     protected void convert(BaseViewHolder helper, NewReturnOrderModel.DataBean.ProductsBean item) {
         ll = helper.getView(R.id.ll);
         ll.setVisibility(View.GONE);
+        tv_return_amount = helper.getView(R.id.tv_return_amount);
         tv_return_num = helper.getView(R.id.tv_return_num);
         tv_title = helper.getView(R.id.tv_title);
         iv_food = helper.getView(R.id.iv_food);
@@ -75,7 +77,7 @@ public class ReturnDetailOrderAdapter extends BaseQuickAdapter<NewReturnOrderMod
         tv_return_num.setText("退货数量:" + item.getReturnNum());
         tv_title.setText(item.getProductName());
         Glide.with(mContext).load(item.getDefaultPic()).into(iv_food);
-
+        tv_return_amount.setText("￥"+item.getReturnTotalAmount());
         data1 = new ArrayList<>();
         data2 = new ArrayList<>();
 

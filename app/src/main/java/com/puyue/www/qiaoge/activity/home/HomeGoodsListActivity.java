@@ -3,6 +3,7 @@ package com.puyue.www.qiaoge.activity.home;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -43,6 +44,7 @@ import com.puyue.www.qiaoge.model.home.GetCustomerPhoneModel;
 import com.puyue.www.qiaoge.model.home.SeckillListModel;
 import com.puyue.www.qiaoge.model.home.SpikeNewQueryModel;
 import com.puyue.www.qiaoge.utils.SharedPreferencesUtil;
+import com.weavey.loading.lib.LoadingLayout;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -51,6 +53,7 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.BindView;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
@@ -84,13 +87,11 @@ public class HomeGoodsListActivity extends BaseSwipeActivity {
     private RelativeLayout rl_good_cart;
     private SpikeNewQueryModel spikeNewQueryModels;
     private SeckillListModel seckillListModel1;
-
     @Override
     public boolean handleExtra(Bundle savedInstanceState) {
         if (getIntent() != null && getIntent().getExtras() != null) {
             Bundle bundle = getIntent().getExtras();
             pageType = bundle.getString(AppConstant.PAGETYPE, null);
-            Log.i("aaaa", "handleExtra: " + pageType);
         }
         return false;
     }
@@ -131,6 +132,7 @@ public class HomeGoodsListActivity extends BaseSwipeActivity {
 
     @Override
     public void setViewData() {
+
         getCustomerPhone();
         getCartNum();
         judgePageType();//进行差异性的设置。

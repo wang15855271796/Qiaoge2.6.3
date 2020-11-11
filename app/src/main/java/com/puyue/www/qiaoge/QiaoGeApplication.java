@@ -16,6 +16,7 @@ import com.tencent.mm.opensdk.openapi.IWXAPI;
 import com.tencent.mm.opensdk.openapi.WXAPIFactory;
 import com.umeng.commonsdk.UMConfigure;
 import com.umeng.socialize.PlatformConfig;
+import com.weavey.loading.lib.LoadingLayout;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -68,6 +69,19 @@ public class QiaoGeApplication extends MultiDexApplication {
                 , "umeng", UMConfigure.DEVICE_TYPE_PHONE, "");//58edcfeb310c93091c000be2 5965ee00734be40b580001a0
 
         disableAPIDialog();
+
+        LoadingLayout.getConfig()
+                .setErrorText("出错啦~请稍后重试！")
+                .setNoNetworkText("无网络连接，请检查您的网络···")
+                .setLoadingPageLayout(R.layout.test)
+                .setEmptyImage(R.mipmap.ic_no_datas)
+                .setAllTipTextColor(R.color.gray)
+                .setAllTipTextSize(14)
+                .setReloadButtonText("点我重试哦")
+                .setReloadButtonTextSize(14)
+                .setReloadButtonTextColor(R.color.gray)
+                .setReloadButtonWidthAndHeight(150,40);
+
     }
 
 

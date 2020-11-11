@@ -1,32 +1,21 @@
 package com.puyue.www.qiaoge.activity.mine.coupons;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 
 
 import com.puyue.www.qiaoge.R;
 import com.puyue.www.qiaoge.adapter.mine.ChooseCouponsAdapter;
-import com.puyue.www.qiaoge.api.cart.CartBalanceAPI;
-import com.puyue.www.qiaoge.api.home.GetCommentListByPageAPI;
 import com.puyue.www.qiaoge.api.mine.coupon.userChooseDeductAPI;
 import com.puyue.www.qiaoge.base.BaseSwipeActivity;
 import com.puyue.www.qiaoge.event.ChooseCoupon1Event;
 import com.puyue.www.qiaoge.event.ChooseCouponEvent;
-import com.puyue.www.qiaoge.event.ChooseCouponsEvent;
-import com.puyue.www.qiaoge.helper.ActivityResultHelper;
 import com.puyue.www.qiaoge.helper.AppHelper;
 import com.puyue.www.qiaoge.listener.NoDoubleClickListener;
-import com.puyue.www.qiaoge.model.StatModel;
-import com.puyue.www.qiaoge.model.cart.CartBalanceModel;
-import com.puyue.www.qiaoge.model.home.GetCommentListByPageModel;
 import com.puyue.www.qiaoge.model.mine.coupons.UserChooseDeductModel;
 
 import org.greenrobot.eventbus.EventBus;
@@ -34,7 +23,6 @@ import org.greenrobot.eventbus.EventBus;
 import java.util.ArrayList;
 import java.util.List;
 
-import in.srain.cube.views.ptr.PtrClassicFrameLayout;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
@@ -147,7 +135,7 @@ public class ChooseCouponsActivity extends BaseSwipeActivity {
 
     UserChooseDeductModel models;
     private void userChooseDeduct() {
-        userChooseDeductAPI.requestData(mContext, activityBalanceVOStr, normalProductBalanceVOStr)
+        userChooseDeductAPI.requestData(mContext, "0",activityBalanceVOStr, normalProductBalanceVOStr)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<UserChooseDeductModel>() {

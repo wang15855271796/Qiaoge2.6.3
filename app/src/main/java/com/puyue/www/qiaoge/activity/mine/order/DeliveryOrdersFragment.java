@@ -22,6 +22,7 @@ import com.puyue.www.qiaoge.base.BaseModel;
 import com.puyue.www.qiaoge.helper.AppHelper;
 import com.puyue.www.qiaoge.helper.StringHelper;
 import com.puyue.www.qiaoge.helper.UserInfoHelper;
+import com.puyue.www.qiaoge.model.OrdersModel;
 import com.puyue.www.qiaoge.model.mine.order.CopyToCartModel;
 import com.puyue.www.qiaoge.model.mine.order.MyOrdersModel;
 
@@ -49,8 +50,8 @@ public class DeliveryOrdersFragment extends BaseFragment {
     private String mType;
     private ImageView mIvNoData;
     private int pageNum = 1;
-    private MyOrdersModel mModelMyOrders;
-    private List<MyOrdersModel.DataBean.ListBean> mListResult = new ArrayList<>();
+//    private OrdersModel mModelMyOrders;
+    private List<OrdersModel.DataBean.ListBean> mListResult = new ArrayList<>();
     private CopyToCartModel mModelCopyToCart;
     private int orderDeliveryType;
     String subId;
@@ -112,14 +113,14 @@ public class DeliveryOrdersFragment extends BaseFragment {
             mAdapterMyOrders = new MyOrdersItemAdapter(R.layout.item_my_order, mListResult, 2,orderDeliveryType, new MyOrdersItemAdapter.OnClick() {
 
                 @Override
-                public void evaluateNowOnclick(int position) { // 立即评价
+                public void evaluateNowOnclick(int position,String orderId) { // 立即评价
 
 
                 }
 
                 @Override
                 public void againBayOnclick(int position) { // 再次购买
-                    MyOrdersModel.DataBean.ListBean listBean=mListResult.get(position);
+                    OrdersModel.DataBean.ListBean listBean=mListResult.get(position);
                     requestCopyToCart(listBean.orderId);
                 }
 
@@ -159,14 +160,14 @@ public class DeliveryOrdersFragment extends BaseFragment {
             mAdapterMyOrders = new MyOrdersItemAdapter(R.layout.item_my_order_self, mListResult, 2,orderDeliveryType, new MyOrdersItemAdapter.OnClick() {
 
                 @Override
-                public void evaluateNowOnclick(int position) { // 立即评价
+                public void evaluateNowOnclick(int position,String orderId) { // 立即评价
 
 
                 }
 
                 @Override
                 public void againBayOnclick(int position) { // 再次购买
-                    MyOrdersModel.DataBean.ListBean listBean=mListResult.get(position);
+                    OrdersModel.DataBean.ListBean listBean=mListResult.get(position);
                     requestCopyToCart(listBean.orderId);
                 }
 
@@ -313,7 +314,7 @@ public class DeliveryOrdersFragment extends BaseFragment {
         MyOrderListAPI.getList(getContext(), orderStatus, pageNum, 20,orderDeliveryType,subId)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<MyOrdersModel>() {
+                .subscribe(new Subscriber<OrdersModel>() {
                     @Override
                     public void onCompleted() {
                         mPtr.refreshComplete();
@@ -325,18 +326,18 @@ public class DeliveryOrdersFragment extends BaseFragment {
                     }
 
                     @Override
-                    public void onNext(MyOrdersModel myOrdersModel) {
+                    public void onNext(OrdersModel myOrdersModel) {
 
                         mPtr.refreshComplete();
                         logoutAndToHome(getContext(), myOrdersModel.code);
-                        mModelMyOrders = myOrdersModel;
-                        if (mModelMyOrders.success) {
-
-
-                            updateOrderList();
-                        } else {
-                            AppHelper.showMsg(getActivity(), mModelMyOrders.message);
-                        }
+//                        mModelMyOrders = myOrdersModel;
+//                        if (mModelMyOrders.success) {
+//
+//
+//                            updateOrderList();
+//                        } else {
+//                            AppHelper.showMsg(getActivity(), mModelMyOrders.message);
+//                        }
                     }
                 });
     }
@@ -370,31 +371,31 @@ public class DeliveryOrdersFragment extends BaseFragment {
                 });
     }
 
-    private void updateOrderList() {
-        if (pageNum == 1) {
-            if (mModelMyOrders.data != null && mModelMyOrders.data.list.size() > 0) {
-                mIvNoData.setVisibility(View.GONE);
-                mRv.setVisibility(View.VISIBLE);
-                mListResult.clear();
-                mListResult.addAll(mModelMyOrders.data.list);
-                mAdapterMyOrders.notifyDataSetChanged();
-            } else {
-                mIvNoData.setVisibility(View.VISIBLE);
-                mRv.setVisibility(View.GONE);
-            }
-        } else {
-            //加载更多数据
-            mListResult.addAll(mModelMyOrders.data.list);
-            mAdapterMyOrders.notifyDataSetChanged();
-        }
-        if (mModelMyOrders.data.hasNextPage) {
-            //有下一页数据
-            mAdapterMyOrders.loadMoreComplete();
-        } else {
-            //没有下一页数据了
-            mAdapterMyOrders.loadMoreEnd();
-        }
-    }
+//    private void updateOrderList() {
+//        if (pageNum == 1) {
+//            if (mModelMyOrders.data != null && mModelMyOrders.data.list.size() > 0) {
+//                mIvNoData.setVisibility(View.GONE);
+//                mRv.setVisibility(View.VISIBLE);
+//                mListResult.clear();
+//                mListResult.addAll(mModelMyOrders.data.list);
+//                mAdapterMyOrders.notifyDataSetChanged();
+//            } else {
+//                mIvNoData.setVisibility(View.VISIBLE);
+//                mRv.setVisibility(View.GONE);
+//            }
+//        } else {
+//            //加载更多数据
+//            mListResult.addAll(mModelMyOrders.data.list);
+//            mAdapterMyOrders.notifyDataSetChanged();
+//        }
+//        if (mModelMyOrders.data.hasNextPage) {
+//            //有下一页数据
+//            mAdapterMyOrders.loadMoreComplete();
+//        } else {
+//            //没有下一页数据了
+//            mAdapterMyOrders.loadMoreEnd();
+//        }
+//    }
 
     @Override
     public void setClickEvent() {

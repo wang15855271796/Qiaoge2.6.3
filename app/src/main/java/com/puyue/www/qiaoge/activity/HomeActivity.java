@@ -72,7 +72,7 @@ import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
-public class HomeActivity extends BaseActivity implements CartFragment.FragmentInteraction, CartFragment.GoToMarket {
+public class HomeActivity extends BaseActivity implements CartFragment.FragmentInteraction, CartFragment.GoToMarket{
     private static final String TAB_HOME = "tab_home";
     private static final String TAB_MARKET = "tab_market";
     private static final String TAB_CART = "tab_cart";
@@ -504,6 +504,7 @@ public class HomeActivity extends BaseActivity implements CartFragment.FragmentI
     @Override
     protected void onResume() {
         super.onResume();
+
         if (StringHelper.notEmptyAndNull(UserInfoHelper.getUserId(mContext))) {
             sendRegistionId();
             if (!isSend) {
