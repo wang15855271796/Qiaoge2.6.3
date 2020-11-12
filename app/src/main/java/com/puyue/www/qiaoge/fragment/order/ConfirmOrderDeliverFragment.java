@@ -326,6 +326,7 @@ public class ConfirmOrderDeliverFragment extends BaseFragment {
                 case R.id.buttonPay:// 去支付
                     buttonPay.setEnabled(false);
                     lav_activity_loading.show();
+                    lav_activity_loading.setVisibility(View.VISIBLE);
                     if (LinearLayoutAddress.getVisibility() == View.VISIBLE) { // 没有地址
                         AppHelper.showMsg(mActivity, "请填写地址");
                         lav_activity_loading.hide();
