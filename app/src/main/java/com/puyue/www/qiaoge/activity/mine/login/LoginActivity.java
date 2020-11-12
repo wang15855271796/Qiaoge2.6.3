@@ -134,9 +134,9 @@ public class LoginActivity extends BaseSwipeActivity {
         linIphone = (LinearLayout) findViewById(R.id.linIphone);
         linPsd = (LinearLayout) findViewById(R.id.linPsd);
         mRelative = (RelativeLayout) findViewById(R.id.relativeLayout);
-        
         iv_change_type = (ImageView) findViewById(R.id.iv_change_type);
         ll_change_type = (LinearLayout) findViewById(R.id.ll_change_type);
+        
     }
 
     @Override
