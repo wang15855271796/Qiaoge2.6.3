@@ -1,6 +1,9 @@
 package com.puyue.www.qiaoge.activity.mine.coupons;
 
 import android.os.Bundle;
+import android.support.design.widget.TabLayout;
+import android.support.v4.app.Fragment;
+import android.support.v4.view.ViewPager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -14,6 +17,8 @@ import com.puyue.www.qiaoge.api.mine.coupon.userChooseDeductAPI;
 import com.puyue.www.qiaoge.base.BaseSwipeActivity;
 import com.puyue.www.qiaoge.event.ChooseCoupon1Event;
 import com.puyue.www.qiaoge.event.ChooseCouponEvent;
+import com.puyue.www.qiaoge.fragment.CouponsUnUseFragment;
+import com.puyue.www.qiaoge.fragment.mine.coupons.CouponsUseFragment;
 import com.puyue.www.qiaoge.helper.AppHelper;
 import com.puyue.www.qiaoge.listener.NoDoubleClickListener;
 import com.puyue.www.qiaoge.model.mine.coupons.UserChooseDeductModel;
@@ -43,8 +48,10 @@ public class ChooseCouponsActivity extends BaseSwipeActivity {
     ImageView iv_select_all;
     boolean statModel;
     private List<UserChooseDeductModel.DataBean> list = new ArrayList<>();
-
-
+    TabLayout tabLayout;
+    ViewPager viewPager;
+    private List<String> stringList =new ArrayList<>();
+    private List<Fragment> list_fragment=new ArrayList<>();
     @Override
     public boolean handleExtra(Bundle savedInstanceState) {
         return false;
@@ -57,9 +64,19 @@ public class ChooseCouponsActivity extends BaseSwipeActivity {
 
     @Override
     public void findViewById() {
+        viewPager = (ViewPager) findViewById(R.id.viewPager);
+        tabLayout = (TabLayout) findViewById(R.id.tabLayout);
         iv_select_all = (ImageView) findViewById(R.id.iv_select_all);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
+
+        stringList.add("可使用");
+        stringList.add("不可使用");
+
+        //可使用
+        list_fragment.add(new CouponsUseFragment());
+        //不可使用
+        list_fragment.add(new CouponsUnUseFragment());
 
         iv_select_all.setOnClickListener(new View.OnClickListener() {
             @Override

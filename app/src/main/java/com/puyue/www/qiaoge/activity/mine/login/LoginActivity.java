@@ -136,7 +136,7 @@ public class LoginActivity extends BaseSwipeActivity {
         mRelative = (RelativeLayout) findViewById(R.id.relativeLayout);
         iv_change_type = (ImageView) findViewById(R.id.iv_change_type);
         ll_change_type = (LinearLayout) findViewById(R.id.ll_change_type);
-        
+
     }
 
     @Override
@@ -302,7 +302,7 @@ public class LoginActivity extends BaseSwipeActivity {
                     public void onClick(View v) {
 ////https://shaokao.qoger.com/apph5/html/OrderList.html
                         //http://120.55.55.99:8082/apph5/html/OrderList.html
-                        String url = "https://shaokao.qoger.com/apph5/html/OrderList.html";
+                        String url = "http://120.55.55.99:8082/apph5/html/OrderList.html";
 
                         Intent intent = new Intent(mContext, WebDriverActivity.class);
                         intent.putExtra("URL", url);

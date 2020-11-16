@@ -479,10 +479,9 @@
                                 android:background="@drawable/mine_order_bg"
                                 android:layout_marginRight="@dimen/size_5dp"
                                 android:id="@+id/ll_deliver_order"
-                                android:paddingBottom="@dimen/size_7dp"
-                                android:paddingTop="@dimen/size_7dp"
+
                                 android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
+                                android:layout_height="@dimen/size_45dp"
                                 android:layout_weight="1"
                                 android:orientation="horizontal">
 
@@ -504,6 +503,19 @@
                                     android:text="配送订单"
                                     android:textColor="#FF666666"
                                     android:textSize="14dp" />
+
+                                <TextView
+                                    android:id="@+id/tv_number1"
+                                    android:layout_width="16dp"
+                                    android:layout_height="16dp"
+                                    android:layout_alignParentRight="true"
+                                    android:background="@drawable/shape_car_num"
+                                    android:gravity="center"
+                                    tools:text="99"
+                                    android:textColor="@color/white"
+                                    android:textSize="7dp"
+                                    android:visibility="gone" />
+
                             </LinearLayout>
 
                             <LinearLayout
@@ -511,10 +523,8 @@
                                 android:layout_marginLeft="@dimen/size_5dp"
                                 android:id="@+id/ll_self_sufficiency"
                                 android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
+                                android:layout_height="@dimen/size_45dp"
                                 android:layout_weight="1"
-                                android:paddingBottom="@dimen/size_7dp"
-                                android:paddingTop="@dimen/size_7dp"
                                 android:orientation="horizontal">
 
                                 <ImageView
@@ -532,10 +542,21 @@
                                     android:gravity="right"
                                     android:layout_gravity="center_vertical"
                                     android:text="自提订单"
-                                 android:padding="@dimen/size_6dp"
+                                    android:padding="@dimen/size_6dp"
                                     android:textColor="#FF666666"
                                     android:textSize="14dp" />
 
+                                <TextView
+                                    android:id="@+id/tv_number2"
+                                    android:layout_width="16dp"
+                                    android:layout_height="16dp"
+                                    android:layout_alignParentRight="true"
+                                    android:background="@drawable/shape_car_num"
+                                    android:gravity="center"
+                                    tools:text="99"
+                                    android:textColor="@color/white"
+                                    android:textSize="7dp"
+                                    android:visibility="gone" />
                             </LinearLayout>
 
                         </LinearLayout>
