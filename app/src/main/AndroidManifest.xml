@@ -198,6 +198,20 @@
         <!--  -->
         <activity android:name=".activity.mine.account.AccountCenterActivity"
             android:screenOrientation="portrait" />
+
+        <!--验证支付密码界面-->
+        <activity android:name=".activity.mine.account.PayActivity"
+            android:screenOrientation="portrait"
+            />
+
+        <activity android:name=".activity.mine.account.LoginPayTestActivity"
+            android:screenOrientation="portrait"
+            />
+        <activity android:name=".activity.mine.account.ChangePhoneActivity"
+            android:screenOrientation="portrait"/>
+
+        <activity android:name=".activity.mine.account.SetLoginSecretActivity"
+            android:screenOrientation="portrait"/>
         <activity android:name=".activity.mine.AddSubAccountActivity"
             android:screenOrientation="portrait" />
         <activity android:name=".activity.home.ChooseAddressActivity"
@@ -216,9 +230,20 @@
             android:screenOrientation="portrait" />
         <activity android:name=".activity.mine.account.EditAccountInputPhoneActivity"
             android:screenOrientation="portrait" />
+
+        <!--登录验证-->
+        <activity android:name=".activity.mine.account.LoginTestActivity"
+            android:screenOrientation="portrait"
+            />
         <!--  -->
         <activity android:name=".activity.mine.account.EditPasswordInputCodeActivity"
             android:screenOrientation="portrait" />
+
+
+        <!--直接修改登录密码界面-->
+        <activity android:name=".activity.mine.account.LoginTest1Activity"
+            android:screenOrientation="portrait"
+            />
         <!--  -->
         <activity android:name=".activity.mine.account.EditPasswordInputPasswordActivity"
             android:screenOrientation="portrait" />

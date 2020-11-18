@@ -6,7 +6,7 @@ package com.puyue.www.qiaoge.constant;
 public class AppInterfaceAddress {
     //https://shaokao.qoger.com/qiaoge/正式   http://192.168.2.188:8082/qiaoge/
     //http://116.62.67.230:8082/qiaoge/   测试http://120.55.55.99:8082/qiaoge/
-    public static final String BASE_URL = "https://shaokao.qoger.com/qiaoge/";
+    public static final String BASE_URL = "http://192.168.2.188:8082/qiaoge/";
     // 正式https://shaokao.qoger.com/qiaoge/
     //http://192.168.1.45/   本地192.168.101.69:8088
     //http://qg.zhiyun88u.com/shen
@@ -15,6 +15,32 @@ public class AppInterfaceAddress {
     //http://192.168.101.41:8088/
 //    queryReturnProdIsContainFullGift
 
+    /**
+     * 待付款订单数量
+     */
+    public static final String Order_Num = "user/getWaitPayOrderNum";
+
+    /**
+     * 验证是否第一次更换
+     */
+    public static final String Check_First = "user/checkUserAccout";
+    /**
+     * 验证登录密码
+     */
+    public static final String Check_Secret = "user/checkLogin";
+    /**
+     *  登录后，更换手机号设置密码
+     */
+    public static final String Set_Secret = "user/resetChangePhonePwd";
+    /**
+     * 登录后、更换手机号获取验证码
+     */
+    public static final String Get_Yzm = "user/getChangePhoneVerifyCode";
+
+    /**
+     * 登录后、更换手机号验证码验证
+     */
+    public static final String Check_Yzm = "user/checkChangePhoneVerifyCode";
     /**
      *订单列表-去评价获取订单商品信息
      */

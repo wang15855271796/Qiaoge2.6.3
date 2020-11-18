@@ -13,6 +13,7 @@ import com.puyue.www.qiaoge.R;
 import com.puyue.www.qiaoge.activity.cart.CompetActivity;
 import com.puyue.www.qiaoge.api.mine.AccountCenterAPI;
 import com.puyue.www.qiaoge.api.mine.LogoutAPI;
+import com.puyue.www.qiaoge.api.mine.login.LoginAPI;
 import com.puyue.www.qiaoge.base.BaseModel;
 import com.puyue.www.qiaoge.base.BaseSwipeActivity;
 import com.puyue.www.qiaoge.helper.AppHelper;
@@ -22,6 +23,7 @@ import com.puyue.www.qiaoge.helper.StringHelper;
 import com.puyue.www.qiaoge.helper.UserInfoHelper;
 import com.puyue.www.qiaoge.listener.NoDoubleClickListener;
 import com.puyue.www.qiaoge.model.mine.AccountCenterModel;
+import com.puyue.www.qiaoge.utils.ToastUtil;
 
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
@@ -91,6 +93,7 @@ public class AccountCenterActivity extends BaseSwipeActivity {
         mRlPayPassword.setOnClickListener(noDoubleClickListener);
         mRlAuthorization.setOnClickListener(noDoubleClickListener);
         mRlLogout.setOnClickListener(noDoubleClickListener);
+        mRlPhone.setOnClickListener(noDoubleClickListener);
         rl_account_secret.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -110,20 +113,24 @@ public class AccountCenterActivity extends BaseSwipeActivity {
             if (view == mIvBack) {
                 finish();
             } else if (view == mRlPhone) {
-                startActivity(EditAccountInputPhoneActivity.getIntent(mContext, EditAccountInputPhoneActivity.class, "0", "account"));
+                startActivity(EditAccountInputPhoneActivity.getIntent(mContext, EditAccountInputPhoneActivity.class, "0", "account",mModelAccountCenter.data.phone));
+                finish();
             } else if (view == mRlLoginPassword) {
                 startActivity(EditPasswordInputCodeActivity.getIntent(mContext, EditPasswordInputCodeActivity.class, "0", mUserCell, "login","",0,0));
             } else if (view == mRlPayPassword) {
-                if (StringHelper.notEmptyAndNull(mUserCell) && StringHelper.notEmptyAndNull(hasSetPayPwd)) {
-                    if (hasSetPayPwd.equals("1")) {
-                        UserInfoHelper.saveForgetPas(mContext, "");
-                        startActivity(EditPasswordInputCodeActivity.getIntent(mContext, EditPasswordInputCodeActivity.class, "1", mUserCell, "pay","",0,0));
-                    } else if (hasSetPayPwd.equals("0")) {
-                        startActivity(EditPasswordInputCodeActivity.getIntent(mContext, EditPasswordInputCodeActivity.class, "0", mUserCell, "pay","",0,0));
-                    }
-                } else {
-                    AppHelper.showMsg(mContext, "手机号有误");
-                }
+                checkFirstChange();
+//                Intent intent = new Intent(mContext,PayActivity.class);
+//                startActivity(intent);
+//                if (StringHelper.notEmptyAndNull(mUserCell) && StringHelper.notEmptyAndNull(hasSetPayPwd)) {
+//                    if (hasSetPayPwd.equals("1")) {
+//                        UserInfoHelper.saveForgetPas(mContext, "");
+//                        startActivity(EditPasswordInputCodeActivity.getIntent(mContext, EditPasswordInputCodeActivity.class, "1", mUserCell, "pay","",0,0));
+//                    } else if (hasSetPayPwd.equals("0")) {
+//                        startActivity(EditPasswordInputCodeActivity.getIntent(mContext, EditPasswordInputCodeActivity.class, "0", mUserCell, "pay","",0,0));
+//                    }
+//                } else {
+//                    AppHelper.showMsg(mContext, "手机号有误");
+//                }
             } else if (view == mRlAuthorization) {
             } else if (view == mRlLogout) {
                 DialogHelper.showLogoutDialog(mContext, new NoDoubleClickListener() {
@@ -140,6 +147,40 @@ public class AccountCenterActivity extends BaseSwipeActivity {
             }
         }
     };
+
+    /**
+     * 校验是否第一次更换
+     */
+    private void checkFirstChange() {
+        LoginAPI.checkFirst(mContext,mUserCell)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<BaseModel>() {
+                    @Override
+                    public void onCompleted() {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onNext(BaseModel baseModel) {
+                        if (baseModel.success) {
+                            //没余额
+                            Intent intent = new Intent(mContext,PayActivity.class);
+                            intent.putExtra("phone",mUserCell);
+                            startActivity(intent);
+                        } else {
+                            //有余额
+//                            Intent intent = new Intent(mContext,);
+//                            startActivity(intent);
+                        }
+                    }
+                });
+    }
 
     private void requestLogout() {
         LogoutAPI.requestLogout(mContext)

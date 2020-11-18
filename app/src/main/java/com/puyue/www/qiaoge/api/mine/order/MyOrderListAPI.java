@@ -2,9 +2,12 @@ package com.puyue.www.qiaoge.api.mine.order;
 
 import android.content.Context;
 
+import com.puyue.www.qiaoge.api.cart.CartListAPI;
 import com.puyue.www.qiaoge.constant.AppInterfaceAddress;
 import com.puyue.www.qiaoge.helper.RestHelper;
+import com.puyue.www.qiaoge.model.OrderNumsModel;
 import com.puyue.www.qiaoge.model.OrdersModel;
+import com.puyue.www.qiaoge.model.cart.CartsListModel;
 import com.puyue.www.qiaoge.model.mine.order.CommonModel;
 import com.puyue.www.qiaoge.model.mine.order.MyOrdersModel;
 
@@ -73,4 +76,14 @@ public class MyOrderListAPI {
         return myOrdersModelObservable;
     }
 
+    //代付款订单状态
+    public interface OrderNumServices {
+        @POST(AppInterfaceAddress.Order_Num)
+        Observable<OrderNumsModel> getData();
+    }
+
+    public static Observable<OrderNumsModel> getNum(Context context) {
+        OrderNumServices service = RestHelper.getBaseRetrofit(context).create(OrderNumServices.class);
+        return service.getData();
+    }
 }

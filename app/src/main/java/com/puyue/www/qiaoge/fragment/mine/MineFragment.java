@@ -39,6 +39,7 @@ import com.puyue.www.qiaoge.activity.mine.wallet.MyWalletNewActivity;
 import com.puyue.www.qiaoge.api.home.GetCustomerPhoneAPI;
 import com.puyue.www.qiaoge.api.mine.AccountCenterAPI;
 import com.puyue.www.qiaoge.api.mine.UpdateAPI;
+import com.puyue.www.qiaoge.api.mine.order.MyOrderListAPI;
 import com.puyue.www.qiaoge.api.mine.order.MyOrderNumAPI;
 import com.puyue.www.qiaoge.api.mine.subaccount.MineAccountAPI;
 import com.puyue.www.qiaoge.base.BaseFragment;
@@ -53,9 +54,11 @@ import com.puyue.www.qiaoge.helper.NetWorkHelper;
 import com.puyue.www.qiaoge.helper.StringHelper;
 import com.puyue.www.qiaoge.helper.UserInfoHelper;
 import com.puyue.www.qiaoge.listener.NoDoubleClickListener;
+import com.puyue.www.qiaoge.model.OrderNumsModel;
 import com.puyue.www.qiaoge.model.home.GetCustomerPhoneModel;
 import com.puyue.www.qiaoge.model.mine.AccountCenterModel;
 import com.puyue.www.qiaoge.model.mine.UpdateModel;
+import com.puyue.www.qiaoge.model.mine.order.CommonModel;
 import com.puyue.www.qiaoge.model.mine.order.MineCenterModel;
 import com.puyue.www.qiaoge.model.mine.order.MyOrderNumModel;
 import com.puyue.www.qiaoge.view.SuperTextView;
@@ -158,7 +161,8 @@ public class MineFragment extends BaseFragment {
     private LinearLayout ll_deduct;//优惠券
     private TextView tv_vip_more;//会员更多权益
     private LinearLayout iv_vip_more;//会员更多权益
-
+    TextView tv_number1;
+    TextView tv_number2;
     private boolean isChecked;
 
     private ImageView iv_message;
@@ -208,7 +212,8 @@ public class MineFragment extends BaseFragment {
 
         EventBus.getDefault().register(this);
         rl_zizhi = (view.findViewById(R.id.rl_zizhi));
-
+        tv_number1 = (view.findViewById(R.id.tv_number1));
+        tv_number2 = (view.findViewById(R.id.tv_number2));
         mIvAvatar = (view.findViewById(R.id.iv_mine_avatar));//头像
         mineIntegral = (view.findViewById(R.id.mineIntegral));//积分
         mTvPhone = (view.findViewById(R.id.tv_mine_phone));
@@ -315,6 +320,7 @@ public class MineFragment extends BaseFragment {
 
         requestUpdate();
         getCustomerPhone();
+        getOrderNum();
     }
 
     @Override
@@ -676,6 +682,47 @@ public class MineFragment extends BaseFragment {
                 });
     }
 
+
+    /**
+     * 待付款订单数
+     * @param
+     */
+    private void getOrderNum() {
+        MyOrderListAPI.getNum(getContext())
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<OrderNumsModel>() {
+                    @Override
+                    public void onCompleted() {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onNext(OrderNumsModel numsModel) {
+                        if(numsModel.isSuccess()) {
+                            if(numsModel.getData().getSendOrderNum()>0) {
+                                tv_number1.setText(numsModel.getData().getSendOrderNum());
+                                tv_number1.setVisibility(View.VISIBLE);
+                            }else {
+                                tv_number1.setVisibility(View.GONE);
+                            }
+
+                            if(numsModel.getData().getSelfOrderNum()>0) {
+                                tv_number2.setText(numsModel.getData().getSendOrderNum());
+                                tv_number2.setVisibility(View.VISIBLE);
+                            }else {
+                                tv_number2.setVisibility(View.GONE);
+                            }
+                        }
+                    }
+                });
+    }
+
     private void showUpdateDialog() {
         final AlertDialog mDialog = new AlertDialog.Builder(getContext()).create();
         mDialog.show();
@@ -738,7 +785,7 @@ public class MineFragment extends BaseFragment {
     @Override
     public void onResume() {
         super.onResume();
-
+        getOrderNum();
     }
 
     private void requestUpdate() {
