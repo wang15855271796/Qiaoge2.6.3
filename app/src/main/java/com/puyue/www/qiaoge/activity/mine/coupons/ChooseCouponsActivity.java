@@ -13,11 +13,13 @@ import android.widget.ImageView;
 
 import com.puyue.www.qiaoge.R;
 import com.puyue.www.qiaoge.adapter.mine.ChooseCouponsAdapter;
+import com.puyue.www.qiaoge.adapter.mine.ViewPagerAdapter;
 import com.puyue.www.qiaoge.api.mine.coupon.userChooseDeductAPI;
 import com.puyue.www.qiaoge.base.BaseSwipeActivity;
 import com.puyue.www.qiaoge.event.ChooseCoupon1Event;
 import com.puyue.www.qiaoge.event.ChooseCouponEvent;
 import com.puyue.www.qiaoge.fragment.CouponsUnUseFragment;
+import com.puyue.www.qiaoge.fragment.mine.coupons.CouponsOverdueFragment;
 import com.puyue.www.qiaoge.fragment.mine.coupons.CouponsUseFragment;
 import com.puyue.www.qiaoge.helper.AppHelper;
 import com.puyue.www.qiaoge.listener.NoDoubleClickListener;
@@ -72,11 +74,32 @@ public class ChooseCouponsActivity extends BaseSwipeActivity {
 
         stringList.add("可使用");
         stringList.add("不可使用");
-
         //可使用
         list_fragment.add(new CouponsUseFragment());
         //不可使用
         list_fragment.add(new CouponsUnUseFragment());
+        ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager(),list_fragment,stringList);
+
+        viewPager.setAdapter(viewPagerAdapter);
+        viewPager.setOffscreenPageLimit(3);
+        tabLayout.setupWithViewPager(viewPager);
+        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                viewPager.setCurrentItem(tab.getPosition(),false);
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
+            }
+        });
+
 
         iv_select_all.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -91,8 +114,6 @@ public class ChooseCouponsActivity extends BaseSwipeActivity {
                 statModel = true;
                 adapter.notifyDataSetChanged();
             }
-
-
         });
 
     }
@@ -119,7 +140,6 @@ public class ChooseCouponsActivity extends BaseSwipeActivity {
                     if (i == position) {
                         list.get(i).setFlag(!list.get(i).isFlag());
                         if (list.get(i).isFlag()) {
-//                            EventBus.getDefault().post(new ChooseCouponsEvent(info.getGiftDetailNo()));
                             EventBus.getDefault().post(new ChooseCouponEvent(info.getGiftDetailNo()));
 
                             finish();

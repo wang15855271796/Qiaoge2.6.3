@@ -180,9 +180,17 @@ public class queryUserDeductByStateModel{
             private String giftDetailNo;
             private List<String> role;
             private String giftProdUseType;
-
+            private String giftFlag;
             public String getGiftProdUseType() {
                 return giftProdUseType;
+            }
+
+            public String getGiftFlag() {
+                return giftFlag;
+            }
+
+            public void setGiftFlag(String giftFlag) {
+                this.giftFlag = giftFlag;
             }
 
             public void setGiftProdUseType(String giftProdUseType) {

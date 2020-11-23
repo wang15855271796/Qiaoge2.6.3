@@ -28,7 +28,7 @@ import rx.schedulers.Schedulers;
 
 /**
  * Created by ${daff} on 2018/9/20
- * 优惠券已使用
+ * 优惠券可使用
  */
 public class CouponsUseFragment extends BaseFragment {
 

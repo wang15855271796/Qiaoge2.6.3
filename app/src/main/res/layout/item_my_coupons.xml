@@ -185,6 +185,19 @@
                 android:layout_height="wrap_content">
 
                 <TextView
+                    tools:text="新手"
+                    android:visibility="gone"
+                    android:id="@+id/tv_coupon_style"
+                    android:textColor="#ffffff"
+                    android:paddingTop="@dimen/size_2dp"
+                    android:paddingBottom="@dimen/size_2dp"
+                    android:paddingLeft="@dimen/size_15dp"
+                    android:paddingRight="@dimen/size_15dp"
+                    android:background="@drawable/shape_red_two"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+                <TextView
                     android:text="￥"
                     android:id="@+id/tv_tip"
                     android:textColor="#F54022"
@@ -260,6 +273,24 @@
                     android:layout_alignParentRight="true"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
+
+                <TextView
+                    android:text="立即使用"
+                    android:id="@+id/tv_use"
+                    android:visibility="gone"
+                    android:textSize="@dimen/sp_12"
+                    android:textColor="#F54022"
+                    android:background="@drawable/shape_f54022"
+                    android:paddingBottom="@dimen/dp_4"
+                    android:paddingTop="@dimen/dp_4"
+                    android:paddingLeft="@dimen/dp_10"
+                    android:paddingRight="@dimen/dp_10"
+                    android:layout_marginRight="@dimen/size_20dp"
+                    android:layout_marginTop="@dimen/size_15dp"
+                    android:layout_alignParentRight="true"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
 
                 <ImageView
                     android:id="@+id/iv_status"

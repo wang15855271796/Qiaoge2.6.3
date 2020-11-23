@@ -40,7 +40,6 @@ public class CouponsNotUseFragment extends BaseFragment {
     private List<queryUserDeductByStateModel.DataBean.ListBean > lists =new ArrayList<>();
 
 
-
     @Override
     public int setLayoutId() {
         return R.layout.fragment_cupons_overdue;
@@ -53,11 +52,14 @@ public class CouponsNotUseFragment extends BaseFragment {
 
     @Override
     public void findViewById(View view) {
+
         tv_desc = view.findViewById(R.id.tv_desc);
         recyclerView=view.findViewById(R.id.recyclerView);
         data= view .findViewById(R.id.data);
         noData= view.findViewById(R.id.noData);
         ptrClassicFrameLayout=view.findViewById(R.id.ptrClassicFrameLayout);
+
+
     }
 
     @Override

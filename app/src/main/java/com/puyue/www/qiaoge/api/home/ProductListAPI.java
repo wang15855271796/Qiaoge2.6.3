@@ -29,4 +29,18 @@ public class ProductListAPI {
         NormalProductService service = RestHelper.getBaseRetrofit(context).create(NormalProductService.class);
         return service.getData(pageNum, pageSize,productType,productName);
     }
+
+    //优惠券去使用
+
+    private interface CouponUseService {
+        @FormUrlEncoded
+        @POST(AppInterfaceAddress.Go_Use)
+        Observable<ProductNormalModel> getData(@Field("pageNum") int pageNum, @Field("pageSize") int pageSize,
+                                               @Field("giftDetailNo") String giftDetailNo);
+    }
+
+    public static Observable<ProductNormalModel> getLists(Context context, int pageNum, int pageSize, String giftDetailNo) {
+        CouponUseService service = RestHelper.getBaseRetrofit(context).create(CouponUseService.class);
+        return service.getData(pageNum, pageSize,giftDetailNo);
+    }
 }

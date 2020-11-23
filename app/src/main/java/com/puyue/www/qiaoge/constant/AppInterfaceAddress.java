@@ -16,6 +16,10 @@ public class AppInterfaceAddress {
 //    queryReturnProdIsContainFullGift
 
     /**
+     * 优惠券-去使用-跳转商品列表
+     */
+    public static final String Go_Use = "gift/queryGiftUseProdPage";
+    /**
      *找回密码验证短信
      *
      */

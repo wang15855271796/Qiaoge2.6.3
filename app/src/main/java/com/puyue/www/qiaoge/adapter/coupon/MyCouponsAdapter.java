@@ -1,6 +1,7 @@
 package com.puyue.www.qiaoge.adapter.coupon;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
@@ -12,11 +13,17 @@ import android.widget.TextView;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.puyue.www.qiaoge.R;
+import com.puyue.www.qiaoge.activity.HomeActivity;
+import com.puyue.www.qiaoge.activity.mine.login.CouponSearchActivity;
 import com.puyue.www.qiaoge.api.mine.coupon.userChooseDeductAPI;
 import com.puyue.www.qiaoge.dialog.CouponProdDialog;
+import com.puyue.www.qiaoge.event.GoToCartFragmentEvent;
+import com.puyue.www.qiaoge.event.GoToMarketEvent;
 import com.puyue.www.qiaoge.model.QueryProdModel;
 import com.puyue.www.qiaoge.model.mine.coupons.queryUserDeductByStateModel;
 
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.util.List;
 
@@ -39,6 +46,9 @@ public class MyCouponsAdapter  extends  BaseQuickAdapter <queryUserDeductByState
     List<queryUserDeductByStateModel.DataBean.ListBean> list;
     RelativeLayout rl_grey;
     TextView tv_tip;
+    TextView tv_use;
+    TextView tv_coupon_style;
+
     public MyCouponsAdapter(int layoutResId, @Nullable List<queryUserDeductByStateModel.DataBean.ListBean> data,Context context) {
         super(layoutResId, data);
         list=data;
@@ -47,6 +57,8 @@ public class MyCouponsAdapter  extends  BaseQuickAdapter <queryUserDeductByState
 
     @Override
     protected void convert(final BaseViewHolder helper, queryUserDeductByStateModel.DataBean.ListBean item) {
+        tv_use = helper.getView(R.id.tv_use);
+        tv_coupon_style = helper.getView(R.id.tv_coupon_style);
         tv_tip=helper.getView(R.id.tv_tip);
         tv_style=helper.getView(R.id.tv_style);
         tv_desc=helper.getView(R.id.tv_desc);
@@ -56,6 +68,31 @@ public class MyCouponsAdapter  extends  BaseQuickAdapter <queryUserDeductByState
         tv_amount=helper.getView(R.id.tv_amount);
         iv_status=helper.getView(R.id.iv_status);
         rl_grey = helper.getView(R.id.rl_grey);
+
+        if(!TextUtils.isEmpty(item.getGiftFlag())) {
+            tv_coupon_style.setText(item.getGiftFlag());
+            tv_coupon_style.setVisibility(View.VISIBLE);
+        }else {
+            tv_coupon_style.setVisibility(View.GONE);
+        }
+        tv_use.setVisibility(View.VISIBLE);
+        tv_use.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(item.getGiftProdUseType().equals("0")) {
+                    //分类
+                    context.startActivity(new Intent(context, HomeActivity.class));
+                    EventBus.getDefault().post(new GoToMarketEvent());
+                    EventBus.getDefault().unregister(this);
+                }else {
+                    //
+                    Intent intent = new Intent(mContext,CouponSearchActivity.class);
+                    intent.putExtra("giftDetailNo",item.getGiftDetailNo());
+                    mContext.startActivity(intent);
+                }
+
+            }
+        });
         if(!TextUtils.isEmpty(item.getApplyFrom())){
             tv_style.setText(item.getApplyFrom());
         }
