@@ -7,6 +7,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 
@@ -74,31 +75,7 @@ public class ChooseCouponsActivity extends BaseSwipeActivity {
 
         stringList.add("可使用");
         stringList.add("不可使用");
-        //可使用
-        list_fragment.add(new CouponsUseFragment());
-        //不可使用
-        list_fragment.add(new CouponsUnUseFragment());
-        ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager(),list_fragment,stringList);
 
-        viewPager.setAdapter(viewPagerAdapter);
-        viewPager.setOffscreenPageLimit(3);
-        tabLayout.setupWithViewPager(viewPager);
-        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
-            @Override
-            public void onTabSelected(TabLayout.Tab tab) {
-                viewPager.setCurrentItem(tab.getPosition(),false);
-            }
-
-            @Override
-            public void onTabUnselected(TabLayout.Tab tab) {
-
-            }
-
-            @Override
-            public void onTabReselected(TabLayout.Tab tab) {
-
-            }
-        });
 
 
         iv_select_all.setOnClickListener(new View.OnClickListener() {
@@ -124,7 +101,34 @@ public class ChooseCouponsActivity extends BaseSwipeActivity {
         normalProductBalanceVOStr = getIntent().getStringExtra("normalProductBalanceVOStr");
         giftDetailNo = getIntent().getStringExtra("giftDetailNo");
         statModel = getIntent().getBooleanExtra("statModel",false);
-        userChooseDeduct();
+
+        //可使用
+        list_fragment.add(CouponsUseFragment.newInstance(giftDetailNo,activityBalanceVOStr,normalProductBalanceVOStr));
+        //不可使用
+        list_fragment.add(new CouponsUnUseFragment());
+        ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager(),list_fragment,stringList);
+
+        viewPager.setAdapter(viewPagerAdapter);
+        viewPager.setOffscreenPageLimit(3);
+        tabLayout.setupWithViewPager(viewPager);
+        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                viewPager.setCurrentItem(tab.getPosition(),false);
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
+            }
+        });
+
+        userChooseDeduct("0");
         setRecyclerView();
     }
 
@@ -138,8 +142,8 @@ public class ChooseCouponsActivity extends BaseSwipeActivity {
                 statModel = false;
                 for (int i = 0; i < list.size(); i++) {
                     if (i == position) {
-                        list.get(i).setFlag(!list.get(i).isFlag());
-                        if (list.get(i).isFlag()) {
+                        list.get(i).setFlags(!list.get(i).isFlags());
+                        if (list.get(i).isFlags()) {
                             EventBus.getDefault().post(new ChooseCouponEvent(info.getGiftDetailNo()));
 
                             finish();
@@ -147,7 +151,7 @@ public class ChooseCouponsActivity extends BaseSwipeActivity {
                             finish();
                         }
                     } else {
-                        list.get(i).setFlag(false);
+                        list.get(i).setFlags(false);
                     }
                 }
 
@@ -171,8 +175,8 @@ public class ChooseCouponsActivity extends BaseSwipeActivity {
     }
 
     UserChooseDeductModel models;
-    private void userChooseDeduct() {
-        userChooseDeductAPI.requestData(mContext, "0",activityBalanceVOStr, normalProductBalanceVOStr)
+    private void userChooseDeduct(String flag) {
+        userChooseDeductAPI.requestData(mContext, "0",activityBalanceVOStr, normalProductBalanceVOStr,flag)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<UserChooseDeductModel>() {
@@ -190,19 +194,21 @@ public class ChooseCouponsActivity extends BaseSwipeActivity {
                     public void onNext(UserChooseDeductModel model) {
                         if (model.success) {
                             models = model;
-                            if (model.getData().size()> 0) {
-                                list.addAll(model.getData());
 
+                            if (model.getData().size()> 0) {
+
+                                list.addAll(model.getData());
+                                adapter.notifyDataSetChanged();
                                 for (int i = 0; i < list.size(); i++) {
                                     if (model.getData().get(i).getGiftDetailNo().equals(giftDetailNo)) {
-                                        model.getData().get(i).setFlag(true);
+                                        model.getData().get(i).setFlags(true);
                                         if(statModel) {
                                             iv_select_all.setBackgroundResource(R.mipmap.ic_pay_ok);
                                         }else {
                                             iv_select_all.setBackgroundResource(R.mipmap.ic_pay_no);
                                         }
                                     } else {
-                                        model.getData().get(i).setFlag(false);
+                                        model.getData().get(i).setFlags(false);
                                         if(statModel) {
                                             iv_select_all.setBackgroundResource(R.mipmap.ic_pay_ok);
                                         }else {
@@ -215,7 +221,7 @@ public class ChooseCouponsActivity extends BaseSwipeActivity {
                                 }
                             }
 
-                            adapter.notifyDataSetChanged();
+
 
                         } else {
                             AppHelper.showMsg(mContext, model.message);

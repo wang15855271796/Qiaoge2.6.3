@@ -57,7 +57,7 @@ public class ChooseCouponsAdapter extends BaseQuickAdapter<UserChooseDeductModel
 
     public void setStat() {
         for (int i = 0; i < list.size(); i++) {
-            list.get(i).setFlag(false);
+            list.get(i).setFlags(false);
             iv_select.setBackgroundResource(R.mipmap.ic_pay_no);
 
         }
@@ -110,7 +110,7 @@ public class ChooseCouponsAdapter extends BaseQuickAdapter<UserChooseDeductModel
             }
         });
 
-        iv_select.setBackgroundResource(item.isFlag() ? R.mipmap.ic_pay_ok : R.mipmap.ic_pay_no);
+        iv_select.setBackgroundResource(item.isFlags() ? R.mipmap.ic_pay_ok : R.mipmap.ic_pay_no);
         if(item.getState().equals("ENABLED")){  // State== ENABLED   可用使用的优惠卷
             tv_amount.setTextColor(Color.parseColor("#F54022"));
             tv_user_factor.setTextColor(Color.parseColor("#333333"));

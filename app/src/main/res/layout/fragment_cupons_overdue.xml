@@ -6,27 +6,44 @@
     android:layout_height="match_parent"
     android:background="@color/color_E5E5E5">
 
-    <LinearLayout
-        android:id="@+id/data"
+    <in.srain.cube.views.ptr.PtrClassicFrameLayout
+        android:id="@+id/ptrClassicFrameLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-        <in.srain.cube.views.ptr.PtrClassicFrameLayout
-            android:id="@+id/ptrClassicFrameLayout"
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:text="凑单可使用"
+            android:padding="20dp"
+            android:textColor="#333333"
+            android:textSize="@dimen/sp_14"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/recyclerView"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content" />
 
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
+        <TextView
+            android:text="本单暂不可使用"
+            android:padding="20dp"
+            android:textColor="#333333"
+            android:textSize="@dimen/sp_14"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
 
-                <android.support.v7.widget.RecyclerView
-                    android:id="@+id/recyclerView"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/recyclerView_un"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
 
-            </RelativeLayout>
+        <include layout="@layout/activity_coupon_no_data"/>
 
-        </in.srain.cube.views.ptr.PtrClassicFrameLayout>
     </LinearLayout>
-    <include layout="@layout/activity_coupon_no_data"/>
+    </in.srain.cube.views.ptr.PtrClassicFrameLayout>
 </LinearLayout>

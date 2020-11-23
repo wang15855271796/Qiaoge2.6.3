@@ -25,14 +25,13 @@ public class userChooseDeductAPI {
         Observable<UserChooseDeductModel> getData(
                 @Field("orderDeliveryType") String orderDeliveryType,
                 @Field("activityBalanceVOStr") String activityBalanceVOStr,
-                @Field("normalProductBalanceVOStr") String normalProductBalanceVOStr
-
-        );
+                @Field("normalProductBalanceVOStr") String normalProductBalanceVOStr,
+                @Field("enabled") String enabled);
     }
 
-    public static Observable<UserChooseDeductModel> requestData(Context context,String orderDeliveryType,String activityBalanceVOStr, String normalProductBalanceVOStr) {
+    public static Observable<UserChooseDeductModel> requestData(Context context,String orderDeliveryType,String activityBalanceVOStr, String normalProductBalanceVOStr,String enabled) {
         userChooseDeductService service = RestHelper.getBaseRetrofit(context).create(userChooseDeductService.class);
-        return service.getData(orderDeliveryType,activityBalanceVOStr, normalProductBalanceVOStr);
+        return service.getData(orderDeliveryType,activityBalanceVOStr, normalProductBalanceVOStr,enabled);
     }
 
     private interface QueryProdsService {

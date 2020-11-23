@@ -101,15 +101,15 @@ public class ChooseCouponssActivity extends BaseSwipeActivity {
                 statModel = false;
                 for (int i = 0; i < list.size(); i++) {
                     if (i == position) {
-                        list.get(i).setFlag(!list.get(i).isFlag());
-                        if (list.get(i).isFlag()) {
+                        list.get(i).setFlags(!list.get(i).isFlags());
+                        if (list.get(i).isFlags()) {
                             EventBus.getDefault().post(new ChooseCouponsEvent(info.getGiftDetailNo()));
                             finish();
                         } else {
                             finish();
                         }
                     } else {
-                        list.get(i).setFlag(false);
+                        list.get(i).setFlags(false);
                     }
                 }
 
@@ -134,7 +134,7 @@ public class ChooseCouponssActivity extends BaseSwipeActivity {
 
     UserChooseDeductModel models;
     private void userChooseDeduct() {
-        userChooseDeductAPI.requestData(mContext, "1",activityBalanceVOStr, normalProductBalanceVOStr)
+        userChooseDeductAPI.requestData(mContext, "1",activityBalanceVOStr, normalProductBalanceVOStr,"0")
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<UserChooseDeductModel>() {
@@ -157,14 +157,14 @@ public class ChooseCouponssActivity extends BaseSwipeActivity {
 
                                 for (int i = 0; i < list.size(); i++) {
                                     if (model.getData().get(i).getGiftDetailNo().equals(giftDetailNo)) {
-                                        model.getData().get(i).setFlag(true);
+                                        model.getData().get(i).setFlags(true);
                                         if(statModel) {
                                             iv_select_all.setBackgroundResource(R.mipmap.ic_pay_ok);
                                         }else {
                                             iv_select_all.setBackgroundResource(R.mipmap.ic_pay_no);
                                         }
                                     } else {
-                                        model.getData().get(i).setFlag(false);
+                                        model.getData().get(i).setFlags(false);
                                         if(statModel) {
                                             iv_select_all.setBackgroundResource(R.mipmap.ic_pay_ok);
                                         }else {

@@ -27,7 +27,7 @@ import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
 /**
- * Created by ${王涛} on 2020/11/13
+ * Created by ${王涛} on 2020/11/13(不可使用)
  */
 public class CouponsUnUseFragment extends BaseFragment {
 
@@ -62,7 +62,6 @@ public class CouponsUnUseFragment extends BaseFragment {
     @Override
     public void setViewData() {
         pageNum = 1;
-        requestMyCoupons();
         ptrClassicFrameLayout.setPtrHandler(new PtrHandler() {
             @Override
             public boolean checkCanDoRefresh(PtrFrameLayout frame, View content, View header) {
@@ -72,7 +71,7 @@ public class CouponsUnUseFragment extends BaseFragment {
             @Override
             public void onRefreshBegin(PtrFrameLayout frame) {
                 pageNum = 1;
-                requestMyCoupons();
+
             }
         });
 
@@ -100,7 +99,6 @@ public class CouponsUnUseFragment extends BaseFragment {
             @Override
             public void onLoadMoreRequested() {
                 pageNum++;
-                requestMyCoupons();
             }
         }, recyclerView);
     }
@@ -110,62 +108,5 @@ public class CouponsUnUseFragment extends BaseFragment {
 
     }
 
-
-    private void requestMyCoupons() {
-        MyCouponsAPI.requestCoupons(getActivity(), pageNum, 10,"USED")
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<queryUserDeductByStateModel>() {
-                    @Override
-                    public void onCompleted() {
-
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-
-                    }
-
-                    @Override
-                    public void onNext(queryUserDeductByStateModel info) {
-                        ptrClassicFrameLayout.refreshComplete();
-                        if (info.isSuccess()) {
-                            updateNoticeList(info);
-                        } else {
-                            AppHelper.showMsg(getContext(), info.getMessage());
-                        }
-
-
-                    }
-                });
-    }
-
-    private void updateNoticeList(queryUserDeductByStateModel info) {
-
-        if (pageNum == 1) {
-            if (info.getData() != null && info.getData().getList().size() > 0) {
-                data.setVisibility(View.VISIBLE);
-                noData.setVisibility(View.GONE);
-                lists.clear();
-                lists.addAll(info.getData().getList());
-                adapter.notifyDataSetChanged();
-            } else {
-                data.setVisibility(View.GONE);
-                noData.setVisibility(View.VISIBLE);
-                tv_desc.setText("您还没有使用优惠券哦");
-            }
-
-        } else {
-            lists.addAll(info.getData().getList());
-            adapter.notifyDataSetChanged();
-        }
-        if (info.getData().isHasNextPage()) {
-            //还有下一页数据
-            adapter.loadMoreComplete();
-        } else {
-            //没有下一页数据了
-            adapter.loadMoreEnd();
-        }
-    }
 
 }

@@ -1,8 +1,13 @@
 package com.puyue.www.qiaoge.fragment.mine.coupons;
 
+import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -11,9 +16,15 @@ import com.puyue.www.qiaoge.R;
 import com.puyue.www.qiaoge.activity.mine.coupons.UseOrNotUseActivity;
 import com.puyue.www.qiaoge.adapter.coupon.MyCouponsAdapter;
 import com.puyue.www.qiaoge.api.mine.coupon.MyCouponsAPI;
+import com.puyue.www.qiaoge.api.mine.coupon.userChooseDeductAPI;
 import com.puyue.www.qiaoge.base.BaseFragment;
+import com.puyue.www.qiaoge.event.ChooseCoupon1Event;
+import com.puyue.www.qiaoge.fragment.mine.order.AllOrderFragment;
 import com.puyue.www.qiaoge.helper.AppHelper;
+import com.puyue.www.qiaoge.model.mine.coupons.UserChooseDeductModel;
 import com.puyue.www.qiaoge.model.mine.coupons.queryUserDeductByStateModel;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,6 +36,8 @@ import in.srain.cube.views.ptr.PtrHandler;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
+
+import static cn.com.chinatelecom.account.api.CtAuth.mContext;
 
 /**
  * Created by ${daff} on 2018/9/20
@@ -39,8 +52,27 @@ public class CouponsUseFragment extends BaseFragment {
     private LinearLayout data;
     private  LinearLayout noData;
     TextView tv_desc;
+    ImageView iv_select_all;
     private List<queryUserDeductByStateModel.DataBean.ListBean > lists =new ArrayList<>();
+    private List<UserChooseDeductModel.DataBean> list = new ArrayList<>();
+    public static CouponsUseFragment newInstance(String giftDetailNo, String activityBalanceVOStr, String normalProductBalanceVOStr) {
+        Bundle args = new Bundle();
+        args.putString("giftDetailNo", giftDetailNo);
+        args.putString("activityBalanceVOStr", activityBalanceVOStr);
+        args.putString("normalProductBalanceVOStr", normalProductBalanceVOStr);
+        CouponsUseFragment fragment = new CouponsUseFragment();
+        fragment.setArguments(args);
+        return fragment;
+    }
 
+    String giftDetailNo;
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        giftDetailNo = getArguments().getString("giftDetailNo");
+        activityBalanceVOStr = getArguments().getString("activityBalanceVOStr");
+        normalProductBalanceVOStr = getArguments().getString("normalProductBalanceVOStr");
+    }
     @Override
     public int setLayoutId() {
         return R.layout.fragment_cupons_overdue;
@@ -53,17 +85,33 @@ public class CouponsUseFragment extends BaseFragment {
 
     @Override
     public void findViewById(View view) {
+        iv_select_all = view.findViewById(R.id.iv_select_all);
         tv_desc = view.findViewById(R.id.tv_desc);
         recyclerView=view.findViewById(R.id.recyclerView);
         data= view .findViewById(R.id.data);
         noData= view.findViewById(R.id.noData);
         ptrClassicFrameLayout=view.findViewById(R.id.ptrClassicFrameLayout);
+
+        iv_select_all.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(list!=null) {
+                    //未选
+//                    adapter.setStat();
+                    EventBus.getDefault().post(new ChooseCoupon1Event());
+                    mActivity.finish();
+
+                }
+                statModel = true;
+                adapter.notifyDataSetChanged();
+            }
+        });
     }
 
     @Override
     public void setViewData() {
         pageNum = 1;
-        requestMyCoupons();
+        userChooseDeduct();
         ptrClassicFrameLayout.setPtrHandler(new PtrHandler() {
             @Override
             public boolean checkCanDoRefresh(PtrFrameLayout frame, View content, View header) {
@@ -73,7 +121,7 @@ public class CouponsUseFragment extends BaseFragment {
             @Override
             public void onRefreshBegin(PtrFrameLayout frame) {
                 pageNum = 1;
-                requestMyCoupons();
+
             }
         });
 
@@ -101,7 +149,6 @@ public class CouponsUseFragment extends BaseFragment {
             @Override
             public void onLoadMoreRequested() {
                 pageNum++;
-                requestMyCoupons();
             }
         }, recyclerView);
     }
@@ -110,13 +157,15 @@ public class CouponsUseFragment extends BaseFragment {
     public void setClickEvent() {
 
     }
-
-
-    private void requestMyCoupons() {
-        MyCouponsAPI.requestCoupons(getActivity(), pageNum, 10,"USED")
+    UserChooseDeductModel models;
+    private String activityBalanceVOStr;
+    private String normalProductBalanceVOStr;
+    boolean statModel;
+    private void userChooseDeduct() {
+        userChooseDeductAPI.requestData(mContext, "0",activityBalanceVOStr, normalProductBalanceVOStr,"0")
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<queryUserDeductByStateModel>() {
+                .subscribe(new Subscriber<UserChooseDeductModel>() {
                     @Override
                     public void onCompleted() {
 
@@ -128,45 +177,37 @@ public class CouponsUseFragment extends BaseFragment {
                     }
 
                     @Override
-                    public void onNext(queryUserDeductByStateModel info) {
-                        ptrClassicFrameLayout.refreshComplete();
-                        if (info.isSuccess()) {
-                            updateNoticeList(info);
+                    public void onNext(UserChooseDeductModel model) {
+                        if (model.success) {
+                            models = model;
+
+                            if (model.getData().size()> 0) {
+
+                                list.addAll(model.getData());
+                                adapter.notifyDataSetChanged();
+                                for (int i = 0; i < list.size(); i++) {
+                                    if (model.getData().get(i).getGiftDetailNo().equals(giftDetailNo)) {
+                                        model.getData().get(i).setFlags(true);
+                                        if(statModel) {
+                                            iv_select_all.setBackgroundResource(R.mipmap.ic_pay_ok);
+                                        }else {
+                                            iv_select_all.setBackgroundResource(R.mipmap.ic_pay_no);
+                                        }
+                                    } else {
+                                        model.getData().get(i).setFlags(false);
+                                        if(statModel) {
+                                            iv_select_all.setBackgroundResource(R.mipmap.ic_pay_ok);
+                                        }else {
+                                            iv_select_all.setBackgroundResource(R.mipmap.ic_pay_no);
+                                        }
+                                    }
+                                }
+                            }
                         } else {
-                            AppHelper.showMsg(getContext(), info.getMessage());
+                            AppHelper.showMsg(mContext, model.message);
                         }
-
-
                     }
                 });
-    }
-
-    private void updateNoticeList(queryUserDeductByStateModel info) {
-
-        if (pageNum == 1) {
-            if (info.getData() != null && info.getData().getList().size() > 0) {
-                data.setVisibility(View.VISIBLE);
-                noData.setVisibility(View.GONE);
-                lists.clear();
-                lists.addAll(info.getData().getList());
-                adapter.notifyDataSetChanged();
-            } else {
-                data.setVisibility(View.GONE);
-                noData.setVisibility(View.VISIBLE);
-                tv_desc.setText("您还没有使用优惠券哦");
-            }
-
-        } else {
-            lists.addAll(info.getData().getList());
-            adapter.notifyDataSetChanged();
-        }
-        if (info.getData().isHasNextPage()) {
-            //还有下一页数据
-            adapter.loadMoreComplete();
-        } else {
-            //没有下一页数据了
-            adapter.loadMoreEnd();
-        }
     }
 
 }
