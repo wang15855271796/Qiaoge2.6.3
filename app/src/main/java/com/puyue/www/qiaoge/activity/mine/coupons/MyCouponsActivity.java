@@ -62,8 +62,9 @@ public class MyCouponsActivity extends BaseSwipeActivity {
 
     @Override
     public void setViewData() {
+        String couponNum = getIntent().getStringExtra("couponsNum");
         pageNum = 1;
-        stringList.add("未使用");
+        stringList.add("未使用"+"("+couponNum+")");
         stringList.add("已使用");
         stringList.add("已过期/失效");
         //未使用

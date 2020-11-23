@@ -637,10 +637,11 @@ public class MineFragment extends BaseFragment {
                 intent.putExtra("name", "");
                 startActivity(intent);
 
-            } else if (view == ll_deduct)
-
-            {
-                startActivity(MyCouponsActivity.getIntent(getContext(), MyCouponsActivity.class));
+            } else if (view == ll_deduct) {
+//                startActivity(MyCouponsActivity.getIntent(getContext(), MyCouponsActivity.class));
+                Intent intent = new Intent(getContext(),MyCouponsActivity.class);
+                intent.putExtra("couponsNum",String.valueOf(mModelMyOrderNum.getData().getDeductNum()));
+                startActivity(intent);
             }
 
         }
