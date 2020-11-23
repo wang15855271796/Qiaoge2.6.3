@@ -236,8 +236,9 @@ public class LoginActivity extends BaseSwipeActivity {
                 //走登录流程
                 requestLogin();
             } else if (view == mTvForgetPassword) {
-                //走忘记密码的流程,忘记密码需要先输入一次手机号码
-//                startActivity(EditAccountInputPhoneActivity.getIntent(mContext, EditAccountInputPhoneActivity.class, "1", "forget"));
+                //忘记密码
+                Intent intent = new Intent(mContext,FindPhoneActivity.class);
+                startActivity(intent);
             }
             else if (view == mTvRegister) {
                 //走注册流程

@@ -175,8 +175,9 @@ public class AccountCenterActivity extends BaseSwipeActivity {
                             startActivity(intent);
                         } else {
                             //有余额
-//                            Intent intent = new Intent(mContext,);
-//                            startActivity(intent);
+                            Intent intent = new Intent(mContext,HisActivity.class);
+                            intent.putExtra("phone",mUserCell);
+                            startActivity(intent);
                         }
                     }
                 });

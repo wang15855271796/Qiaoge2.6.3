@@ -5,6 +5,8 @@ import android.content.Context;
 import com.puyue.www.qiaoge.base.BaseModel;
 import com.puyue.www.qiaoge.constant.AppInterfaceAddress;
 import com.puyue.www.qiaoge.helper.RestHelper;
+import com.puyue.www.qiaoge.model.AddressMessageModel;
+import com.puyue.www.qiaoge.model.HisModel;
 import com.puyue.www.qiaoge.model.mine.login.LoginModel;
 
 import retrofit2.http.Field;
@@ -92,5 +94,89 @@ public class LoginAPI {
     public static Observable<BaseModel> checkFirst(Context context, String phone) {
         Observable<BaseModel> loginModelObservable = RestHelper.getBaseRetrofit(context).create(CheckFirstService.class).setParams(phone);
         return loginModelObservable;
+    }
+
+    //验证支付密码
+    public interface CheckPayService {
+        @FormUrlEncoded
+        @POST(AppInterfaceAddress.Check_Pay_Secret)
+        Observable<BaseModel> setParams(@Field("phone") String phone, @Field("password") String password);
+    }
+
+    public static Observable<BaseModel> checkPay(Context context, String phone,String password) {
+        Observable<BaseModel> myOrdersModelObservable = RestHelper.getBaseRetrofit(context).create(CheckPayService.class).setParams(phone,password);
+        return myOrdersModelObservable;
+    }
+
+    //登录后，修改支付密码
+    public interface ModifyPaySecretService {
+        @FormUrlEncoded
+        @POST(AppInterfaceAddress.Logined_Modify_Secret)
+        Observable<BaseModel> setParams(@Field("phone") String phone, @Field("password") String password);
+    }
+
+    public static Observable<BaseModel> modifyPay(Context context, String phone,String password) {
+        Observable<BaseModel> myOrdersModelObservable = RestHelper.getBaseRetrofit(context).create(ModifyPaySecretService.class).setParams(phone,password);
+        return myOrdersModelObservable;
+    }
+
+    //校验手机号
+    public interface CheckPhoneService {
+        @FormUrlEncoded
+        @POST(AppInterfaceAddress.Check_Phone)
+        Observable<BaseModel> setParams(@Field("phone") String phone);
+    }
+
+    public static Observable<BaseModel> checkPhone(Context context, String phone) {
+        Observable<BaseModel> myOrdersModelObservable = RestHelper.getBaseRetrofit(context).create(CheckPhoneService.class).setParams(phone);
+        return myOrdersModelObservable;
+    }
+
+    //获取验证地址
+    public interface CheckAddressService {
+        @FormUrlEncoded
+        @POST(AppInterfaceAddress.Get_Check_Address)
+        Observable<HisModel> setParams(@Field("phone") String phone);
+    }
+
+    public static Observable<HisModel> getCheckAddress(Context context, String phone) {
+        Observable<HisModel> myOrdersModelObservable = RestHelper.getBaseRetrofit(context).create(CheckAddressService.class).setParams(phone);
+        return myOrdersModelObservable;
+    }
+
+    // 根据手机号 收货地址进行验证
+    public interface CheckAddressMessageService {
+        @FormUrlEncoded
+        @POST(AppInterfaceAddress.Check_Address)
+        Observable<AddressMessageModel> setParams(@Field("phone") String phone,@Field("addressId") String addressId);
+    }
+
+    public static Observable<AddressMessageModel> checkAddress(Context context, String phone, String addressId) {
+        Observable<AddressMessageModel> myOrdersModelObservable = RestHelper.getBaseRetrofit(context).create(CheckAddressMessageService.class).setParams(phone,addressId);
+        return myOrdersModelObservable;
+    }
+
+    //校验收货地址中的收货人和联系电话
+    public interface CheckContactService {
+        @FormUrlEncoded
+        @POST(AppInterfaceAddress.Check_Contact)
+        Observable<BaseModel> setParams(@Field("userName") String userName,@Field("addressId") String addressId,@Field("contactPhone") String contactPhone);
+    }
+
+    public static Observable<BaseModel> checkContact(Context context, String userName, String addressId,String contactPhone) {
+        Observable<BaseModel> myOrdersModelObservable = RestHelper.getBaseRetrofit(context).create(CheckContactService.class).setParams(addressId,userName,contactPhone);
+        return myOrdersModelObservable;
+    }
+
+    //找回密码验证短信
+    public interface CheckMessageService {
+        @FormUrlEncoded
+        @POST(AppInterfaceAddress.Check_Message)
+        Observable<BaseModel> setParams(@Field("phone") String phone,@Field("verifyCode") String verifyCode);
+    }
+
+    public static Observable<BaseModel> checkMessage(Context context, String phone,String verifyCode) {
+        Observable<BaseModel> myOrdersModelObservable = RestHelper.getBaseRetrofit(context).create(CheckMessageService.class).setParams(phone,verifyCode);
+        return myOrdersModelObservable;
     }
 }

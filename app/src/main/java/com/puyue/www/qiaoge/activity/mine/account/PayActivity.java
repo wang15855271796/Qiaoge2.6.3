@@ -30,7 +30,6 @@ import rx.schedulers.Schedulers;
 public class PayActivity extends BaseSwipeActivity {
 
     private ImageView mIvBack;
-    private TextView mEdit;
     private TextView mBtnNext;
     private TextView mTvTitle;
     private int mCode;
@@ -41,7 +40,7 @@ public class PayActivity extends BaseSwipeActivity {
     String phones;
     String et_yzms;
     TextView tv_stop;
-
+    TextView tv_phone;
     @Override
     public boolean handleExtra(Bundle savedInstanceState) {
         return false;
@@ -58,19 +57,20 @@ public class PayActivity extends BaseSwipeActivity {
         et_yzm = (EditText) findViewById(R.id.et_yzm);
         tv_yzm = (TextView) findViewById(R.id.tv_yzm);
         mIvBack = (ImageView) findViewById(R.id.iv_pp_input_phone_back);
-        mEdit = (TextView) findViewById(R.id.edit_pp_input_phone);
         mBtnNext = (TextView) findViewById(R.id.tv_next);
         mTvTitle = (TextView) findViewById(R.id.tv_pp_input_phone_title);
+        tv_phone = (TextView) findViewById(R.id.tv_phone);
     }
 
     @Override
     public void setViewData() {
+        phone = getIntent().getStringExtra("phone");
         mIvBack.setOnClickListener(noDoubleClickListener);
         mBtnNext.setOnClickListener(noDoubleClickListener);
         tv_yzm.setOnClickListener(noDoubleClickListener);
         tv_stop.setOnClickListener(noDoubleClickListener);
 
-        mEdit.setText(phone);
+        tv_phone.setText(phone);
     }
 
     @Override
@@ -112,6 +112,7 @@ public class PayActivity extends BaseSwipeActivity {
                 Intent intent = new Intent(mContext,LoginPayTestActivity.class);
                 intent.putExtra("phone",phone);
                 startActivity(intent);
+                finish();
             }
         }
     };
@@ -135,6 +136,7 @@ public class PayActivity extends BaseSwipeActivity {
                     public void onNext(BaseModel baseModel) {
                         if (baseModel.success) {
                             Intent intent = new Intent(mContext,LoginPayTestActivity.class);
+                            intent.putExtra("phone",phone);
                             startActivity(intent);
                             finish();
                         } else {

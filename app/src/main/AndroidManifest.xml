@@ -207,6 +207,31 @@
         <activity android:name=".activity.mine.account.LoginPayTestActivity"
             android:screenOrientation="portrait"
             />
+
+        <!---->
+        <activity android:name=".activity.mine.login.FindPhoneActivity"
+            android:screenOrientation="portrait"
+            />
+
+        <!---->
+        <activity android:name=".activity.mine.login.PointActivity"
+            android:screenOrientation="portrait"
+            />
+
+        <activity android:name=".activity.mine.login.MessageCheckActivity"
+            android:screenOrientation="portrait"
+            />
+        <!---->
+        <activity android:name=".activity.mine.login.TakeMessageActivity"
+            android:screenOrientation="portrait"
+            />
+
+        <activity android:name=".activity.mine.login.CommonContactActivity"
+            android:screenOrientation="portrait"
+            />
+        <activity android:name=".activity.mine.account.SetPayActivity"
+            android:screenOrientation="portrait"
+            />
         <activity android:name=".activity.mine.account.ChangePhoneActivity"
             android:screenOrientation="portrait"/>
 

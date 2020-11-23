@@ -21,9 +21,9 @@ import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
 /**
- * Created by ${王涛} on 2020/11/18
+ * Created by ${王涛} on 2020/11/19
  */
-public class LoginPayTestActivity extends BaseSwipeActivity {
+public class HisActivity extends BaseSwipeActivity {
     @BindView(R.id.et_pay)
     EditText et_pay;
     @BindView(R.id.tv_next)
@@ -38,12 +38,16 @@ public class LoginPayTestActivity extends BaseSwipeActivity {
 
     @Override
     public void setContentView() {
-        setContentView(R.layout.activity_pay_test);
+        setContentView(R.layout.activity_his);
     }
 
     @Override
     public void findViewById() {
         ButterKnife.bind(this);
+    }
+
+    @Override
+    public void setViewData() {
         phone = getIntent().getStringExtra("phone");
 
         if(!TextUtils.isEmpty(phone)){
@@ -57,19 +61,19 @@ public class LoginPayTestActivity extends BaseSwipeActivity {
         tv_next.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String pay = et_pay.getText().toString();
-                checkPay(phones,pay);
+                String pays = et_pay.getText().toString();
+                checkPay(phones,pays);
             }
         });
     }
 
     @Override
-    public void setViewData() {
+    public void setClickEvent() {
 
     }
 
     /**
-     * 修改支付密码
+     * 验证支付密码
      */
     private void checkPay(String phones,String pay) {
         LoginAPI.checkPay(mContext,phones,pay)
@@ -89,8 +93,7 @@ public class LoginPayTestActivity extends BaseSwipeActivity {
                     @Override
                     public void onNext(BaseModel baseModel) {
                         if (baseModel.success) {
-                            //跳转到修改支付密码界面
-                            Intent intent = new Intent(mContext,SetPayActivity.class);
+                            Intent intent = new Intent(mContext,LoginPayTestActivity.class);
                             intent.putExtra("phone",phone);
                             startActivity(intent);
                             ToastUtil.showSuccessMsg(mContext,baseModel.message);
@@ -101,12 +104,4 @@ public class LoginPayTestActivity extends BaseSwipeActivity {
                     }
                 });
     }
-
-
-    @Override
-    public void setClickEvent() {
-
-    }
-
-
 }

@@ -706,14 +706,14 @@ public class MineFragment extends BaseFragment {
                     public void onNext(OrderNumsModel numsModel) {
                         if(numsModel.isSuccess()) {
                             if(numsModel.getData().getSendOrderNum()>0) {
-                                tv_number1.setText(numsModel.getData().getSendOrderNum());
+                                tv_number1.setText(numsModel.getData().getSendOrderNum()+"");
                                 tv_number1.setVisibility(View.VISIBLE);
                             }else {
                                 tv_number1.setVisibility(View.GONE);
                             }
 
                             if(numsModel.getData().getSelfOrderNum()>0) {
-                                tv_number2.setText(numsModel.getData().getSendOrderNum());
+                                tv_number2.setText(numsModel.getData().getSelfOrderNum()+"");
                                 tv_number2.setVisibility(View.VISIBLE);
                             }else {
                                 tv_number2.setVisibility(View.GONE);

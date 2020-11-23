@@ -3,6 +3,7 @@ package com.puyue.www.qiaoge.api.mine.order;
 import android.content.Context;
 
 import com.puyue.www.qiaoge.api.cart.CartListAPI;
+import com.puyue.www.qiaoge.base.BaseModel;
 import com.puyue.www.qiaoge.constant.AppInterfaceAddress;
 import com.puyue.www.qiaoge.helper.RestHelper;
 import com.puyue.www.qiaoge.model.OrderNumsModel;
@@ -86,4 +87,6 @@ public class MyOrderListAPI {
         OrderNumServices service = RestHelper.getBaseRetrofit(context).create(OrderNumServices.class);
         return service.getData();
     }
+
+
 }

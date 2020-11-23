@@ -16,6 +16,35 @@ public class AppInterfaceAddress {
 //    queryReturnProdIsContainFullGift
 
     /**
+     *找回密码验证短信
+     *
+     */
+    public static final String Check_Message = "auth/checkResetPwd";
+    /**
+     * 校验收货地址中的收货人和联系电话
+     */
+    public static final String Check_Contact = "auth/checkAddressByUserAndPhone";
+    /**
+     *  根据手机号 收货地址进行验证
+     */
+    public static final String Check_Address = "auth/checkByAddress";
+    /**
+     *获取验证地址
+     */
+    public static final String Get_Check_Address = "auth/getAddressByPhone";
+    /**
+     *校验手机号
+     */
+    public static final String Check_Phone = "auth/checkPhone";
+    /**
+     * 登录后，修改支付密码
+     */
+    public static final String Logined_Modify_Secret = "user/resetPayPwd";
+    /**
+     *  校验支付密码
+     */
+    public static final String Check_Pay_Secret = "user/checkPayPwd";
+    /**
      * 待付款订单数量
      */
     public static final String Order_Num = "user/getWaitPayOrderNum";
