@@ -29,7 +29,7 @@ import rx.schedulers.Schedulers;
 
 /**
  * Created by ${daff} on 2018/9/20
- * 不可使用(过期)
+ * 我的优惠券界面不可使用(过期)
  */
 public class CouponsOverdueFragment extends BaseFragment {
     private RecyclerView recyclerView;

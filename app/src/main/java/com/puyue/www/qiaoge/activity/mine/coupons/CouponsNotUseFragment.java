@@ -27,7 +27,7 @@ import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
 /**
- * Created by ${王涛} on 2020/8/7（未使用）
+ * Created by ${王涛} on 2020/8/7我的优惠券界面（未使用）
  */
 public class CouponsNotUseFragment extends BaseFragment {
     private RecyclerView recyclerView;

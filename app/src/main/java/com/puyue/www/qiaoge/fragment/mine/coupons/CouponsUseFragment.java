@@ -41,7 +41,7 @@ import static cn.com.chinatelecom.account.api.CtAuth.mContext;
 
 /**
  * Created by ${daff} on 2018/9/20
- * 优惠券可使用
+ * 我的优惠券界面已使用
  */
 public class CouponsUseFragment extends BaseFragment {
 
@@ -52,7 +52,7 @@ public class CouponsUseFragment extends BaseFragment {
     private LinearLayout data;
     private  LinearLayout noData;
     TextView tv_desc;
-    ImageView iv_select_all;
+//    ImageView iv_select_all;
     private List<queryUserDeductByStateModel.DataBean.ListBean > lists =new ArrayList<>();
     private List<UserChooseDeductModel.DataBean> list = new ArrayList<>();
     public static CouponsUseFragment newInstance(String giftDetailNo, String activityBalanceVOStr, String normalProductBalanceVOStr) {
@@ -69,9 +69,9 @@ public class CouponsUseFragment extends BaseFragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        giftDetailNo = getArguments().getString("giftDetailNo");
-        activityBalanceVOStr = getArguments().getString("activityBalanceVOStr");
-        normalProductBalanceVOStr = getArguments().getString("normalProductBalanceVOStr");
+//        giftDetailNo = getArguments().getString("giftDetailNo");
+//        activityBalanceVOStr = getArguments().getString("activityBalanceVOStr");
+//        normalProductBalanceVOStr = getArguments().getString("normalProductBalanceVOStr");
     }
     @Override
     public int setLayoutId() {
@@ -85,33 +85,33 @@ public class CouponsUseFragment extends BaseFragment {
 
     @Override
     public void findViewById(View view) {
-        iv_select_all = view.findViewById(R.id.iv_select_all);
+//        iv_select_all = view.findViewById(R.id.iv_select_all);
         tv_desc = view.findViewById(R.id.tv_desc);
         recyclerView=view.findViewById(R.id.recyclerView);
         data= view .findViewById(R.id.data);
         noData= view.findViewById(R.id.noData);
         ptrClassicFrameLayout=view.findViewById(R.id.ptrClassicFrameLayout);
 
-        iv_select_all.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(list!=null) {
-                    //未选
-//                    adapter.setStat();
-                    EventBus.getDefault().post(new ChooseCoupon1Event());
-                    mActivity.finish();
-
-                }
-                statModel = true;
-                adapter.notifyDataSetChanged();
-            }
-        });
+//        iv_select_all.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                if(list!=null) {
+//                    //未选
+////                    adapter.setStat();
+//                    EventBus.getDefault().post(new ChooseCoupon1Event());
+//                    mActivity.finish();
+//
+//                }
+//                statModel = true;
+//                adapter.notifyDataSetChanged();
+//            }
+//        });
     }
 
     @Override
     public void setViewData() {
         pageNum = 1;
-        userChooseDeduct();
+//        userChooseDeduct();
         ptrClassicFrameLayout.setPtrHandler(new PtrHandler() {
             @Override
             public boolean checkCanDoRefresh(PtrFrameLayout frame, View content, View header) {
@@ -156,58 +156,6 @@ public class CouponsUseFragment extends BaseFragment {
     @Override
     public void setClickEvent() {
 
-    }
-    UserChooseDeductModel models;
-    private String activityBalanceVOStr;
-    private String normalProductBalanceVOStr;
-    boolean statModel;
-    private void userChooseDeduct() {
-        userChooseDeductAPI.requestData(mContext, "0",activityBalanceVOStr, normalProductBalanceVOStr,"0")
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<UserChooseDeductModel>() {
-                    @Override
-                    public void onCompleted() {
-
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-
-                    }
-
-                    @Override
-                    public void onNext(UserChooseDeductModel model) {
-                        if (model.success) {
-                            models = model;
-
-                            if (model.getData().size()> 0) {
-
-                                list.addAll(model.getData());
-                                adapter.notifyDataSetChanged();
-                                for (int i = 0; i < list.size(); i++) {
-                                    if (model.getData().get(i).getGiftDetailNo().equals(giftDetailNo)) {
-                                        model.getData().get(i).setFlags(true);
-                                        if(statModel) {
-                                            iv_select_all.setBackgroundResource(R.mipmap.ic_pay_ok);
-                                        }else {
-                                            iv_select_all.setBackgroundResource(R.mipmap.ic_pay_no);
-                                        }
-                                    } else {
-                                        model.getData().get(i).setFlags(false);
-                                        if(statModel) {
-                                            iv_select_all.setBackgroundResource(R.mipmap.ic_pay_ok);
-                                        }else {
-                                            iv_select_all.setBackgroundResource(R.mipmap.ic_pay_no);
-                                        }
-                                    }
-                                }
-                            }
-                        } else {
-                            AppHelper.showMsg(mContext, model.message);
-                        }
-                    }
-                });
     }
 
 }
