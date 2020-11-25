@@ -8,4 +8,13 @@ import com.puyue.www.qiaoge.base.BaseModel;
 public class ReturnOrderSucModel extends BaseModel {
 
     public int data;
+    String allReturn;
+
+    public String getAllReturn() {
+        return allReturn;
+    }
+
+    public void setAllReturn(String allReturn) {
+        this.allReturn = allReturn;
+    }
 }

@@ -221,6 +221,10 @@
         <activity android:name=".activity.mine.login.MessageCheckActivity"
             android:screenOrientation="portrait"
             />
+
+        <activity android:name=".activity.mine.login.SetUnLoginSecretActivity"
+            android:screenOrientation="portrait"
+            />
         <!---->
         <activity android:name=".activity.mine.login.TakeMessageActivity"
             android:screenOrientation="portrait"

@@ -95,6 +95,7 @@ public class FindPhoneActivity extends BaseSwipeActivity {
                             intent.putExtra("phone",phone);
                             startActivity(intent);
                             AppHelper.showMsg(mContext, baseModel.message);
+                            finish();
                         } else {
                             AppHelper.showMsg(mContext, baseModel.message);
                         }

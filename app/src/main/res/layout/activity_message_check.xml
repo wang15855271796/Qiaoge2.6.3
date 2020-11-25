@@ -48,7 +48,7 @@
         tools:text="验证码已发送至   182 0347 1798"
         android:layout_marginTop="@dimen/size_5dp"
         android:layout_marginLeft="@dimen/size_38dp"
-        android:textColor="#999999"
+        android:textColor="#333333"
         android:textSize="14dp" />
 
     <com.puyue.www.qiaoge.view.VerifyCodeView

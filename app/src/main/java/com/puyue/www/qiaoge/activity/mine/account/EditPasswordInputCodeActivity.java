@@ -88,8 +88,8 @@ public class EditPasswordInputCodeActivity extends BaseSwipeActivity implements 
         tv_stop = (TextView) findViewById(R.id.tv_stop);
         et_yzm = (EditText) findViewById(R.id.et_yzm);
         tv_yzm = (TextView) findViewById(R.id.tv_yzm);
-        mIvBack = (ImageView) findViewById(R.id.iv_pp_input_phone_back);
-        mEdit = (TextView) findViewById(R.id.edit_pp_input_phone);
+        mIvBack = (ImageView) findViewById(R.id.iv_back);
+        mEdit = (TextView) findViewById(R.id.tv_phone);
         mBtnNext = (TextView) findViewById(R.id.tv_next);
         mTvTitle = (TextView) findViewById(R.id.tv_pp_input_phone_title);
     }

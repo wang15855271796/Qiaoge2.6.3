@@ -36,7 +36,7 @@ public class ReturnGoodDetailTwoAdapter extends RecyclerView.Adapter<ReturnGoodD
     private int businessId;
     private int businessType;
     public OnReturnClickListener listener;
-
+    String allReturn;
     public OnReturnClickListener getListener() {
         return listener;
     }
@@ -50,9 +50,10 @@ public class ReturnGoodDetailTwoAdapter extends RecyclerView.Adapter<ReturnGoodD
 
     }
 
-    public ReturnGoodDetailTwoAdapter(List<ReturnOrderDetailModel.DataBean.ProductsBean> mListProduct, Context context) {
+    public ReturnGoodDetailTwoAdapter(List<ReturnOrderDetailModel.DataBean.ProductsBean> mListProduct, Context context,String allReturn) {
         this.mListProduct = mListProduct;
         this.context = context;
+        this.allReturn = allReturn;
         for (int i = 0; i < mListProduct.size(); i++) {
             for (int j = 0; j < mListProduct.get(i).getDetails().size(); j++) {
                 mListProduct.get(i).getDetails().get(j).setBusinessId(mListProduct.get(i).getBusinessId());
@@ -113,7 +114,7 @@ public class ReturnGoodDetailTwoAdapter extends RecyclerView.Adapter<ReturnGoodD
 
         mListSpec.addAll(mListProduct.get(position).getDetails());
         holder.mRySpec.setLayoutManager(new LinearLayoutManager(context));
-        mSpecAdaPter = new ReturnSpecAdapter(R.layout.retrun_order_spec, mListSpec);
+        mSpecAdaPter = new ReturnSpecAdapter(R.layout.retrun_order_spec, mListSpec,allReturn);
         orderId = UserInfoHelper.getOrderId(context);
 
         businessId = mListProduct.get(position).getBusinessId();

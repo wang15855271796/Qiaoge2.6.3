@@ -33,6 +33,7 @@ public class ReturnGoodDetailChangeAdapter extends RecyclerView.Adapter<ReturnGo
     public String orderId;
     public int businessId;
     public int businessType;
+    String allReturn;
     public OnReturnClickListener listener;
     public OnReturnClickListener getListener() {
         return listener;
@@ -45,10 +46,10 @@ public class ReturnGoodDetailChangeAdapter extends RecyclerView.Adapter<ReturnGo
 
     }
 
-    public ReturnGoodDetailChangeAdapter(List<ReturnOrderDetailModel.DataBean.ProductsBean> mListProduct, Context context) {
+    public ReturnGoodDetailChangeAdapter(List<ReturnOrderDetailModel.DataBean.ProductsBean> mListProduct, Context context, String allReturn) {
         this.mListProduct = mListProduct;
         this.context = context;
-
+        this.allReturn = allReturn;
     }
 
     @NonNull
@@ -90,13 +91,15 @@ public class ReturnGoodDetailChangeAdapter extends RecyclerView.Adapter<ReturnGo
         mListSpec.clear();
         mListSpec.addAll(mListProduct.get(position).getDetails());
         holder.mRySpec.setLayoutManager(new LinearLayoutManager(context));
-        mSpecAdaPter = new ReturnSpecAdapter(R.layout.retrun_order_spec, mListSpec);
+        mSpecAdaPter = new ReturnSpecAdapter(R.layout.retrun_order_spec, mListSpec,allReturn);
         orderId = UserInfoHelper.getOrderId(context);
 
         businessId = mListProduct.get(position).getBusinessId();
         businessType = mListProduct.get(position).getBusinessType();
 
         final boolean[] isSelect = {true};
+
+
         mSpecAdaPter.setClick(new ReturnSpecAdapter.OnItemClick() {
             @Override
             public void delete() {

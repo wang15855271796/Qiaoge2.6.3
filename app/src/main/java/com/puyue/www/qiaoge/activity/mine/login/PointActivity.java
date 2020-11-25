@@ -43,6 +43,7 @@ public class PointActivity extends BaseSwipeActivity {
                 Intent intent = new Intent(mContext,MessageCheckActivity.class);
                 intent.putExtra("phone",phone);
                 startActivity(intent);
+                finish();
             }
         });
 
@@ -52,6 +53,7 @@ public class PointActivity extends BaseSwipeActivity {
                 Intent intent = new Intent(mContext,TakeMessageActivity.class);
                 intent.putExtra("phone",phone);
                 startActivity(intent);
+                finish();
             }
         });
     }

@@ -69,7 +69,16 @@ public class ReturnOrderDetailModel {
 
         private String offerAmount;
         private List<ProductsBean> products;
+        String allReturn;
 
+
+        public String getAllReturn() {
+            return allReturn;
+        }
+
+        public void setAllReturn(String allReturn) {
+            this.allReturn = allReturn;
+        }
 
         public List<ReturnChannelBean> returnChannel;
 

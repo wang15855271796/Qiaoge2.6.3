@@ -1,5 +1,6 @@
 package com.puyue.www.qiaoge.fragment;
 
+import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -9,10 +10,14 @@ import android.widget.TextView;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.puyue.www.qiaoge.R;
+import com.puyue.www.qiaoge.adapter.CouDanAdapter;
+import com.puyue.www.qiaoge.adapter.CouDanUnAdapter;
 import com.puyue.www.qiaoge.api.mine.coupon.MyCouponsAPI;
+import com.puyue.www.qiaoge.api.mine.coupon.userChooseDeductAPI;
 import com.puyue.www.qiaoge.base.BaseFragment;
 import com.puyue.www.qiaoge.fragment.mine.coupons.MyCouponsUsedAdapter;
 import com.puyue.www.qiaoge.helper.AppHelper;
+import com.puyue.www.qiaoge.model.mine.coupons.UserChooseDeductModel;
 import com.puyue.www.qiaoge.model.mine.coupons.queryUserDeductByStateModel;
 
 import java.util.ArrayList;
@@ -32,17 +37,28 @@ import rx.schedulers.Schedulers;
 public class CouponsUnUseFragment extends BaseFragment {
 
     private RecyclerView recyclerView;
-    private PtrClassicFrameLayout ptrClassicFrameLayout ;
-    private MyCouponsUsedAdapter adapter;
-    private int pageNum = 1;
+    RecyclerView recyclerView_un;
+    private CouDanAdapter adapter;
     private LinearLayout data;
     private  LinearLayout noData;
     TextView tv_desc;
+    TextView tv_nocoudan;
+    TextView tv_coudan;
     private List<queryUserDeductByStateModel.DataBean.ListBean > lists =new ArrayList<>();
+
+    public static CouponsUnUseFragment newInstance(String giftDetailNo,String normalProductBalanceVOStr,String activityBalanceVOStr) {
+        Bundle args = new Bundle();
+        args.putString("giftDetailNo", giftDetailNo);
+        args.putString("activityBalanceVOStr", activityBalanceVOStr);
+        args.putString("normalProductBalanceVOStr", normalProductBalanceVOStr);
+        CouponsUnUseFragment fragment = new CouponsUnUseFragment();
+        fragment.setArguments(args);
+        return fragment;
+    }
 
     @Override
     public int setLayoutId() {
-        return R.layout.fragment_cupons_overdue;
+        return R.layout.fragment_coupon_unuse;
     }
 
     @Override
@@ -50,57 +66,41 @@ public class CouponsUnUseFragment extends BaseFragment {
 
     }
 
+    boolean statModel;
+    String giftDetailNo;
+    String normalProductBalanceVOStr;
+    String activityBalanceVOStr;
     @Override
     public void findViewById(View view) {
+        tv_nocoudan = view.findViewById(R.id.tv_nocoudan);
+        tv_coudan = view.findViewById(R.id.tv_coudan);
+        recyclerView_un = view.findViewById(R.id.recyclerView_un);
         tv_desc = view.findViewById(R.id.tv_desc);
         recyclerView=view.findViewById(R.id.recyclerView);
+        view.findViewById(R.id.recyclerView_un);
         data= view .findViewById(R.id.data);
         noData= view.findViewById(R.id.noData);
-        ptrClassicFrameLayout=view.findViewById(R.id.ptrClassicFrameLayout);
-    }
 
+        statModel = getArguments().getBoolean("statModel");
+        giftDetailNo = getArguments().getString("giftDetailNo");
+        normalProductBalanceVOStr = getArguments().getString("normalProductBalanceVOStr");
+        activityBalanceVOStr = getArguments().getString("activityBalanceVOStr");
+        activityBalanceVOStr = getArguments().getString("activityBalanceVOStr");
+        userChooseDeduct();
+
+    }
+    CouDanUnAdapter adapter1;
     @Override
     public void setViewData() {
-        pageNum = 1;
-        ptrClassicFrameLayout.setPtrHandler(new PtrHandler() {
-            @Override
-            public boolean checkCanDoRefresh(PtrFrameLayout frame, View content, View header) {
-                return PtrDefaultHandler.checkContentCanBePulledDown(frame, content, header);
-            }
-
-            @Override
-            public void onRefreshBegin(PtrFrameLayout frame) {
-                pageNum = 1;
-
-            }
-        });
-
-        adapter = new MyCouponsUsedAdapter(R.layout.item_my_coupons,lists,getActivity());
-
+        //凑单可用
+        adapter = new CouDanAdapter(R.layout.item_my_coupons,dataBean1);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-                super.onScrollStateChanged(recyclerView, newState);
-            }
-
-            @Override
-            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                super.onScrolled(recyclerView, dx, dy);
-                if (recyclerView.canScrollVertically(-1)) {
-                    ptrClassicFrameLayout.setEnabled(false);
-                } else {
-                    ptrClassicFrameLayout.setEnabled(true);
-                }
-            }
-        });
         recyclerView.setAdapter(adapter);
-        adapter.setOnLoadMoreListener(new BaseQuickAdapter.RequestLoadMoreListener() {
-            @Override
-            public void onLoadMoreRequested() {
-                pageNum++;
-            }
-        }, recyclerView);
+        //本身不可用
+        adapter1 = new CouDanUnAdapter(R.layout.item_my_coupons,dataBean2);
+        recyclerView_un.setLayoutManager(new LinearLayoutManager(getActivity()));
+        recyclerView_un.setAdapter(adapter1);
+
     }
 
     @Override
@@ -108,5 +108,57 @@ public class CouponsUnUseFragment extends BaseFragment {
 
     }
 
+    UserChooseDeductModel models;
+    List<UserChooseDeductModel.DataBean>dataBean1 = new ArrayList<>();
+    List<UserChooseDeductModel.DataBean>dataBean2 = new ArrayList<>();
+    private List<UserChooseDeductModel.DataBean> list = new ArrayList<>();
+    private void userChooseDeduct() {
+        userChooseDeductAPI.requestData(getContext(), "0",activityBalanceVOStr, normalProductBalanceVOStr,"1")
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<UserChooseDeductModel>() {
+                    @Override
+                    public void onCompleted() {
 
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onNext(UserChooseDeductModel model) {
+                        if (model.success) {
+                            models = model;
+                            for (int i = 0; i < model.getData().size(); i++) {
+                                if(model.getData().get(i).getFlag().equals("1")) {
+                                    //凑单可用
+                                    dataBean1.add(model.getData().get(i));
+                                    adapter.notifyDataSetChanged();
+
+                                    if(dataBean1.size()>0) {
+                                        tv_coudan.setVisibility(View.VISIBLE);
+                                    }else {
+                                        tv_coudan.setVisibility(View.GONE);
+                                    }
+                                }else {
+                                    //凑单不可用
+                                    dataBean2.add(model.getData().get(i));
+                                    adapter1.notifyDataSetChanged();
+
+                                    if(dataBean2.size()>0) {
+                                        tv_nocoudan.setVisibility(View.VISIBLE);
+                                    }else {
+                                        tv_nocoudan.setVisibility(View.GONE);
+                                    }
+                                }
+                            }
+                        } else {
+                            AppHelper.showMsg(getContext(), model.message);
+                        }
+
+                    }
+                });
+    }
 }

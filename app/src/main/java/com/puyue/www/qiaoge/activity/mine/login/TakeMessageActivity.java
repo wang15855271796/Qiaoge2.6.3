@@ -64,7 +64,8 @@ public class TakeMessageActivity extends BaseSwipeActivity {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
                 id = lists.get(position).getId();
-
+                hisAddressAdapter.setNotify(position);
+                hisAddressAdapter.notifyDataSetChanged();
             }
         });
     }
@@ -113,6 +114,7 @@ public class TakeMessageActivity extends BaseSwipeActivity {
                     @Override
                     public void onNext(HisModel hisModel) {
                         if (hisModel.isSuccess()) {
+                            lists.clear();
                             List<HisModel.DataBean> data = hisModel.getData();
                             lists.addAll(data);
                             hisAddressAdapter.notifyDataSetChanged();
@@ -142,10 +144,21 @@ public class TakeMessageActivity extends BaseSwipeActivity {
                     @Override
                     public void onNext(AddressMessageModel addressMessageModel) {
                         if (addressMessageModel.isSuccess()) {
-                            Intent intent = new Intent(mContext,CommonContactActivity.class);
-                            intent.putExtra("id",id);
-                            startActivity(intent);
-                            ToastUtil.showSuccessMsg(mContext,addressMessageModel.getMessage());
+                            if(addressMessageModel.getData().getIsTrue().equals("1")) {
+                                Intent intent = new Intent(mContext,CommonContactActivity.class);
+                                intent.putExtra("id",id);
+                                startActivity(intent);
+                                ToastUtil.showSuccessMsg(mContext,"认证成功");
+                            }else {
+                                if(addressMessageModel.getData().getTimes()==0) {
+                                    ToastUtil.showSuccessMsg(mContext,"您还剩机会已用完");
+                                }else {
+                                    ToastUtil.showSuccessMsg(mContext,"您今日还剩"+addressMessageModel.getData().getTimes()+"次");
+                                    getCheckAdddress(phones);
+                                }
+
+                            }
+
                         } else {
                             ToastUtil.showSuccessMsg(mContext,addressMessageModel.getMessage());
                         }

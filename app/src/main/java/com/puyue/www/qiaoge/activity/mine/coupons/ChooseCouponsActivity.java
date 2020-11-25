@@ -19,6 +19,7 @@ import com.puyue.www.qiaoge.api.mine.coupon.userChooseDeductAPI;
 import com.puyue.www.qiaoge.base.BaseSwipeActivity;
 import com.puyue.www.qiaoge.event.ChooseCoupon1Event;
 import com.puyue.www.qiaoge.event.ChooseCouponEvent;
+import com.puyue.www.qiaoge.fragment.ChooseCouponFragment;
 import com.puyue.www.qiaoge.fragment.CouponsUnUseFragment;
 import com.puyue.www.qiaoge.fragment.mine.coupons.CouponsOverdueFragment;
 import com.puyue.www.qiaoge.fragment.mine.coupons.CouponsUseFragment;
@@ -76,8 +77,6 @@ public class ChooseCouponsActivity extends BaseSwipeActivity {
         stringList.add("可使用");
         stringList.add("不可使用");
 
-
-
         iv_select_all.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -103,9 +102,9 @@ public class ChooseCouponsActivity extends BaseSwipeActivity {
         statModel = getIntent().getBooleanExtra("statModel",false);
 
         //可使用
-        list_fragment.add(CouponsUseFragment.newInstance(giftDetailNo,activityBalanceVOStr,normalProductBalanceVOStr));
+        list_fragment.add(ChooseCouponFragment.newInstance(giftDetailNo,normalProductBalanceVOStr,activityBalanceVOStr,statModel));
         //不可使用
-        list_fragment.add(new CouponsUnUseFragment());
+        list_fragment.add(CouponsUnUseFragment.newInstance(giftDetailNo,normalProductBalanceVOStr,activityBalanceVOStr));
         ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager(),list_fragment,stringList);
 
         viewPager.setAdapter(viewPagerAdapter);

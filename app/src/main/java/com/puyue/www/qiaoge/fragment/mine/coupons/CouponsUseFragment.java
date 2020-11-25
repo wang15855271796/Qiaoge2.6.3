@@ -52,27 +52,8 @@ public class CouponsUseFragment extends BaseFragment {
     private LinearLayout data;
     private  LinearLayout noData;
     TextView tv_desc;
-//    ImageView iv_select_all;
     private List<queryUserDeductByStateModel.DataBean.ListBean > lists =new ArrayList<>();
-    private List<UserChooseDeductModel.DataBean> list = new ArrayList<>();
-    public static CouponsUseFragment newInstance(String giftDetailNo, String activityBalanceVOStr, String normalProductBalanceVOStr) {
-        Bundle args = new Bundle();
-        args.putString("giftDetailNo", giftDetailNo);
-        args.putString("activityBalanceVOStr", activityBalanceVOStr);
-        args.putString("normalProductBalanceVOStr", normalProductBalanceVOStr);
-        CouponsUseFragment fragment = new CouponsUseFragment();
-        fragment.setArguments(args);
-        return fragment;
-    }
 
-    String giftDetailNo;
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-//        giftDetailNo = getArguments().getString("giftDetailNo");
-//        activityBalanceVOStr = getArguments().getString("activityBalanceVOStr");
-//        normalProductBalanceVOStr = getArguments().getString("normalProductBalanceVOStr");
-    }
     @Override
     public int setLayoutId() {
         return R.layout.fragment_cupons_overdue;
@@ -85,33 +66,17 @@ public class CouponsUseFragment extends BaseFragment {
 
     @Override
     public void findViewById(View view) {
-//        iv_select_all = view.findViewById(R.id.iv_select_all);
         tv_desc = view.findViewById(R.id.tv_desc);
         recyclerView=view.findViewById(R.id.recyclerView);
         data= view .findViewById(R.id.data);
         noData= view.findViewById(R.id.noData);
         ptrClassicFrameLayout=view.findViewById(R.id.ptrClassicFrameLayout);
-
-//        iv_select_all.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                if(list!=null) {
-//                    //未选
-////                    adapter.setStat();
-//                    EventBus.getDefault().post(new ChooseCoupon1Event());
-//                    mActivity.finish();
-//
-//                }
-//                statModel = true;
-//                adapter.notifyDataSetChanged();
-//            }
-//        });
     }
 
     @Override
     public void setViewData() {
         pageNum = 1;
-//        userChooseDeduct();
+        requestMyCoupons();
         ptrClassicFrameLayout.setPtrHandler(new PtrHandler() {
             @Override
             public boolean checkCanDoRefresh(PtrFrameLayout frame, View content, View header) {
@@ -121,7 +86,7 @@ public class CouponsUseFragment extends BaseFragment {
             @Override
             public void onRefreshBegin(PtrFrameLayout frame) {
                 pageNum = 1;
-
+                requestMyCoupons();
             }
         });
 
@@ -149,6 +114,7 @@ public class CouponsUseFragment extends BaseFragment {
             @Override
             public void onLoadMoreRequested() {
                 pageNum++;
+                requestMyCoupons();
             }
         }, recyclerView);
     }
@@ -157,5 +123,64 @@ public class CouponsUseFragment extends BaseFragment {
     public void setClickEvent() {
 
     }
+
+
+    private void requestMyCoupons() {
+        MyCouponsAPI.requestCoupons(getActivity(), pageNum, 10,"USED")
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<queryUserDeductByStateModel>() {
+                    @Override
+                    public void onCompleted() {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onNext(queryUserDeductByStateModel info) {
+                        ptrClassicFrameLayout.refreshComplete();
+                        if (info.isSuccess()) {
+                            updateNoticeList(info);
+                        } else {
+                            AppHelper.showMsg(getContext(), info.getMessage());
+                        }
+
+
+                    }
+                });
+    }
+
+    private void updateNoticeList(queryUserDeductByStateModel info) {
+
+        if (pageNum == 1) {
+            if (info.getData() != null && info.getData().getList().size() > 0) {
+                data.setVisibility(View.VISIBLE);
+                noData.setVisibility(View.GONE);
+                lists.clear();
+                lists.addAll(info.getData().getList());
+                adapter.notifyDataSetChanged();
+            } else {
+                data.setVisibility(View.GONE);
+                noData.setVisibility(View.VISIBLE);
+                tv_desc.setText("您还没有使用优惠券哦");
+            }
+
+        } else {
+            lists.addAll(info.getData().getList());
+            adapter.notifyDataSetChanged();
+        }
+        if (info.getData().isHasNextPage()) {
+            //还有下一页数据
+            adapter.loadMoreComplete();
+        } else {
+            //没有下一页数据了
+            adapter.loadMoreEnd();
+        }
+    }
+
 
 }

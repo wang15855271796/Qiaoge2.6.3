@@ -179,4 +179,16 @@ public class LoginAPI {
         Observable<BaseModel> myOrdersModelObservable = RestHelper.getBaseRetrofit(context).create(CheckMessageService.class).setParams(phone,verifyCode);
         return myOrdersModelObservable;
     }
+
+    // 找回密码(修改密码)没有验证码
+    public interface UnLoginSetSecretService {
+        @FormUrlEncoded
+        @POST(AppInterfaceAddress.UnLogin_Set_Secret)
+        Observable<BaseModel> setParams(@Field("phone") String phone,@Field("password") String password);
+    }
+
+    public static Observable<BaseModel> setUnLoginSecret(Context context, String phone,String password) {
+        Observable<BaseModel> myOrdersModelObservable = RestHelper.getBaseRetrofit(context).create(UnLoginSetSecretService.class).setParams(phone,password);
+        return myOrdersModelObservable;
+    }
 }

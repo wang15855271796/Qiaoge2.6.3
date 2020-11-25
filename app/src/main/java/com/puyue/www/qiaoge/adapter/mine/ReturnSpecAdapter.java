@@ -29,6 +29,7 @@ public class ReturnSpecAdapter extends BaseQuickAdapter<ReturnOrderDetailModel.D
     private TextView mTvPrice;
     private OnItemClick click;
     TextView tv_old_price;
+    String allReturn;
     public OnItemClick getClick() {
         return click;
     }
@@ -37,8 +38,9 @@ public class ReturnSpecAdapter extends BaseQuickAdapter<ReturnOrderDetailModel.D
         this.click = click;
     }
 
-    public ReturnSpecAdapter(int layoutResId, @Nullable List<ReturnOrderDetailModel.DataBean.ProductsBean.DetailsBean> data) {
+    public ReturnSpecAdapter(int layoutResId, @Nullable List<ReturnOrderDetailModel.DataBean.ProductsBean.DetailsBean> data,String allReturn) {
         super(layoutResId, data);
+        this.allReturn = allReturn;
     }
 
     @Override
@@ -53,6 +55,12 @@ public class ReturnSpecAdapter extends BaseQuickAdapter<ReturnOrderDetailModel.D
         mTvPrice.setText(item.getAfterPrice());
         tv_old_price.setText(item.getTotalPrice());
         mTvSpec.setText(item.getDesc());
+        TextView tv_return = helper.getView(R.id.tv_return);
+        if(allReturn.equals("1")) {
+            tv_return.setEnabled(false);
+        }else {
+            tv_return.setEnabled(true);
+        }
         helper.getView(R.id.tv_return).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

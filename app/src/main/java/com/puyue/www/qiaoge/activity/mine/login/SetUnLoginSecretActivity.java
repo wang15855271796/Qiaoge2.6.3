@@ -1,4 +1,4 @@
-package com.puyue.www.qiaoge.activity.mine.account;
+package com.puyue.www.qiaoge.activity.mine.login;
 
 import android.content.Context;
 import android.content.Intent;
@@ -6,28 +6,22 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.text.method.HideReturnsTransformationMethod;
 import android.text.method.PasswordTransformationMethod;
-import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.puyue.www.qiaoge.R;
-import com.puyue.www.qiaoge.activity.mine.login.LoginActivity;
-import com.puyue.www.qiaoge.activity.mine.login.LogoutsEvent;
+import com.puyue.www.qiaoge.activity.mine.account.SetLoginSecretActivity;
 import com.puyue.www.qiaoge.api.mine.LogoutAPI;
 import com.puyue.www.qiaoge.api.mine.login.LoginAPI;
 import com.puyue.www.qiaoge.base.BaseModel;
 import com.puyue.www.qiaoge.base.BaseSwipeActivity;
 import com.puyue.www.qiaoge.dialog.SecretSuccessDialog;
 import com.puyue.www.qiaoge.helper.AppHelper;
-import com.puyue.www.qiaoge.helper.DialogHelper;
 import com.puyue.www.qiaoge.helper.StringHelper;
 import com.puyue.www.qiaoge.helper.UserInfoHelper;
 import com.puyue.www.qiaoge.utils.EnCodeUtil;
-import com.puyue.www.qiaoge.utils.ToastUtil;
-
-import org.greenrobot.eventbus.EventBus;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -39,9 +33,9 @@ import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
 /**
- * Created by ${王涛} on 2020/11/17
+ * Created by ${王涛} on 2020/11/24
  */
-public class SetLoginSecretActivity extends BaseSwipeActivity {
+public class SetUnLoginSecretActivity extends BaseSwipeActivity {
     @BindView(R.id.et_login)
     EditText et_login;
     @BindView(R.id.et_login_sure)
@@ -64,8 +58,6 @@ public class SetLoginSecretActivity extends BaseSwipeActivity {
 
     @Override
     public void setContentView() {
-
-
         setContentView(R.layout.activity_set_login_secret);
     }
 
@@ -167,7 +159,7 @@ public class SetLoginSecretActivity extends BaseSwipeActivity {
 
 
     private void setSecret(String phones, String secret2) {
-        LoginAPI.setSecret(mContext,phones,secret2)
+        LoginAPI.setUnLoginSecret(mContext,phones,secret2)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<BaseModel>() {
@@ -187,14 +179,14 @@ public class SetLoginSecretActivity extends BaseSwipeActivity {
                             SecretSuccessDialog secretSuccessDialog = new SecretSuccessDialog(mContext) {
                                 @Override
                                 public void Confirm() {
-                                    requestLogout();
                                     dismiss();
+                                    finish();
                                 }
 
                                 @Override
                                 public void Close() {
-                                    requestLogout();
                                     dismiss();
+                                    finish();
                                 }
                             };
                             secretSuccessDialog.show();
@@ -203,44 +195,5 @@ public class SetLoginSecretActivity extends BaseSwipeActivity {
                         }
                     }
                 });
-    }
-
-    private void requestLogout() {
-        LogoutAPI.requestLogout(mContext)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<BaseModel>() {
-                    @Override
-                    public void onCompleted() {
-
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-
-                    }
-
-                    @Override
-                    public void onNext(BaseModel baseModel) {
-                        if (baseModel.success) {
-                            logouts(mContext, -10000);
-                        } else {
-                            AppHelper.showMsg(mContext, baseModel.message);
-                        }
-                    }
-                });
-    }
-
-    private void logouts(Context context, int mStateCode) {
-        if (mStateCode == -10000 || mStateCode == -10001) {
-            UserInfoHelper.saveUserId(context, "");
-            UserInfoHelper.saveUserType(context, "");
-            UserInfoHelper.saveUserHomeRefresh(context, "");
-            UserInfoHelper.saveUserMarketRefresh(context, "");
-            UserInfoHelper.saveChangeFlag(mActivity, "0");
-            Intent intent = new Intent(SetLoginSecretActivity.this,LoginActivity.class);
-            startActivity(intent);
-            finish();
-        }
     }
 }

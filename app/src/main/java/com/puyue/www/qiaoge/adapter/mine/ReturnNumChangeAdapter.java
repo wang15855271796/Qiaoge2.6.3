@@ -59,7 +59,7 @@ public class ReturnNumChangeAdapter extends BaseQuickAdapter<ReturnOrderDetailMo
 
     }
 
-    public ReturnNumChangeAdapter(int layoutResId, @Nullable List<ReturnOrderDetailModel.DataBean.ProductsBean.DetailsBean> data,int additionFlag) {
+    public ReturnNumChangeAdapter(int layoutResId, @Nullable List<ReturnOrderDetailModel.DataBean.ProductsBean.DetailsBean> data, int additionFlag) {
         super(layoutResId, data);
         this.additionFlag=additionFlag;
     }

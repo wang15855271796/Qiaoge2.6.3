@@ -74,6 +74,13 @@ public class MessageCheckActivity extends BaseSwipeActivity {
                 checkMessage(editContent);
             }
         });
+
+        tv_send.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                requestSendCode(phones);
+            }
+        });
     }
 
     @Override
@@ -105,9 +112,10 @@ public class MessageCheckActivity extends BaseSwipeActivity {
                     @Override
                     public void onNext(BaseModel baseModel) {
                         if (baseModel.success) {
-                            Intent intent = new Intent(mContext,SetLoginSecretActivity.class);
+                            Intent intent = new Intent(mContext,SetUnLoginSecretActivity.class);
                             intent.putExtra("phone",phone);
                             startActivity(intent);
+                            finish();
                             ToastUtil.showSuccessMsg(mContext,baseModel.message);
                         } else {
                             ToastUtil.showSuccessMsg(mContext,baseModel.message);
@@ -167,10 +175,15 @@ public class MessageCheckActivity extends BaseSwipeActivity {
             @Override
             public void onFinish() {
                 isSendingCode = false;
-                tv_send.setText("点击发送验证码");
+                tv_send.setText("重新获取验证码>");
                 tv_send.setEnabled(true);
             }
         }.start();
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        countDownTimer.cancel();
+    }
 }

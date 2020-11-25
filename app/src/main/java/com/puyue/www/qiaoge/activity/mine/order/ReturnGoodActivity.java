@@ -165,58 +165,12 @@ public class ReturnGoodActivity extends BaseSwipeActivity {
             @Override
             public void onClick(View v) {
                 if (rd_check.isChecked()) {
-                    icFirst = true;
-                    mRyOrderDetail.setItemViewCacheSize(500);
-                    mRvDetailChangeAdapter = new ReturnGoodDetailChangeAdapter(mProductList, mContext);
-                    double total_Price = 0.00;
-                    for (int i = 0; i < mDetailModel.getData().getProducts().size(); i++) {
-                        for (int j = 0; j < mDetailModel.getData().getProducts().get(i).getDetails().size(); j++) {
-                            if (new BigDecimal(mDetailModel.getData().getProducts().get(i).getDetails().get(j).getPrice()).multiply(new BigDecimal(mDetailModel.getData().getProducts().get(i).getDetails().get(j).getNum())).setScale(2).doubleValue() - new BigDecimal(mDetailModel.getData().getProducts().get(i).getDetails().get(j).getDeductPrice()).multiply(new BigDecimal(mDetailModel.getData().getProducts().get(i).getDetails().get(j).getNum())).setScale(2).doubleValue() > 0) {
-                                total_Price += (new BigDecimal(mDetailModel.getData().getProducts().get(i).getDetails().get(j).getPrice()).multiply(new BigDecimal(mDetailModel.getData().getProducts().get(i).getDetails().get(j).getNum())).setScale(2).doubleValue() - new BigDecimal(mDetailModel.getData().getProducts().get(i).getDetails().get(j).getDeductPrice()).multiply(new BigDecimal(mDetailModel.getData().getProducts().get(i).getDetails().get(j).getNum())).setScale(2).doubleValue());
-                                mDetailModel.getData().getProducts().get(i).getDetails().get(j).setItemPrice(new BigDecimal(mDetailModel.getData().getProducts().get(i).getDetails().get(j).getPrice()).multiply(new BigDecimal(mDetailModel.getData().getProducts().get(i).getDetails().get(j).getNum())).setScale(2).doubleValue() - new BigDecimal(mDetailModel.getData().getProducts().get(i).getDetails().get(j).getDeductPrice()).multiply(new BigDecimal(mDetailModel.getData().getProducts().get(i).getDetails().get(j).getNum())).setScale(2).doubleValue());
-
-                            } else {
-                                total_Price += 0;
-                                mDetailModel.getData().getProducts().get(i).getDetails().get(j).setItemPrice(0);
-
-                            }
-                            mDetailModel.getData().getProducts().get(i).getDetails().get(j).setItemNum(mDetailModel.getData().getProducts().get(i).getDetails().get(j).getNum());
-                        }
-                    }
-                    BigDecimal bg = new BigDecimal(total_Price);
-                    double f = bg.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
-                    tv_return_money.setText("￥" + f);
-                    totalPrice = f;
-                    mRvDetailChangeAdapter.setListener(new ReturnGoodDetailChangeAdapter.OnReturnClickListener() {
-                        @Override
-                        public void onClick() {
-                            double toPrice = 0.00;
-                            double fiPrice = 0.00;
-                            for (int i = 0; i < mDetailModel.getData().getProducts().size(); i++) {
-                                for (int j = 0; j < mDetailModel.getData().getProducts().get(i).getDetails().size(); j++) {
-                                    toPrice += mDetailModel.getData().getProducts().get(i).getDetails().get(j).getItemPrice();
-                                    if (mDetailModel.getData().getProducts().get(i).getDetails().get(j).getItemPrice() > 0) {
-
-                                    } else {
-                                        rd_check.setChecked(false);
-                                        mDetailModel.getData().getProducts().get(i).getDetails().get(j).setItemNum(0);
-                                        icFirst = true;
-                                    }
-                                }
-                            }
-                            BigDecimal bg = new BigDecimal(toPrice);
-                            double f1 = bg.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
-                            tv_return_money.setText("￥" + f1);
-                            totalPrice = toPrice;
-                        }
-                    });
-
-                    mRyOrderDetail.setAdapter(mRvDetailChangeAdapter);
+                  getState();
 
                 } else {
 
                     mRyOrderDetail.removeAllViews();
-                    mRvDetailAdapter = new ReturnGoodDetailTwoAdapter(mProductList, mContext);
+                    mRvDetailAdapter = new ReturnGoodDetailTwoAdapter(mProductList, mContext,mDetailModel.getData().getAllReturn());
 
                     tv_return_money.setText(0 + "");
                     totalPrice = 0;
@@ -289,6 +243,56 @@ public class ReturnGoodActivity extends BaseSwipeActivity {
         });
     }
 
+    private void getState() {
+        icFirst = true;
+        mRyOrderDetail.setItemViewCacheSize(500);
+        mRvDetailChangeAdapter = new ReturnGoodDetailChangeAdapter(mProductList, mContext,mDetailModel.getData().getAllReturn());
+        double total_Price = 0.00;
+        for (int i = 0; i < mDetailModel.getData().getProducts().size(); i++) {
+            for (int j = 0; j < mDetailModel.getData().getProducts().get(i).getDetails().size(); j++) {
+                if (new BigDecimal(mDetailModel.getData().getProducts().get(i).getDetails().get(j).getPrice()).multiply(new BigDecimal(mDetailModel.getData().getProducts().get(i).getDetails().get(j).getNum())).setScale(2).doubleValue() - new BigDecimal(mDetailModel.getData().getProducts().get(i).getDetails().get(j).getDeductPrice()).multiply(new BigDecimal(mDetailModel.getData().getProducts().get(i).getDetails().get(j).getNum())).setScale(2).doubleValue() > 0) {
+                    total_Price += (new BigDecimal(mDetailModel.getData().getProducts().get(i).getDetails().get(j).getPrice()).multiply(new BigDecimal(mDetailModel.getData().getProducts().get(i).getDetails().get(j).getNum())).setScale(2).doubleValue() - new BigDecimal(mDetailModel.getData().getProducts().get(i).getDetails().get(j).getDeductPrice()).multiply(new BigDecimal(mDetailModel.getData().getProducts().get(i).getDetails().get(j).getNum())).setScale(2).doubleValue());
+                    mDetailModel.getData().getProducts().get(i).getDetails().get(j).setItemPrice(new BigDecimal(mDetailModel.getData().getProducts().get(i).getDetails().get(j).getPrice()).multiply(new BigDecimal(mDetailModel.getData().getProducts().get(i).getDetails().get(j).getNum())).setScale(2).doubleValue() - new BigDecimal(mDetailModel.getData().getProducts().get(i).getDetails().get(j).getDeductPrice()).multiply(new BigDecimal(mDetailModel.getData().getProducts().get(i).getDetails().get(j).getNum())).setScale(2).doubleValue());
+
+                } else {
+                    total_Price += 0;
+                    mDetailModel.getData().getProducts().get(i).getDetails().get(j).setItemPrice(0);
+
+                }
+                mDetailModel.getData().getProducts().get(i).getDetails().get(j).setItemNum(mDetailModel.getData().getProducts().get(i).getDetails().get(j).getNum());
+            }
+        }
+        BigDecimal bg = new BigDecimal(total_Price);
+        double f = bg.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+        tv_return_money.setText("￥" + f);
+        totalPrice = f;
+        mRvDetailChangeAdapter.setListener(new ReturnGoodDetailChangeAdapter.OnReturnClickListener() {
+            @Override
+            public void onClick() {
+                double toPrice = 0.00;
+                double fiPrice = 0.00;
+                for (int i = 0; i < mDetailModel.getData().getProducts().size(); i++) {
+                    for (int j = 0; j < mDetailModel.getData().getProducts().get(i).getDetails().size(); j++) {
+                        toPrice += mDetailModel.getData().getProducts().get(i).getDetails().get(j).getItemPrice();
+                        if (mDetailModel.getData().getProducts().get(i).getDetails().get(j).getItemPrice() > 0) {
+
+                        } else {
+                            rd_check.setChecked(false);
+                            mDetailModel.getData().getProducts().get(i).getDetails().get(j).setItemNum(0);
+                            icFirst = true;
+                        }
+                    }
+                }
+                BigDecimal bg = new BigDecimal(toPrice);
+                double f1 = bg.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+                tv_return_money.setText("￥" + f1);
+                totalPrice = toPrice;
+            }
+        });
+
+        mRyOrderDetail.setAdapter(mRvDetailChangeAdapter);
+    }
+
     //获取退货订单信息
     private void getReturnOrderDetail(String orderId) {
         ReturnOrderDetailAPi.requestReturnOrder(mContext, orderId)
@@ -319,6 +323,16 @@ public class ReturnGoodActivity extends BaseSwipeActivity {
                                 channelValue = returnOrderDetailModel.getData().returnChannel.get(0).channelValue;
                                 getOrder(mProductList);
 
+
+                                if(mDetailModel.getData().getAllReturn().equals("1")) {
+                                    //全退
+                                    rd_check.setChecked(true);
+                                    rd_check.setEnabled(false);
+                                    getState();
+                                }else {
+                                    rd_check.setChecked(false);
+                                    rd_check.setEnabled(true);
+                                }
                             }
 
                         } else {
@@ -330,7 +344,7 @@ public class ReturnGoodActivity extends BaseSwipeActivity {
 
 
     private void getOrder(List<ReturnOrderDetailModel.DataBean.ProductsBean> list) {
-        mRvDetailAdapter = new ReturnGoodDetailTwoAdapter(list, mContext);
+        mRvDetailAdapter = new ReturnGoodDetailTwoAdapter(list, mContext,mDetailModel.getData().getAllReturn());
         mRvDetailAdapter.setListener(new ReturnGoodDetailTwoAdapter.OnReturnClickListener() {
             @Override
             public void onClick() {
@@ -714,6 +728,10 @@ public class ReturnGoodActivity extends BaseSwipeActivity {
                         public void onNext(ReturnOrderSucModel model) {
                             if (model.success) {
                                 isChecked = true;
+
+//                                if(model.getAllReturn().equals("1")) {
+//                                    //
+//                                }
                                 AppHelper.showMsg(mContext,"申请退货成功,请等待审核");
                                 Intent intent = new Intent(mContext, ReturnGoodDetailActivity.class);
                                 intent.putExtra(AppConstant.RETURNPRODUCTMAINID, String.valueOf(model.data));
