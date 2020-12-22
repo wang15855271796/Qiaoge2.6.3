@@ -23,9 +23,13 @@ import com.puyue.www.qiaoge.R;
 import com.puyue.www.qiaoge.activity.cart.PaysResultActivity;
 import com.puyue.www.qiaoge.activity.mine.account.AccountCenterActivity;
 import com.puyue.www.qiaoge.activity.mine.account.EditPasswordInputCodeActivity;
+import com.puyue.www.qiaoge.activity.mine.account.HisActivity;
+import com.puyue.www.qiaoge.activity.mine.account.PayActivity;
 import com.puyue.www.qiaoge.adapter.ExchangeAdapter;
 import com.puyue.www.qiaoge.api.home.CancleAPI;
 import com.puyue.www.qiaoge.api.mine.AccountCenterAPI;
+import com.puyue.www.qiaoge.api.mine.login.LoginAPI;
+import com.puyue.www.qiaoge.base.BaseModel;
 import com.puyue.www.qiaoge.event.CouponEvent;
 import com.puyue.www.qiaoge.helper.AppHelper;
 import com.puyue.www.qiaoge.helper.NetWorkHelper;
@@ -168,20 +172,21 @@ public class ExCouponDialog extends Dialog {
                         public void onNext(AccountCenterModel accountCenterModel) {
                             if (accountCenterModel.success) {
                                 mModelAccountCenter = accountCenterModel;
-                                if (mModelAccountCenter.data.hasSetPayPwd) {
-                                    //已经设置过支付密码
-                                    mUserCell = mModelAccountCenter.data.phone;
-                                    hasSetPayPwd = "1";
-                                    UserInfoHelper.saveForgetPas(context, "");
-                                    context.startActivity(EditPasswordInputCodeActivity.getIntent(context, EditPasswordInputCodeActivity.class, "1", mUserCell, "pay","",0,0));
-
-                                    mDialog.dismiss();
-                                } else {
-                                    //没有设置过支付密码
-                                    hasSetPayPwd = "0";
-                                    context.startActivity(EditPasswordInputCodeActivity.getIntent(context, EditPasswordInputCodeActivity.class, "0", mUserCell, "pay","",0,0));
-                                    mDialog.dismiss();
-                                }
+                                checkFirstChange();
+//                                if (mModelAccountCenter.data.hasSetPayPwd) {
+//                                    //已经设置过支付密码
+//                                    mUserCell = mModelAccountCenter.data.phone;
+//                                    hasSetPayPwd = "1";
+//                                    UserInfoHelper.saveForgetPas(context, "");
+//                                    context.startActivity(EditPasswordInputCodeActivity.getIntent(context, EditPasswordInputCodeActivity.class, "1", mUserCell, "pay","",0,0));
+//
+//                                    mDialog.dismiss();
+//                                } else {
+//                                    //没有设置过支付密码
+//                                    hasSetPayPwd = "0";
+//                                    context.startActivity(EditPasswordInputCodeActivity.getIntent(context, EditPasswordInputCodeActivity.class, "0", mUserCell, "pay","",0,0));
+//                                    mDialog.dismiss();
+//                                }
 
                             } else {
                                 AppHelper.showMsg(context, mModelAccountCenter.message);
@@ -189,6 +194,44 @@ public class ExCouponDialog extends Dialog {
                         }
                     });
         }
+    }
+
+    private void checkFirstChange() {
+        LoginAPI.checkFirst(getContext(),mUserCell)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<BaseModel>() {
+                    @Override
+                    public void onCompleted() {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onNext(BaseModel baseModel) {
+                        //没余额
+                        if(baseModel.code==-1) {
+                            Intent intent = new Intent(getContext(),PayActivity.class);
+                            intent.putExtra("phone",mUserCell);
+                            getContext().startActivity(intent);
+                            mDialog.dismiss();
+                        }else if(baseModel.code ==1){
+                            Intent intent = new Intent(getContext(),HisActivity.class);
+                            intent.putExtra("phone",mUserCell);
+                            getContext().startActivity(intent);
+                            mDialog.dismiss();
+                        }else {
+                            ToastUtil.showSuccessMsg(getContext(),baseModel.message);
+                            mDialog.dismiss();
+                        }
+
+                    }
+
+                });
     }
 
     private void accountCenter() {

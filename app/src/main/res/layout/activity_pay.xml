@@ -59,6 +59,7 @@
 
         <TextView
             android:id="@+id/tv_phone"
+            android:gravity="center_vertical"
             android:layout_width="match_parent"
             android:layout_height="@dimen/size_50dp"
             android:background="@null"
@@ -87,7 +88,7 @@
                 android:layout_height="@dimen/size_50dp"
                 android:background="@null"
                 android:inputType="number"
-                android:maxLength="11"
+                android:maxLength="6"
                 android:paddingLeft="38dp"
                 android:textColor="#232131"
                 android:textColorHint="#D5D5D5"
@@ -135,12 +136,11 @@
 
     <TextView
         android:id="@+id/tv_stop"
-        android:text="手机号已停用"
+        android:text="手机号已停用>"
         android:textSize="@dimen/sp_14"
         android:textColor="#333333"
         android:paddingTop="@dimen/size_30dp"
         android:drawablePadding="@dimen/size_10dp"
-        android:drawableRight="@mipmap/address_arrow"
         android:paddingLeft="@dimen/size_38dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />

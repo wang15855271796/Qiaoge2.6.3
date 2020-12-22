@@ -20,6 +20,7 @@ import com.bumptech.glide.Glide;
 import com.puyue.www.qiaoge.NewWebViewActivity;
 import com.puyue.www.qiaoge.R;
 import com.puyue.www.qiaoge.activity.mine.account.EditPasswordInputCodeActivity;
+import com.puyue.www.qiaoge.activity.mine.account.PayActivity;
 import com.puyue.www.qiaoge.activity.mine.order.MyOrdersActivity;
 import com.puyue.www.qiaoge.activity.mine.order.NewOrderDetailActivity;
 
@@ -289,7 +290,10 @@ public class PayResultActivity extends BaseSwipeActivity {
         mDialog.getWindow().findViewById(R.id.tv_dialog_goset).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(EditPasswordInputCodeActivity.getIntent(mContext, EditPasswordInputCodeActivity.class, "0", mUserCell, "pay","forgetPsw",0,0));
+                Intent intent = new Intent(mContext,PayActivity.class);
+                intent.putExtra("phone",mUserCell);
+                mContext.startActivity(intent);
+//                startActivity(EditPasswordInputCodeActivity.getIntent(mContext, EditPasswordInputCodeActivity.class, "0", mUserCell, "pay","forgetPsw",0,0));
                 mDialog.dismiss();
                 handler.postDelayed(new Runnable() {
                     @Override

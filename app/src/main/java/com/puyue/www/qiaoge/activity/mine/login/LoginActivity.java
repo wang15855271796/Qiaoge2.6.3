@@ -303,7 +303,7 @@ public class LoginActivity extends BaseSwipeActivity {
                     public void onClick(View v) {
 ////https://shaokao.qoger.com/apph5/html/OrderList.html
                         //http://120.55.55.99:8082/apph5/html/OrderList.html
-                        String url = "http://120.55.55.99:8082/apph5/html/OrderList.html";
+                        String url = "https://shaokao.qoger.com/apph5/html/OrderList.html";
 
                         Intent intent = new Intent(mContext, WebDriverActivity.class);
                         intent.putExtra("URL", url);
@@ -498,7 +498,7 @@ public class LoginActivity extends BaseSwipeActivity {
         UserInfoHelper.saveUserCell(mContext, mModelLogin.data.userBaseInfoVO.phone);
         UserInfoHelper.saveUserType(mContext, String.valueOf(mModelLogin.data.userBaseInfoVO.type));
         UserInfoHelper.saveCity(mContext, city);
-
+        SharedPreferencesUtil.saveString(mContext,"userId",mModelLogin.data.userBaseInfoVO.id);
         isShow();
         //登录成功,登录状态有变化,需要让
         UserInfoHelper.saveUserHomeRefresh(mContext, "");

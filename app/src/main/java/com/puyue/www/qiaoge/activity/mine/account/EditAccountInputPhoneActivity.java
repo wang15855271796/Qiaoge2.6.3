@@ -148,10 +148,11 @@ public class EditAccountInputPhoneActivity extends BaseSwipeActivity {
                 if(!TextUtils.isEmpty(phone)){
                     try {
                         phones = EnCodeUtil.encryptByPublicKey(phone, publicKeyStr);
+                        sendCode(phones);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
-                    sendCode(phones);
+
 
                 }else {
                     AppHelper.showMsg(mContext,"请填写正确手机号码");
@@ -160,6 +161,7 @@ public class EditAccountInputPhoneActivity extends BaseSwipeActivity {
                 Intent intent = new Intent(mContext,LoginTestActivity.class);
                 intent.putExtra("phone",phone);
                 startActivity(intent);
+                finish();
             }
         }
     };
@@ -184,6 +186,7 @@ public class EditAccountInputPhoneActivity extends BaseSwipeActivity {
                         mModelSendCode = baseModel;
                         if (mModelSendCode.success) {
                             Intent intent = new Intent(EditAccountInputPhoneActivity.this,ChangePhoneActivity.class);
+                            intent.putExtra("oldPhone",phone);
                             startActivity(intent);
                             finish();
                         } else {
@@ -201,7 +204,7 @@ public class EditAccountInputPhoneActivity extends BaseSwipeActivity {
         if (!NetWorkHelper.isNetworkAvailable(mContext)) {
             ToastUtil.showSuccessMsg(mContext, "网络不给力!");
         } else {
-            LoginAPI.getYzm(mContext,phone)
+            SendCodeAPI.changePhone(mContext,phone)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(new Subscriber<BaseModel>() {
@@ -219,9 +222,8 @@ public class EditAccountInputPhoneActivity extends BaseSwipeActivity {
                         public void onNext(BaseModel baseModel) {
                             mModelSendCode = baseModel;
                             if (mModelSendCode.success) {
-                                ToastUtil.showSuccessMsg(mContext, "发送验证码成功!");
                                 handleCountDown();
-
+                                ToastUtil.showSuccessMsg(mContext, baseModel.message);
                             } else {
                                 ToastUtil.showSuccessMsg(mContext, mModelSendCode.message);
                             }

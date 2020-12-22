@@ -59,7 +59,6 @@ public class ChooseCouponsAdapter extends BaseQuickAdapter<UserChooseDeductModel
         for (int i = 0; i < list.size(); i++) {
             list.get(i).setFlags(false);
             iv_select.setBackgroundResource(R.mipmap.ic_pay_no);
-
         }
         notifyDataSetChanged();
 
@@ -75,11 +74,7 @@ public class ChooseCouponsAdapter extends BaseQuickAdapter<UserChooseDeductModel
         tv_role=helper.getView(R.id.tv_role);
         tv_amount=helper.getView(R.id.tv_amount);
         iv_select = helper.getView(R.id.iv_select);
-        if(!TextUtils.isEmpty(item.getApplyFrom())){
-            tv_style.setText(item.getApplyFrom());
-        }
-        //item.getGiftType()+"   "+
-        tv_user_factor.setText(item.getGiftName());
+
         tv_time.setText(item.getDateTime());
         tv_amount.setText(item.getAmount());
 
@@ -91,6 +86,14 @@ public class ChooseCouponsAdapter extends BaseQuickAdapter<UserChooseDeductModel
             tv_role.setText("");
             tv_role.setVisibility(View.INVISIBLE);
         }
+
+        if(!TextUtils.isEmpty(item.getLimitAmtStr())) {
+            tv_user_factor.setText(item.getLimitAmtStr());
+            tv_user_factor.setVisibility(View.VISIBLE);
+        }else {
+            tv_user_factor.setVisibility(View.GONE);
+        }
+        tv_style.setText(item.getGiftName());
 
         tv_role.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -137,68 +140,6 @@ public class ChooseCouponsAdapter extends BaseQuickAdapter<UserChooseDeductModel
             tv_tip.setTextColor(Color.parseColor("#A1A1A1"));
             iv_select.setEnabled(false);
         }
-//
-//        couponsTitle = helper.getView(R.id.couponsTitle);
-//        couponsCount = helper.getView(R.id.couponsCount);
-//        LinearLayoutCoupon = helper.getView(R.id.LinearLayoutCoupon);
-//        time = helper.getView(R.id.time);
-//        note = helper.getView(R.id.note);
-//        priceNum = helper.getView(R.id.priceNum);
-//        LinearLayoutOne = helper.getView(R.id.LinearLayoutOne);
-//        LinearLayoutView=helper.getView(R.id.LinearLayoutView);
-//        unCouponsTitle = helper.getView(R.id.unCouponsTitle);
-//        unCouponsCount = helper.getView(R.id.unCouponsCount);
-//        unTime = helper.getView(R.id.unTime);
-//        unNote = helper.getView(R.id.unNote);
-//        unPriceNum = helper.getView(R.id.unPriceNum);
-//        LinearLayoutTwo = helper.getView(R.id.LinearLayoutTwo);
-//        LinearLayoutUnview=helper.getView(R.id.LinearLayoutUnview);
-//
-//
-//
-//
-//        if (item.getState().equals("ENABLED")) {
-//            couponsTitle.setText(item.getApplyFrom());
-//            couponsCount.setText(item.getGiftType()+item.getGiftName());
-//            time.setText(item.getDateTime());
-//            priceNum.setText(item.getAmount() + "");
-//            LinearLayoutCoupon.setBackgroundResource(item.isFlag() ? R.mipmap.ic_coupon_ : R.mipmap.ic_coupon_new);
-//            Log.e(WeiyiTAG, "convert: "+item.isFlag() );
-//            LinearLayoutTwo.setVisibility(View.GONE);
-//            LinearLayoutOne.setVisibility(View.VISIBLE);
-//            if (item.getRole().size() > 0) {
-//                note.setText(item.getRole().get(0));
-//                LinearLayoutView.setVisibility(View.VISIBLE);
-//            }else {
-//                note.setText("");
-//                LinearLayoutView.setVisibility(View.GONE);
-//            }
-//
-//
-//        } else if (item.getState().equals("UN_ENABLED")){
-//            unCouponsTitle.setText(item.getApplyFrom());
-//            unCouponsCount.setText(item.getGiftType()+item.getGiftName());
-//            unTime.setText(item.getDateTime()+"");
-//            unPriceNum.setText(item.getAmount() + "");
-//            LinearLayoutTwo.setVisibility(View.VISIBLE);
-//          LinearLayoutOne.setVisibility(View.GONE);
-//            if (item.getRole().size() > 0) {
-//                LinearLayoutUnview.setVisibility(View.VISIBLE);
-//                unNote.setText(item.getRole().get(0));
-//            }else {
-//                LinearLayoutUnview.setVisibility(View.GONE);
-//                unNote.setText("");
-//
-//            }
-//        }
-//        LinearLayoutOne.setOnClickListener(new NoDoubleClickListener() {
-//            @Override
-//             public void onNoDoubleClick(View view) {
-//                onclick.Onclick(helper.getLayoutPosition(), item.getGiftDetailNo());
-//              }
-//           }
-//        );
-
     }
     String datas;
     private void queryProd(String giftDetailNo) {

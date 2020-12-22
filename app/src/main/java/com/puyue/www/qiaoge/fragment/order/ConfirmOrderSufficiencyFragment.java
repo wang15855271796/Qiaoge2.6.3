@@ -1083,7 +1083,6 @@ public class ConfirmOrderSufficiencyFragment extends BaseFragment {
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void getCouponss(ChooseCouponsEvent chooseCouponEvent) {
         list.clear();
-
         requestCartBalance(chooseCouponEvent.getGiftDetailNo(), 1);
         statModel.setSelects(false);
     }
@@ -1095,6 +1094,7 @@ public class ConfirmOrderSufficiencyFragment extends BaseFragment {
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void getCoupons(ChooseCoupon2Event chooseCouponEvent) {
         list.clear();
+        NewgiftDetailNo = "";
         requestCartBalance("",1);
         statModel.setSelects(true);
     }

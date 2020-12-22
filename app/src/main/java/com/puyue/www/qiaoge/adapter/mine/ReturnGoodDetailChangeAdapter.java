@@ -76,17 +76,22 @@ public class ReturnGoodDetailChangeAdapter extends RecyclerView.Adapter<ReturnGo
         //数量
         mListReturnNum.clear();
         mListReturnNum.addAll(mListProduct.get(position).getDetails());
-        mReturnNumAdapter = new ReturnNumChangeAdapter(R.layout.return_order_num, mListReturnNum,mListProduct.get(position).additionFlag);
-        mReturnNumAdapter.setListener(new ReturnNumChangeAdapter.OnReturnClickListener() {
-            @Override
-            public void onEventClick() {
-                listener.onClick();
-            }
-        });
+        if(allReturn.equals("1")) {
 
-        holder.mRyNum.setLayoutManager(new GridLayoutManager(context, 1));
-        holder.mRyNum.setAdapter(mReturnNumAdapter);
-        mReturnNumAdapter.notifyDataSetChanged();
+        }else {
+            mReturnNumAdapter = new ReturnNumChangeAdapter(R.layout.return_order_num, mListReturnNum,mListProduct.get(position).additionFlag);
+            mReturnNumAdapter.setListener(new ReturnNumChangeAdapter.OnReturnClickListener() {
+                @Override
+                public void onEventClick() {
+                    listener.onClick();
+                }
+            });
+
+            holder.mRyNum.setLayoutManager(new GridLayoutManager(context, 1));
+            holder.mRyNum.setAdapter(mReturnNumAdapter);
+            mReturnNumAdapter.notifyDataSetChanged();
+        }
+
         //规格
         mListSpec.clear();
         mListSpec.addAll(mListProduct.get(position).getDetails());

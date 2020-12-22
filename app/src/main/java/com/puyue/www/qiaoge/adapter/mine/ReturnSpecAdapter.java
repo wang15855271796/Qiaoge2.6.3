@@ -46,7 +46,6 @@ public class ReturnSpecAdapter extends BaseQuickAdapter<ReturnOrderDetailModel.D
     @Override
     protected void convert(BaseViewHolder helper, ReturnOrderDetailModel.DataBean.ProductsBean.DetailsBean item) {
         helper.setIsRecyclable(false);
-        //tv_coupon_price
         tv_old_price = helper.getView(R.id.tv_old_price);
         tv_old_price.getPaint().setAntiAlias(true);//抗锯齿
         tv_old_price.getPaint().setFlags(Paint.STRIKE_THRU_TEXT_FLAG);

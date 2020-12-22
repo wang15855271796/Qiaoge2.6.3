@@ -9,10 +9,13 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.puyue.www.qiaoge.R;
+import com.puyue.www.qiaoge.activity.mine.login.ChangePhoneUnLoginActivity;
 import com.puyue.www.qiaoge.activity.mine.login.LoginActivity;
+import com.puyue.www.qiaoge.activity.mine.login.SetUnLoginSecretActivity;
 import com.puyue.www.qiaoge.api.mine.login.LoginAPI;
 import com.puyue.www.qiaoge.base.BaseModel;
 import com.puyue.www.qiaoge.base.BaseSwipeActivity;
@@ -41,9 +44,11 @@ public class ChangePhoneActivity extends BaseSwipeActivity implements View.OnCli
     TextView tv_yzm;
     @BindView(R.id.tv_next)
     TextView tv_next;
-
+    @BindView(R.id.iv_back)
+    ImageView iv_back;
     String publicKeyStr = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDTykrDv1TEKVjDeE29kVLo5M7mctlE65WlHSMN8RVL1iA9jXsF9SMNH1AErs2lqxpv18fd3TOAw0pBaG+cXOxApKdvRDKgxyuHnONOBzxr6EyWOQlRZt94auL1ESVbLdvYa7+cISkVe+MphfQh7uI/64tGQ34aRNmvFKv9PEeBTQIDAQAB";
-
+    String oldPhone;
+    String oldPhones;
     @Override
     public boolean handleExtra(Bundle savedInstanceState) {
         return false;
@@ -63,6 +68,8 @@ public class ChangePhoneActivity extends BaseSwipeActivity implements View.OnCli
     public void setViewData() {
         tv_yzm.setOnClickListener(this);
         tv_next.setOnClickListener(this);
+        iv_back.setOnClickListener(this);
+        oldPhone = getIntent().getStringExtra("oldPhone");
     }
 
     @Override
@@ -75,15 +82,21 @@ public class ChangePhoneActivity extends BaseSwipeActivity implements View.OnCli
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
+
+            case R.id.iv_back:
+                finish();
+                break;
+
             case R.id.tv_yzm:
                 phone = et_phone.getText().toString();
                 if(!TextUtils.isEmpty(phone)){
                     try {
                         phones = EnCodeUtil.encryptByPublicKey(phone, publicKeyStr);
+                        sendCode(phones);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
-                    sendCode(phones);
+
 
                 }else {
                     AppHelper.showMsg(mContext,"请填写正确手机号码");
@@ -92,15 +105,18 @@ public class ChangePhoneActivity extends BaseSwipeActivity implements View.OnCli
 
             case R.id.tv_next:
                 //校验验证码
+
                 phone = et_phone.getText().toString();
                 et_yzms = et_yzm.getText().toString();
                 if(!TextUtils.isEmpty(phone)){
                     try {
                         phones = EnCodeUtil.encryptByPublicKey(phone, publicKeyStr);
+                        oldPhones = EnCodeUtil.encryptByPublicKey(oldPhone, publicKeyStr);
+                        checkYzm(phones,et_yzms);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
-                    checkYzm(phones,et_yzms);
+
 
                 }
                 break;
@@ -109,6 +125,32 @@ public class ChangePhoneActivity extends BaseSwipeActivity implements View.OnCli
 
     private void checkYzm(String phones, String et_yzms) {
         LoginAPI.checkYzm(mContext,phones,et_yzms)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<BaseModel>() {
+                    @Override
+                    public void onCompleted() {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onNext(BaseModel baseModel) {
+                        if (baseModel.success) {
+                            changPhone(phones, oldPhones, et_yzms);
+                        }else {
+                            ToastUtil.showSuccessMsg(mContext,baseModel.message);
+                        }
+                    }
+                });
+    }
+
+    private void changPhone(String phones, String oldPhones,String et_yzms) {
+        LoginAPI.setChnagePhone(mContext,phones,oldPhones,et_yzms)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<BaseModel>() {
@@ -143,7 +185,6 @@ public class ChangePhoneActivity extends BaseSwipeActivity implements View.OnCli
                     }
                 });
     }
-
     /**
      * 发送验证码
      * @param phone
@@ -182,7 +223,7 @@ public class ChangePhoneActivity extends BaseSwipeActivity implements View.OnCli
     CountDownTimer countDownTimer;
     boolean isSendingCode;
     private void handleCountDown() {
-        countDownTimer = new CountDownTimer(60000, 1000) {
+        countDownTimer = new CountDownTimer(120000, 1000) {
             @Override
             public void onTick(long millisUntilFinished) {
                 isSendingCode = true;

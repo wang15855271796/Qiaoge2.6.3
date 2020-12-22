@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.puyue.www.qiaoge.R;
@@ -29,6 +30,8 @@ public class LoginTest1Activity extends BaseSwipeActivity {
     EditText et_secret;
     @BindView(R.id.tv_next)
     TextView tv_next;
+    @BindView(R.id.iv_back)
+    ImageView iv_back;
     String phone;
     String phones;
     String publicKeyStr = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDTykrDv1TEKVjDeE29kVLo5M7mctlE65WlHSMN8RVL1iA9jXsF9SMNH1AErs2lqxpv18fd3TOAw0pBaG+cXOxApKdvRDKgxyuHnONOBzxr6EyWOQlRZt94auL1ESVbLdvYa7+cISkVe+MphfQh7uI/64tGQ34aRNmvFKv9PEeBTQIDAQAB";
@@ -57,16 +60,25 @@ public class LoginTest1Activity extends BaseSwipeActivity {
                 if(!TextUtils.isEmpty(phone)){
                     try {
                         phones = EnCodeUtil.encryptByPublicKey(phone, publicKeyStr);
+                        checkSecret();
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
 
-                    checkSecret();
+
                 }
 
 
             }
         });
+
+        iv_back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+
     }
     private void checkSecret() {
         LoginAPI.checkSecret(mContext,phones,secret)
@@ -87,6 +99,9 @@ public class LoginTest1Activity extends BaseSwipeActivity {
                     public void onNext(BaseModel baseModel) {
                         if (baseModel.success) {
                             ToastUtil.showSuccessMsg(mContext,"验证成功");
+                            Intent intent = new Intent(mContext,SetLoginSecretActivity.class);
+                            intent.putExtra("phone",phone);
+                            startActivity(intent);
                             finish();
                         } else {
                             AppHelper.showMsg(mContext, baseModel.message);

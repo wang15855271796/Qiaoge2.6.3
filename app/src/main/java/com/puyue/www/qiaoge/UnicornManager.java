@@ -1,9 +1,11 @@
 package com.puyue.www.qiaoge;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.google.gson.Gson;
 import com.puyue.www.qiaoge.model.User;
+import com.puyue.www.qiaoge.utils.SharedPreferencesUtil;
 import com.qiyukf.unicorn.api.ConsultSource;
 import com.qiyukf.unicorn.api.UICustomization;
 import com.qiyukf.unicorn.api.Unicorn;
@@ -34,6 +36,9 @@ public class UnicornManager {
          * 三个参数分别为：来源页面的url，来源页面标题，来源页面额外信息（保留字段，暂时无用）。
          * 设置来源后，在客服会话界面的"用户资料"栏的页面项，可以看到这里设置的值。
          */
+        YSFUserInfo userInfo = new YSFUserInfo();
+        userInfo.userId = SharedPreferencesUtil.getString(context,"userId");
+        Unicorn.setUserInfo(userInfo);
         ConsultSource source = new ConsultSource(null, null, null);
 //        source.prompt = "连接客服成功的提示语";
 //        source.VIPStaffAvatarUrl = "头像的 url";
@@ -55,7 +60,7 @@ public class UnicornManager {
      * 设置设置对话UI
      */
     public static void setUiCustomization(User userBean) {
-        SophixStubApplication.ysfOptions.uiCustomization = uiCustomization(userBean);
+//        SophixStubApplication.ysfOptions.uiCustomization = uiCustomization(userBean);
     }
 
     /**
@@ -75,7 +80,7 @@ public class UnicornManager {
         //键盘控制
         customization.hideKeyboardOnEnterConsult = true;
         //输入框内字体颜色（一定要设置这个属性，有的手机上不设置此属性会出现输入的字体色是透明的）
-        customization.inputTextColor = SophixStubApplication.getInstance().getApplicationContext().getResources().getColor(R.color.color_black);
+//        customization.inputTextColor = SophixStubApplication.getInstance().getApplicationContext().getResources().getColor(R.color.color_black);
         //访问者头像
         customization.rightAvatar = userBean.getHeadPortrait();
         //客服头像

@@ -20,11 +20,14 @@ import com.puyue.www.qiaoge.api.mine.collection.DeleteCollectionAPI;
 import com.puyue.www.qiaoge.api.mine.collection.MyCollectionListAPI;
 import com.puyue.www.qiaoge.base.BaseSwipeActivity;
 import com.puyue.www.qiaoge.constant.AppConstant;
+import com.puyue.www.qiaoge.event.MessageEvent;
 import com.puyue.www.qiaoge.helper.AppHelper;
 import com.puyue.www.qiaoge.listener.NoDoubleClickListener;
 import com.puyue.www.qiaoge.model.mine.collection.CollectionListModel;
 import com.puyue.www.qiaoge.model.mine.collection.DeleteCollectionModel;
 import com.puyue.www.qiaoge.utils.SharedPreferencesUtil;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -309,6 +312,7 @@ public class MyCollectionActivity extends BaseSwipeActivity {
                             //删除成功
                             AppHelper.showMsg(mContext, "删除成功");
                             mPtr.autoRefresh();
+                            EventBus.getDefault().post(new MessageEvent());
                         } else {
                             AppHelper.showMsg(mActivity, mModelDeleteCollection.message);
                         }

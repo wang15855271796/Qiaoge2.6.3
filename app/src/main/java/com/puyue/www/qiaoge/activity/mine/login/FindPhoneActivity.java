@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.puyue.www.qiaoge.R;
@@ -29,6 +30,8 @@ public class FindPhoneActivity extends BaseSwipeActivity {
     EditText et_phone;
     @BindView(R.id.tv_next)
     TextView tv_next;
+    @BindView(R.id.iv_back)
+    ImageView iv_back;
 
     String publicKeyStr = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDTykrDv1TEKVjDeE29kVLo5M7mctlE65WlHSMN8RVL1iA9jXsF9SMNH1AErs2lqxpv18fd3TOAw0pBaG+cXOxApKdvRDKgxyuHnONOBzxr6EyWOQlRZt94auL1ESVbLdvYa7+cISkVe+MphfQh7uI/64tGQ34aRNmvFKv9PEeBTQIDAQAB";
     String phones;
@@ -50,6 +53,12 @@ public class FindPhoneActivity extends BaseSwipeActivity {
 
     @Override
     public void setViewData() {
+        iv_back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
         tv_next.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

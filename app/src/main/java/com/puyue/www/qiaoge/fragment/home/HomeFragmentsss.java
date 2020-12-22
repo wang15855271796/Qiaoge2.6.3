@@ -2198,7 +2198,6 @@ public class HomeFragmentsss extends BaseFragment implements View.OnClickListene
                                 banner.setDelayTime(3000);
                                 banner.setIndicatorGravity(BannerConfig.RIGHT);
                                 ClickBanner(data.getBanners());
-
                                 banner.start();
                             } else {
                                 banner.setVisibility(View.GONE);

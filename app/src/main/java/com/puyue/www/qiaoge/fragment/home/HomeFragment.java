@@ -16,6 +16,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.view.animation.Animation;
@@ -1627,6 +1628,7 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener, 
 
                     @Override
                     public void onNext(IndexInfoModel indexInfoModel) {
+
                         if(indexInfoModel.isSuccess()) {
                             data = indexInfoModel.getData();
                             classifyList.clear();
@@ -1796,8 +1798,26 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener, 
                                 banner.setDelayTime(3000);
                                 banner.setIndicatorGravity(BannerConfig.RIGHT);
                                 ClickBanner(data.getBanners());
+                                banner.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+                                    @Override
+                                    public void onPageScrolled(int i, float v, int i1) {
+
+                                    }
+
+                                    @Override
+                                    public void onPageSelected(int i) {
+
+                                    }
+
+                                    @Override
+                                    public void onPageScrollStateChanged(int i) {
+
+                                    }
+                                });
 
                                 banner.start();
+
+
                             } else {
                                 banner.setVisibility(View.GONE);
                                 iv_empty.setVisibility(View.VISIBLE);

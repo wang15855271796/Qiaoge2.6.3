@@ -36,6 +36,8 @@ import com.puyue.www.qiaoge.R;
 
 import com.puyue.www.qiaoge.activity.cart.PayResultActivity;
 import com.puyue.www.qiaoge.activity.mine.account.EditPasswordInputCodeActivity;
+import com.puyue.www.qiaoge.activity.mine.account.HisActivity;
+import com.puyue.www.qiaoge.activity.mine.account.PayActivity;
 import com.puyue.www.qiaoge.activity.mine.order.MyConfireOrdersActivity;
 import com.puyue.www.qiaoge.activity.mine.order.NewOrderDetailActivity;
 import com.puyue.www.qiaoge.activity.mine.order.SelfSufficiencyOrderDetailActivity;
@@ -44,6 +46,8 @@ import com.puyue.www.qiaoge.api.cart.CheckPayPwdAPI;
 import com.puyue.www.qiaoge.api.cart.GetPayResultAPI;
 import com.puyue.www.qiaoge.api.cart.OrderPayAPI;
 import com.puyue.www.qiaoge.api.mine.AccountCenterAPI;
+import com.puyue.www.qiaoge.api.mine.login.LoginAPI;
+import com.puyue.www.qiaoge.base.BaseModel;
 import com.puyue.www.qiaoge.constant.AppConstant;
 import com.puyue.www.qiaoge.dialog.YueDialog;
 import com.puyue.www.qiaoge.event.BackEvent;
@@ -537,7 +541,8 @@ public class PaymentFragment extends DialogFragment {
             public void onClick(View v) {
                 UserInfoHelper.saveDeliverType(getContext(),1+"");
                 UserInfoHelper.saveForgetPas(getContext(), "wwwe");
-                startActivity(EditPasswordInputCodeActivity.getIntent(getContext(), EditPasswordInputCodeActivity.class, "0", mUserCell, "pay","forgetPsw",1, Double.parseDouble(payAmount)));
+                checkFirstChange();
+//                startActivity(EditPasswordInputCodeActivity.getIntent(getContext(), EditPasswordInputCodeActivity.class, "0", mUserCell, "pay","forgetPsw",1, Double.parseDouble(payAmount)));
 
                 mDialog.dismiss();
                 handler.postDelayed(new Runnable() {
@@ -565,14 +570,13 @@ public class PaymentFragment extends DialogFragment {
         mDialog.getWindow().findViewById(R.id.tv_dialog_cancle).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                Intent intent = new Intent(mContext, EditPasswordInputCodeActivity.class);
-
-
-                startActivity(EditPasswordInputCodeActivity.getIntent(getContext(), EditPasswordInputCodeActivity.class, "1", mUserCell, "pay","forgetPsw",1, Double.parseDouble(payAmount)));
+//                Intent intent = new Intent(getContext(), PayActivity.class);
+//                intent.putExtra("phone",mUserCell);
+//                startActivity(intent);
                 UserInfoHelper.saveForgetPas(getContext(), "wwwe");
                 UserInfoHelper.saveDeliverType(getContext(),1+"");
-                mDialog.dismiss();
-//                mLavLoading.setVisibility(View.GONE);
+//
+                checkFirstChange();
 
             }
         });
@@ -597,6 +601,44 @@ public class PaymentFragment extends DialogFragment {
                 }
             }
         });
+    }
+
+    private void checkFirstChange() {
+        LoginAPI.checkFirst(getActivity(),mUserCell)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<BaseModel>() {
+                    @Override
+                    public void onCompleted() {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onNext(BaseModel baseModel) {
+                        //没余额
+                        if(baseModel.code==-1) {
+                            Intent intent = new Intent(getActivity(),PayActivity.class);
+                            intent.putExtra("phone",mUserCell);
+                            startActivity(intent);
+                            mDialog.dismiss();
+                        }else if(baseModel.code ==1){
+                            Intent intent = new Intent(getActivity(),HisActivity.class);
+                            intent.putExtra("phone",mUserCell);
+                            startActivity(intent);
+                            mDialog.dismiss();
+                        }else {
+                            ToastUtil.showSuccessMsg(getActivity(),baseModel.message);
+                            mDialog.dismiss();
+                        }
+
+                    }
+
+                });
     }
 
     /**

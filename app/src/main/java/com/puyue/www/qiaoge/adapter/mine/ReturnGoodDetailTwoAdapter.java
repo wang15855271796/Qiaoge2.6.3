@@ -114,13 +114,14 @@ public class ReturnGoodDetailTwoAdapter extends RecyclerView.Adapter<ReturnGoodD
 
         mListSpec.addAll(mListProduct.get(position).getDetails());
         holder.mRySpec.setLayoutManager(new LinearLayoutManager(context));
-        mSpecAdaPter = new ReturnSpecAdapter(R.layout.retrun_order_spec, mListSpec,allReturn);
+
         orderId = UserInfoHelper.getOrderId(context);
 
         businessId = mListProduct.get(position).getBusinessId();
         businessType = mListProduct.get(position).getBusinessType();
 
         final boolean[] isSelect = {true};
+        mSpecAdaPter = new ReturnSpecAdapter(R.layout.retrun_order_spec, mListSpec,allReturn);
         mSpecAdaPter.setClick(new ReturnSpecAdapter.OnItemClick() {
             @Override
             public void delete() {

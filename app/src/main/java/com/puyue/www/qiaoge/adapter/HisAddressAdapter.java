@@ -18,7 +18,7 @@ import java.util.List;
  * Created by ${王涛} on 2020/11/20
  */
 public class HisAddressAdapter extends BaseQuickAdapter<HisModel.DataBean,BaseViewHolder> {
-    CheckBox iv_choose;
+    ImageView iv_choose;
     int selectionPosition = -1;
     public HisAddressAdapter(int layoutResId, @Nullable List<HisModel.DataBean> data) {
         super(layoutResId, data);

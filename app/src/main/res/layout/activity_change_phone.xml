@@ -13,7 +13,7 @@
         android:background="@drawable/app_border_bottom_bg">
 
         <ImageView
-            android:id="@+id/iv_pp_input_phone_back"
+            android:id="@+id/iv_back"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
@@ -82,7 +82,7 @@
                 android:layout_height="@dimen/size_50dp"
                 android:background="@null"
                 android:inputType="number"
-                android:maxLength="11"
+                android:maxLength="6"
                 android:paddingLeft="38dp"
                 android:textColor="#232131"
                 android:textColorHint="#D5D5D5"

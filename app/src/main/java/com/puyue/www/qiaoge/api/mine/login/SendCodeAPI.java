@@ -55,4 +55,19 @@ public class SendCodeAPI {
         return sendCodeObservable;
     }
 
+    /**
+     * 登录后，更换手机号-老号码获取验证码
+     */
+    public interface OldChangeServices {
+        @FormUrlEncoded
+        @POST(AppInterfaceAddress.Old_Change_phone)
+        Observable<BaseModel> setParams(@Field("phone") String phone);
+    }
+
+    public static Observable<BaseModel> changePhone(Context context, String phone) {
+        Observable<BaseModel> sendCodeObservable = RestHelper.getBaseRetrofit(context).create(OldChangeServices.class).setParams(phone);
+        return sendCodeObservable;
+    }
+
+
 }

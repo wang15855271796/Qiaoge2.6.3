@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -131,8 +132,9 @@ public class CouponsUnUseFragment extends BaseFragment {
                     public void onNext(UserChooseDeductModel model) {
                         if (model.success) {
                             models = model;
+
                             for (int i = 0; i < model.getData().size(); i++) {
-                                if(model.getData().get(i).getFlag().equals("1")) {
+                                if(model.getData().get(i).getGiftFlag().equals("1")) {
                                     //凑单可用
                                     dataBean1.add(model.getData().get(i));
                                     adapter.notifyDataSetChanged();
@@ -153,6 +155,7 @@ public class CouponsUnUseFragment extends BaseFragment {
                                         tv_nocoudan.setVisibility(View.GONE);
                                     }
                                 }
+
                             }
                         } else {
                             AppHelper.showMsg(getContext(), model.message);

@@ -1044,6 +1044,7 @@ public class MineFragment extends BaseFragment {
         mDialog.getWindow().findViewById(R.id.tv_dialog_call_phone_sure).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 UnicornManager.inToUnicorn(getContext());
 //                if (isTablet(getActivity())) {
 //                    AppHelper.showMsg(getActivity(), "当前设备不具备拨号功能");
@@ -1061,6 +1062,7 @@ public class MineFragment extends BaseFragment {
     public void message(MessageEvent messageEvent) {
         tv_number.setVisibility(View.GONE);
         getCustomerPhone();
+        requestOrderNum();
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)

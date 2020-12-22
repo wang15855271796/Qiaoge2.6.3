@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.text.method.HideReturnsTransformationMethod;
 import android.text.method.PasswordTransformationMethod;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -14,6 +15,7 @@ import android.widget.TextView;
 import com.puyue.www.qiaoge.R;
 import com.puyue.www.qiaoge.activity.mine.account.SetLoginSecretActivity;
 import com.puyue.www.qiaoge.api.mine.LogoutAPI;
+import com.puyue.www.qiaoge.api.mine.login.ChangeLoginPasswordAPI;
 import com.puyue.www.qiaoge.api.mine.login.LoginAPI;
 import com.puyue.www.qiaoge.base.BaseModel;
 import com.puyue.www.qiaoge.base.BaseSwipeActivity;
@@ -33,7 +35,7 @@ import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
 /**
- * Created by ${王涛} on 2020/11/24
+ * Created by ${王涛} on 2020/11/24(未登录情况下，走验证码界面)
  */
 public class SetUnLoginSecretActivity extends BaseSwipeActivity {
     @BindView(R.id.et_login)
@@ -46,10 +48,13 @@ public class SetUnLoginSecretActivity extends BaseSwipeActivity {
     ImageView iv_close_sure;
     @BindView(R.id.tv_next)
     TextView tv_next;
+    @BindView(R.id.iv_back)
+    ImageView iv_back;
     boolean showPassword = true;
     boolean showPassword1 = true;
     String publicKeyStr = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDTykrDv1TEKVjDeE29kVLo5M7mctlE65WlHSMN8RVL1iA9jXsF9SMNH1AErs2lqxpv18fd3TOAw0pBaG+cXOxApKdvRDKgxyuHnONOBzxr6EyWOQlRZt94auL1ESVbLdvYa7+cISkVe+MphfQh7uI/64tGQ34aRNmvFKv9PEeBTQIDAQAB";
     String phone;
+    String verifyCode;
     @Override
     public boolean handleExtra(Bundle savedInstanceState) {
 
@@ -63,15 +68,14 @@ public class SetUnLoginSecretActivity extends BaseSwipeActivity {
 
     @Override
     public void findViewById() {
-        phone = getIntent().getStringExtra("phone");
         ButterKnife.bind(this);
     }
 
     String phones;
     @Override
     public void setViewData() {
+        verifyCode = getIntent().getStringExtra("verifyCode");
         phone = getIntent().getStringExtra("phone");
-
         iv_close.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -90,6 +94,12 @@ public class SetUnLoginSecretActivity extends BaseSwipeActivity {
             }
         });
 
+        iv_back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
         iv_close_sure.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -115,29 +125,26 @@ public class SetUnLoginSecretActivity extends BaseSwipeActivity {
                 if(!TextUtils.isEmpty(phone)){
                     try {
                         phones = EnCodeUtil.encryptByPublicKey(phone, publicKeyStr);
+                        if(secret1 !=null && secret2 !=null) {
+                            if(secret1.equals(secret2)) {
+                                if(secret1.length()>=6&& secret2.length()>=6) {
+                                    if (StringHelper.isLetterDigit(et_login_sure.getText().toString())) {
+                                        requestChangeLoginPassword(phones,verifyCode,secret2);
+                                    } else {
+                                        AppHelper.showMsg(mContext, "密码由6-16位数字与字母组成");
+                                    }
+                                } else {
+                                    AppHelper.showMsg(mContext, "密码位数不足!");
+                                }
+                            }else {
+                                AppHelper.showMsg(mContext, "两次密码不一致!");
+                            }
+                        }else {
+                            AppHelper.showMsg(mContext, "密码不能为空");
+                        }
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
-
-                    if(secret1 !=null && secret2 !=null) {
-                        if(secret1.equals(secret2)) {
-                            if(secret1.length()>=6&& secret2.length()>=6) {
-                                if (StringHelper.isLetterDigit(et_login_sure.getText().toString())) {
-                                    setSecret(phones,secret2);
-                                } else {
-                                    AppHelper.showMsg(mContext, "密码由6-16位数字与字母组成");
-                                }
-                            } else {
-                                AppHelper.showMsg(mContext, "密码位数不足!");
-                            }
-                        }else {
-                            AppHelper.showMsg(mContext, "两次密码不一致!");
-                        }
-                    }else {
-                        AppHelper.showMsg(mContext, "密码不能为空");
-                    }
-
-
                 }
 
             }
@@ -158,8 +165,9 @@ public class SetUnLoginSecretActivity extends BaseSwipeActivity {
     }
 
 
-    private void setSecret(String phones, String secret2) {
-        LoginAPI.setUnLoginSecret(mContext,phones,secret2)
+    private void requestChangeLoginPassword(String phones, String verifyCode, String secret2) {
+        //在这里获取到用户手机号,用户的验证码,以及在这个界面获取到的新的登录密码,调接口将用户的登录密码修改过来
+        ChangeLoginPasswordAPI.requestChangeLoginPassword(mContext, phones, verifyCode, secret2)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<BaseModel>() {
@@ -176,20 +184,8 @@ public class SetUnLoginSecretActivity extends BaseSwipeActivity {
                     @Override
                     public void onNext(BaseModel baseModel) {
                         if (baseModel.success) {
-                            SecretSuccessDialog secretSuccessDialog = new SecretSuccessDialog(mContext) {
-                                @Override
-                                public void Confirm() {
-                                    dismiss();
-                                    finish();
-                                }
-
-                                @Override
-                                public void Close() {
-                                    dismiss();
-                                    finish();
-                                }
-                            };
-                            secretSuccessDialog.show();
+                            finish();
+                            AppHelper.showMsg(mContext, baseModel.message);
                         } else {
                             AppHelper.showMsg(mContext, baseModel.message);
                         }

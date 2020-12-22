@@ -37,6 +37,7 @@ public class RegisterModel extends BaseModel{
             public String name;
             public String phone;
             public int sex;
+            public String id;
             public String sexName;
             public int type;
             public String invitationCode;

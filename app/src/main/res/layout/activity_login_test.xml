@@ -13,7 +13,7 @@
         android:background="@drawable/app_border_bottom_bg">
 
         <ImageView
-            android:id="@+id/iv_pp_input_phone_back"
+            android:id="@+id/iv_back"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
@@ -35,7 +35,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="请输入您的登录密码"
+        android:text="登录密码验证"
         android:layout_marginTop="@dimen/size_50dp"
         android:layout_marginLeft="@dimen/size_38dp"
         android:textColor="#333333"

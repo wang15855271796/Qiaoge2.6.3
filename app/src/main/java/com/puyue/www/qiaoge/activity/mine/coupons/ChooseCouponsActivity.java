@@ -20,6 +20,7 @@ import com.puyue.www.qiaoge.base.BaseSwipeActivity;
 import com.puyue.www.qiaoge.event.ChooseCoupon1Event;
 import com.puyue.www.qiaoge.event.ChooseCouponEvent;
 import com.puyue.www.qiaoge.fragment.ChooseCouponFragment;
+import com.puyue.www.qiaoge.fragment.ChooseSelfCouponFragment;
 import com.puyue.www.qiaoge.fragment.CouponsUnUseFragment;
 import com.puyue.www.qiaoge.fragment.mine.coupons.CouponsOverdueFragment;
 import com.puyue.www.qiaoge.fragment.mine.coupons.CouponsUseFragment;
@@ -49,7 +50,7 @@ public class ChooseCouponsActivity extends BaseSwipeActivity {
     private String normalProductBalanceVOStr;
     private String giftDetailNo="";
     private ChooseCouponsAdapter adapter;
-    ImageView iv_select_all;
+//    ImageView iv_select_all;
     boolean statModel;
     private List<UserChooseDeductModel.DataBean> list = new ArrayList<>();
     TabLayout tabLayout;
@@ -70,27 +71,12 @@ public class ChooseCouponsActivity extends BaseSwipeActivity {
     public void findViewById() {
         viewPager = (ViewPager) findViewById(R.id.viewPager);
         tabLayout = (TabLayout) findViewById(R.id.tabLayout);
-        iv_select_all = (ImageView) findViewById(R.id.iv_select_all);
+//        iv_select_all = (ImageView) findViewById(R.id.iv_select_all);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
 
         stringList.add("可使用");
         stringList.add("不可使用");
-
-        iv_select_all.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(list!=null) {
-                    //未选
-                    adapter.setStat();
-                    EventBus.getDefault().post(new ChooseCoupon1Event());
-                    finish();
-
-                }
-                statModel = true;
-                adapter.notifyDataSetChanged();
-            }
-        });
 
     }
 
@@ -108,7 +94,7 @@ public class ChooseCouponsActivity extends BaseSwipeActivity {
         ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager(),list_fragment,stringList);
 
         viewPager.setAdapter(viewPagerAdapter);
-        viewPager.setOffscreenPageLimit(3);
+        viewPager.setOffscreenPageLimit(2);
         tabLayout.setupWithViewPager(viewPager);
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
@@ -202,19 +188,17 @@ public class ChooseCouponsActivity extends BaseSwipeActivity {
                                     if (model.getData().get(i).getGiftDetailNo().equals(giftDetailNo)) {
                                         model.getData().get(i).setFlags(true);
                                         if(statModel) {
-                                            iv_select_all.setBackgroundResource(R.mipmap.ic_pay_ok);
+//                                            iv_select_all.setBackgroundResource(R.mipmap.ic_pay_ok);
                                         }else {
-                                            iv_select_all.setBackgroundResource(R.mipmap.ic_pay_no);
+//                                            iv_select_all.setBackgroundResource(R.mipmap.ic_pay_no);
                                         }
                                     } else {
                                         model.getData().get(i).setFlags(false);
                                         if(statModel) {
-                                            iv_select_all.setBackgroundResource(R.mipmap.ic_pay_ok);
+//                                            iv_select_all.setBackgroundResource(R.mipmap.ic_pay_ok);
                                         }else {
-                                            iv_select_all.setBackgroundResource(R.mipmap.ic_pay_no);
+//                                            iv_select_all.setBackgroundResource(R.mipmap.ic_pay_no);
                                         }
-
-
                                     }
 
                                 }

@@ -614,7 +614,7 @@ public class RegisterStep1Activity extends BaseSwipeActivity implements View.OnC
         UserInfoHelper.saveUserId(mContext, mModelRegister.data.token);
         UserInfoHelper.saveUserCell(mContext, mModelRegister.data.userBaseInfoVO.phone);
         UserInfoHelper.saveUserType(mContext, String.valueOf(mModelRegister.data.userBaseInfoVO.type));
-
+        SharedPreferencesUtil.saveString(mContext,"userId",mModelRegister.data.userBaseInfoVO.id);
         isShow();
         //注册成功同时登录成功,需要首页和市场页刷新数据
         UserInfoHelper.saveUserHomeRefresh(mContext, "");

@@ -6,7 +6,7 @@ package com.puyue.www.qiaoge.constant;
 public class AppInterfaceAddress {
     //https://shaokao.qoger.com/qiaoge/正式   http://192.168.2.188:8082/qiaoge/
     //http://116.62.67.230:8082/qiaoge/   测试http://120.55.55.99:8082/qiaoge/
-    public static final String BASE_URL = "https://shaokao.qoger.com/qiaoge/";
+    public static final String BASE_URL = "http://192.168.2.188:8082/qiaoge/";
     // 正式https://shaokao.qoger.com/qiaoge/
     //http://192.168.1.45/   本地192.168.101.69:8088
     //http://qg.zhiyun88u.com/shen
@@ -15,6 +15,10 @@ public class AppInterfaceAddress {
     //http://192.168.101.41:8088/
 //    queryReturnProdIsContainFullGift
 
+    /**
+     *未登录 更换手机号码
+     */
+    public static final String UnLogin_Change_Phone = "auth/changePhone";
     /**
      *  找回密码(修改密码)没有验证码
      */
@@ -143,6 +147,10 @@ public class AppInterfaceAddress {
     public static final String CHANGE_LOGIN_PASSWORD = "auth/resetPwd";
     public static final String CHANGE_PAY_PASSWORD = "pay/updatePayPwd";
 
+    /**
+     *登录后，更换手机号-老号码获取验证码
+     */
+    public static final String Old_Change_phone = "auth/getChangeOldPhoneVerifyCode";
     /**
      *
      * 支付列表

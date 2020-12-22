@@ -6,10 +6,10 @@
     android:layout_height="match_parent"
     android:background="#f2f2f2">
 
-    <in.srain.cube.views.ptr.PtrClassicFrameLayout
-        android:id="@+id/ptrClassicFrameLayout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+    <!--<in.srain.cube.views.ptr.PtrClassicFrameLayout-->
+        <!--android:id="@+id/ptrClassicFrameLayout"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content">-->
 
         <LinearLayout
             android:orientation="vertical"
@@ -51,5 +51,5 @@
             <include layout="@layout/activity_coupon_no_data"/>
 
         </LinearLayout>
-    </in.srain.cube.views.ptr.PtrClassicFrameLayout>
+    <!--</in.srain.cube.views.ptr.PtrClassicFrameLayout>-->
 </LinearLayout>

@@ -33,6 +33,7 @@ import com.puyue.www.qiaoge.activity.BeizhuActivity;
 import com.puyue.www.qiaoge.activity.mine.account.AddressListActivity;
 import com.puyue.www.qiaoge.activity.mine.account.AddressListsActivity;
 import com.puyue.www.qiaoge.activity.mine.coupons.ChooseCouponsActivity;
+import com.puyue.www.qiaoge.activity.mine.coupons.ChooseCouponssActivity;
 import com.puyue.www.qiaoge.activity.mine.order.MyConfireOrdersActivity;
 import com.puyue.www.qiaoge.adapter.PayListAdapter;
 import com.puyue.www.qiaoge.adapter.UnOperateAdapter;

@@ -2,6 +2,7 @@ package com.puyue.www.qiaoge.activity.mine.account;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
@@ -23,7 +24,10 @@ import com.puyue.www.qiaoge.helper.StringHelper;
 import com.puyue.www.qiaoge.helper.UserInfoHelper;
 import com.puyue.www.qiaoge.listener.NoDoubleClickListener;
 import com.puyue.www.qiaoge.model.mine.AccountCenterModel;
+import com.puyue.www.qiaoge.utils.EnCodeUtil;
 import com.puyue.www.qiaoge.utils.ToastUtil;
+
+import org.greenrobot.eventbus.EventBus;
 
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
@@ -48,7 +52,8 @@ public class AccountCenterActivity extends BaseSwipeActivity {
 
     private String mUserCell;
     private String hasSetPayPwd;
-
+    String publicKeyStr = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDTykrDv1TEKVjDeE29kVLo5M7mctlE65WlHSMN8RVL1iA9jXsF9SMNH1AErs2lqxpv18fd3TOAw0pBaG+cXOxApKdvRDKgxyuHnONOBzxr6EyWOQlRZt94auL1ESVbLdvYa7+cISkVe+MphfQh7uI/64tGQ34aRNmvFKv9PEeBTQIDAQAB";
+    String mUserCells;
     private AccountCenterModel mModelAccountCenter;
     private BaseModel mModelLogout;
 
@@ -113,11 +118,21 @@ public class AccountCenterActivity extends BaseSwipeActivity {
             if (view == mIvBack) {
                 finish();
             } else if (view == mRlPhone) {
+                //更改账号
                 startActivity(EditAccountInputPhoneActivity.getIntent(mContext, EditAccountInputPhoneActivity.class, "0", "account",mModelAccountCenter.data.phone));
-                finish();
+//                finish();
             } else if (view == mRlLoginPassword) {
                 startActivity(EditPasswordInputCodeActivity.getIntent(mContext, EditPasswordInputCodeActivity.class, "0", mUserCell, "login","",0,0));
             } else if (view == mRlPayPassword) {
+//                if(!TextUtils.isEmpty(mModelAccountCenter.data.phone)) {
+//                    try {
+//                        mUserCells = EnCodeUtil.encryptByPublicKey(mModelAccountCenter.data.phone, publicKeyStr);
+//
+//                    } catch (Exception e) {
+//                        e.printStackTrace();
+//                    }
+//
+//                }
                 checkFirstChange();
 //                Intent intent = new Intent(mContext,PayActivity.class);
 //                startActivity(intent);
@@ -168,18 +183,21 @@ public class AccountCenterActivity extends BaseSwipeActivity {
 
                     @Override
                     public void onNext(BaseModel baseModel) {
-                        if (baseModel.success) {
                             //没余额
-                            Intent intent = new Intent(mContext,PayActivity.class);
-                            intent.putExtra("phone",mUserCell);
-                            startActivity(intent);
-                        } else {
-                            //有余额
-                            Intent intent = new Intent(mContext,HisActivity.class);
-                            intent.putExtra("phone",mUserCell);
-                            startActivity(intent);
+                            if(baseModel.code==-1) {
+                                Intent intent = new Intent(mContext,PayActivity.class);
+                                intent.putExtra("phone",mUserCell);
+                                startActivity(intent);
+                            }else if(baseModel.code ==1){
+                                Intent intent = new Intent(mContext,HisActivity.class);
+                                intent.putExtra("phone",mUserCell);
+                                startActivity(intent);
+                            }else {
+                                ToastUtil.showSuccessMsg(mContext,baseModel.message);
+                            }
+
                         }
-                    }
+
                 });
     }
 
@@ -238,6 +256,7 @@ public class AccountCenterActivity extends BaseSwipeActivity {
 
                         @Override
                         public void onNext(AccountCenterModel accountCenterModel) {
+                            Log.d("dsassddddd......","sssss");
                             logoutAndToHome(mContext, accountCenterModel.code);
                             mModelAccountCenter = accountCenterModel;
                             if (mModelAccountCenter.success) {

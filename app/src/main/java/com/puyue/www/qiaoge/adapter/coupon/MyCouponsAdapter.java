@@ -21,6 +21,7 @@ import com.puyue.www.qiaoge.event.GoToCartFragmentEvent;
 import com.puyue.www.qiaoge.event.GoToMarketEvent;
 import com.puyue.www.qiaoge.model.QueryProdModel;
 import com.puyue.www.qiaoge.model.mine.coupons.queryUserDeductByStateModel;
+import com.puyue.www.qiaoge.utils.ToastUtil;
 
 
 import org.greenrobot.eventbus.EventBus;
@@ -75,6 +76,14 @@ public class MyCouponsAdapter  extends  BaseQuickAdapter <queryUserDeductByState
         }else {
             tv_coupon_style.setVisibility(View.GONE);
         }
+
+        if(!TextUtils.isEmpty(item.getLimitAmtStr())) {
+            tv_user_factor.setText(item.getLimitAmtStr());
+            tv_user_factor.setVisibility(View.VISIBLE);
+        }else {
+            tv_user_factor.setVisibility(View.GONE);
+        }
+        tv_style.setText(item.getGiftName());
         tv_use.setVisibility(View.VISIBLE);
         tv_use.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -85,18 +94,24 @@ public class MyCouponsAdapter  extends  BaseQuickAdapter <queryUserDeductByState
                     EventBus.getDefault().post(new GoToMarketEvent());
                     EventBus.getDefault().unregister(this);
                 }else {
-                    //
-                    Intent intent = new Intent(mContext,CouponSearchActivity.class);
-                    intent.putExtra("giftDetailNo",item.getGiftDetailNo());
-                    mContext.startActivity(intent);
+                    //可用列表
+
+                    if(item.getJumpFlag().equals("0")) {
+                        //不可跳
+                        ToastUtil.showSuccessMsg(mContext,"当前区域不可查看");
+                    }else {
+                        //可跳
+                        Intent intent = new Intent(mContext,CouponSearchActivity.class);
+                        intent.putExtra("giftDetailNo",item.getGiftDetailNo());
+                        intent.putExtra("giftName",item.getGiftName());
+                        mContext.startActivity(intent);
+                    }
+
                 }
 
             }
         });
-        if(!TextUtils.isEmpty(item.getApplyFrom())){
-            tv_style.setText(item.getApplyFrom());
-        }
-        tv_user_factor.setText(item.getGiftName());
+
         tv_time.setText(item.getDateTime());
         tv_amount.setText(item.getAmount());
 
@@ -108,16 +123,6 @@ public class MyCouponsAdapter  extends  BaseQuickAdapter <queryUserDeductByState
             tv_role.setText("");
             tv_role.setVisibility(View.INVISIBLE);
         }
-
-        tv_role.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(item.getGiftProdUseType().equals("1")||item.getGiftProdUseType().equals("2")) {
-                    queryProd(item.getGiftDetailNo());
-                }
-
-            }
-        });
 
         if(item.getState().equals("ENABLED")){  // State== ENABLED   可用使用的优惠卷
             iv_status.setVisibility(View.GONE);
@@ -149,46 +154,6 @@ public class MyCouponsAdapter  extends  BaseQuickAdapter <queryUserDeductByState
             tv_style.setTextColor(Color.parseColor("#A1A1A1"));
             tv_tip.setTextColor(Color.parseColor("#A1A1A1"));
         }
-    }
-    String datas;
-    private void queryProd(String giftDetailNo) {
-        userChooseDeductAPI.queryProd(mContext,giftDetailNo)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<QueryProdModel>() {
-                    @Override
-                    public void onCompleted() {
-
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-
-                    }
-
-                    @Override
-                    public void onNext(QueryProdModel model) {
-                        if (model.isSuccess()) {
-
-                            if(model.getData()!=null) {
-                                datas = model.getData();
-
-                                CouponProdDialog couponProdDialog = new CouponProdDialog(mContext,datas) {
-                                    @Override
-                                    public void Confirm() {
-                                        dismiss();
-                                    }
-                                };
-                                couponProdDialog.show();
-                            }
-
-
-                        } else {
-//                            AppHelper.showMsg(mContext, model.getMessage());
-                        }
-
-                    }
-                });
     }
 
 }

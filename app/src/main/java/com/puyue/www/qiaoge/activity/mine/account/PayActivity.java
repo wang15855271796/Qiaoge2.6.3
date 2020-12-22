@@ -11,7 +11,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.puyue.www.qiaoge.R;
+import com.puyue.www.qiaoge.activity.mine.login.SetLoginSecret1Activity;
+import com.puyue.www.qiaoge.api.mine.login.CheckCommonCodeAPI;
 import com.puyue.www.qiaoge.api.mine.login.LoginAPI;
+import com.puyue.www.qiaoge.api.mine.login.SendCodeAPI;
 import com.puyue.www.qiaoge.base.BaseModel;
 import com.puyue.www.qiaoge.base.BaseSwipeActivity;
 import com.puyue.www.qiaoge.helper.AppHelper;
@@ -88,11 +91,12 @@ public class PayActivity extends BaseSwipeActivity {
                 et_yzms = et_yzm.getText().toString();
                 if(!TextUtils.isEmpty(phone)){
                     try {
-                        phones = EnCodeUtil.encryptByPublicKey(phone, publicKeyStr);
+//                        phones = EnCodeUtil.encryptByPublicKey(phone, publicKeyStr);
+                        checkYzm(phone,et_yzms);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
-                    checkYzm(phones,et_yzms);
+
 
                 }
 
@@ -100,10 +104,10 @@ public class PayActivity extends BaseSwipeActivity {
                 if(!TextUtils.isEmpty(phone)){
                     try {
                         phones = EnCodeUtil.encryptByPublicKey(phone, publicKeyStr);
+                        sendCode(phones);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
-                    sendCode(phones);
 
                 }else {
                     AppHelper.showMsg(mContext,"请填写正确手机号码");
@@ -117,8 +121,9 @@ public class PayActivity extends BaseSwipeActivity {
         }
     };
 
+
     private void checkYzm(String phones, String et_yzms) {
-        LoginAPI.checkYzm(mContext,phones,et_yzms)
+        CheckCommonCodeAPI.requestCodeRight(mContext,phones,et_yzms,6)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<BaseModel>() {
@@ -135,7 +140,7 @@ public class PayActivity extends BaseSwipeActivity {
                     @Override
                     public void onNext(BaseModel baseModel) {
                         if (baseModel.success) {
-                            Intent intent = new Intent(mContext,LoginPayTestActivity.class);
+                            Intent intent = new Intent(mContext,SetPayActivity.class);
                             intent.putExtra("phone",phone);
                             startActivity(intent);
                             finish();
@@ -146,6 +151,35 @@ public class PayActivity extends BaseSwipeActivity {
                 });
     }
 
+//    private void checkYzm(String phones, String et_yzms) {
+//        LoginAPI.checkYzm(mContext,phones,et_yzms)
+//                .subscribeOn(Schedulers.io())
+//                .observeOn(AndroidSchedulers.mainThread())
+//                .subscribe(new Subscriber<BaseModel>() {
+//                    @Override
+//                    public void onCompleted() {
+//
+//                    }
+//
+//                    @Override
+//                    public void onError(Throwable e) {
+//
+//                    }
+//
+//                    @Override
+//                    public void onNext(BaseModel baseModel) {
+//                        if (baseModel.success) {
+//                            Intent intent = new Intent(mContext,SetPayActivity.class);
+//                            intent.putExtra("phone",phone);
+//                            startActivity(intent);
+//                            finish();
+//                        } else {
+//                            ToastUtil.showSuccessMsg(mContext, baseModel.message);
+//                        }
+//                    }
+//                });
+//    }
+
     /**
      * 发送验证码
      * @param phone
@@ -154,7 +188,7 @@ public class PayActivity extends BaseSwipeActivity {
         if (!NetWorkHelper.isNetworkAvailable(mContext)) {
             ToastUtil.showSuccessMsg(mContext, "网络不给力!");
         } else {
-            LoginAPI.getYzm(mContext,phone)
+            SendCodeAPI.requestSendCode(mContext,phone,6)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(new Subscriber<BaseModel>() {

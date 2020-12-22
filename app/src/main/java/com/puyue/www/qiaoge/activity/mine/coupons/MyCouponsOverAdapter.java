@@ -56,11 +56,13 @@ public class MyCouponsOverAdapter extends BaseQuickAdapter<queryUserDeductByStat
         tv_role=helper.getView(R.id.tv_role);
         tv_amount=helper.getView(R.id.tv_amount);
         iv_status=helper.getView(R.id.iv_status);
-        if(!TextUtils.isEmpty(item.getApplyFrom())){
-            tv_style.setText(item.getApplyFrom());
+        if(!TextUtils.isEmpty(item.getLimitAmtStr())) {
+            tv_user_factor.setText(item.getLimitAmtStr());
+            tv_user_factor.setVisibility(View.VISIBLE);
+        }else {
+            tv_user_factor.setVisibility(View.GONE);
         }
-        //item.getGiftType()+"   "+
-        tv_user_factor.setText(item.getGiftName());
+        tv_style.setText(item.getGiftName());
         tv_time.setText(item.getDateTime());
         tv_amount.setText(item.getAmount());
 

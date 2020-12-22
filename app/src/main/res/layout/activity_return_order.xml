@@ -51,6 +51,13 @@
                 android:paddingLeft="10dp"
                 android:paddingRight="10dp">
 
+                <TextView
+                    android:visibility="gone"
+                    android:id="@+id/tv_desc"
+                    android:text="本订单包含满赠活动商品，仅支持全部商品退款（部分商品退款请联系客服处理）"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="0dp"

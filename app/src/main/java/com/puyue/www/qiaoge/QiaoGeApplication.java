@@ -1,20 +1,37 @@
 package com.puyue.www.qiaoge;
 
 import android.content.Context;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Build;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.multidex.MultiDexApplication;
 import android.util.Log;
 
 import com.baidu.location.LocationClientOption;
 import com.baidu.mapapi.SDKInitializer;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
+import com.bumptech.glide.request.target.SimpleTarget;
+import com.bumptech.glide.request.transition.Transition;
 import com.puyue.www.qiaoge.helper.UserInfoHelper;
 import com.puyue.www.qiaoge.utils.SharedPreferencesUtil;
 
 
-import com.tencent.bugly.crashreport.CrashReport;
+import com.qiyukf.unicorn.api.ImageLoaderListener;
+import com.qiyukf.unicorn.api.OnBotEventListener;
+import com.qiyukf.unicorn.api.StatusBarNotificationConfig;
+import com.qiyukf.unicorn.api.Unicorn;
+import com.qiyukf.unicorn.api.UnicornImageLoader;
+import com.qiyukf.unicorn.api.YSFOptions;
 import com.tencent.mm.opensdk.openapi.IWXAPI;
 import com.tencent.mm.opensdk.openapi.WXAPIFactory;
 import com.umeng.commonsdk.UMConfigure;
+import com.umeng.message.IUmengRegisterCallback;
+import com.umeng.message.PushAgent;
 import com.umeng.socialize.PlatformConfig;
 import com.weavey.loading.lib.LoadingLayout;
 
@@ -39,7 +56,7 @@ public class QiaoGeApplication extends MultiDexApplication {
     public void onCreate() {
         super.onCreate();
         SharedPreferencesUtil.saveString(this,"pays","-1");
-        CrashReport.initCrashReport(getApplicationContext(), "385e5aaa75", false);
+//        CrashReport.initCrashReport(getApplicationContext(), "385e5aaa75", false);
         SDKInitializer.initialize(getApplicationContext());
 //        mLocationClient = new LocationClient(getApplicationContext());
 //        //声明LocationClient类
@@ -48,6 +65,22 @@ public class QiaoGeApplication extends MultiDexApplication {
         LocationClientOption option = new LocationClientOption();
         option.setLocationMode(LocationClientOption.LocationMode.Hight_Accuracy);
         option.setIsNeedAddress(true);
+//        友盟
+        UMConfigure.init(this, "5facd45320657917050f92a0", "Umeng", UMConfigure.DEVICE_TYPE_PHONE, "9bde9b69caaff881a14239cb326241b8");
+        PushAgent mPushAgent = PushAgent.getInstance(this);
+        mPushAgent.setResourcePackageName(R.class.getPackage().getName());
+//注册推送服务，每次调用register方法都会回调该接口
+        mPushAgent.register(new IUmengRegisterCallback() {
+            @Override
+            public void onSuccess(String deviceToken) {
+                //注册成功会返回deviceToken
+                Log.d("wsassssssss......",deviceToken);
+            }
+            @Override
+            public void onFailure(String s, String s1) {
+                Log.d("wsassssssss......",s1);
+            }
+        });
 //可选，是否需要地址信息，默认为不需要，即参数为false
 //如果开发者需要获得当前点的地址信息，此处必须为true
 //
@@ -82,6 +115,69 @@ public class QiaoGeApplication extends MultiDexApplication {
                 .setReloadButtonTextColor(R.color.gray)
                 .setReloadButtonWidthAndHeight(150,40);
 
+
+        Unicorn.init(this, "32e2c3d171b7d70287c22876a5622022", options(), new UnicornImageLoader() {
+            @Nullable
+            @Override
+            public Bitmap loadImageSync(String uri, int width, int height) {
+                return null;
+            }
+
+            @Override
+            public void loadImage(String uri, int width, int height, ImageLoaderListener listener) {
+                RequestOptions options = new RequestOptions()
+//                        .placeholder(R.drawable.placeholder)
+                        .centerCrop();
+//                .error(R.drawable.error);
+                if (width <= 0 || height <= 0) {
+                    width = height = Integer.MIN_VALUE;
+                }
+
+                Glide.with(QiaoGeApplication.this).asBitmap().load(uri).apply(options)
+                        .into(new SimpleTarget<Bitmap>(width, height) {
+                            @Override
+                            public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
+                                if (listener != null) {
+                                    listener.onLoadComplete(resource);
+                                }
+                            }
+
+                            @Override
+                            public void onLoadFailed(@Nullable Drawable errorDrawable) {
+                                super.onLoadFailed(errorDrawable);
+                                Throwable t = new Throwable("加载异常");
+                                listener.onLoadFailed(t);
+                            }
+                        });
+            }
+        });
+
+
+    }
+    public static YSFOptions ysfOptions;
+    /**
+     //     * 网易七鱼客服
+     //     *
+     //     * @return
+     //     */
+    private YSFOptions options() {
+        YSFOptions options = new YSFOptions();
+        /**
+         * 客服消息通知
+         */
+        options.statusBarNotificationConfig = new StatusBarNotificationConfig();
+        options.statusBarNotificationConfig.notificationSmallIconId = R.mipmap.ic_launcher;
+        options.onBotEventListener = new OnBotEventListener() {
+            @Override
+            public boolean onUrlClick(Context context, String url) {
+                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+                context.startActivity(intent);
+                return true;
+            }
+        };
+
+        ysfOptions = options;
+        return options;
     }
 
 

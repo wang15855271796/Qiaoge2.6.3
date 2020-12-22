@@ -191,7 +191,7 @@ public class ProductNormalModel implements Serializable {
              * prodPrices : [{"price":"￥11/c","oldPrice":"","priceId":1406,"productUnit":649,"unitDesc":""}]
              */
 
-
+            String companyId;
             String deductAmount;
             private String type;
             private int productMainId;
@@ -209,6 +209,14 @@ public class ProductNormalModel implements Serializable {
             private List<ProdPricesBean> prodPrices;
             String sendTimeTpl;
             String selfProd;
+
+            public String getCompanyId() {
+                return companyId;
+            }
+
+            public void setCompanyId(String companyId) {
+                this.companyId = companyId;
+            }
 
             public String getSendTimeTpl() {
                 return sendTimeTpl;

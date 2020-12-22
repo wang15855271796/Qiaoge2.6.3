@@ -3,6 +3,7 @@ package com.puyue.www.qiaoge.activity.mine.login;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.puyue.www.qiaoge.R;
@@ -21,6 +22,8 @@ public class PointActivity extends BaseSwipeActivity {
     TextView tv_yes;
     @BindView(R.id.tv_phone)
     TextView tv_phone;
+    @BindView(R.id.iv_back)
+    ImageView iv_back;
     String phone;
     @Override
     public boolean handleExtra(Bundle savedInstanceState) {
@@ -37,6 +40,12 @@ public class PointActivity extends BaseSwipeActivity {
         ButterKnife.bind(this);
         phone = getIntent().getStringExtra("phone");
         tv_phone.setText("您的手机号"+phone+"现在能接收短信吗？");
+        iv_back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
         tv_yes.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

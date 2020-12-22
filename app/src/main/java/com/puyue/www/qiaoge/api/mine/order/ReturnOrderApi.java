@@ -27,11 +27,12 @@ public class ReturnOrderApi {
                                                   @Field("returnAmount") String returnAmount,
                                                   @Field("returnPic") String returnPic,
                                                   @Field("returnProducts") JSONArray returnProducts,
-                                                  @Field("returnChannel") String returnChannel);
+                                                  @Field("returnChannel") String returnChannel,
+        @Field("allReturn") String allReturn);
     }
 
-    public static Observable<ReturnOrderSucModel> requestReturnOrder(Context context, String orderId, String returnReasonType, String returnReason, String returnAmount, String returnPic, JSONArray returnProducts,String returnChannel) {
-        Observable<ReturnOrderSucModel> loginModelObservable = RestHelper.getBaseRetrofit(context).create(returnOrderService.class).setParams(orderId, returnReasonType, returnReason, returnAmount,returnPic,returnProducts,returnChannel);
+    public static Observable<ReturnOrderSucModel> requestReturnOrder(Context context, String orderId, String returnReasonType, String returnReason, String returnAmount, String returnPic, JSONArray returnProducts,String returnChannel,String allReturn) {
+        Observable<ReturnOrderSucModel> loginModelObservable = RestHelper.getBaseRetrofit(context).create(returnOrderService.class).setParams(orderId, returnReasonType, returnReason, returnAmount,returnPic,returnProducts,returnChannel,allReturn);
         return loginModelObservable;
     }
 }

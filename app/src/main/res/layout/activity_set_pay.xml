@@ -13,7 +13,7 @@
         android:background="@drawable/app_border_bottom_bg">
 
         <ImageView
-            android:id="@+id/iv_pp_input_phone_back"
+            android:id="@+id/iv_back"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
@@ -91,7 +91,7 @@
                 android:id="@+id/iv_close"
                 android:layout_width="18dp"
                 android:layout_height="12dp"
-                android:src="@mipmap/ic_login_hide" />
+                android:src="@mipmap/ic_login_display" />
 
         </RelativeLayout>
 
@@ -138,7 +138,7 @@
                 android:id="@+id/iv_close_sure"
                 android:layout_width="18dp"
                 android:layout_height="12dp"
-                android:src="@mipmap/ic_login_hide" />
+                android:src="@mipmap/ic_login_display" />
 
         </RelativeLayout>
 

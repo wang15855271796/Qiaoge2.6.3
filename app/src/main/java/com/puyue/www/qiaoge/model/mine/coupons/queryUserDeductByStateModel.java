@@ -164,6 +164,7 @@ public class queryUserDeductByStateModel{
              * state : ENABLED
              * giftDetailNo : 112018092000000015
              */
+            String jumpFlag;
             String useInfo;
             private String giftName;
             private String giftType;
@@ -181,6 +182,15 @@ public class queryUserDeductByStateModel{
             private List<String> role;
             private String giftProdUseType;
             private String giftFlag;
+
+            public String getJumpFlag() {
+                return jumpFlag;
+            }
+
+            public void setJumpFlag(String jumpFlag) {
+                this.jumpFlag = jumpFlag;
+            }
+
             public String getGiftProdUseType() {
                 return giftProdUseType;
             }

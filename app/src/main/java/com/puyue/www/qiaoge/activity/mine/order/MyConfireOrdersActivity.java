@@ -32,6 +32,7 @@ import com.puyue.www.qiaoge.activity.HomeActivity;
 import com.puyue.www.qiaoge.activity.cart.PayResultActivity;
 import com.puyue.www.qiaoge.activity.mine.account.EditPasswordInputCodeActivity;
 
+import com.puyue.www.qiaoge.activity.mine.account.PayActivity;
 import com.puyue.www.qiaoge.api.cart.CheckPayPwdAPI;
 import com.puyue.www.qiaoge.api.cart.GetPayResultAPI;
 import com.puyue.www.qiaoge.api.cart.OrderPayAPI;
@@ -439,8 +440,10 @@ public class MyConfireOrdersActivity extends BaseSwipeActivity {
             public void onClick(View v) {
                 UserInfoHelper.saveDeliverType(mContext,orderDeliveryType+"");
                 UserInfoHelper.saveForgetPas(mContext, "wwwe");
-                startActivity(EditPasswordInputCodeActivity.getIntent(mContext, EditPasswordInputCodeActivity.class, "0", mUserCell, "pay","forgetPsw",orderDeliveryType,payAmount));
-
+//                startActivity(EditPasswordInputCodeActivity.getIntent(mContext, EditPasswordInputCodeActivity.class, "0", mUserCell, "pay","forgetPsw",orderDeliveryType,payAmount));
+                Intent intent = new Intent(getContext(),PayActivity.class);
+                intent.putExtra("phone",mUserCell);
+                getContext().startActivity(intent);
                 mDialog.dismiss();
                 handler.postDelayed(new Runnable() {
                     @Override

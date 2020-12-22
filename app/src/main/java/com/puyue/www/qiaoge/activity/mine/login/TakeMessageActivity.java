@@ -1,11 +1,13 @@
 package com.puyue.www.qiaoge.activity.mine.login;
 
 import android.content.Intent;
+import android.media.Image;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
@@ -35,6 +37,8 @@ import rx.schedulers.Schedulers;
 public class TakeMessageActivity extends BaseSwipeActivity {
     @BindView(R.id.recyclerView)
     RecyclerView recyclerView;
+    @BindView(R.id.iv_back)
+    ImageView iv_back;
     String phone;
     String publicKeyStr = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDTykrDv1TEKVjDeE29kVLo5M7mctlE65WlHSMN8RVL1iA9jXsF9SMNH1AErs2lqxpv18fd3TOAw0pBaG+cXOxApKdvRDKgxyuHnONOBzxr6EyWOQlRZt94auL1ESVbLdvYa7+cISkVe+MphfQh7uI/64tGQ34aRNmvFKv9PEeBTQIDAQAB";
     String phones;
@@ -82,6 +86,12 @@ public class TakeMessageActivity extends BaseSwipeActivity {
             }
         }
 
+        iv_back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
         tv_next.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -114,12 +124,19 @@ public class TakeMessageActivity extends BaseSwipeActivity {
                     @Override
                     public void onNext(HisModel hisModel) {
                         if (hisModel.isSuccess()) {
-                            lists.clear();
-                            List<HisModel.DataBean> data = hisModel.getData();
-                            lists.addAll(data);
-                            hisAddressAdapter.notifyDataSetChanged();
+                            if(hisModel.getData()!=null) {
+                                lists.clear();
+                                List<HisModel.DataBean> data = hisModel.getData();
+                                lists.addAll(data);
+                                hisAddressAdapter.notifyDataSetChanged();
+                                hisAddressAdapter.setNotify(-1);
+                                tv_next.setEnabled(true);
+                            }else {
+                                tv_next.setEnabled(false);
+                            }
                         } else {
                             ToastUtil.showSuccessMsg(mContext,hisModel.getMessage());
+                            tv_next.setEnabled(false);
                         }
                     }
                 });
@@ -146,14 +163,16 @@ public class TakeMessageActivity extends BaseSwipeActivity {
                         if (addressMessageModel.isSuccess()) {
                             if(addressMessageModel.getData().getIsTrue().equals("1")) {
                                 Intent intent = new Intent(mContext,CommonContactActivity.class);
+                                intent.putExtra("phone",phone);
                                 intent.putExtra("id",id);
                                 startActivity(intent);
+                                finish();
                                 ToastUtil.showSuccessMsg(mContext,"认证成功");
                             }else {
                                 if(addressMessageModel.getData().getTimes()==0) {
-                                    ToastUtil.showSuccessMsg(mContext,"您还剩机会已用完");
+                                    ToastUtil.showSuccessMsg(mContext,"您机会已用完,如需帮助,请联系客服处理");
                                 }else {
-                                    ToastUtil.showSuccessMsg(mContext,"您今日还剩"+addressMessageModel.getData().getTimes()+"次");
+                                    ToastUtil.showSuccessMsg(mContext,"验证失败,您今日还剩"+addressMessageModel.getData().getTimes()+"次");
                                     getCheckAdddress(phones);
                                 }
 

@@ -5,7 +5,9 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.puyue.www.qiaoge.R;
@@ -37,6 +39,8 @@ public class MessageCheckActivity extends BaseSwipeActivity {
     TextView tv_send;
     @BindView(R.id.tv_next)
     TextView tv_next;
+    @BindView(R.id.iv_back)
+    ImageView iv_back;
     @BindView(R.id.verify_code_view)
     VerifyCodeView verify_code_view;
     String phone;
@@ -72,6 +76,13 @@ public class MessageCheckActivity extends BaseSwipeActivity {
             public void onClick(View v) {
                 String editContent = verify_code_view.getEditContent();
                 checkMessage(editContent);
+            }
+        });
+
+        iv_back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
             }
         });
 
@@ -114,6 +125,7 @@ public class MessageCheckActivity extends BaseSwipeActivity {
                         if (baseModel.success) {
                             Intent intent = new Intent(mContext,SetUnLoginSecretActivity.class);
                             intent.putExtra("phone",phone);
+                            intent.putExtra("verifyCode",password);
                             startActivity(intent);
                             finish();
                             ToastUtil.showSuccessMsg(mContext,baseModel.message);

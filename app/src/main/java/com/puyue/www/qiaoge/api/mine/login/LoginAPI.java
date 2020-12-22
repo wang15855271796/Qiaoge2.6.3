@@ -160,11 +160,11 @@ public class LoginAPI {
     public interface CheckContactService {
         @FormUrlEncoded
         @POST(AppInterfaceAddress.Check_Contact)
-        Observable<BaseModel> setParams(@Field("userName") String userName,@Field("addressId") String addressId,@Field("contactPhone") String contactPhone);
+        Observable<BaseModel> setParams(@Field("userName") String userName,@Field("addressId") String addressId,@Field("contactPhone") String contactPhone,@Field("phone") String phone);
     }
 
-    public static Observable<BaseModel> checkContact(Context context, String userName, String addressId,String contactPhone) {
-        Observable<BaseModel> myOrdersModelObservable = RestHelper.getBaseRetrofit(context).create(CheckContactService.class).setParams(addressId,userName,contactPhone);
+    public static Observable<BaseModel> checkContact(Context context, String userName, String addressId,String contactPhone,String phone) {
+        Observable<BaseModel> myOrdersModelObservable = RestHelper.getBaseRetrofit(context).create(CheckContactService.class).setParams(userName,addressId,contactPhone,phone);
         return myOrdersModelObservable;
     }
 
@@ -189,6 +189,18 @@ public class LoginAPI {
 
     public static Observable<BaseModel> setUnLoginSecret(Context context, String phone,String password) {
         Observable<BaseModel> myOrdersModelObservable = RestHelper.getBaseRetrofit(context).create(UnLoginSetSecretService.class).setParams(phone,password);
+        return myOrdersModelObservable;
+    }
+
+    //未登录 更换手机号码
+    public interface UnLoginChnagePhoneService {
+        @FormUrlEncoded
+        @POST(AppInterfaceAddress.UnLogin_Change_Phone)
+        Observable<BaseModel> setParams(@Field("newPhone") String newPhone,@Field("oldPhone") String oldPhone,@Field("verifyCode") String verifyCode);
+    }
+
+    public static Observable<BaseModel> setChnagePhone(Context context, String newPhone,String oldPhone,String verifyCode) {
+        Observable<BaseModel> myOrdersModelObservable = RestHelper.getBaseRetrofit(context).create(UnLoginChnagePhoneService.class).setParams(newPhone,oldPhone,verifyCode);
         return myOrdersModelObservable;
     }
 }

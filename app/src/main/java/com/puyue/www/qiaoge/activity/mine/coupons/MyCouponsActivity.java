@@ -5,19 +5,24 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
 
 import com.puyue.www.qiaoge.R;
 import com.puyue.www.qiaoge.adapter.mine.ViewPagerAdapter;
 import com.puyue.www.qiaoge.api.mine.coupon.MyCouponsAPI;
+import com.puyue.www.qiaoge.api.mine.order.MyOrderNumAPI;
 import com.puyue.www.qiaoge.base.BaseSwipeActivity;
 
 import com.puyue.www.qiaoge.fragment.mine.coupons.CouponsOverdueFragment;
 import com.puyue.www.qiaoge.fragment.mine.coupons.CouponsUseFragment;
 import com.puyue.www.qiaoge.helper.AppHelper;
+import com.puyue.www.qiaoge.helper.StringHelper;
 import com.puyue.www.qiaoge.listener.NoDoubleClickListener;
 import com.puyue.www.qiaoge.model.mine.coupons.queryUserDeductByStateModel;
+import com.puyue.www.qiaoge.model.mine.order.MyOrderNumModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,7 +37,6 @@ import rx.schedulers.Schedulers;
  */
 public class MyCouponsActivity extends BaseSwipeActivity {
 
-    private int pageNum = 1;
     private  LinearLayout data;
     private  LinearLayout noData;
     private Toolbar toolbar;
@@ -62,42 +66,69 @@ public class MyCouponsActivity extends BaseSwipeActivity {
 
     @Override
     public void setViewData() {
-        String couponNum = getIntent().getStringExtra("couponsNum");
-        pageNum = 1;
-        stringList.add("未使用"+"("+couponNum+")");
-        stringList.add("已使用");
-        stringList.add("已过期/失效");
-        //未使用
-        list.add(new CouponsNotUseFragment());
-        //已使用
-        list.add(new CouponsUseFragment());
-        //过期
-        list.add(new CouponsOverdueFragment());
+//        String couponNum = getIntent().getStringExtra("couponsNum");
+        requestOrderNum();
 
 
 
+    }
 
 
-        ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager(),list,stringList);
-        viewPager.setAdapter(viewPagerAdapter);
-        viewPager.setOffscreenPageLimit(4);
-        tabLayout.setupWithViewPager(viewPager);
-        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
-            @Override
-            public void onTabSelected(TabLayout.Tab tab) {
-                viewPager.setCurrentItem(tab.getPosition(),false);
-            }
+    private void requestOrderNum() {
+        MyOrderNumAPI.requestOrderNum(mContext)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<MyOrderNumModel>() {
+                    @Override
+                    public void onCompleted() {
 
-            @Override
-            public void onTabUnselected(TabLayout.Tab tab) {
+                    }
 
-            }
+                    @Override
+                    public void onError(Throwable e) {
 
-            @Override
-            public void onTabReselected(TabLayout.Tab tab) {
+                    }
 
-            }
-        });
+                    @Override
+                    public void onNext(MyOrderNumModel myOrderNumModel) {
+
+                        if (myOrderNumModel.success) {
+                            stringList.add("未使用"+"("+myOrderNumModel.getData().getDeductNum()+")");
+                            stringList.add("已使用");
+                            stringList.add("已过期/失效");
+                            //未使用
+                            list.add(new CouponsNotUseFragment());
+                            //已使用
+                            list.add(new CouponsUseFragment());
+                            //过期
+                            list.add(new CouponsOverdueFragment());
+
+                            ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager(),list,stringList);
+                            viewPager.setAdapter(viewPagerAdapter);
+                            viewPager.setOffscreenPageLimit(4);
+                            tabLayout.setupWithViewPager(viewPager);
+                            tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+                                @Override
+                                public void onTabSelected(TabLayout.Tab tab) {
+                                    viewPager.setCurrentItem(tab.getPosition(),false);
+                                }
+
+                                @Override
+                                public void onTabUnselected(TabLayout.Tab tab) {
+
+                                }
+
+                                @Override
+                                public void onTabReselected(TabLayout.Tab tab) {
+
+                                }
+                            });
+
+                        } else {
+                            AppHelper.showMsg(mActivity, myOrderNumModel.message);
+                        }
+                    }
+                });
     }
 
     @Override

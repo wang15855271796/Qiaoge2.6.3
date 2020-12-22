@@ -34,7 +34,6 @@ import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
-import static com.umeng.socialize.utils.DeviceConfig.context;
 
 /**
  * Created by ${王文博} on 2019/5/22
@@ -232,7 +231,7 @@ public class ReturnNumAdapter extends BaseQuickAdapter<ReturnOrderDetailModel.Da
                                     getDetuctPrice(orderId, businessId, businessType, additionFlag, unitId, priceId, maxNum, price, total_price, item);
 
                                 } else {
-                                    AppHelper.showMsg(context, returnSpecModel.getMessage());
+                                    AppHelper.showMsg(mContext, returnSpecModel.getMessage());
                                 }
                             }
                         });

@@ -88,6 +88,7 @@ public class ReturnGoodActivity extends BaseSwipeActivity {
     private RecyclerView mRecyclerView;
     private PopupWindow pop;
     private TextView tv_post_order;
+    TextView tv_desc;
     public Double offerAmount;
     private ReturnOrderDetailModel mDetailModel;
     private List<String> picList = new ArrayList();
@@ -113,6 +114,7 @@ public class ReturnGoodActivity extends BaseSwipeActivity {
 
     @Override
     public void findViewById() {
+        tv_desc = findViewById(R.id.tv_desc);
         mTvSelectReason = findViewById(R.id.tv_select_reason);
         mRyOrderDetail = findViewById(R.id.recyclerview_return_good);
         mRecyclerView = findViewById(R.id.recycler);
@@ -328,8 +330,10 @@ public class ReturnGoodActivity extends BaseSwipeActivity {
                                     //全退
                                     rd_check.setChecked(true);
                                     rd_check.setEnabled(false);
+                                    tv_desc.setVisibility(View.VISIBLE);
                                     getState();
                                 }else {
+                                    tv_desc.setVisibility(View.GONE);
                                     rd_check.setChecked(false);
                                     rd_check.setEnabled(true);
                                 }
@@ -708,7 +712,7 @@ public class ReturnGoodActivity extends BaseSwipeActivity {
             isChecked = false;
             //生成退货单
             ReturnOrderApi.requestReturnOrder(mContext, orderId, mTvSelectReason.getText().toString(),
-                    et_return_content.getText().toString(), totalPrice + "", returnPic, jsonArray, channelValue)
+                    et_return_content.getText().toString(), totalPrice + "", returnPic, jsonArray, channelValue,mDetailModel.getData().getAllReturn())
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(new Subscriber<ReturnOrderSucModel>() {

@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.widget.ImageView;
@@ -170,10 +171,7 @@ public class ReceivedOrderFragment extends BaseFragment {
                                         //确认收货成功
                                         AppHelper.showMsg(mContext, "确认收货成功");
                                         mPtr.autoRefresh();
-                                        requestOrdersList(3);
 
-                                        //刷新订单状态
-                                        //  getOrderDetail(orderId, orderState, returnProductMainId);
                                     } else {
                                         AppHelper.showMsg(mContext, confirmGetGoodsModel.message);
                                     }
@@ -271,6 +269,8 @@ public class ReceivedOrderFragment extends BaseFragment {
             });
         }
 
+
+
         mAdapterMyOrders.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
@@ -322,7 +322,6 @@ public class ReceivedOrderFragment extends BaseFragment {
 
                     @Override
                     public void onNext(OrdersModel myOrdersModel) {
-                        logoutAndToHome(getContext(), myOrdersModel.code);
                         mPtr.refreshComplete();
                         mModelMyOrders = myOrdersModel;
                         if (mModelMyOrders.success) {
@@ -336,7 +335,7 @@ public class ReceivedOrderFragment extends BaseFragment {
 
     private void updateOrderList() {
         if (pageNum == 1) {
-            if (mModelMyOrders.data != null && mModelMyOrders.data.list.size() > 0) {
+            if (mModelMyOrders.data != null && mModelMyOrders.data.list.size() >  0) {
                 mIvNoData.setVisibility(View.GONE);
                 mRv.setVisibility(View.VISIBLE);
                 mListResult.clear();
