@@ -74,7 +74,6 @@ public class CommonCouponAdapter extends RecyclerView.Adapter<CommonCouponAdapte
 
         try{
             pos = position%actives.size();
-            Log.d("wasaaaaaaaaaaaaaa...",pos+"bb");
             activesBean = actives.get(position%actives.size());
 
             Glide.with(mContext).load(activesBean.getDefaultPic()).into(holder.iv_pic);

@@ -49,7 +49,7 @@ public class CommonsssAdapter extends RecyclerView.Adapter<CommonsssAdapter.Base
     private int pos;
 //    private CouponModel.DataBean.ActivesBean activesBean;
 
-    public CommonsssAdapter(Context context,String style, int layoutResId, List<CouponModel.DataBean.ActivesBean> actives,String flag,OnClick onClick) {
+    public CommonsssAdapter(Context context,String style, int layoutResId, List<CouponModel.DataBean.ActivesBean> actives,String flag) {
         this.mContext = context;
         this.style = style;
         this.layoutResId = layoutResId;

@@ -25,6 +25,20 @@
                 android:gravity="center"
                 android:orientation="horizontal">
 
+                <RadioButton
+                    android:textStyle="bold"
+                    android:background="@null"
+                    android:textColor="#17BD60"
+                    android:textSize="@dimen/sp_16"
+                    android:id="@+id/rb_must_common"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:button="@null"
+                    android:checked="false"
+                    android:gravity="center"
+                    android:text="必买清单"/>
+
 
                 <RadioButton
                     android:textStyle="bold"
@@ -35,25 +49,13 @@
                     android:layout_weight="1"
                     android:button="@null"
                     android:background="@null"
-                    android:textColor="#FF5000"
+                    android:textColor="#333333"
                     android:textSize="@dimen/sp_16"
                     android:gravity="center"
                     android:text="新品上市"/>
 
 
-                <RadioButton
-                    android:textStyle="bold"
-                    android:background="@null"
-                    android:textColor="#333333"
-                    android:textSize="@dimen/sp_16"
-                    android:id="@+id/rb_must_common"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:button="@null"
-                    android:checked="false"
-                    android:gravity="center"
-                    android:text="必买清单"/>
+
 
                 <RadioButton
                     android:background="@null"
@@ -95,6 +97,20 @@
             android:layout_height="wrap_content">
 
             <TextView
+                android:id="@+id/tv_title2"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:textColor="#ffffff"
+                android:textSize="13dp"
+                android:layout_marginTop="@dimen/size_35dp"
+                android:text="超值囤货"
+                android:background="@drawable/shape_greenss"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:gravity="center_horizontal"
+                android:layout_height="match_parent" />
+
+            <TextView
                 android:id="@+id/tv_title1"
                 android:singleLine="true"
                 android:maxLines="1"
@@ -104,24 +120,12 @@
                 android:text="上新立荐"
                 android:layout_width="0dp"
                 android:layout_weight="1"
-                android:textColor="#ffffff"
-                android:background="@drawable/shape_orange"
+                android:textColor="#999999"
                 android:textSize="13dp"
                 android:gravity="center_horizontal"
                 android:layout_height="match_parent" />
 
-            <TextView
-                android:id="@+id/tv_title2"
-                android:layout_marginLeft="5dp"
-                android:layout_marginRight="5dp"
-                android:textColor="#999999"
-                android:textSize="13dp"
-                android:layout_marginTop="@dimen/size_35dp"
-                android:text="超值囤货"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:gravity="center_horizontal"
-                android:layout_height="match_parent" />
+
 
             <TextView
                 android:id="@+id/tv_title3"
@@ -158,6 +162,17 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
+            <View
+                android:id="@+id/v2"
+                android:visibility="gone"
+                android:layout_marginTop="@dimen/size_45dp"
+                android:layout_marginLeft="@dimen/size_30dp"
+                android:layout_marginRight="@dimen/size_30dp"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:background="#17BD60"
+                android:gravity="center_horizontal"
+                android:layout_height="3dp" />
 
             <View
                 android:visibility="gone"
@@ -167,21 +182,10 @@
                 android:layout_weight="1"
                 android:layout_marginLeft="@dimen/size_30dp"
                 android:layout_marginRight="@dimen/size_30dp"
-                android:background="#FF5000"
+                android:background="#17BD60"
                 android:gravity="center_horizontal"
                 android:layout_height="3dp" />
 
-            <View
-                android:id="@+id/v2"
-                android:visibility="gone"
-                android:layout_marginTop="@dimen/size_45dp"
-                android:layout_marginLeft="@dimen/size_30dp"
-                android:layout_marginRight="@dimen/size_30dp"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:background="#FF5000"
-                android:gravity="center_horizontal"
-                android:layout_height="3dp" />
 
             <View
                 android:id="@+id/v3"
@@ -191,7 +195,7 @@
                 android:layout_marginLeft="@dimen/size_30dp"
                 android:layout_marginRight="@dimen/size_30dp"
                 android:layout_weight="1"
-                android:background="#FF5000"
+                android:background="#17BD60"
                 android:gravity="center_horizontal"
                 android:layout_height="3dp" />
 
@@ -203,7 +207,7 @@
                 android:layout_weight="1"
                 android:layout_marginLeft="@dimen/size_30dp"
                 android:layout_marginRight="@dimen/size_30dp"
-                android:background="#FF5000"
+                android:background="#17BD60"
                 android:gravity="center_horizontal"
                 android:layout_height="3dp" />
 

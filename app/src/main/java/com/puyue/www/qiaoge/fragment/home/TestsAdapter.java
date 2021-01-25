@@ -34,8 +34,7 @@ public class TestsAdapter extends RecyclerView.Adapter<TestsAdapter.BaseViewHold
     private ImageView iv_pic;
     private ImageView iv_add;
     private RelativeLayout rl_group;
-    //根据flag 判断返回集合大小还是最大值 0返回最大值 1，返回集合大小
-    String flag;
+
     ImageView iv_flag;
     private TextView tv_old_price;
     private TextView tv_coupon;
@@ -50,13 +49,12 @@ public class TestsAdapter extends RecyclerView.Adapter<TestsAdapter.BaseViewHold
     List<CouponModel.DataBean.ActivesBean> actives;
     CouponModel.DataBean.ActivesBean activesBean;
     private int pos;
-    public TestsAdapter(Context context,String style, int layoutResId, List<CouponModel.DataBean.ActivesBean> actives,String flag,OnClick onClick) {
+    public TestsAdapter(Context context,String style, int layoutResId, List<CouponModel.DataBean.ActivesBean> actives) {
         this.mContext = context;
         this.style = style;
         this.layoutResId = layoutResId;
         this.actives = actives;
-        this.flag = flag;
-        this.onClick = onClick;
+
     }
 
 
@@ -157,11 +155,7 @@ public class TestsAdapter extends RecyclerView.Adapter<TestsAdapter.BaseViewHold
 
     @Override
     public int getItemCount() {
-        if(flag.equals("0")) {
-            return Integer.MAX_VALUE;
-        }else {
-            return actives.size();
-        }
+        return actives.size();
 
     }
 

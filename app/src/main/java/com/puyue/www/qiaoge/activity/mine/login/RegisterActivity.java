@@ -33,6 +33,7 @@ import com.chuanglan.shanyan_sdk.OneKeyLoginManager;
 import com.chuanglan.shanyan_sdk.listener.AuthenticationExecuteListener;
 import com.puyue.www.qiaoge.NewWebViewActivity;
 import com.puyue.www.qiaoge.R;
+import com.puyue.www.qiaoge.UnicornManager;
 import com.puyue.www.qiaoge.activity.HomeActivity;
 import com.puyue.www.qiaoge.adapter.home.RegisterShopAdapterTwo;
 import com.puyue.www.qiaoge.api.home.GetCustomerPhoneAPI;
@@ -596,31 +597,51 @@ public class RegisterActivity extends BaseSwipeActivity implements View.OnClickL
     /**
      * 弹出电话号码
      */
+    TextView tv_time;
+    TextView tv_phone;
     private void showPhoneDialog(final String cell) {
         mDialog = new AlertDialog.Builder(mActivity).create();
         mDialog.show();
         mDialog.getWindow().setContentView(R.layout.dialog_call_phone);
-        TextView mTvCell = (TextView) mDialog.getWindow().findViewById(R.id.tv_dialog_call_phone_phone);
+        tv_phone = mDialog.getWindow().findViewById(R.id.tv_phone);
+        tv_time = mDialog.getWindow().findViewById(R.id.tv_time);
+        tv_phone.setText("客服热线 ("+cell+")");
+        tv_phone.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + cell));
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+                mDialog.dismiss();
+            }
+        });
+        tv_time.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                UnicornManager.inToUnicorn(mActivity);
+                mDialog.dismiss();
+            }
+        });
 //        mTvCell.setText(cell);
-        mDialog.getWindow().findViewById(R.id.tv_dialog_call_phone_cancel).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mDialog.dismiss();
-            }
-        });
-        mDialog.getWindow().findViewById(R.id.tv_dialog_call_phone_sure).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (isTablet(mContext)) {
-                    AppHelper.showMsg(mContext, "当前设备不具备拨号功能");
-                } else {
-                    Intent intent = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + cell));
-                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    startActivity(intent);
-                }
-                mDialog.dismiss();
-            }
-        });
+//        mDialog.getWindow().findViewById(R.id.tv_dialog_call_phone_cancel).setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                mDialog.dismiss();
+//            }
+//        });
+//        mDialog.getWindow().findViewById(R.id.tv_dialog_call_phone_sure).setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                if (isTablet(mContext)) {
+//                    AppHelper.showMsg(mContext, "当前设备不具备拨号功能");
+//                } else {
+//                    Intent intent = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + cell));
+//                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//                    startActivity(intent);
+//                }
+//                mDialog.dismiss();
+//            }
+//        });
     }
 
 

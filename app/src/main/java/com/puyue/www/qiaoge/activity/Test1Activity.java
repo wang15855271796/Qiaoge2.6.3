@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Path;
 import android.graphics.PathMeasure;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.GridLayoutManager;
@@ -54,6 +55,7 @@ import com.flyco.tablayout.listener.OnTabSelectListener;
 import com.puyue.www.qiaoge.CustomViewPager;
 import com.puyue.www.qiaoge.R;
 import com.puyue.www.qiaoge.TabEntity;
+import com.puyue.www.qiaoge.UnicornManager;
 import com.puyue.www.qiaoge.activity.flow.TagAdapter;
 import com.puyue.www.qiaoge.activity.flow.TagFlowLayout;
 import com.puyue.www.qiaoge.activity.home.ChangeCityActivity;
@@ -1182,15 +1184,28 @@ public class Test1Activity extends BaseSwipeActivity implements View.OnClickList
      */
     private android.app.AlertDialog mDialog;
     TextView tv_phone;
+    TextView tv_time;
     public void showPhoneDialog(final String cell) {
-        mDialog = new android.app.AlertDialog.Builder(mActivity).create();
+        mDialog = new android.app.AlertDialog.Builder(mContext).create();
         mDialog.show();
         mDialog.getWindow().setContentView(R.layout.dialog_shouye_tip);
         tv_phone = mDialog.getWindow().findViewById(R.id.tv_phone);
-        tv_phone.setText(cell);
-        mDialog.getWindow().findViewById(R.id.tv_dialog_call_phone_sure).setOnClickListener(new View.OnClickListener() {
+        tv_time = mDialog.getWindow().findViewById(R.id.tv_time);
+        tv_phone.setText("客服热线 ("+cell+")");
+
+        tv_phone.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Intent intent = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + cell));
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+                mDialog.dismiss();
+            }
+        });
+        tv_time.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                UnicornManager.inToUnicorn(mContext);
                 mDialog.dismiss();
             }
         });

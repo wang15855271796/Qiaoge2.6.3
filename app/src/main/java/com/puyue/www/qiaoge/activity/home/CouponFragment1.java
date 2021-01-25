@@ -3,6 +3,7 @@ package com.puyue.www.qiaoge.activity.home;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.graphics.Color;
+import android.net.Uri;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
@@ -13,6 +14,7 @@ import android.widget.TextView;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.puyue.www.qiaoge.R;
+import com.puyue.www.qiaoge.UnicornManager;
 import com.puyue.www.qiaoge.api.home.TeamActiveQueryAPI;
 import com.puyue.www.qiaoge.base.BaseFragment;
 import com.puyue.www.qiaoge.constant.AppConstant;
@@ -87,15 +89,28 @@ public class CouponFragment1 extends BaseFragment {
      */
     private AlertDialog mDialog;
     TextView tv_phone;
+    TextView tv_time;
     public void showPhoneDialog(final String cell) {
-        mDialog = new AlertDialog.Builder(mActivity).create();
+        mDialog = new AlertDialog.Builder(getActivity()).create();
         mDialog.show();
         mDialog.getWindow().setContentView(R.layout.dialog_shouye_tip);
         tv_phone = mDialog.getWindow().findViewById(R.id.tv_phone);
-        tv_phone.setText(cell);
-        mDialog.getWindow().findViewById(R.id.tv_dialog_call_phone_sure).setOnClickListener(new View.OnClickListener() {
+        tv_time = mDialog.getWindow().findViewById(R.id.tv_time);
+        tv_phone.setText("客服热线 ("+cell+")");
+
+        tv_phone.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Intent intent = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + cell));
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+                mDialog.dismiss();
+            }
+        });
+        tv_time.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                UnicornManager.inToUnicorn(getContext());
                 mDialog.dismiss();
             }
         });

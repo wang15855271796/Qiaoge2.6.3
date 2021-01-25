@@ -93,6 +93,7 @@
             android:layout_height="wrap_content" />
 
         <ImageView
+            android:visibility="gone"
             tools:src="@mipmap/icon_next"
             android:id="@+id/iv_next"
             android:layout_marginLeft="@dimen/dp_10"

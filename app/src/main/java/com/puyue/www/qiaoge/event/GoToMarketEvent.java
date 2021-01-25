@@ -6,7 +6,9 @@ package com.puyue.www.qiaoge.event;
  * 备注  购物车Fragment 去逛逛按钮
  */
 public class GoToMarketEvent {
+
     public GoToMarketEvent(){
 
     }
+
 }

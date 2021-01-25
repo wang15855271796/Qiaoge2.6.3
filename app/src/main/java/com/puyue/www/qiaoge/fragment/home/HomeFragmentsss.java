@@ -14,12 +14,16 @@ import android.support.design.widget.AppBarLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
+import android.support.v4.widget.NestedScrollView;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.LinearSmoothScroller;
 import android.support.v7.widget.LinearSnapHelper;
 import android.support.v7.widget.PagerSnapHelper;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -39,7 +43,9 @@ import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
+import io.reactivex.Observable;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Consumer;
 import com.bumptech.glide.Glide;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.daimajia.slider.library.SliderTypes.BaseSliderView;
@@ -48,16 +54,21 @@ import com.puyue.www.qiaoge.AutoPollRecyclerView;
 import com.puyue.www.qiaoge.NewWebViewActivity;
 import com.puyue.www.qiaoge.R;
 import com.puyue.www.qiaoge.RoundImageView;
+import com.puyue.www.qiaoge.UnicornManager;
+import com.puyue.www.qiaoge.activity.HomeActivity;
 import com.puyue.www.qiaoge.activity.Test1Activity;
 import com.puyue.www.qiaoge.activity.TestActivity;
+import com.puyue.www.qiaoge.activity.TopEvent;
 import com.puyue.www.qiaoge.activity.home.ChangeCityActivity;
 import com.puyue.www.qiaoge.activity.home.ChooseAddressActivity;
 import com.puyue.www.qiaoge.activity.home.CommonGoodsDetailActivity;
 import com.puyue.www.qiaoge.activity.home.CouponDetailActivity;
 import com.puyue.www.qiaoge.activity.home.FullGiftActivity;
 import com.puyue.www.qiaoge.activity.home.HomeGoodsListActivity;
+import com.puyue.www.qiaoge.activity.home.SearchReasultActivity;
 import com.puyue.www.qiaoge.activity.home.SearchStartActivity;
 import com.puyue.www.qiaoge.activity.home.SpecialGoodDetailActivity;
+import com.puyue.www.qiaoge.activity.home.Team1Adapter;
 import com.puyue.www.qiaoge.activity.home.TeamDetailActivity;
 import com.puyue.www.qiaoge.activity.home.ViewPagerAdapters;
 import com.puyue.www.qiaoge.activity.home.myViewPagerAdapter;
@@ -76,8 +87,13 @@ import com.puyue.www.qiaoge.adapter.CommonsAdapter;
 import com.puyue.www.qiaoge.adapter.CommonssAdapter;
 import com.puyue.www.qiaoge.adapter.CommonsssAdapter;
 import com.puyue.www.qiaoge.adapter.CouponListAdapter;
+import com.puyue.www.qiaoge.adapter.FullAdapter;
+import com.puyue.www.qiaoge.adapter.IndexRecommendAdapter;
 import com.puyue.www.qiaoge.adapter.Skill2Adapter;
 import com.puyue.www.qiaoge.adapter.Skill3Adapter;
+import com.puyue.www.qiaoge.adapter.Skill5Adapter;
+import com.puyue.www.qiaoge.adapter.Team3Adapter;
+import com.puyue.www.qiaoge.adapter.TeamAdapter;
 import com.puyue.www.qiaoge.adapter.home.AutoPollAdapter;
 import com.puyue.www.qiaoge.adapter.home.CommonAdapter;
 import com.puyue.www.qiaoge.adapter.home.CommonProductActivity;
@@ -112,6 +128,9 @@ import com.puyue.www.qiaoge.dialog.TurnTableDialog;
 import com.puyue.www.qiaoge.event.AddressEvent;
 import com.puyue.www.qiaoge.event.BackEvent;
 import com.puyue.www.qiaoge.event.CouponListModel;
+import com.puyue.www.qiaoge.event.FromIndexEvent;
+import com.puyue.www.qiaoge.event.GoToCartFragmentEvent;
+import com.puyue.www.qiaoge.event.GoToMarketEvent;
 import com.puyue.www.qiaoge.event.IsTurnModel;
 import com.puyue.www.qiaoge.event.OnHttpCallBack;
 import com.puyue.www.qiaoge.event.PrivacyModel;
@@ -135,6 +154,7 @@ import com.puyue.www.qiaoge.helper.PublicRequestHelper;
 import com.puyue.www.qiaoge.helper.StringHelper;
 import com.puyue.www.qiaoge.helper.UserInfoHelper;
 import com.puyue.www.qiaoge.model.IsShowModel;
+import com.puyue.www.qiaoge.model.OrderModel;
 import com.puyue.www.qiaoge.model.SendModel;
 import com.puyue.www.qiaoge.model.cart.AddCartModel;
 import com.puyue.www.qiaoge.model.cart.GetCartNumModel;
@@ -143,6 +163,7 @@ import com.puyue.www.qiaoge.model.home.GetCustomerPhoneModel;
 import com.puyue.www.qiaoge.model.home.HomeNewRecommendModel;
 import com.puyue.www.qiaoge.model.home.ProductNormalModel;
 import com.puyue.www.qiaoge.model.home.QueryHomePropupModel;
+import com.puyue.www.qiaoge.model.home.RecommendModel;
 import com.puyue.www.qiaoge.model.mine.UpdateModel;
 import com.puyue.www.qiaoge.model.mine.order.HomeBaseModel;
 import com.puyue.www.qiaoge.model.mine.order.MyOrderNumModel;
@@ -151,15 +172,19 @@ import com.puyue.www.qiaoge.utils.LoginUtil;
 import com.puyue.www.qiaoge.utils.SharedPreferencesUtil;
 import com.puyue.www.qiaoge.utils.Utils;
 
+import com.puyue.www.qiaoge.view.AutoScrollRecyclerView;
 import com.puyue.www.qiaoge.view.CustomPopWindow;
 import com.puyue.www.qiaoge.view.GlideModel;
+import com.puyue.www.qiaoge.view.HIndicators;
 import com.puyue.www.qiaoge.view.LuckPanAnimEndCallBack;
 import com.puyue.www.qiaoge.view.SnapUpCountDownTimerView;
+import com.puyue.www.qiaoge.view.SnapUpCountDownTimerViewss;
 import com.puyue.www.qiaoge.view.StatusBarUtil;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 import com.taobao.library.VerticalBannerView;
+import com.umeng.socialize.shareboard.IndicatorView;
 import com.wang.avi.AVLoadingIndicatorView;
 import com.weavey.loading.lib.LoadingLayout;
 
@@ -177,9 +202,11 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+import butterknife.BindInt;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
+import io.reactivex.disposables.Disposable;
 import rx.Observer;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
@@ -191,8 +218,20 @@ import rx.schedulers.Schedulers;
  */
 public class HomeFragmentsss extends BaseFragment implements View.OnClickListener, BaseSliderView.OnSliderClickListener{
     Unbinder binder;
+    @BindView(R.id.rv_auto_view1)
+    AutoScrollRecyclerView rv_auto_view1;
+    @BindView(R.id.rl1)
+    RelativeLayout rl1;
+    @BindView(R.id.ll2)
+    LinearLayout ll2;
+    @BindView(R.id.ll1)
+    LinearLayout ll1;
+    @BindView(R.id.indicator)
+    HIndicators indicator;
     @BindView(R.id.rv_icon)
     RecyclerView rv_icon;
+    @BindView(R.id.rootview)
+    FrameLayout rootview;
     @BindView(R.id.tv_city)
     TextView tv_city;
     @BindView(R.id.tv_search)
@@ -213,20 +252,14 @@ public class HomeFragmentsss extends BaseFragment implements View.OnClickListene
     RelativeLayout rl_message;
     @BindView(R.id.homeMessage)
     ImageView homeMessage;
-    @BindView(R.id.rv_type)
-    RecyclerView rv_type;
-    @BindView(R.id.rg_group)
-    LinearLayout rg_group;
-    @BindView(R.id.rb_1)
-    RadioButton rb_1;
-    @BindView(R.id.rb_2)
-    RadioButton rb_2;
-    @BindView(R.id.rb_3)
-    RadioButton rb_3;
-    @BindView(R.id.rb_4)
-    RadioButton rb_4;
-    @BindView(R.id.rg_new)
-    RadioGroup rg_new;
+    @BindView(R.id.rl_more)
+    RelativeLayout rl_more;
+    @BindView(R.id.rl_more2)
+    RelativeLayout rl_more2;
+    @BindView(R.id.rl_more3)
+    RelativeLayout rl_more3;
+    @BindView(R.id.rl_more4)
+    RelativeLayout rl_more4;
     @BindView(R.id.rb_new)
     RadioButton rb_new;
     @BindView(R.id.rb_must_common)
@@ -237,6 +270,10 @@ public class HomeFragmentsss extends BaseFragment implements View.OnClickListene
     RadioButton rb_common;
     @BindView(R.id.ll_line)
     LinearLayout ll_line;
+    @BindView(R.id.rv_team)
+    AutoScrollRecyclerView rv_team;
+    @BindView(R.id.rv_given)
+    AutoScrollRecyclerView rv_given;
     @BindView(R.id.v1)
     View v1;
     @BindView(R.id.v2)
@@ -268,7 +305,7 @@ public class HomeFragmentsss extends BaseFragment implements View.OnClickListene
     @BindView(R.id.tv_more)
     TextView tv_more;
     @BindView(R.id.snap)
-    SnapUpCountDownTimerView snap;
+    SnapUpCountDownTimerViewss snap;
     @BindView(R.id.tv_time)
     TextView tv_time;
     @BindView(R.id.tv_desc2)
@@ -279,14 +316,6 @@ public class HomeFragmentsss extends BaseFragment implements View.OnClickListene
     TextView tv_desc3;
     @BindView(R.id.tv_desc4)
     TextView tv_desc4;
-    @BindView(R.id.rl_more)
-    RelativeLayout rl_more;
-    @BindView(R.id.rl_more2)
-    RelativeLayout rl_more2;
-    @BindView(R.id.rl_more3)
-    RelativeLayout rl_more3;
-    @BindView(R.id.rl_more4)
-    RelativeLayout rl_more4;
     @BindView(R.id.verticalBanner)
     VerticalBannerView verticalBanner;
     @BindView(R.id.lav_activity_loading)
@@ -299,28 +328,40 @@ public class HomeFragmentsss extends BaseFragment implements View.OnClickListene
     TextView tv_change_address;
     @BindView(R.id.toolbar1)
     Toolbar toolbar1;
-    @BindView(R.id.tv_offer)
-    TextView tv_offer;
-    @BindView(R.id.rl_coupon)
-    RelativeLayout rl_coupon;
+    @BindView(R.id.tv_skill_title)
+    TextView tv_skill_title;
     @BindView(R.id.tv_search1)
     TextView tv_search1;
     @BindView(R.id.tv_times)
     TextView tv_times;
     @BindView(R.id.tv_amount)
     TextView tv_amount;
-//    @BindView(R.id.loading)
-//    LoadingLayout loading;
-//    @BindView(R.id.iv_normal)
-//    ImageView iv_normal;
+    @BindView(R.id.rv_recommend)
+    RecyclerView rv_recommend;
+    @BindView(R.id.ll_bgc)
+    LinearLayout ll_bgc;
+    @BindView(R.id.rv_skill)
+    RecyclerView rv_skill;
+    @BindView(R.id.rg_new)
+    RadioGroup rg_new;
+    @BindView(R.id.nestedScrollView)
+    NestedScrollView nestedScrollView;
+    @BindView(R.id.rv_auto_view)
+    AutoScrollRecyclerView rv_auto_view;
+    @BindView(R.id.rv_auto_team)
+    AutoScrollRecyclerView rv_auto_team;
+    Skill5Adapter skill5Adapter;
+    IndexRecommendAdapter indexRecommendAdapter;
     CouponDialog couponDialog;
+    FullAdapter fullAdapter;
     private String cell; // 客服电话
     private PrivacyDialog privacyDialog;
     ChooseHomeDialog chooseAddressDialog;
     CommonsssAdapter commonsssAdapter;
+    List<String> recommendData;
 //    AnimationDrawable drawable;
     //司机信息
-    List<DriverInfo.DataBean> driverList = new ArrayList<>();
+    List<OrderModel.DataBean> driverList = new ArrayList<>();
     //八个icon集合
     List<IndexInfoModel.DataBean.IconsBean> iconList = new ArrayList<>();
     //秒杀集合
@@ -333,6 +374,8 @@ public class HomeFragmentsss extends BaseFragment implements View.OnClickListene
     List<HomeNewRecommendModel.DataBean.ListBean> newList = new ArrayList<>();
     //banner集合
     private List<String> bannerList = new ArrayList<>();
+    //首页顶部推荐集合
+    private List<String> recommendList = new ArrayList<>();
     private RvIconAdapter rvIconAdapter;
     Context context;
     int PageNum = 1;
@@ -351,7 +394,6 @@ public class HomeFragmentsss extends BaseFragment implements View.OnClickListene
     private IndexInfoModel.DataBean data;
     //分类列表
     private List<IndexInfoModel.DataBean.ClassifyListBean> classifyList = new ArrayList<>();
-    private TypesAdapter typeAdapter;
     NewFragment newFragment;
     MustFragment mustFragment;
     InfoFragment infoFragment;
@@ -420,7 +462,7 @@ public class HomeFragmentsss extends BaseFragment implements View.OnClickListene
     private void requestOrderNumTwo() {
         MyOrderNumAPI.requestOrderNum(mActivity)
                 .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .observeOn(rx.android.schedulers.AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<MyOrderNumModel>() {
                     @Override
                     public void onCompleted() {
@@ -458,9 +500,8 @@ public class HomeFragmentsss extends BaseFragment implements View.OnClickListene
     private void getSpikeList(int type) {
         IndexHomeAPI.getCouponList(mActivity,type+"")
                 .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .observeOn(rx.android.schedulers.AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<CouponModel>() {
-
 
                     @Override
                     public void onCompleted() {
@@ -469,6 +510,7 @@ public class HomeFragmentsss extends BaseFragment implements View.OnClickListene
 
                     @Override
                     public void onError(Throwable e) {
+
                     }
 
                     @Override
@@ -479,102 +521,63 @@ public class HomeFragmentsss extends BaseFragment implements View.OnClickListene
                                 data1 = couponModel.getData();
                                 if(data1!=null) {
                                     PagerSnapHelper snapHelper = new PagerSnapHelper();
-                                    rl_more.setVisibility(View.VISIBLE);
-                                    rl_more2.setVisibility(View.GONE);
-                                    rl_more4.setVisibility(View.GONE);
-                                    rl_more3.setVisibility(View.GONE);
                                     tv_desc.setText(data1.getDesc());
-                                    rb_1.setVisibility(View.VISIBLE);
-                                    rb_1.setTextColor(Color.parseColor("#ffffff"));
-                                    rb_1.setBackgroundResource(R.drawable.shape_oranges_home);
-                                    rb_2.setTextColor(Color.parseColor("#FF680A"));
-                                    rb_2.setBackgroundResource(R.drawable.shape_white_home);
-                                    rb_3.setTextColor(Color.parseColor("#FF680A"));
-                                    rb_3.setBackgroundResource(R.drawable.shape_white_home);
-                                    rb_4.setTextColor(Color.parseColor("#FF680A"));
-                                    rb_4.setBackgroundResource(R.drawable.shape_white_home);
+                                    tv_skill_title.setText(data1.getTitle());
                                     currentTime = couponModel.getData().getCurrentTime();
                                     startTime = couponModel.getData().getStartTime();
+
+                                    if(data1.getActives().size()>4) {
+                                        rv_skill.setVisibility(View.GONE);
+                                        rv_auto_view.setVisibility(View.VISIBLE);
+                                    }else {
+                                        rv_skill.setVisibility(View.VISIBLE);
+                                        rv_auto_view.setVisibility(View.GONE);
+                                    }
+
+
                                     if(data1.getActives().size()==1) {
                                         skillActive1.clear();
                                         skillActive1.addAll(data1.getActives());
-                                        skillAdapter = new SkillAdapter(mActivity,R.layout.item_skill_lists, skillActive1,"1", new SkillAdapter.OnClick() {
-                                            @Override
-                                            public void shoppingCartOnClick(int position) {
-                                                int activeId = skillActive1.get(position).getActiveId();
-                                                addCar(activeId, "", 2, "1");
-                                            }
-
-                                            @Override
-                                            public void tipClick() {
-
-                                                showPhoneDialog(cell);
-                                            }
-
-                                            @Override
-                                            public void addDialog() {
-                                                initDialog();
-                                            }
-                                        });
-                                        recyclerView.setAdapter(skillAdapter);
-                                        recyclerView.setLayoutManager(new LinearLayoutManager(mActivity,LinearLayoutManager.HORIZONTAL, false));
+                                        skillAdapter = new SkillAdapter(mActivity,R.layout.item_skill_lists, skillActive1,"1");
+                                        rv_skill.setAdapter(skillAdapter);
+                                        rv_skill.setLayoutManager(new LinearLayoutManager(mActivity,LinearLayoutManager.HORIZONTAL, false));
                                         recyclerViewTest.setVisibility(View.GONE);
-                                        recyclerView.setVisibility(View.VISIBLE);
+                                        rv_skill.setVisibility(View.VISIBLE);
                                         skillAdapter.notifyDataSetChanged();
                                     }else if(data1.getActives().size()==2){
                                         skillActive2.clear();
                                         skillActive2.addAll(data1.getActives());
-                                        skill2Adapter = new Skill2Adapter(mActivity, R.layout.item_skill_lists, skillActive2, "0", new Skill2Adapter.OnClick() {
-                                            @Override
-                                            public void shoppingCartOnClick(int position) {
-                                                int activeId = skillActive2.get(position).getActiveId();
-                                                addCar(activeId, "", 2, "1");
-                                            }
-
-                                            @Override
-                                            public void tipClick() {
-
-                                                showPhoneDialog(cell);
-                                            }
-
-                                            @Override
-                                            public void addDialog() {
-                                                initDialog();
-                                            }
-                                        });
-                                        recyclerViewTest.setAdapter(skill2Adapter);
+                                        skill2Adapter = new Skill2Adapter(mActivity, R.layout.item_skill_lists, skillActive2, "0");
+                                        rv_skill.setAdapter(skill2Adapter);
                                         recyclerView.setVisibility(View.GONE);
-                                        recyclerViewTest.setVisibility(View.VISIBLE);
+                                        rv_skill.setVisibility(View.VISIBLE);
                                         skill2Adapter.notifyDataSetChanged();
                                         snapHelper.attachToRecyclerView(recyclerViewTest);
                                         initRecycle();
 
+                                    }else if(data1.getActives().size()==3){
+                                        skillActive3.clear();
+                                        skillActive3.addAll(data1.getActives());
+                                        skill3Adapter = new Skill3Adapter(R.layout.item_skill_list,skillActive3);
+                                        rv_skill.setAdapter(skill3Adapter);
+                                        rv_skill.setLayoutManager(new GridLayoutManager(mActivity,3));
+                                        recyclerViewTest.setVisibility(View.GONE);
+                                        rv_skill.setVisibility(View.VISIBLE);
+                                        skill3Adapter.notifyDataSetChanged();
+                                    }else if(data1.getActives().size()==4){
+                                        skillActive3.clear();
+                                        skillActive3.addAll(data1.getActives());
+                                        skill3Adapter = new Skill3Adapter(R.layout.item_skill_list4,skillActive3);
+                                        rv_skill.setAdapter(skill3Adapter);
+                                        rv_skill.setLayoutManager(new GridLayoutManager(mActivity,4));
+                                        recyclerViewTest.setVisibility(View.GONE);
+                                        rv_skill.setVisibility(View.VISIBLE);
+                                        skill3Adapter.notifyDataSetChanged();
                                     }else {
                                         skillActive3.clear();
                                         skillActive3.addAll(data1.getActives());
-                                        skill3Adapter = new Skill3Adapter(mActivity, R.layout.item_skill_list, skillActive3, "1", new Skill3Adapter.OnClick() {
-                                            @Override
-                                            public void shoppingCartOnClick(int position) {
-                                                int activeId = skillActive3.get(position).getActiveId();
-                                                addCar(activeId, "", 2, "1");
-                                            }
-
-                                            @Override
-                                            public void tipClick() {
-
-                                                showPhoneDialog(cell);
-                                            }
-
-                                            @Override
-                                            public void addDialog() {
-                                                initDialog();
-                                            }
-                                        });
-                                        recyclerView.setAdapter(skill3Adapter);
-                                        recyclerView.setLayoutManager(new MyLinearLayoutManger(mActivity,MyLinearLayoutManger.HORIZONTAL, false));
-                                        recyclerViewTest.setVisibility(View.GONE);
-                                        recyclerView.setVisibility(View.VISIBLE);
-                                        skill3Adapter.notifyDataSetChanged();
+                                        skill5Adapter.notifyDataSetChanged();
+                                        rv_auto_view.setVisibility(View.VISIBLE);
                                     }
 
 
@@ -626,52 +629,18 @@ public class HomeFragmentsss extends BaseFragment implements View.OnClickListene
                                         }
                                     }
 
-                                }else {
-                                    rb_1.setVisibility(View.GONE);
-                                    rl_more.setVisibility(View.GONE);
                                 }
 
                             } else if(type==11) {
                                 data1 = couponModel.getData();
                                 if(data1!=null) {
-                                    rb_2.setVisibility(View.VISIBLE);
-                                    rl_coupon.setVisibility(View.VISIBLE);
-                                    rl_more3.setVisibility(View.GONE);
-                                    rl_more4.setVisibility(View.GONE);
-                                    rl_more.setVisibility(View.GONE);
-                                    rl_more2.setVisibility(View.VISIBLE);
                                     tv_desc2.setText(data1.getDesc());
-                                    rb_2.setTextColor(Color.parseColor("#ffffff"));
-                                    rb_2.setBackgroundResource(R.drawable.shape_oranges_home);
 
-                                    rb_1.setTextColor(Color.parseColor("#FF680A"));
-                                    rb_1.setBackgroundResource(R.drawable.shape_white_home);
-
-                                    rb_3.setTextColor(Color.parseColor("#FF680A"));
-                                    rb_3.setBackgroundResource(R.drawable.shape_white_home);
-                                    rb_4.setTextColor(Color.parseColor("#FF680A"));
-                                    rb_4.setBackgroundResource(R.drawable.shape_white_home);
 
                                     if(data1.getActives().size()==1) {
                                         couponActive1.clear();
                                         couponActive1.addAll(data1.getActives());
-                                        commonAdapter = new CommonAdapter(mActivity, 11 + "", R.layout.item_common_lists, couponActive1, "1", new CommonAdapter.OnClick() {
-                                            @Override
-                                            public void shoppingCartOnClick(int position) {
-                                                int activeId = couponActive1.get(position).getActiveId();
-                                                addCar(activeId, "", 11, "1");
-                                            }
-
-                                            @Override
-                                            public void tipClick() {
-                                                showPhoneDialog(cell);
-                                            }
-
-                                            @Override
-                                            public void addDialog() {
-                                                initDialog();
-                                            }
-                                        });
+                                        commonAdapter = new CommonAdapter(mActivity, 11 + "", R.layout.item_common_lists, couponActive1, "1");
 
                                         recyclerView.setLayoutManager(new LinearLayoutManager(mActivity,LinearLayoutManager.HORIZONTAL, false));
                                         recyclerView.setAdapter(commonAdapter);
@@ -709,245 +678,32 @@ public class HomeFragmentsss extends BaseFragment implements View.OnClickListene
                                     }else {
                                         couponActive3.clear();
                                         couponActive3.addAll(data1.getActives());
-                                        commonAdapter = new CommonAdapter(mActivity, 11 + "", R.layout.item_commons_list, couponActive3, "1", new CommonAdapter.OnClick() {
-                                            @Override
-                                            public void shoppingCartOnClick(int position) {
-                                                int activeId = couponActive3.get(position).getActiveId();
-                                                addCar(activeId, "", 11, "1");
-                                            }
-
-                                            @Override
-                                            public void tipClick() {
-                                                showPhoneDialog(cell);
-                                            }
-
-                                            @Override
-                                            public void addDialog() {
-                                                initDialog();
-                                            }
-                                        });
+                                        commonAdapter = new CommonAdapter(mActivity, 11 + "", R.layout.item_commons_list, couponActive3, "1");
                                         recyclerView.setLayoutManager(new LinearLayoutManager(mActivity,LinearLayoutManager.HORIZONTAL, false));
                                         recyclerView.setAdapter(commonAdapter);
                                         recyclerView.setVisibility(View.VISIBLE);
                                         recyclerViewTest.setVisibility(View.GONE);
                                         commonAdapter.notifyDataSetChanged();
                                     }
-
-
-                                }else {
-                                    rb_2.setVisibility(View.GONE);
-                                    rl_coupon.setVisibility(View.GONE);
-                                    rl_more2.setVisibility(View.GONE);
                                 }
                             } else if(type==3) {
                                 data1 = couponModel.getData();
                                 if(data1!=null) {
-                                    PagerSnapHelper snapHelper = new PagerSnapHelper();
-                                    rl_more.setVisibility(View.GONE);
-                                    rl_more2.setVisibility(View.GONE);
-                                    rl_more4.setVisibility(View.GONE);
-                                    rl_more3.setVisibility(View.VISIBLE);
                                     tv_desc3.setText(data1.getDesc());
-                                    rb_1.setTextColor(Color.parseColor("#FF680A"));
-                                    rb_1.setBackgroundResource(R.drawable.shape_white_home);
-                                    rb_2.setTextColor(Color.parseColor("#FF680A"));
-                                    rb_2.setBackgroundResource(R.drawable.shape_white_home);
-                                    rb_4.setTextColor(Color.parseColor("#FF680A"));
-                                    rb_4.setBackgroundResource(R.drawable.shape_white_home);
-
-                                    rb_3.setTextColor(Color.parseColor("#ffffff"));
-                                    rb_3.setBackgroundResource(R.drawable.shape_oranges_home);
-                                    rb_3.setVisibility(View.VISIBLE);
-
-                                    if(data1.getActives().size()==1) {
-                                        teamActive1.clear();
-                                        teamActive1.addAll(data1.getActives());
-                                        commonAdapter = new CommonAdapter(mActivity, 3 + "", R.layout.item_skill_lists, teamActive1, "1", new CommonAdapter.OnClick() {
-                                            @Override
-                                            public void shoppingCartOnClick(int position) {
-                                                int activeId = teamActive1.get(position).getActiveId();
-                                                addCar(activeId, "", 3, "1");
-                                            }
-
-                                            @Override
-                                            public void tipClick() {
-                                                showPhoneDialog(cell);
-                                            }
-
-                                            @Override
-                                            public void addDialog() {
-                                                initDialog();
-                                            }
-                                        });
-                                        recyclerView.setAdapter(commonAdapter);
-                                        recyclerView.setVisibility(View.VISIBLE);
-                                        recyclerViewTest.setVisibility(View.GONE);
-                                        recyclerView.setLayoutManager(new LinearLayoutManager(mActivity,LinearLayoutManager.HORIZONTAL, false));
-                                        commonAdapter.notifyDataSetChanged();
-
-                                    } else if(data1.getActives().size()==2){
-                                        teamActive2.clear();
-                                        teamActive2.addAll(data1.getActives());
-                                        TestsAdapter testAdapter = new TestsAdapter(mActivity, 3 + "", R.layout.item_skill_lists, teamActive2, "0", new TestsAdapter.OnClick() {
-                                            @Override
-                                            public void shoppingCartOnClick(int position) {
-                                                int activeId = teamActive2.get(position).getActiveId();
-                                                addCar(activeId, "", 3, "1");
-                                            }
-
-                                            @Override
-                                            public void tipClick() {
-                                                showPhoneDialog(cell);
-                                            }
-
-                                            @Override
-                                            public void addDialog() {
-                                                initDialog();
-                                            }
-                                        });
-                                        recyclerViewTest.setAdapter(testAdapter);
-                                        recyclerView.setVisibility(View.GONE);
-                                        recyclerViewTest.setVisibility(View.VISIBLE);
-                                        testAdapter.notifyDataSetChanged();
-                                        snapHelper.attachToRecyclerView(recyclerViewTest);
-                                        initRecycle();
-
-                                    }else {
-                                        teamActive3.clear();
-                                        teamActive3.addAll(data1.getActives());
-                                        commonAdapter = new CommonAdapter(mActivity, 3 + "", R.layout.item_commons_list, teamActive3, "1", new CommonAdapter.OnClick() {
-                                            @Override
-                                            public void shoppingCartOnClick(int position) {
-                                                int activeId = teamActive3.get(position).getActiveId();
-                                                addCar(activeId, "", 3, "1");
-                                            }
-
-                                            @Override
-                                            public void tipClick() {
-                                                showPhoneDialog(cell);
-                                            }
-
-                                            @Override
-                                            public void addDialog() {
-                                                initDialog();
-                                            }
-                                        });
-                                        recyclerView.setLayoutManager(new LinearLayoutManager(mActivity,LinearLayoutManager.HORIZONTAL, false));
-                                        recyclerView.setAdapter(commonAdapter);
-                                        recyclerView.setVisibility(View.VISIBLE);
-                                        recyclerViewTest.setVisibility(View.GONE);
-                                        commonAdapter.notifyDataSetChanged();
-                                    }
-
-                                }else {
-                                    rb_3.setVisibility(View.GONE);
+                                    teamActive1.clear();
+                                    teamActive1.addAll(data1.getActives());
+                                    teamAdapter.notifyDataSetChanged();
+                                    team3Adapter.notifyDataSetChanged();
                                 }
                             }else if(type==12) {
                                 data1 = couponModel.getData();
                                 if(data1!=null) {
-                                    rb_4.setVisibility(View.VISIBLE);
-                                    rl_more.setVisibility(View.GONE);
-                                    rl_more2.setVisibility(View.GONE);
-                                    rl_more3.setVisibility(View.GONE);
-                                    tv_desc4.setText(data1.getDesc());
-                                    rb_3.setTextColor(Color.parseColor("#FF680A"));
-                                    rb_3.setBackgroundResource(R.drawable.shape_white_home);
-                                    rb_2.setTextColor(Color.parseColor("#FF680A"));
-                                    rb_2.setBackgroundResource(R.drawable.shape_white_home);
-                                    rb_1.setTextColor(Color.parseColor("#FF680A"));
-                                    rb_1.setBackgroundResource(R.drawable.shape_white_home);
-
-                                    rb_4.setTextColor(Color.parseColor("#ffffff"));
-                                    rb_4.setBackgroundResource(R.drawable.shape_oranges_home);
-                                    rl_more4.setVisibility(View.VISIBLE);
-
-                                    if(data1.getActives().size()==1) {
-                                        fullActive1.clear();
-                                        fullActive1.addAll(data1.getActives());
-                                        commonssAdapter = new CommonssAdapter(mActivity, 12 + "", R.layout.item_full_list, fullActive1, "1", new CommonssAdapter.OnClick() {
-                                            @Override
-                                            public void shoppingCartOnClick(int position) {
-//                                                Intent intent = new Intent(mActivity,CommonGoodsDetailActivity.class);
-//                                                startActivity(intent);
-                                            }
-
-                                            @Override
-                                            public void tipClick() {
-                                                showPhoneDialog(cell);
-                                            }
-
-                                            @Override
-                                            public void addDialog() {
-                                                initDialog();
-                                            }
-                                        });
-                                        recyclerView.setAdapter(commonssAdapter);
-                                        recyclerView.setVisibility(View.VISIBLE);
-                                        recyclerViewTest.setVisibility(View.GONE);
-                                        recyclerView.setLayoutManager(new LinearLayoutManager(mActivity,LinearLayoutManager.HORIZONTAL, false));
-                                        commonssAdapter.notifyDataSetChanged();
-
-                                    } else if(data1.getActives().size()==2){
-                                        fullActive2.clear();
-                                        fullActive2.addAll(data1.getActives());
-                                        commonsAdapter = new CommonsAdapter(mActivity, 12 + "", R.layout.item_full_list, fullActive2, "0", new CommonsAdapter.OnClick() {
-                                            @Override
-                                            public void shoppingCartOnClick(int position) {
-//                                                int activeId = actives.get(position).getActiveId();
-//                                                addCar(activeId, "", 3, "1");
-                                            }
-
-                                            @Override
-                                            public void tipClick() {
-                                                showPhoneDialog(cell);
-                                            }
-
-                                            @Override
-                                            public void addDialog() {
-                                                initDialog();
-                                            }
-                                        });
-                                        recyclerViewTest.setAdapter(commonsAdapter);
-                                        recyclerView.setVisibility(View.GONE);
-                                        recyclerViewTest.setVisibility(View.VISIBLE);
-                                        commonsAdapter.notifyDataSetChanged();
-                                        PagerSnapHelper snapHelper = new PagerSnapHelper();
-                                        snapHelper.attachToRecyclerView(recyclerViewTest);
-                                        initRecycle();
-
-
-                                    }else {
-                                        fullActive3.clear();
-                                        fullActive3.addAll(data1.getActives());
-                                        commonsssAdapter = new CommonsssAdapter(getContext(), 12 + "", R.layout.item_full_lists, fullActive3, "1", new CommonsssAdapter.OnClick() {
-                                            @Override
-                                            public void shoppingCartOnClick(int position) {
-//                                                int activeId = actives.get(position).getActiveId();
-//                                                addCar(activeId, "", 3, "1");
-                                            }
-
-                                            @Override
-                                            public void tipClick() {
-                                                showPhoneDialog(cell);
-                                            }
-
-                                            @Override
-                                            public void addDialog() {
-                                                initDialog();
-                                            }
-                                        });
-                                        recyclerView.setLayoutManager(new LinearLayoutManager(mActivity,LinearLayoutManager.HORIZONTAL, false));
-                                        recyclerView.setAdapter(commonsssAdapter);
-                                        recyclerView.setVisibility(View.VISIBLE);
-                                        recyclerViewTest.setVisibility(View.GONE);
-                                        commonsssAdapter.notifyDataSetChanged();
-                                    }
-
-                                }else {
-                                    rb_4.setVisibility(View.GONE);
-                                    rl_more4.setVisibility(View.GONE);
+                                    tv_desc4.setText(data1.getTitle());
+                                    fullActive1.clear();
+                                    fullActive1.addAll(data1.getActives());
+                                    commonssAdapter.notifyDataSetChanged();
+                                    fullAdapter.notifyDataSetChanged();
                                 }
-
                             }
                             commonAdapter.notifyDataSetChanged();
                         }
@@ -978,7 +734,7 @@ public class HomeFragmentsss extends BaseFragment implements View.OnClickListene
     private void addCar(int businessId, String productCombinationPriceVOList, int businessType, String totalNum) {
         AddCartAPI.requestData(mActivity, businessId, productCombinationPriceVOList, businessType, String.valueOf(totalNum))
                 .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .observeOn(rx.android.schedulers.AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<AddCartModel>() {
                     @Override
                     public void onCompleted() {
@@ -1008,7 +764,6 @@ public class HomeFragmentsss extends BaseFragment implements View.OnClickListene
     public void onDestroy() {
         super.onDestroy();
         verticalBanner.stop();
-        tv_offer.clearAnimation();
         EventBus.getDefault().unregister(this);
     }
 
@@ -1091,116 +846,6 @@ public class HomeFragmentsss extends BaseFragment implements View.OnClickListene
         });
 
 
-        rb_1.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-
-                getSpikeList(2);
-
-            }
-        });
-
-        rb_2.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                getSpikeList(11);
-
-
-            }
-        });
-
-        rb_3.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                getSpikeList(3);
-
-            }
-        });
-
-        rb_4.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                getSpikeList(12);
-
-            }
-        });
-
-        rb_1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                rb_1.setTextColor(Color.parseColor("#ffffff"));
-                rb_1.setBackgroundResource(R.drawable.shape_oranges_home);
-
-                rb_2.setTextColor(Color.parseColor("#FF680A"));
-                rb_2.setBackgroundResource(R.drawable.shape_white_home);
-
-                rb_3.setTextColor(Color.parseColor("#FF680A"));
-                rb_3.setBackgroundResource(R.drawable.shape_white_home);
-
-                rb_4.setTextColor(Color.parseColor("#FF680A"));
-                rb_4.setBackgroundResource(R.drawable.shape_white_home);
-                getSpikeList(2);
-            }
-        });
-
-        rb_4.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                rb_1.setTextColor(Color.parseColor("#FF680A"));
-                rb_1.setBackgroundResource(R.drawable.shape_white_home);
-
-                rb_2.setTextColor(Color.parseColor("#FF680A"));
-                rb_2.setBackgroundResource(R.drawable.shape_white_home);
-
-                rb_3.setTextColor(Color.parseColor("#FF680A"));
-                rb_3.setBackgroundResource(R.drawable.shape_white_home);
-
-                rb_4.setTextColor(Color.parseColor("#ffffff"));
-                rb_4.setBackgroundResource(R.drawable.shape_oranges_home);
-                getSpikeList(12);
-            }
-        });
-
-
-        rb_2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                rb_2.setTextColor(Color.parseColor("#ffffff"));
-                rb_2.setBackgroundResource(R.drawable.shape_oranges_home);
-
-                rb_1.setTextColor(Color.parseColor("#FF680A"));
-                rb_1.setBackgroundResource(R.drawable.shape_white_home);
-
-                rb_3.setTextColor(Color.parseColor("#FF680A"));
-                rb_3.setBackgroundResource(R.drawable.shape_white_home);
-
-                rb_4.setTextColor(Color.parseColor("#FF680A"));
-                rb_4.setBackgroundResource(R.drawable.shape_white_home);
-                getSpikeList(11);
-            }
-        });
-
-        rb_3.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                rb_1.setTextColor(Color.parseColor("#FF680A"));
-                rb_1.setBackgroundResource(R.drawable.shape_white_home);
-
-                rb_2.setTextColor(Color.parseColor("#FF680A"));
-                rb_2.setBackgroundResource(R.drawable.shape_white_home);
-
-                rb_3.setTextColor(Color.parseColor("#ffffff"));
-                rb_3.setBackgroundResource(R.drawable.shape_oranges_home);
-
-                rb_4.setTextColor(Color.parseColor("#FF680A"));
-                rb_4.setBackgroundResource(R.drawable.shape_white_home);
-                getSpikeList(3);
-
-            }
-        });
-
-
-
 
         rg_new.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
@@ -1210,9 +855,9 @@ public class HomeFragmentsss extends BaseFragment implements View.OnClickListene
                         rb_info.setTextColor(Color.parseColor("#333333"));
                         rb_common.setTextColor(Color.parseColor("#333333"));
                         rb_must_common.setTextColor(Color.parseColor("#333333"));
-                        rb_new.setTextColor(Color.parseColor("#FF5000"));
+                        rb_new.setTextColor(Color.parseColor("#17BD60"));
                         tv_title1.setTextColor(Color.parseColor("#ffffff"));
-                        tv_title1.setBackgroundResource(R.drawable.shape_orange);
+                        tv_title1.setBackgroundResource(R.drawable.shape_greenss);
 
                         tv_title2.setTextColor(Color.parseColor("#999999"));
                         tv_title2.setBackgroundResource(R.drawable.shape_white);
@@ -1232,9 +877,9 @@ public class HomeFragmentsss extends BaseFragment implements View.OnClickListene
                         rb_must_common.setTextColor(Color.parseColor("#333333"));
                         rb_new.setTextColor(Color.parseColor("#333333"));
 
-                        rb_must_common.setTextColor(Color.parseColor("#FF5000"));
+                        rb_must_common.setTextColor(Color.parseColor("#17BD60"));
                         tv_title2.setTextColor(Color.parseColor("#ffffff"));
-                        tv_title2.setBackgroundResource(R.drawable.shape_orange);
+                        tv_title2.setBackgroundResource(R.drawable.shape_greenss);
 
                         tv_title1.setTextColor(Color.parseColor("#999999"));
                         tv_title1.setBackgroundResource(R.drawable.shape_white);
@@ -1248,7 +893,7 @@ public class HomeFragmentsss extends BaseFragment implements View.OnClickListene
                         break;
 
                     case R.id.rb_info:
-                        rb_info.setTextColor(Color.parseColor("#FF5000"));
+                        rb_info.setTextColor(Color.parseColor("#17BD60"));
                         rb_common.setTextColor(Color.parseColor("#333333"));
                         rb_must_common.setTextColor(Color.parseColor("#333333"));
                         rb_new.setTextColor(Color.parseColor("#333333"));
@@ -1259,7 +904,7 @@ public class HomeFragmentsss extends BaseFragment implements View.OnClickListene
                         tv_title1.setBackgroundResource(R.drawable.shape_white);
 
                         tv_title3.setTextColor(Color.parseColor("#ffffff"));
-                        tv_title3.setBackgroundResource(R.drawable.shape_orange);
+                        tv_title3.setBackgroundResource(R.drawable.shape_greenss);
 
                         tv_title4.setTextColor(Color.parseColor("#999999"));
                         tv_title4.setBackgroundResource(R.drawable.shape_white);
@@ -1268,7 +913,7 @@ public class HomeFragmentsss extends BaseFragment implements View.OnClickListene
 
                     case R.id.rb_common:
                         rb_info.setTextColor(Color.parseColor("#333333"));
-                        rb_common.setTextColor(Color.parseColor("#FF5000"));
+                        rb_common.setTextColor(Color.parseColor("#17BD60"));
                         rb_must_common.setTextColor(Color.parseColor("#333333"));
                         rb_new.setTextColor(Color.parseColor("#333333"));
                         rb_info.setTextColor(Color.parseColor("#333333"));
@@ -1283,7 +928,7 @@ public class HomeFragmentsss extends BaseFragment implements View.OnClickListene
                         tv_title3.setBackgroundResource(R.drawable.shape_white);
 
                         tv_title4.setTextColor(Color.parseColor("#ffffff"));
-                        tv_title4.setBackgroundResource(R.drawable.shape_orange);
+                        tv_title4.setBackgroundResource(R.drawable.shape_greenss);
 
                         switchRb7();
 
@@ -1293,28 +938,25 @@ public class HomeFragmentsss extends BaseFragment implements View.OnClickListene
         });
 
 
+        //顶部推荐
+        indexRecommendAdapter = new IndexRecommendAdapter(R.layout.item_index_recommend,recommendList);
+        rv_recommend.setLayoutManager(new LinearLayoutManager(mActivity,LinearLayoutManager.HORIZONTAL,false));
+        rv_recommend.setAdapter(indexRecommendAdapter);
 
-        //六个品种点击
-        typeAdapter = new TypesAdapter(classifyList);
-        GridLayoutManager gridLayoutManager = new GridLayoutManager(mActivity , 2);
-        rv_type.setLayoutManager(gridLayoutManager);
-        rv_type.setAdapter(typeAdapter);
-
-        gridLayoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
+        indexRecommendAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
-            public int getSpanSize(int position) {
-                return classifyList.get(position).getSpanSize();
+            public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
+                Intent intent = new Intent(mActivity,SearchReasultActivity.class);
+                intent.putExtra(AppConstant.SEARCHWORD,recommendList.get(position));
+                startActivity(intent);
             }
         });
+
 
         tv_search1.setOnClickListener(this);
         tv_search.setOnClickListener(this);
         rl_message.setOnClickListener(this);
         tv_city.setOnClickListener(this);
-        rl_more.setOnClickListener(this);
-        rl_more2.setOnClickListener(this);
-        rl_more3.setOnClickListener(this);
-        rl_more4.setOnClickListener(this);
         tv_change.setOnClickListener(this);
         tv_change_address.setOnClickListener(this);
     }
@@ -1322,7 +964,7 @@ public class HomeFragmentsss extends BaseFragment implements View.OnClickListene
     private void isShow() {
         CityChangeAPI.isShow(mActivity)
                 .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .observeOn(rx.android.schedulers.AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<IsShowModel>() {
 
                     @Override
@@ -1354,7 +996,7 @@ public class HomeFragmentsss extends BaseFragment implements View.OnClickListene
     private void getPrivacy() {
         IndexHomeAPI.getPrivacy(mActivity)
                 .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .observeOn(rx.android.schedulers.AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<PrivacyModel>() {
 
                     @Override
@@ -1390,7 +1032,7 @@ public class HomeFragmentsss extends BaseFragment implements View.OnClickListene
     private void getProductsList(int pageNums, int pageSize, String type) {
         ProductListAPI.requestData(mActivity, pageNums, pageSize,type,null)
                 .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .observeOn(rx.android.schedulers.AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<ProductNormalModel>() {
                     @Override
                     public void onCompleted() {
@@ -1418,26 +1060,6 @@ public class HomeFragmentsss extends BaseFragment implements View.OnClickListene
                     }
                 });
     }
-
-//    private void hideFragment() {
-//        if (newFragment!=null){
-//            //隐藏
-//            fragmentTransaction.hide(newFragment);
-//        }
-//        if (mustFragment!=null){
-//            //隐藏
-//            fragmentTransaction.hide(mustFragment);
-//        }
-//        if (infoFragment!=null){
-//            //隐藏
-//            fragmentTransaction.hide(infoFragment);
-//        }
-//        if (commonFragment!=null){
-//            //隐藏
-//            fragmentTransaction.hide(commonFragment);
-//        }
-//    }
-
 
     /**
      * 常用清单
@@ -1584,12 +1206,40 @@ public class HomeFragmentsss extends BaseFragment implements View.OnClickListene
     public void findViewById(View view) {
 
     }
-
+    TeamAdapter teamAdapter;
+    Team3Adapter team3Adapter;
     @Override
     public void setViewData() {
-//        loading.setStatus(LoadingLayout.Loading);
-//        drawable = (AnimationDrawable) iv_normal.getDrawable();
-//        drawable.start();
+
+        skill5Adapter = new Skill5Adapter(mActivity,skillActive3);
+        rv_auto_view.setAdapter(skill5Adapter);
+        rv_auto_view.setLayoutManager(new GridLayoutManager(mActivity,4));
+
+        //满赠1
+        commonssAdapter = new CommonssAdapter(mActivity, fullActive1);
+        rv_auto_view1.setAdapter(commonssAdapter);
+        rv_auto_view1.setLayoutManager(new GridLayoutManager(mActivity,1));
+
+        //满赠2
+        fullAdapter = new FullAdapter(R.layout.item_full_lists,fullActive1);
+        rv_given.setAdapter(fullAdapter);
+        rv_given.setLayoutManager(new GridLayoutManager(mActivity,1));
+
+        //组合
+        teamAdapter = new TeamAdapter(R.layout.item_team_lists,teamActive1);
+        rv_team.setLayoutManager(new GridLayoutManager(mActivity,1));
+        rv_team.setAdapter(teamAdapter);
+
+        //组合2
+        team3Adapter = new Team3Adapter(R.layout.item_teams_list,teamActive1);
+        rv_team.setLayoutManager(new GridLayoutManager(mActivity,1));
+        rv_team.setAdapter(team3Adapter);
+
+
+        rl_more.setOnClickListener(this);
+        rl_more2.setOnClickListener(this);
+        rl_more3.setOnClickListener(this);
+        rl_more4.setOnClickListener(this);
         rl_address.setOnClickListener(null);
         requestUpdate();
         refreshLayout.autoRefresh();
@@ -1598,9 +1248,33 @@ public class HomeFragmentsss extends BaseFragment implements View.OnClickListene
         getPrivacys();
         getCustomerPhone();
         isSend();
+        hotKey();
+        classifyList();
+        getOrder();
         mTypedialog = new AlertDialog.Builder(mActivity, R.style.DialogStyle).create();
         mTypedialog.setCancelable(false);
+        mSmoothScroller = new LinearSmoothScroller(mActivity) {
+            @Override
+            protected int getVerticalSnapPreference() {
+                return LinearSmoothScroller.SNAP_TO_START;
+            }
 
+            @Override
+            protected float calculateSpeedPerPixel(DisplayMetrics displayMetrics) {
+                return 3f / (displayMetrics.density);
+            }
+        };
+        mSmoothScrollers = new LinearSmoothScroller(mActivity) {
+            @Override
+            protected int getVerticalSnapPreference() {
+                return LinearSmoothScroller.SNAP_TO_START;
+            }
+
+            @Override
+            protected float calculateSpeedPerPixel(DisplayMetrics displayMetrics) {
+                return 3f / (displayMetrics.density);
+            }
+        };
         refreshLayout.setOnRefreshListener(new OnRefreshListener() {
             @Override
             public void onRefresh(@NonNull RefreshLayout refreshLayout) {
@@ -1610,12 +1284,36 @@ public class HomeFragmentsss extends BaseFragment implements View.OnClickListene
                 skillAdvList.clear();
                 driverList.clear();
                 isSend();
+                hotKey();
                 getBaseLists();
                 isTurn();
                 getCustomerPhone();
-                getDriveInfo();
+//                getDriveInfo();
+                classifyList();
                 EventBus.getDefault().post(new BackEvent());
                 refreshLayout.finishRefresh();
+            }
+        });
+
+        rvIconAdapter = new RvIconAdapter(R.layout.item_home_icon,classifyList);
+        GridLayoutManager gridLayoutManager=new GridLayoutManager(context, 2,RecyclerView.HORIZONTAL, false);
+
+        rvIconAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
+                context.startActivity(new Intent(context, HomeActivity.class));
+                EventBus.getDefault().post(new GoToMarketEvent());
+                EventBus.getDefault().postSticky(new FromIndexEvent(classifyList.get(position).getId()+""));
+            }
+        });
+        rv_icon.setLayoutManager(gridLayoutManager);
+        rv_icon.setAdapter(rvIconAdapter);
+
+        rv_icon.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                indicator.bindRecyclerView(rv_icon);
             }
         });
     }
@@ -1623,7 +1321,7 @@ public class HomeFragmentsss extends BaseFragment implements View.OnClickListene
     private void getPrivacys() {
         IndexHomeAPI.getPrivacy(mActivity)
                 .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .observeOn(rx.android.schedulers.AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<PrivacyModel>() {
 
                     @Override
@@ -1655,10 +1353,122 @@ public class HomeFragmentsss extends BaseFragment implements View.OnClickListene
                 });
     }
 
+    private Disposable mAutoTask;
+    private Disposable mAutoTasks;
+    private LinearSmoothScroller mSmoothScroller;
+    private LinearSmoothScroller mSmoothScrollers;
+    private int mCurrentPosition ;
+    int mCurrentPositions;
+    @Override
+    public void onResume() {
+        super.onResume();
+        startAuto();
+        fullAdapter.start();
+        teamAdapter.start();
+        team3Adapter.start();
+//        startAuto2();
+//        startAuto3();
+    }
+
+
+
+
+    private void startAuto3() {
+        if (mAutoTasks != null && !mAutoTasks.isDisposed()) {
+            mAutoTasks.dispose();
+        }
+        mAutoTasks = Observable.interval(5, 2, TimeUnit.SECONDS).observeOn(io.reactivex.android.schedulers.AndroidSchedulers.mainThread()).subscribe(new Consumer<Long>() {
+
+            @Override
+            public void accept(Long aLong) {
+                if (mCurrentPositions == 0) {
+                    mCurrentPositions = aLong.intValue();
+                } else {
+                    mCurrentPositions++;
+                }
+                mSmoothScrollers.setTargetPosition(mCurrentPositions);
+                RecyclerView.LayoutManager layoutManager = rv_team.getLayoutManager();
+                if (layoutManager!=null) {
+                    layoutManager.startSmoothScroll(mSmoothScrollers);
+                }
+            }
+        });
+    }
+
+
+    private void startAuto2() {
+        if (mAutoTasks != null && !mAutoTasks.isDisposed()) {
+            mAutoTasks.dispose();
+        }
+        mAutoTasks = Observable.interval(5, 2, TimeUnit.SECONDS).observeOn(io.reactivex.android.schedulers.AndroidSchedulers.mainThread()).subscribe(new Consumer<Long>() {
+
+            @Override
+            public void accept(Long aLong) {
+                if (mCurrentPositions == 0) {
+                    mCurrentPositions = aLong.intValue();
+                } else {
+                    mCurrentPositions++;
+                }
+                mSmoothScrollers.setTargetPosition(mCurrentPositions);
+                RecyclerView.LayoutManager layoutManager = rv_auto_view1.getLayoutManager();
+                if (layoutManager!=null) {
+                    layoutManager.startSmoothScroll(mSmoothScrollers);
+                }
+            }
+        });
+    }
+
+//    private void startAuto1() {
+//        if (mAutoTask != null && !mAutoTask.isDisposed()) {
+//            mAutoTask.dispose();
+//        }
+//        mAutoTask = Observable.interval(5, 2, TimeUnit.SECONDS).observeOn(io.reactivex.android.schedulers.AndroidSchedulers.mainThread()).subscribe(new Consumer<Long>() {
+//
+//            @Override
+//            public void accept(Long aLong) {
+//                if (mCurrentPosition == 0) {
+//                    mCurrentPosition = aLong.intValue();
+//                } else {
+//                    mCurrentPosition++;
+//                }
+//                mSmoothScroller.setTargetPosition(mCurrentPosition);
+//                RecyclerView.LayoutManager layoutManager = rv_given.getLayoutManager();
+//                if (layoutManager!=null) {
+//                    layoutManager.startSmoothScroll(mSmoothScroller);
+//                }
+//
+//            }
+//        });
+//    }
+
+
+    private void startAuto() {
+        if (mAutoTask != null && !mAutoTask.isDisposed()) {
+            mAutoTask.dispose();
+        }
+        mAutoTask = Observable.interval(5, 2, TimeUnit.SECONDS).observeOn(io.reactivex.android.schedulers.AndroidSchedulers.mainThread()).subscribe(new Consumer<Long>() {
+
+            @Override
+            public void accept(Long aLong) {
+                if (mCurrentPosition == 0) {
+                    mCurrentPosition = aLong.intValue();
+                } else {
+                    mCurrentPosition++;
+                }
+                mSmoothScroller.setTargetPosition(mCurrentPosition);
+                RecyclerView.LayoutManager layoutManager = rv_auto_view.getLayoutManager();
+                if (layoutManager!=null) {
+                    layoutManager.startSmoothScroll(mSmoothScroller);
+                }
+
+            }
+        });
+    }
+
     private void isSend() {
         IndexHomeAPI.isSend(mActivity)
                 .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .observeOn(rx.android.schedulers.AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<SendModel>() {
                     @Override
                     public void onCompleted() {
@@ -1689,7 +1499,7 @@ public class HomeFragmentsss extends BaseFragment implements View.OnClickListene
     private void isTurn() {
         IndexHomeAPI.isTurn(mActivity)
                 .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .observeOn(rx.android.schedulers.AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<IsTurnModel>() {
                     @Override
                     public void onCompleted() {
@@ -1725,7 +1535,7 @@ public class HomeFragmentsss extends BaseFragment implements View.OnClickListene
     private void getCouponList() {
         IndexHomeAPI.getCouponLists(mActivity)
                 .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .observeOn(rx.android.schedulers.AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<CouponListModel>() {
                     @Override
                     public void onCompleted() {
@@ -1768,7 +1578,7 @@ public class HomeFragmentsss extends BaseFragment implements View.OnClickListene
     private void QueryHomePropup() {
         QueryHomePropupAPI.requestQueryHomePropup(mActivity)
                 .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .observeOn(rx.android.schedulers.AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<QueryHomePropupModel>() {
                     @Override
                     public void onCompleted() {
@@ -1805,7 +1615,7 @@ public class HomeFragmentsss extends BaseFragment implements View.OnClickListene
     private void getTurn() {
         IndexHomeAPI.getTurn(mActivity)
                 .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .observeOn(rx.android.schedulers.AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<TurnModel>() {
                     @Override
                     public void onCompleted() {
@@ -1840,15 +1650,28 @@ public class HomeFragmentsss extends BaseFragment implements View.OnClickListene
      */
     private AlertDialog mDialog;
     TextView tv_phone;
+    TextView tv_timess;
     public void showPhoneDialog(final String cell) {
-        mDialog = new AlertDialog.Builder(mActivity).create();
+        mDialog = new AlertDialog.Builder(getActivity()).create();
         mDialog.show();
         mDialog.getWindow().setContentView(R.layout.dialog_shouye_tip);
         tv_phone = mDialog.getWindow().findViewById(R.id.tv_phone);
-        tv_phone.setText(cell);
-        mDialog.getWindow().findViewById(R.id.tv_dialog_call_phone_sure).setOnClickListener(new View.OnClickListener() {
+        tv_timess = mDialog.getWindow().findViewById(R.id.tv_time);
+        tv_phone.setText("客服热线 ("+cell+")");
+
+        tv_phone.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Intent intent = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + cell));
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+                mDialog.dismiss();
+            }
+        });
+        tv_timess.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                UnicornManager.inToUnicorn(getActivity());
                 mDialog.dismiss();
             }
         });
@@ -1875,13 +1698,14 @@ public class HomeFragmentsss extends BaseFragment implements View.OnClickListene
 
 
     /**
-     * 获取司机信息
+     * 订单状态
      */
-    private void getDriveInfo() {
-        IndexHomeAPI.getDriverInfo(mActivity)
+
+    private void getOrder() {
+        IndexHomeAPI.indexOrder(mActivity)
                 .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<DriverInfo>() {
+                .observeOn(rx.android.schedulers.AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<OrderModel>() {
                     @Override
                     public void onCompleted() {
 
@@ -1893,38 +1717,96 @@ public class HomeFragmentsss extends BaseFragment implements View.OnClickListene
                     }
 
                     @Override
-                    public void onNext(DriverInfo driverInfo) {
-                        if(driverInfo.isSuccess()) {
-
-                            if(driverInfo.getData().size()!=0) {
+                    public void onNext(OrderModel indexInfoModel) {
+                        if(indexInfoModel.isSuccess()) {
+                            if(indexInfoModel.getData().size()!=0) {
                                 driverList.clear();
-                                driverList.addAll(driverInfo.getData());
-                                if(!cell.equals("")) {
-                                    ll_driver.setVisibility(View.VISIBLE);
-                                    verticalBannerAdapter = new VerticalBannerAdapter(cell,driverList,getContext());
-                                    verticalBanner.setAdapter(verticalBannerAdapter);
-                                    verticalBanner.start();
-
-                                }else {
-                                    ll_driver.setVisibility(View.GONE);
-                                }
-
+                                driverList.addAll(indexInfoModel.getData());
+                                verticalBannerAdapter = new VerticalBannerAdapter(cell,driverList,getContext());
+                                verticalBanner.setAdapter(verticalBannerAdapter);
+                                verticalBanner.start();
+                                ll_driver.setVisibility(View.VISIBLE);
                             }else {
                                 ll_driver.setVisibility(View.GONE);
                             }
                         }
-
                     }
                 });
     }
 
+    /**
+     * 搜索热词
+     */
+    List<IndexInfoModel.DataBean.ClassifyListBean> classifyLists;
+    private void classifyList() {
+        IndexHomeAPI.classifyList(mActivity)
+                .subscribeOn(Schedulers.io())
+                .observeOn(rx.android.schedulers.AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<IndexInfoModel>() {
+                    @Override
+                    public void onCompleted() {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onNext(IndexInfoModel indexInfoModel) {
+                        if(indexInfoModel.isSuccess()) {
+                            classifyLists = indexInfoModel.getData().getClassifyList();
+                            classifyList.addAll(classifyLists);
+                            rvIconAdapter.notifyDataSetChanged();
+                        }else {
+                            AppHelper.showMsg(mActivity,indexInfoModel.getMessage());
+                        }
+                    }
+                });
+    }
+
+    /**
+     *
+     */
+    /**
+     * 搜索热词
+     */
+    private void hotKey() {
+        IndexHomeAPI.recommendList(mActivity)
+                .subscribeOn(Schedulers.io())
+                .observeOn(rx.android.schedulers.AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<RecommendModel>() {
+                    @Override
+                    public void onCompleted() {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onNext(RecommendModel recommendModel) {
+                        if(recommendModel.isSuccess()) {
+                            recommendList.clear();
+                            recommendData = recommendModel.getData();
+                            recommendList.addAll(recommendData);
+                            indexRecommendAdapter.notifyDataSetChanged();
+                        }else {
+                            AppHelper.showMsg(mActivity,recommendModel.getMessage());
+                        }
+                    }
+                });
+    }
     /**
      * 获取首页信息
      */
     private void getBaseLists() {
         IndexHomeAPI.getIndexInfo(mActivity)
                 .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .observeOn(rx.android.schedulers.AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<IndexInfoModel>() {
                     @Override
                     public void onCompleted() {
@@ -1934,82 +1816,19 @@ public class HomeFragmentsss extends BaseFragment implements View.OnClickListene
                     @Override
                     public void onError(Throwable e) {
                         lav_activity_loading.hide();
-//                        loading.setStatus(LoadingLayout.No_Network);
-//                        loading.setOnReloadListener(new LoadingLayout.OnReloadListener() {
-//                            @Override
-//                            public void onReload(View v) {
-//                                loading.setStatus(LoadingLayout.Loading);
-//                                getBaseLists();
-//                            }
-//                        });
                     }
 
                     @Override
                     public void onNext(IndexInfoModel indexInfoModel) {
                         if(indexInfoModel.isSuccess()) {
                             data = indexInfoModel.getData();
-                            classifyList.clear();
-                            classifyList.addAll(data.getClassifyList());
-                            if(indexInfoModel.getData().getHomeBackPic()!=null) {
-                                GlideModel.disPlayPlaceHolder(mActivity,indexInfoModel.getData().getHomeBackPic(),iv_bg);
-                            }
-
-                            for (int i = 0; i <classifyList.size() ; i++) {
-                                if(classifyList.size()%2 == 1 && i == classifyList.size()-1) {
-                                    classifyList.get(i).setItemType(1);
-                                    classifyList.get(i).setSpanSize(2);
-                                }else {
-                                    classifyList.get(i).setItemType(0);
-                                    classifyList.get(i).setSpanSize(1);
-
-                                }
-                            }
-
-                            typeAdapter.notifyDataSetChanged();
-                            if(classifyList.size()>0) {
-                                rv_type.setVisibility(View.VISIBLE);
-                            }else {
-                                rv_type.setVisibility(View.GONE);
-
-                            }
-
 
                             iconList.clear();
                             iconList.addAll(data.getIcons());
                             if(data.getDeductAmountStr()!=null) {
                                 deductAmountStr = data.getDeductAmountStr();
                             }
-                            if(!data.getOfferStr().equals("")) {
-                                offerStr = data.getOfferStr();
-                                tv_offer.setText(offerStr);
-                                Animation scaleAnimation = new ScaleAnimation(0.0f, 1.0f, 0.0f, 1.0f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
-                                scaleAnimation.setDuration(3000);
-                                scaleAnimation.setFillAfter(true);
-                                scaleAnimation.setFillBefore(false);
-                                scaleAnimation.setRepeatCount(-1);
-                                scaleAnimation.setRepeatMode(Animation.REVERSE);
-                                scaleAnimation.setStartOffset(0);
-                                scaleAnimation.setInterpolator(mActivity, android.R.anim.decelerate_interpolator);//设置动画插入器
-                                tv_offer.startAnimation(scaleAnimation);
-                                tv_offer.setVisibility(View.VISIBLE);
-                                tv_offer.setBackground(getResources().getDrawable(R.drawable.icon_red_home));
 
-                            }else {
-                                tv_offer.setVisibility(View.GONE);
-                                tv_offer.setBackground(null);
-
-                            }
-
-                            //八个icon Adapter 142603
-                            rvIconAdapter = new RvIconAdapter(R.layout.item_home_icon,iconList,deductAmountStr);
-                            rv_icon.setLayoutManager(new GridLayoutManager(context,4));
-                            rv_icon.setAdapter(rvIconAdapter);
-
-                            if(iconList.size()>0) {
-                                rv_icon.setVisibility(View.VISIBLE);
-                            }else {
-                                rv_icon.setVisibility(View.GONE);
-                            }
 
                             tv_times.setText("最快"+indexInfoModel.getData().getSendTime()+"小时送达");
                             tv_amount.setText("满"+indexInfoModel.getData().getSendAmount()+"元免配送费");
@@ -2017,108 +1836,6 @@ public class HomeFragmentsss extends BaseFragment implements View.OnClickListene
                             teamNum = indexInfoModel.getData().getTeamNum();
                             specialNum = indexInfoModel.getData().getSpecialNum();
                             fullGiftNum = indexInfoModel.getData().getFullGiftNum();
-//                            if(spikeNum!=0) {
-//                                rb_1.setVisibility(View.VISIBLE);
-//                                rb_1.setChecked(true);
-//                                getSpikeList(2);
-//                            }else {
-//                                rb_1.setChecked(false);
-//                                rb_1.setVisibility(View.GONE);
-//
-//                            }
-//
-//                            if(spikeNum==0) {
-//                                if(specialNum!=0) {
-//                                    rb_2.setChecked(true);
-//                                    getSpikeList(11);
-//                                    rb_2.setVisibility(View.VISIBLE);
-//                                    rl_coupon.setVisibility(View.VISIBLE);
-//                                }else {
-//                                    rb_2.setChecked(false);
-//                                    rb_2.setVisibility(View.GONE);
-//                                    rl_coupon.setVisibility(View.GONE);
-//
-//                                    if(fullGiftNum==0) {
-//                                        rb_4.setVisibility(View.GONE);
-//                                    }else {
-//                                        rb_4.setVisibility(View.VISIBLE);
-//                                        rb_4.setChecked(true);
-//                                        getSpikeList(12);
-//                                    }
-//                                }
-//
-//                                if(specialNum==0) {
-//                                    if(teamNum!=0) {
-//                                        getSpikeList(3);
-//
-//                                        rb_3.setVisibility(View.VISIBLE);
-//                                        rb_3.setChecked(true);
-//                                    }else {
-//                                        rb_3.setChecked(false);
-//                                        rb_3.setVisibility(View.GONE);
-//                                    }
-//                                }
-//                            }
-//
-//                            if(teamNum==0) {
-//                                rb_3.setVisibility(View.GONE);
-//
-//                            }else {
-//                                rb_3.setVisibility(View.VISIBLE);
-//                            }
-//
-//                            if(fullGiftNum==0) {
-//                                rb_4.setVisibility(View.GONE);
-//
-//                            }else {
-//                                rb_4.setVisibility(View.VISIBLE);
-//                            }
-//
-//                            if(spikeNum==0) {
-//                                rb_1.setVisibility(View.GONE);
-//
-//                            }else {
-//                                rb_1.setVisibility(View.VISIBLE);
-//                            }
-//
-//                            if(specialNum==0) {
-//                                rb_2.setVisibility(View.GONE);
-//                                rl_coupon.setVisibility(View.GONE);
-//                            }else {
-//                                rb_2.setVisibility(View.VISIBLE);
-//                                rl_coupon.setVisibility(View.VISIBLE);
-//                            }
-//
-//                            if(teamNum==0&&specialNum==0&&spikeNum==0&&fullGiftNum==0) {
-//                                ll_active.setVisibility(View.GONE);
-//                            }else {
-//                                ll_active.setVisibility(View.VISIBLE);
-//                            }
-
-                            if(spikeNum>0) {
-                                rb_1.setVisibility(View.VISIBLE);
-
-                            }else {
-                                rb_1.setVisibility(View.GONE);
-                            }
-
-                            if(specialNum>0) {
-                                rl_coupon.setVisibility(View.VISIBLE);
-                            }else {
-                                rl_coupon.setVisibility(View.GONE);
-                            }
-
-                            if(fullGiftNum>0) {
-                                rb_4.setVisibility(View.VISIBLE);
-                            }else {
-                                rb_4.setVisibility(View.GONE);
-                            }
-
-                            if(teamNum>0) {
-                                rb_3.setVisibility(View.VISIBLE);
-                            }else {
-                                rb_3.setVisibility(View.GONE);
-                            }
 
                             if(teamNum==0&&specialNum==0&&spikeNum==0&&fullGiftNum==0) {
                                 ll_active.setVisibility(View.GONE);
@@ -2126,47 +1843,19 @@ public class HomeFragmentsss extends BaseFragment implements View.OnClickListene
                                 ll_active.setVisibility(View.VISIBLE);
                             }
 
-
-
-
-                            rb_1.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    getSpikeList(2);
-                                }
-                            });
-
-                            rb_2.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    getSpikeList(11);
-                                }
-                            });
-
-                            rb_3.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    getSpikeList(3);
-                                }
-                            });
-
-                            rb_4.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    getSpikeList(12);
-                                }
-                            });
-
-                            if(spikeNum>0) {
-                                getSpikeList(2);
-                            }else if(specialNum>0) {
-                                getSpikeList(11);
-                            }else if(fullGiftNum>0) {
-                                getSpikeList(12);
+                            if(teamNum==0) {
+                                ll2.setVisibility(View.GONE);
+                                ll1.setVisibility(View.GONE);
+                                rl1.setVisibility(View.VISIBLE);
                             }else {
-                                getSpikeList(3);
+                                rl1.setVisibility(View.GONE);
+                                ll1.setVisibility(View.VISIBLE);
+                                ll2.setVisibility(View.VISIBLE);
                             }
 
+
+                            getSpikeList(12);
+                            getSpikeList(3);
                             rvIconAdapter.notifyDataSetChanged();
                             questUrl = indexInfoModel.getData().getQuestUrl();
 
@@ -2199,17 +1888,38 @@ public class HomeFragmentsss extends BaseFragment implements View.OnClickListene
                                 banner.setIndicatorGravity(BannerConfig.RIGHT);
                                 ClickBanner(data.getBanners());
                                 banner.start();
+
+                                List<IndexInfoModel.DataBean.BannersBean> banners = data.getBanners();
+
+
+                                banner.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+                                    @Override
+                                    public void onPageScrolled(int i, float v, int i1) {
+//                                        Log.d("wwwwwwww........","1111");
+                                    }
+
+                                    @Override
+                                    public void onPageSelected(int pos) {
+                                        if(!TextUtils.isEmpty(banners.get(pos).getRgbColor())) {
+                                            String rgbColor = banners.get(pos).getRgbColor();
+                                            ll_bgc.setBackgroundColor(Color.parseColor("#"+rgbColor));
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onPageScrollStateChanged(int i) {
+//                                        Log.d("wwwwwwww........","3333");
+                                    }
+                                });
+                
                             } else {
                                 banner.setVisibility(View.GONE);
                                 iv_empty.setVisibility(View.VISIBLE);
 
                             }
                             lav_activity_loading.hide();
-//                            loading.setStatus(LoadingLayout.Success);
-//                            drawable.stop();
                         }else {
-//                            loading.setStatus(LoadingLayout.Error);
-//                            drawable.stop();
+
                             AppHelper.showMsg(mActivity, indexInfoModel.getMessage());
                             lav_activity_loading.hide();
                         }
@@ -2305,7 +2015,7 @@ public class HomeFragmentsss extends BaseFragment implements View.OnClickListene
     private void requestUpdate() {
         UpdateAPI.requestUpdate(getContext(), AppHelper.getVersion(getContext()))
                 .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .observeOn(rx.android.schedulers.AndroidSchedulers.mainThread())
                 .subscribe(new Observer<UpdateModel>() {
                     @Override
                     public void onCompleted() {
@@ -2417,7 +2127,6 @@ public class HomeFragmentsss extends BaseFragment implements View.OnClickListene
         super.onStart();
         //开始轮播
         banner.startAutoPlay();
-        typeAdapter.start();
     }
 
     @Override
@@ -2440,15 +2149,17 @@ public class HomeFragmentsss extends BaseFragment implements View.OnClickListene
                 break;
 
             case R.id.rl_message:
-                if (StringHelper.notEmptyAndNull(UserInfoHelper.getUserId(getActivity()))) {
-                    Intent intents = new Intent(getActivity(), MessageCenterActivity.class);
-                    startActivityForResult(intents, 101);
-//                    Intent intent2 = new Intent(getActivity(), Test1Activity.class);
-//                    startActivity(intent2);
-
-                } else {
-                    initDialog();
-                }
+                Intent intent2 = new Intent(context,TestActivity4.class);
+                startActivity(intent2);
+//                if (StringHelper.notEmptyAndNull(UserInfoHelper.getUserId(getActivity()))) {
+//                    Intent intents = new Intent(getActivity(), MessageCenterActivity.class);
+//                    startActivityForResult(intents, 101);
+////                    Intent intent2 = new Intent(getActivity(), Test1Activity.class);
+////                    startActivity(intent2);
+//
+//                } else {
+//                    initDialog();
+//                }
                 break;
 
             case R.id.tv_city:
@@ -2487,7 +2198,7 @@ public class HomeFragmentsss extends BaseFragment implements View.OnClickListene
                 startActivity(teamIntent);
                 break;
             case R.id.rl_more4:
-                //精选折扣
+                //满赠
                 Intent fullIntent = new Intent(getActivity(), FullGiftActivity.class);
                 startActivity(fullIntent);
                 break;
@@ -2536,9 +2247,17 @@ public class HomeFragmentsss extends BaseFragment implements View.OnClickListene
     public void onStop() {
         super.onStop();
         banner.stopAutoPlay();
-        typeAdapter.cancle();
+        stopAuto();
+        fullAdapter.cancle();
+        team3Adapter.cancle();
+    }
 
 
+    private void stopAuto() {
+        if (mAutoTask != null && !mAutoTask.isDisposed()) {
+            mAutoTask.dispose();
+            mAutoTask = null;
+        }
     }
 
     private void initRecycle() {
@@ -2547,10 +2266,10 @@ public class HomeFragmentsss extends BaseFragment implements View.OnClickListene
         scheduledExecutorService.scheduleAtFixedRate(new Runnable() {
             @Override
             public void run() {
-                recyclerViewTest.smoothScrollToPosition(layoutManager.findFirstVisibleItemPosition()+1);
+                rv_skill.smoothScrollToPosition(layoutManager.findFirstVisibleItemPosition()+1);
             }
         }, 2000, 2000, TimeUnit.MILLISECONDS);
-        recyclerViewTest.setLayoutManager(layoutManager);
+        rv_skill.setLayoutManager(layoutManager);
     }
 
 
@@ -2619,36 +2338,14 @@ public class HomeFragmentsss extends BaseFragment implements View.OnClickListene
     public void cityEvent(CityEvent event) {
         refreshLayout.autoRefresh();
         chooseAddressDialog.dismiss();
+//        rootview.setTranslationY(0);
 
     }
 
-    private class myOnPageChangeListener implements ViewPager.OnPageChangeListener {
-        @Override
-        public void onPageScrolled(int i, float v, int i1) {
-
-        }
-
-        @Override
-        public void onPageSelected(int position) {
-            switch (position){
-                case 0:
-                    rg_new.check(R.id.rb_new);
-                    break;
-                case 1:
-                    rg_new.check(R.id.rb_must_common);
-                    break;
-                case 2:
-                    rg_new.check(R.id.rb_info);
-                    break;
-                case 3:
-                    rg_new.check(R.id.rb_common);
-                    break;
-            }
-        }
-
-        @Override
-        public void onPageScrollStateChanged(int i) {
-
-        }
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void topEvent(TopEvent event) {
+        appbar.setExpanded(true);
+        nestedScrollView.smoothScrollTo(0,0);
     }
+
 }

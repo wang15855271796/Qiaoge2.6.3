@@ -2,10 +2,17 @@ package com.puyue.www.qiaoge.fragment.mine;
 
 import android.app.AlertDialog;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.widget.AppBarLayout;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.support.v4.widget.NestedScrollView;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Log;
@@ -14,11 +21,14 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
+import com.example.xrecyclerview.DensityUtil;
 import com.puyue.www.qiaoge.NewWebViewActivity;
 import com.puyue.www.qiaoge.R;
 import com.puyue.www.qiaoge.UnicornManager;
@@ -36,7 +46,9 @@ import com.puyue.www.qiaoge.activity.mine.order.MyOrdersActivity;
 import com.puyue.www.qiaoge.activity.mine.wallet.MinerIntegralActivity;
 import com.puyue.www.qiaoge.activity.mine.wallet.MyWalletDetailActivity;
 import com.puyue.www.qiaoge.activity.mine.wallet.MyWalletNewActivity;
+import com.puyue.www.qiaoge.adapter.MyAdapter;
 import com.puyue.www.qiaoge.api.home.GetCustomerPhoneAPI;
+import com.puyue.www.qiaoge.api.home.IndexHomeAPI;
 import com.puyue.www.qiaoge.api.mine.AccountCenterAPI;
 import com.puyue.www.qiaoge.api.mine.UpdateAPI;
 import com.puyue.www.qiaoge.api.mine.order.MyOrderListAPI;
@@ -49,6 +61,7 @@ import com.puyue.www.qiaoge.event.CouponEvent;
 import com.puyue.www.qiaoge.event.GoToMineEvent;
 import com.puyue.www.qiaoge.event.MessageEvent;
 import com.puyue.www.qiaoge.fragment.home.CityEvent;
+import com.puyue.www.qiaoge.fragment.home.MustAdapter;
 import com.puyue.www.qiaoge.helper.AppHelper;
 import com.puyue.www.qiaoge.helper.NetWorkHelper;
 import com.puyue.www.qiaoge.helper.StringHelper;
@@ -56,11 +69,13 @@ import com.puyue.www.qiaoge.helper.UserInfoHelper;
 import com.puyue.www.qiaoge.listener.NoDoubleClickListener;
 import com.puyue.www.qiaoge.model.OrderNumsModel;
 import com.puyue.www.qiaoge.model.home.GetCustomerPhoneModel;
+import com.puyue.www.qiaoge.model.home.MustModel;
 import com.puyue.www.qiaoge.model.mine.AccountCenterModel;
 import com.puyue.www.qiaoge.model.mine.UpdateModel;
 import com.puyue.www.qiaoge.model.mine.order.CommonModel;
 import com.puyue.www.qiaoge.model.mine.order.MineCenterModel;
 import com.puyue.www.qiaoge.model.mine.order.MyOrderNumModel;
+import com.puyue.www.qiaoge.view.OutScollerview;
 import com.puyue.www.qiaoge.view.SuperTextView;
 
 import org.greenrobot.eventbus.EventBus;
@@ -75,11 +90,13 @@ import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
+import static android.support.v4.view.ViewCompat.TYPE_NON_TOUCH;
+
 /**
  * Created by Administrator on 2018/3/28.
  */
 
-public class MineFragment extends BaseFragment {
+public class MineFragment extends BaseFragment implements AppBarLayout.OnOffsetChangedListener{
 
     private static final String TAG = MineFragment.class.getSimpleName();
     private ImageView mIvAvatar;
@@ -96,21 +113,26 @@ public class MineFragment extends BaseFragment {
     private RelativeLayout mRlFeedback;
     private RelativeLayout mRlVersion;
     private TextView mTvVersion;
+    NestedScrollView scrollView;
     private TextView mViewVersionPoint;
-    private RelativeLayout mRlMyOrders;
     private AccountCenterModel mModelAccountCenter;
     private String mUserCell;
     private int mStateCode;
     TextView tv_phone;
+    ImageView iv_back;
+    CoordinatorLayout coordinator;
+    RelativeLayout rl_top;
     private SuperTextView mViewWaitPaymentNum;
     private SuperTextView mViewWaitShipmentNum;
     private SuperTextView mViewWaitReceivingNum;
     private SuperTextView mViewWaitEvaluateNum;
     private SuperTextView mViewReturnNum;
     private SuperTextView mViewCollectionNum;
-
-    // protected ImmersionBar mImmersionBar;
-
+    AppBarLayout appBarLayout;
+    RelativeLayout rl_bg;
+    ImageView iv_setting1;
+    ImageView iv_message1;
+    RecyclerView rv1;
     private AlertDialog mDialog;
     private String mCustomerPhone;
     private SuperTextView mViewMessageNum;
@@ -122,7 +144,6 @@ public class MineFragment extends BaseFragment {
     private RelativeLayout couponsLayout;//优惠券
     private TextView couponsNum; // 优惠券数量
     private TextView textCouponsPoint;// 钱包优惠券
-    private ImageView imageViewBanner;
     private RelativeLayout accountAddress;
     private RelativeLayout accountManagement;
     private String MyBannerUrl = "";
@@ -135,7 +156,7 @@ public class MineFragment extends BaseFragment {
     private String urlVIP;
     private String vipDayUrlVIP;
     private String commissionUrl;
-
+    MustAdapter mustAdapter;
 
     private TextView tv_vip;
     private TextView tv_amount;
@@ -164,7 +185,7 @@ public class MineFragment extends BaseFragment {
     TextView tv_number1;
     TextView tv_number2;
     private boolean isChecked;
-
+    RecyclerView rv2;
     private ImageView iv_message;
 
 
@@ -211,7 +232,17 @@ public class MineFragment extends BaseFragment {
     public void findViewById(View view) {
 
         EventBus.getDefault().register(this);
+        coordinator = (view.findViewById(R.id.coordinator));
+        rl_top = (view.findViewById(R.id.rl_top));
+        rv2 =  (view.findViewById(R.id.rv2));
+        scrollView = (view.findViewById(R.id.scrollView));
+        iv_back = (view.findViewById(R.id.iv_back));
+        iv_setting1 = (view.findViewById(R.id.iv_setting1));
+        iv_message1 = (view.findViewById(R.id.iv_message1));
+        rv1 = (view.findViewById(R.id.rv1));
+        appBarLayout = (view.findViewById(R.id.appBarLayout));
         rl_zizhi = (view.findViewById(R.id.rl_zizhi));
+        rl_bg = (view.findViewById(R.id.rl_bg));
         tv_number1 = (view.findViewById(R.id.tv_number1));
         tv_number2 = (view.findViewById(R.id.tv_number2));
         mIvAvatar = (view.findViewById(R.id.iv_mine_avatar));//头像
@@ -226,7 +257,6 @@ public class MineFragment extends BaseFragment {
         mLlReturnGoods = (view.findViewById(R.id.ll_mine_tips_return_goods));//退货
         mLlReceived = (view.findViewById(R.id.ll_mine_tips_received));//待收货
 
-        mRlMyOrders = (view.findViewById(R.id.rl_mine_orders));//我的订单
         mRlCollection = (view.findViewById(R.id.rl_mine_collection));//我的收藏
 
         mRlContact = (view.findViewById(R.id.rl_mine_contact));//联系客服
@@ -238,7 +268,7 @@ public class MineFragment extends BaseFragment {
 
         couponsNum = (view.findViewById(R.id.couponsNum));
         textCouponsPoint = (view.findViewById(R.id.textCouponsPoint));
-        imageViewBanner = (view.findViewById(R.id.imageViewBanner));
+
         mViewCollectionNum = (view.findViewById(R.id.textCollectionMount));//我的收藏数量
         mViewWaitPaymentNum = (view.findViewById(R.id.view_mine_order_wait_pay));//待付款数量
         mViewWaitShipmentNum = (view.findViewById(R.id.view_mine_order_wait_shipments));//待发货数量
@@ -282,6 +312,15 @@ public class MineFragment extends BaseFragment {
         ll_deliver_order = (view.findViewById(R.id.ll_deliver_order));
         ll_self_sufficiency = (view.findViewById(R.id.ll_self_sufficiency));
 
+        iv_back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //置顶
+                rv1.smoothScrollToPosition(0);
+                scrollView.smoothScrollTo(0,0);
+                appBarLayout.setExpanded(true);
+            }
+        });
     }
 
     @Override
@@ -318,9 +357,24 @@ public class MineFragment extends BaseFragment {
         }
 
 
+        mustAdapter = new MustAdapter(R.layout.item_team_list, list, new MustAdapter.Onclick() {
+            @Override
+            public void addDialog() {
+            }
+
+            @Override
+            public void tipClick() {
+                showPhoneDialog(cell);
+            }
+        });
+
+        rv1.setLayoutManager(new GridLayoutManager(mActivity,2));
+        rv1.setAdapter(mustAdapter);
         requestUpdate();
         getCustomerPhone();
         getOrderNum();
+        getProductsList();
+        appBarLayout.addOnOffsetChangedListener(this);
     }
 
     @Override
@@ -344,11 +398,10 @@ public class MineFragment extends BaseFragment {
         mRlContact.setOnClickListener(noDoubleClickListener);//联系客服
         mRlFeedback.setOnClickListener(noDoubleClickListener);
         mRlVersion.setOnClickListener(noDoubleClickListener);//关于版本
-        mRlMyOrders.setOnClickListener(noDoubleClickListener);//我的订单
         couponsLayout.setOnClickListener(noDoubleClickListener);//优惠券
         accountAddress.setOnClickListener(noDoubleClickListener);//我的地址
         accountManagement.setOnClickListener(noDoubleClickListener);//子账号管理
-        imageViewBanner.setOnClickListener(noDoubleClickListener);
+
         mineIntegral.setOnClickListener(noDoubleClickListener);
         relativeLayoutVip.setOnClickListener(noDoubleClickListener);
         tv_order.setOnClickListener(noDoubleClickListener);
@@ -540,14 +593,7 @@ public class MineFragment extends BaseFragment {
                         }
                     });
                 }
-            } else if (view == mRlMyOrders)
-
-            {
-                //我的订单
-
-                startActivity(MyOrdersActivity.getIntent(getContext(), MyOrdersActivity.class, AppConstant.ALL));
-
-            } else if (view == tv_order)
+            }  else if (view == tv_order)
 
             {
                 //我的订单
@@ -577,17 +623,7 @@ public class MineFragment extends BaseFragment {
                 Intent intent = new Intent(getContext(),SubAccountActivity.class);
                 startActivity(intent);
 
-            } else if (view == imageViewBanner) {
-                if (StringHelper.notEmptyAndNull(MyBannerUrl)) {
-                    //我直接让他跳转到NewWebViewActivity 中去。
-//                    String newWebViewUrl="http://116.62.67.230:8082/apph5/html/member.html";
-                    Intent intent = new Intent(getActivity(), NewWebViewActivity.class);
-                    intent.putExtra("URL", MyBannerUrl);
-                    intent.putExtra("TYPE", 2);
-                    intent.putExtra("name","consult");
-                    startActivity(intent);
-                }
-            } else if (view == ll_account)
+            }  else if (view == ll_account)
 
             {//积分
                 startActivity(CommonH5Activity.getIntent(getContext(), MinerIntegralActivity.class));
@@ -1029,33 +1065,52 @@ public class MineFragment extends BaseFragment {
     /**
      * 弹出电话号码
      */
+    TextView tv_time;
     private void showPhoneDialog(final String cell) {
         mDialog = new AlertDialog.Builder(getActivity()).create();
         mDialog.show();
         mDialog.getWindow().setContentView(R.layout.dialog_call_phone);
         tv_phone = mDialog.getWindow().findViewById(R.id.tv_phone);
-        mDialog.getWindow().findViewById(R.id.tv_dialog_call_phone_cancel).setOnClickListener(new View.OnClickListener() {
+        tv_time = mDialog.getWindow().findViewById(R.id.tv_time);
+        tv_phone.setText("客服热线 ("+cell+")");
+        tv_phone.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Intent intent = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + cell));
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
                 mDialog.dismiss();
             }
         });
-        tv_phone.setText(cell);
-        mDialog.getWindow().findViewById(R.id.tv_dialog_call_phone_sure).setOnClickListener(new View.OnClickListener() {
+        tv_time.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 UnicornManager.inToUnicorn(getContext());
-//                if (isTablet(getActivity())) {
-//                    AppHelper.showMsg(getActivity(), "当前设备不具备拨号功能");
-//                } else {
-//                    Intent intent = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + cell));
-//                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//                    startActivity(intent);
-//                }
                 mDialog.dismiss();
             }
         });
+//        mDialog.getWindow().findViewById(R.id.tv_dialog_call_phone_cancel).setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                mDialog.dismiss();
+//            }
+//        });
+
+//        mDialog.getWindow().findViewById(R.id.tv_dialog_call_phone_sure).setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//
+//                UnicornManager.inToUnicorn(getContext());
+////                if (isTablet(getActivity())) {
+////                    AppHelper.showMsg(getActivity(), "当前设备不具备拨号功能");
+////                } else {
+////                    Intent intent = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + cell));
+////                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+////                    startActivity(intent);
+////                }
+//                mDialog.dismiss();
+//            }
+//        });
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -1091,6 +1146,44 @@ public class MineFragment extends BaseFragment {
         requestUpdate();
         getCustomerPhone();
 
+    }
+
+    /**
+     * 必买列表(王涛)
+     * @param
+     */
+
+    private List<MustModel.DataBean> list = new ArrayList<>();
+    private void getProductsList() {
+        IndexHomeAPI.getMust(mActivity)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<MustModel>() {
+                    @Override
+                    public void onCompleted() {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onNext(MustModel getCommonProductModel) {
+                        if (getCommonProductModel.isSuccess()) {
+                            list.clear();
+                            mustAdapter.notifyDataSetChanged();
+                            if(getCommonProductModel.getData().size()>0) {
+                                list.addAll(getCommonProductModel.getData());
+                                mustAdapter.notifyDataSetChanged();
+                            }
+
+                        } else {
+                            AppHelper.showMsg(mActivity, getCommonProductModel.getMessage());
+                        }
+                    }
+                });
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -1136,5 +1229,27 @@ public class MineFragment extends BaseFragment {
                     }
                 });
     }
+
+    private int mMaxScrollSize;
+    @Override
+    public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
+        if (mMaxScrollSize == 0){
+            mMaxScrollSize = appBarLayout.getTotalScrollRange();
+        }
+        int currentScrollPercentage = (Math.abs(verticalOffset)) * 100
+                / mMaxScrollSize;
+        float alpha=(float) (1 - currentScrollPercentage/100.0);
+        float alphas = (1 - alpha);
+
+        if(verticalOffset==0) {
+            rl_bg.setVisibility(View.GONE);
+        }else {
+            rl_bg.setVisibility(View.VISIBLE);
+
+        }
+
+
+    }
+
 
 }

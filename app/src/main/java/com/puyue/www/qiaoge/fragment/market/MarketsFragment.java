@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
@@ -33,6 +34,7 @@ import com.daimajia.slider.library.SliderLayout;
 import com.example.xrecyclerview.XRecyclerView;
 import com.puyue.www.qiaoge.NewWebViewActivity;
 import com.puyue.www.qiaoge.R;
+import com.puyue.www.qiaoge.UnicornManager;
 import com.puyue.www.qiaoge.activity.home.CommonGoodsDetailActivity;
 import com.puyue.www.qiaoge.activity.home.CouponDetailActivity;
 import com.puyue.www.qiaoge.activity.home.HomeGoodsListActivity;
@@ -81,6 +83,7 @@ import com.puyue.www.qiaoge.constant.AppConstant;
 import com.puyue.www.qiaoge.dialog.CouponDialog;
 import com.puyue.www.qiaoge.dialog.LoadingDialog;
 import com.puyue.www.qiaoge.event.AddressEvent;
+import com.puyue.www.qiaoge.event.FromIndexEvent;
 import com.puyue.www.qiaoge.event.GoToMarketEvent;
 import com.puyue.www.qiaoge.event.LogoutEvent;
 import com.puyue.www.qiaoge.event.OnHttpCallBack;
@@ -208,7 +211,6 @@ public class MarketsFragment extends BaseFragment {
     public int selectionPositon;
     private AlertDialog mTypedialog;
     boolean flag = false;
-
     public static MarketsFragment getInstance() {
         MarketsFragment fragment = new MarketsFragment();
         Bundle bundle = new Bundle();
@@ -508,8 +510,6 @@ public class MarketsFragment extends BaseFragment {
 
     //筛选确定
     private void sendSelectGood(String saleVolume, String priceUp, String newProduct, String brandName, String minPrices, String maxPrices) {
-
-
         MarketGoodSelcetAPI.getClassifyRight(mActivity, pageNum, 12, mFirstCode, mSecondCode, saleVolume, priceUp, newProduct, brandName, minPrices, maxPrices)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -530,7 +530,6 @@ public class MarketsFragment extends BaseFragment {
                     @Override
                     public void onNext(MarketRightModel marketGoodSelectModel) {
                         if (marketGoodSelectModel.isSuccess()) {
-                            Log.d("swsssssssssss.......","2");
                             selectBrandName = "";
                             minPrice = "";
                             maxPrice = "";
@@ -547,7 +546,44 @@ public class MarketsFragment extends BaseFragment {
                     }
                 });
     }
+    //筛选确定
+    private void sendSelectGoods(int mFirstCodes,int mSecondCodes, String priceUp, String newProduct, String brandName, String minPrices, String maxPrices) {
+        MarketGoodSelcetAPI.getClassifyRight(mActivity, pageNum, 12, mFirstCodes, mSecondCodes, saleVolume, priceUp, newProduct, brandName, minPrices, maxPrices)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<MarketRightModel>() {
+                    @Override
+                    public void onCompleted() {
+//                        ptr.refreshComplete();
+                        mRvDetail.refreshComplete();
 
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+//                        ptr.refreshComplete();
+                        lav_activity_loading.hide();
+                    }
+
+                    @Override
+                    public void onNext(MarketRightModel marketGoodSelectModel) {
+                        if (marketGoodSelectModel.isSuccess()) {
+                            selectBrandName = "";
+                            minPrice = "";
+                            maxPrice = "";
+                            mModelMarketGoods = marketGoodSelectModel;
+                            dialog.dismiss();
+                            updateMarketGoods();
+                            lav_activity_loading.hide();
+                            flag = true;
+                        } else {
+                            AppHelper.showMsg(mActivity, marketGoodSelectModel.getMessage());
+                            lav_activity_loading.hide();
+
+                        }
+                    }
+                });
+    }
 
     //获取购买过商品
     private void getAlreadyGood() {
@@ -672,7 +708,7 @@ public class MarketsFragment extends BaseFragment {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void getMessages(GoToMarketEvent goToMarketEvent) {
-        requestGoodsList();
+//        requestGoodsList("");
         requestBanner();
         sendSelectGood("", "", "", "", "", "");
     }
@@ -682,7 +718,7 @@ public class MarketsFragment extends BaseFragment {
         //刷新UI
         lav_activity_loading.show();
 //        lav_activity_loading.smoothToShow();
-        requestGoodsList();
+//        requestGoodsList("");
         requestBanner();
         getSearchProd();
         getDataThree();
@@ -696,7 +732,7 @@ public class MarketsFragment extends BaseFragment {
         //刷新数据
         lav_activity_loading.show();
 //        lav_activity_loading.smoothToShow();
-        requestGoodsList();
+//        requestGoodsList("");
         requestBanner();
         getSearchProd();
         getDataThree();
@@ -705,9 +741,11 @@ public class MarketsFragment extends BaseFragment {
 
     }
 
+
     @Override
     public void setViewData() {
         lav_activity_loading.show();
+
         ArrayList<String> titles = new ArrayList<>();
         titles.add("综合排序");
         ArrayList<String> contentThree = new ArrayList<>();
@@ -846,7 +884,14 @@ public class MarketsFragment extends BaseFragment {
             }
         });
 
-        mAdapterMarketSecond = new MarketSecondAdapter(R.layout.item_left_classify, mListSecondNow);
+        mAdapterMarketSecond = new MarketSecondAdapter(R.layout.item_left_classify, mListSecondNow, new MarketSecondAdapter.OnPositionListener() {
+            @Override
+            public void getPos(int position,int firstId,int secondId) {
+                mRvSecond.smoothScrollToPosition(position);
+                sendSelectGoods(firstId,secondId,"","","","","");
+                Log.d("wdadasdsddss........",firstId+"------");
+            }
+        });
 
             mAdapterMarketSecond.setOnItemClickListener(new OnItemClickListener() {
                 @Override
@@ -857,12 +902,11 @@ public class MarketsFragment extends BaseFragment {
                     selectBrandName = "";
                         if (flag) {
                             flag = false;
-//                            if(pos!=position) {
-//                            pos = position;
                             hintKbTwo();
                             dialog.show();
                             selectionPositon = position;
                             mAdapterMarketSecond.selectPosition(position);
+                            mAdapterMarketSecond.selectId("");
                             mFirstCode = mList.get(position).getFirstId();
                             mAdapterMarketSecond.notifyDataSetChanged();
                             if (mList.get(position).getSecondClassify() == null) {
@@ -993,10 +1037,13 @@ public class MarketsFragment extends BaseFragment {
         });
         mRvSecond.setAdapter(mAdapterMarketSecond);
         mRvDetail.setAdapter(mAdapterMarketDetail);
-        requestGoodsList();
+//        if(fromId.equals("")) {
+//            requestGoodsList("");
+//        }else {
+//            requestGoodsList(fromId);
+//        }
+
         getCustomerPhone();
-
-
     }
 
     /**
@@ -1158,7 +1205,7 @@ public class MarketsFragment extends BaseFragment {
     /**
      * 请求左侧数据集合
      */
-    private void requestGoodsList() {
+    private void requestGoodsList(String fromId) {
         MarketGoodsClassifyAPI.getClassify(getContext())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -1178,7 +1225,8 @@ public class MarketsFragment extends BaseFragment {
                         AppHelper.UserLogout(getContext(), marketGoodsModel.getCode(), 0);
                         mModelMarketGoodsClassify = marketGoodsModel;
                         if (mModelMarketGoodsClassify.isSuccess()) {
-                            updateGoodsList();
+                            updateGoodsList(fromId);
+
                         } else {
                             if (marketGoodsModel.getCode() == AppConstant.ANOTHER_PLACE_LOGIN) {
                                 TwoDeviceHelper.logoutAndToHome(getActivity());
@@ -1193,17 +1241,31 @@ public class MarketsFragment extends BaseFragment {
     /**
      * 初始化列表数据
      */
-    private void updateGoodsList() {
-        mList.clear();
-        mList.addAll(mModelMarketGoodsClassify.getData());
-        mListSecondNow.clear();
-        mListSecondNow.addAll(mModelMarketGoodsClassify.getData());
-        mAdapterMarketSecond.notifyDataSetChanged();
-        mAdapterMarketSecond.selectPosition(0);
+    private void updateGoodsList(String fromId) {
+        if(fromId.equals("")) {
+            mList.clear();
+            mList.addAll(mModelMarketGoodsClassify.getData());
+            mListSecondNow.clear();
+            mListSecondNow.addAll(mModelMarketGoodsClassify.getData());
+            mAdapterMarketSecond.notifyDataSetChanged();
+            mAdapterMarketSecond.selectPosition(0);
+            mFirstCode = -1;
+            mSecondCode  = 0;
+            getData();
+            Log.d("wsasdwsssss.......",fromId+"1111");
+        }else {
+            mList.clear();
+            mList.addAll(mModelMarketGoodsClassify.getData());
+            mListSecondNow.clear();
+            mListSecondNow.addAll(mModelMarketGoodsClassify.getData());
+            mAdapterMarketSecond.notifyDataSetChanged();
+            mAdapterMarketSecond.selectId(fromId);
+            mFirstCode = Integer.parseInt(fromId);
+            mSecondCode  = 0;
+            Log.d("wsasdwsssss.......",fromId+"2222");
+            getData();
+        }
 
-        mFirstCode = -1;
-        mSecondCode  = 0;
-        getData();
 
     }
 
@@ -1283,15 +1345,28 @@ public class MarketsFragment extends BaseFragment {
      */
     private AlertDialog mDialog;
     TextView tv_phone;
+    TextView tv_time;
     public void showPhoneDialog(final String cell) {
-        mDialog = new AlertDialog.Builder(mActivity).create();
+        mDialog = new AlertDialog.Builder(mContext).create();
         mDialog.show();
         mDialog.getWindow().setContentView(R.layout.dialog_shouye_tip);
         tv_phone = mDialog.getWindow().findViewById(R.id.tv_phone);
-        tv_phone.setText(cell);
-        mDialog.getWindow().findViewById(R.id.tv_dialog_call_phone_sure).setOnClickListener(new View.OnClickListener() {
+        tv_time = mDialog.getWindow().findViewById(R.id.tv_time);
+        tv_phone.setText("客服热线 ("+cell+")");
+
+        tv_phone.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Intent intent = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + cell));
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+                mDialog.dismiss();
+            }
+        });
+        tv_time.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                UnicornManager.inToUnicorn(mContext);
                 mDialog.dismiss();
             }
         });
@@ -1470,7 +1545,7 @@ public class MarketsFragment extends BaseFragment {
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void loginEvent(LoginEvent event) {
         //刷新UI
-        requestGoodsList();
+//        requestGoodsList("");
         getData();
         getCustomerPhone();
     }
@@ -1484,17 +1559,24 @@ public class MarketsFragment extends BaseFragment {
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void loginEvent(LogoutEvent event) {
         //刷新UI
-        requestGoodsList();
+//        requestGoodsList("");
         getData();
         getCustomerPhone();
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void change(CityEvent cityEvent) {
-        requestGoodsList();
+//        requestGoodsList("");
         getData();
         getCustomerPhone();
 
+    }
+    String fromId;
+    @Subscribe(threadMode = ThreadMode.MAIN,sticky = true)
+    public void change(FromIndexEvent fromIndexEvent) {
+        fromId = fromIndexEvent.getId();
+        Log.d("dwqdsdsdwdsds....",fromId);
+        requestGoodsList(fromId);
     }
 
     /**

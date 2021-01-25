@@ -52,13 +52,12 @@ public class CommonAdapter extends RecyclerView.Adapter<CommonAdapter.BaseViewHo
     private int pos;
 //    private CouponModel.DataBean.ActivesBean activesBean;
 
-    public CommonAdapter(Context context,String style, int layoutResId, List<CouponModel.DataBean.ActivesBean> actives,String flag,OnClick onClick) {
+    public CommonAdapter(Context context,String style, int layoutResId, List<CouponModel.DataBean.ActivesBean> actives,String flag) {
         this.mContext = context;
         this.style = style;
         this.layoutResId = layoutResId;
         this.actives = actives;
         this.flag = flag;
-        this.onClick = onClick;
     }
 
 
@@ -78,81 +77,81 @@ public class CommonAdapter extends RecyclerView.Adapter<CommonAdapter.BaseViewHo
 //        }catch (Exception e) {
 //
 //        }
-        CouponModel.DataBean.ActivesBean activesBean = actives.get(position);
-        Glide.with(mContext).load(activesBean.getDefaultPic()).into(holder.iv_pic);
-        holder.tv_name.setText(activesBean.getActiveName());
-        holder.tv_price.setText(activesBean.getPrice());
-        holder.tv_old_price.getPaint().setFlags(Paint.STRIKE_THRU_TEXT_FLAG);
-        holder.tv_old_price.setText(activesBean.getOldPrice());
-        holder.tv_old_price.getPaint().setAntiAlias(true);//抗锯齿
-
-        if(StringHelper.notEmptyAndNull(UserInfoHelper.getUserId(mContext))) {
-            if(SharedPreferencesUtil.getString(mContext,"priceType").equals("1")) {
-                holder.tv_desc.setVisibility(View.GONE);
-                holder.tv_old_price.setVisibility(View.VISIBLE);
-                holder.tv_price.setVisibility(View.VISIBLE);
-            }else {
-                holder.tv_desc.setVisibility(View.VISIBLE);
-                holder.tv_old_price.setVisibility(View.GONE);
-                holder.tv_price.setVisibility(View.GONE);
-            }
-        }else {
-            holder.tv_desc.setVisibility(View.GONE);
-            holder.tv_old_price.setVisibility(View.VISIBLE);
-            holder.tv_price.setVisibility(View.VISIBLE);
-        }
-
-        if(activesBean.getDiscount()!=null) {
-            holder.tv_coupon.setText(activesBean.getDiscount());
-            holder.rl_coupon.setVisibility(View.VISIBLE);
-        }else {
-            holder.rl_coupon.setVisibility(View.GONE);
-        }
-
-        if(activesBean.getFlag()==1) {
-            Glide.with(mContext).load(activesBean.getSoldOutPic()).into(holder.iv_sale_done);
-            holder.iv_sale_done.setVisibility(View.VISIBLE);
-        }else {
-            holder.iv_sale_done.setVisibility(View.GONE);
-        }
-
-        holder.rl_group.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(style.equals("2")) {
-                    Intent intent = new Intent(mContext,SeckillGoodActivity.class);
-                    intent.putExtra(AppConstant.ACTIVEID, activesBean.getActiveId());
-                    intent.putExtra("priceType",SharedPreferencesUtil.getString(mContext,"priceType"));
-                    intent.putExtra("num","-1");
-                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK );
-                    mContext.startActivity(intent);
-                }else {
-                    Intent intent = new Intent(mContext,SpecialGoodDetailActivity.class);
-                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK );
-                    intent.putExtra(AppConstant.ACTIVEID, activesBean.getActiveId());
-                    intent.putExtra("priceType",SharedPreferencesUtil.getString(mContext,"priceType"));
-                    mContext.startActivity(intent);
-                }
-            }
-        });
-
-        holder.iv_add.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                if(onClick!=null) {
-                    if(StringHelper.notEmptyAndNull(UserInfoHelper.getUserId(mContext))) {
-                        if(SharedPreferencesUtil.getString(mContext,"priceType").equals("1")) {
-                            onClick.shoppingCartOnClick(position%actives.size());
-                        }else {
-                            onClick.tipClick();
-                        }
-                    }else {
-                        onClick.addDialog();
-                    }
-                }
-            }
-        });
+//        CouponModel.DataBean.ActivesBean activesBean = actives.get(position);
+//        Glide.with(mContext).load(activesBean.getDefaultPic()).into(holder.iv_pic);
+//        holder.tv_name.setText(activesBean.getActiveName());
+//        holder.tv_price.setText(activesBean.getPrice());
+//        holder.tv_old_price.getPaint().setFlags(Paint.STRIKE_THRU_TEXT_FLAG);
+//        holder.tv_old_price.setText(activesBean.getOldPrice());
+//        holder.tv_old_price.getPaint().setAntiAlias(true);//抗锯齿
+//
+//        if(StringHelper.notEmptyAndNull(UserInfoHelper.getUserId(mContext))) {
+//            if(SharedPreferencesUtil.getString(mContext,"priceType").equals("1")) {
+//                holder.tv_desc.setVisibility(View.GONE);
+//                holder.tv_old_price.setVisibility(View.VISIBLE);
+//                holder.tv_price.setVisibility(View.VISIBLE);
+//            }else {
+//                holder.tv_desc.setVisibility(View.VISIBLE);
+//                holder.tv_old_price.setVisibility(View.GONE);
+//                holder.tv_price.setVisibility(View.GONE);
+//            }
+//        }else {
+//            holder.tv_desc.setVisibility(View.GONE);
+//            holder.tv_old_price.setVisibility(View.VISIBLE);
+//            holder.tv_price.setVisibility(View.VISIBLE);
+//        }
+//
+//        if(activesBean.getDiscount()!=null) {
+//            holder.tv_coupon.setText(activesBean.getDiscount());
+//            holder.rl_coupon.setVisibility(View.VISIBLE);
+//        }else {
+//            holder.rl_coupon.setVisibility(View.GONE);
+//        }
+//
+//        if(activesBean.getFlag()==1) {
+//            Glide.with(mContext).load(activesBean.getSoldOutPic()).into(holder.iv_sale_done);
+//            holder.iv_sale_done.setVisibility(View.VISIBLE);
+//        }else {
+//            holder.iv_sale_done.setVisibility(View.GONE);
+//        }
+//
+//        holder.rl_group.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                if(style.equals("2")) {
+//                    Intent intent = new Intent(mContext,SeckillGoodActivity.class);
+//                    intent.putExtra(AppConstant.ACTIVEID, activesBean.getActiveId());
+//                    intent.putExtra("priceType",SharedPreferencesUtil.getString(mContext,"priceType"));
+//                    intent.putExtra("num","-1");
+//                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK );
+//                    mContext.startActivity(intent);
+//                }else {
+//                    Intent intent = new Intent(mContext,SpecialGoodDetailActivity.class);
+//                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK );
+//                    intent.putExtra(AppConstant.ACTIVEID, activesBean.getActiveId());
+//                    intent.putExtra("priceType",SharedPreferencesUtil.getString(mContext,"priceType"));
+//                    mContext.startActivity(intent);
+//                }
+//            }
+//        });
+//
+//        holder.iv_add.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//
+//                if(onClick!=null) {
+//                    if(StringHelper.notEmptyAndNull(UserInfoHelper.getUserId(mContext))) {
+//                        if(SharedPreferencesUtil.getString(mContext,"priceType").equals("1")) {
+//                            onClick.shoppingCartOnClick(position%actives.size());
+//                        }else {
+//                            onClick.tipClick();
+//                        }
+//                    }else {
+//                        onClick.addDialog();
+//                    }
+//                }
+//            }
+//        });
 
 
 

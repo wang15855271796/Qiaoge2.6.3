@@ -24,7 +24,7 @@
                 android:singleLine="true"
                 android:maxLines="1"
                 android:ellipsize="end"
-                android:textColor="#FF6A0A"
+                android:textColor="#D95152"
                 android:textSize="@dimen/sp_12"
                 android:drawablePadding="@dimen/size_5dp"
                 android:drawableLeft="@mipmap/ic_car"
@@ -42,7 +42,7 @@
             <TextView
                 tools:text="极速退款"
                 android:id="@+id/tv_amount"
-                android:textColor="#FF6A0A"
+                android:textColor="#D95152"
                 android:textSize="@dimen/sp_12"
                 android:singleLine="true"
                 android:maxLines="1"
@@ -62,7 +62,7 @@
 
         <TextView
             android:text="极速退款"
-            android:textColor="#FF6A0A"
+            android:textColor="#D95152"
             android:textSize="@dimen/sp_12"
             android:singleLine="true"
             android:maxLines="1"

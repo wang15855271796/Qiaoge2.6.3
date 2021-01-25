@@ -86,6 +86,7 @@ public class TypesAdapter extends BaseMultiItemQuickAdapter<IndexInfoModel.DataB
                                     public void onFinish() {
                                         try {
                                             Glide.with(mContext).load(item.getProdPics().get(i)).into(iv_pic);
+
 //                                            AlphaAnimation alphaAnimation = (AlphaAnimation) AnimationUtils.loadAnimation(mContext, R.anim.alpha);
 //                                            iv_pic.startAnimation(alphaAnimation);
 
@@ -258,7 +259,6 @@ public class TypesAdapter extends BaseMultiItemQuickAdapter<IndexInfoModel.DataB
                                     }
                                 }.start();
                             }
-
                         }
                         rl_bg.setBackgroundResource(R.drawable.shouye_purple_bg);
                 }

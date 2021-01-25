@@ -168,26 +168,46 @@ public class AppHelper {
     /**
      * 弹出电话号码
      */
+
     public static void showPhoneDialog(final Context context, final String cell) {
         final AlertDialog mDialog = new AlertDialog.Builder(context).create();
         mDialog.show();
         mDialog.getWindow().setContentView(R.layout.dialog_call_phone);
-        TextView mTvCell = (TextView) mDialog.getWindow().findViewById(R.id.tv_phone);
-        mTvCell.setText(cell);
-        mDialog.getWindow().findViewById(R.id.tv_dialog_call_phone_cancel).setOnClickListener(new View.OnClickListener() {
+        TextView tv_phones = mDialog.getWindow().findViewById(R.id.tv_phone);
+        TextView tv_time = mDialog.getWindow().findViewById(R.id.tv_time);
+        tv_phones.setText("客服热线 ("+cell+")");
+        tv_phones.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Intent intent = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + cell));
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                context.startActivity(intent);
                 mDialog.dismiss();
             }
         });
-        mDialog.getWindow().findViewById(R.id.tv_dialog_call_phone_sure).setOnClickListener(new View.OnClickListener() {
+        tv_time.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 UnicornManager.inToUnicorn(context);
-
                 mDialog.dismiss();
             }
         });
+//        TextView mTvCell = (TextView) mDialog.getWindow().findViewById(R.id.tv_phone);
+//        mTvCell.setText(cell);
+//        mDialog.getWindow().findViewById(R.id.tv_dialog_call_phone_cancel).setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                mDialog.dismiss();
+//            }
+//        });
+//        mDialog.getWindow().findViewById(R.id.tv_dialog_call_phone_sure).setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                UnicornManager.inToUnicorn(context);
+//
+//                mDialog.dismiss();
+//            }
+//        });
     }
     public static String AuthorizationCode;
     public static AlertDialog mDialogAuth;

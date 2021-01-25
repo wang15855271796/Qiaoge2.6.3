@@ -52,7 +52,7 @@ public class CommonsAdapter extends RecyclerView.Adapter<CommonsAdapter.BaseView
     private int pos;
     private CouponModel.DataBean.ActivesBean activesBean;
 
-    public CommonsAdapter(Context context,String style, int layoutResId, List<CouponModel.DataBean.ActivesBean> actives,String flag,OnClick onClick) {
+    public CommonsAdapter(Context context,String style, int layoutResId, List<CouponModel.DataBean.ActivesBean> actives,String flag) {
         this.mContext = context;
         this.style = style;
         this.layoutResId = layoutResId;

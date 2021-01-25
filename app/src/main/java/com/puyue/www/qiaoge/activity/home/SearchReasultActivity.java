@@ -2,8 +2,13 @@ package com.puyue.www.qiaoge.activity.home;
 
 import android.app.AlertDialog;
 import android.content.Intent;
+import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -12,12 +17,17 @@ import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.CompoundButton;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.android.tu.loadingdialog.LoadingDailog;
 import com.puyue.www.qiaoge.R;
+import com.puyue.www.qiaoge.UnicornManager;
 import com.puyue.www.qiaoge.activity.CartActivity;
 import com.puyue.www.qiaoge.activity.mine.login.LoginActivity;
 import com.puyue.www.qiaoge.adapter.home.RegisterShopAdapterTwo;
@@ -28,6 +38,7 @@ import com.puyue.www.qiaoge.api.cart.RecommendApI;
 import com.puyue.www.qiaoge.api.home.CityChangeAPI;
 import com.puyue.www.qiaoge.api.home.GetRegisterShopAPI;
 import com.puyue.www.qiaoge.api.home.UpdateUserInvitationAPI;
+import com.puyue.www.qiaoge.base.BaseFragment;
 import com.puyue.www.qiaoge.base.BaseSwipeActivity;
 import com.puyue.www.qiaoge.constant.AppConstant;
 import com.puyue.www.qiaoge.dialog.CouponDialog;
@@ -36,6 +47,9 @@ import com.puyue.www.qiaoge.event.UpDateNumEvent7;
 import com.puyue.www.qiaoge.event.UpDateNumEvent8;
 import com.puyue.www.qiaoge.fragment.cart.NumEvent;
 import com.puyue.www.qiaoge.fragment.cart.ReduceNumEvent;
+import com.puyue.www.qiaoge.fragment.home.AllGoodsFragment;
+import com.puyue.www.qiaoge.fragment.home.OperateFragment;
+import com.puyue.www.qiaoge.fragment.home.UnOperateFragment;
 import com.puyue.www.qiaoge.helper.AppHelper;
 import com.puyue.www.qiaoge.helper.PublicRequestHelper;
 import com.puyue.www.qiaoge.helper.StringHelper;
@@ -52,6 +66,7 @@ import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnLoadMoreListener;
 import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
+import com.wang.avi.AVLoadingIndicatorView;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -80,15 +95,28 @@ public class SearchReasultActivity extends BaseSwipeActivity {
     TextView tv_num;
     @BindView(R.id.tv_activity_result)
     TextView tv_activity_result;
-    @BindView(R.id.smart)
-    SmartRefreshLayout refreshLayout;
     @BindView(R.id.rl_num)
     RelativeLayout rl_num;
-    SearchReasultAdapter searchReasultAdapter;
+    @BindView(R.id.rb_all)
+    RadioButton rb_all;
+    @BindView(R.id.rb_operate)
+    RadioButton rb_operate;
+    @BindView(R.id.rb_unOperate)
+    RadioButton rb_unOperate;
+    @BindView(R.id.fl_container)
+    FrameLayout fl_container;
+    @BindView(R.id.rg_group)
+    RadioGroup rg_group;
+    @BindView(R.id.ll_recommend)
+    LinearLayout ll_recommend;
+    @BindView(R.id.ll_all)
+    LinearLayout ll_all;
     String searchWord;
     int pageNum = 1;
     int pageSize = 10;
     public View view;
+    @BindView(R.id.lav_activity_loading)
+    AVLoadingIndicatorView lav_activity_loading;
     private SearchResultAdapter searchResultAdapter;
     SearchResultsModel searchResultsModel;
     //搜索集合
@@ -96,6 +124,7 @@ public class SearchReasultActivity extends BaseSwipeActivity {
     private String priceType;
     private String enjoyProduct;
     private String cell; // 客服电话
+    private List<Fragment> mBaseFragment;
     @Override
     public boolean handleExtra(Bundle savedInstanceState) {
 
@@ -111,8 +140,9 @@ public class SearchReasultActivity extends BaseSwipeActivity {
     public void findViewById() {
         ButterKnife.bind(this);
         EventBus.getDefault().register(this);
+
+
         priceType = getIntent().getStringExtra("priceType");
-        refreshLayout.autoRefresh();
         rl_num.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -141,71 +171,52 @@ public class SearchReasultActivity extends BaseSwipeActivity {
                 finish();
             }
         });
+    }
+
+    private void initFragment(String searchWord) {
+        mBaseFragment = new ArrayList<>();
+        mBaseFragment.add(AllGoodsFragment.getInstance(searchWord));
+        mBaseFragment.add(OperateFragment.getInstance(searchWord));
+        mBaseFragment.add(UnOperateFragment.getInstance(searchWord));
+
+    }
 
 
-            refreshLayout.setEnableLoadMore(false);
-            refreshLayout.setOnRefreshListener(new OnRefreshListener() {
-                @Override
-                public void onRefresh(@NonNull RefreshLayout refreshLayout) {
-                    pageNum = 1;
-                    searchList.clear();
-                    getRecommendList(1,pageSize);
-                    refreshLayout.finishRefresh();
-                }
-            });
-
-            refreshLayout.setOnLoadMoreListener(new OnLoadMoreListener() {
-                @Override
-                public void onLoadMore(@NonNull RefreshLayout refreshLayout) {
-                    if(searchResultsModel.getData() != null) {
-                        if(searchResultsModel.getData().getSearchProd().isHasNextPage()) {
-                            pageNum++;
-                            getRecommendList(pageNum, 10);
-                            refreshLayout.finishLoadMore();      //加载完成
-                        }else {
-                            refreshLayout.finishLoadMoreWithNoMoreData();
-                        }
-                    }
-                }
-            });
-
-
-        //搜索Adapter
-        searchReasultAdapter = new SearchReasultAdapter(R.layout.item_noresult_recommend, searchList, new SearchReasultAdapter.Onclick() {
-            @Override
-            public void addDialog() {
-                if (StringHelper.notEmptyAndNull(UserInfoHelper.getUserId(SearchReasultActivity.this))) {
-
-                }else {
-                    initDialog();
-                }
-            }
-
-            @Override
-            public void getPrice() {
-                showPhoneDialog(cell);
-            }
-        });
-        recyclerView.setLayoutManager(new LinearLayoutManager(mContext));
-        recyclerView.setAdapter(searchReasultAdapter);
-
+    private void setListener() {
+        rg_group.setOnCheckedChangeListener(new MyOnCheckedChangeListener());
+        //设置默认选中框架页面
+        rg_group.check(R.id.rb_all);
     }
 
     private AlertDialog mDialog;
     TextView tv_phone;
+    TextView tv_time;
     public void showPhoneDialog(final String cell) {
-        mDialog = new AlertDialog.Builder(mActivity).create();
+        mDialog = new AlertDialog.Builder(mContext).create();
         mDialog.show();
         mDialog.getWindow().setContentView(R.layout.dialog_shouye_tip);
         tv_phone = mDialog.getWindow().findViewById(R.id.tv_phone);
-        tv_phone.setText(cell);
-        mDialog.getWindow().findViewById(R.id.tv_dialog_call_phone_sure).setOnClickListener(new View.OnClickListener() {
+        tv_time = mDialog.getWindow().findViewById(R.id.tv_time);
+        tv_phone.setText("客服热线 ("+cell+")");
+
+        tv_phone.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Intent intent = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + cell));
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+                mDialog.dismiss();
+            }
+        });
+        tv_time.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                UnicornManager.inToUnicorn(mContext);
                 mDialog.dismiss();
             }
         });
     }
+
 
 
     @Override
@@ -215,6 +226,11 @@ public class SearchReasultActivity extends BaseSwipeActivity {
         tv_activity_result.setText(searchWord);
         getCartNum();
         getCustomerPhone();
+        lav_activity_loading.setVisibility(View.VISIBLE);
+        lav_activity_loading.show();
+        getRecommendList(1,pageSize);
+        initFragment(searchWord);
+        setListener();
     }
 
     private void getCustomerPhone() {
@@ -289,7 +305,7 @@ public class SearchReasultActivity extends BaseSwipeActivity {
      * 获取推荐列表
      */
     private void getRecommendList(int pageNum,int pageSize) {
-        RecommendApI.requestData(mContext,searchWord,pageNum,pageSize)
+        RecommendApI.requestData(mContext,searchWord,pageNum,pageSize,0)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<SearchResultsModel>() {
@@ -306,10 +322,15 @@ public class SearchReasultActivity extends BaseSwipeActivity {
                     public void onNext(SearchResultsModel recommendModel) {
                         if (recommendModel.isSuccess()) {
                             searchResultsModel = recommendModel;
+
                             if(recommendModel.getData().getSearchProd()!=null) {
-                                searchList.addAll(searchResultsModel.getData().getSearchProd().getList());
-                                searchReasultAdapter.notifyDataSetChanged();
-                                refreshLayout.setEnableLoadMore(true);
+                                if(recommendModel.getData().getSearchProd().getList().size()>0) {
+                                    ll_all.setVisibility(View.VISIBLE);
+                                    lav_activity_loading.setVisibility(View.GONE);
+                                }else {
+                                    ll_all.setVisibility(View.GONE);
+                                    lav_activity_loading.setVisibility(View.VISIBLE);
+                                }
                             }
 
                             if(recommendModel.getData().getRecommendProd().size()!=0) {
@@ -328,15 +349,19 @@ public class SearchReasultActivity extends BaseSwipeActivity {
                                         showPhoneDialog(cell);
                                     }
                                 });
+                                lav_activity_loading.setVisibility(View.GONE);
+                                ll_recommend.setVisibility(View.VISIBLE);
                                 searchResultAdapter.addHeaderView(view);
                                 recyclerView.setLayoutManager(new LinearLayoutManager(mContext));
                                 recyclerView.setAdapter(searchResultAdapter);
+                            }else {
+                                ll_recommend.setVisibility(View.GONE);
+                                lav_activity_loading.setVisibility(View.GONE);
                             }
-
-
 
                         } else {
                             AppHelper.showMsg(mContext, recommendModel.getMessage());
+                            lav_activity_loading.setVisibility(View.GONE);
                         }
                     }
                 });
@@ -363,4 +388,73 @@ public class SearchReasultActivity extends BaseSwipeActivity {
     public void setClickEvent() {
 
     }
+    private int position;
+    private class MyOnCheckedChangeListener implements RadioGroup.OnCheckedChangeListener {
+        @Override
+        public void onCheckedChanged(RadioGroup group, int checkedId) {
+            switch (checkedId){
+                case R.id.rb_all:
+                    position = 0;
+                    rb_all.setTextColor(Color.parseColor("#FF5C00"));
+                    rb_operate.setTextColor(Color.parseColor("#666666"));
+                    rb_unOperate.setTextColor(Color.parseColor("#666666"));
+                    break;
+                case R.id.rb_operate:
+                    position = 1;
+                    rb_operate.setTextColor(Color.parseColor("#FF5C00"));
+                    rb_all.setTextColor(Color.parseColor("#666666"));
+                    rb_unOperate.setTextColor(Color.parseColor("#666666"));
+                    break;
+                case R.id.rb_unOperate:
+                    position = 2;
+                    rb_unOperate.setTextColor(Color.parseColor("#FF5C00"));
+                    rb_operate.setTextColor(Color.parseColor("#666666"));
+                    rb_all.setTextColor(Color.parseColor("#666666"));
+                    break;
+                default: //默认第一个(框架)
+                    position = 0;
+                    break;
+            }
+
+            //根据位置得到对应的Fragment
+            Fragment to = getFragment();
+            //替换到Fragment
+            switchFrament(mContent,to);
+
+        }
+    }
+
+    private Fragment getFragment() {
+        Fragment fragment = mBaseFragment.get(position);
+        return fragment;
+    }
+
+    private Fragment mContent;
+    private void switchFrament(Fragment from,Fragment to) {
+        if(from != to){ //才切换
+            mContent = to;
+            FragmentTransaction ft = getSupportFragmentManager().beginTransaction(); //开启事务
+            //判断to有没有被添加
+            if(!to.isAdded()){//to没有被添加
+                //1.from隐藏
+                if(from != null){
+                    ft.hide(from);
+                }
+                //2.添加to
+                if(to != null){
+                    ft.add(R.id.fl_container,to).commit();
+                }
+            }else{ //to已经被添加
+                //1.from隐藏
+                if(from != null){
+                    ft.hide(from);
+                }
+                //2.显示to
+                if(to != null){
+                    ft.show(to).commit();
+                }
+            }
+        }
+    }
+
 }

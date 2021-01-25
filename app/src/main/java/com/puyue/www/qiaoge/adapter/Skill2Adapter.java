@@ -30,31 +30,25 @@ import java.util.List;
  */
 public class Skill2Adapter extends RecyclerView.Adapter<Skill2Adapter.BaseViewHolder> implements View.OnClickListener {
     private ImageView iv_pic;
-    private ImageView iv_add;
+//    private ImageView iv_add;
     private RelativeLayout rl_group;
     String flag;
     ImageView iv_flag;
-    private TextView tv_old_price;
+//    private TextView tv_old_price;
     private TextView tv_coupon;
-    RelativeLayout rl_coupon;
+//    RelativeLayout rl_coupon;
     public OnClick onClick;
     TextView tv_desc;
     Context mContext;
     int layoutResId;
     int pos;
-        CouponModel.DataBean.ActivesBean activesBean;
+    CouponModel.DataBean.ActivesBean activesBean;
     List<CouponModel.DataBean.ActivesBean> actives;
-    public Skill2Adapter(Context context,int layoutResId, List<CouponModel.DataBean.ActivesBean> actives, String flag,OnClick onClick) {
+    public Skill2Adapter(Context context,int layoutResId, List<CouponModel.DataBean.ActivesBean> actives, String flag) {
         this.mContext = context;
-        this.onClick = onClick;
         this.layoutResId = layoutResId;
         this.actives = actives;
         this.flag = flag;
-    }
-
-
-    public void setOnclick(OnClick onClick) {
-        this.onClick = onClick;
     }
 
     @NonNull
@@ -77,38 +71,38 @@ public class Skill2Adapter extends RecyclerView.Adapter<Skill2Adapter.BaseViewHo
         holder.tv_name.setText(activesBean.getActiveName());
         Glide.with(mContext).load(activesBean.getDefaultPic()).into(holder.iv_pic);
         holder.tv_price.setText(activesBean.getPrice());
-        holder.tv_old_price.getPaint().setFlags(Paint.STRIKE_THRU_TEXT_FLAG);
-        holder.tv_old_price.setText(activesBean.getOldPrice());
-        holder.tv_old_price.getPaint().setAntiAlias(true);//抗锯齿
+//        holder.tv_old_price.getPaint().setFlags(Paint.STRIKE_THRU_TEXT_FLAG);
+//        holder.tv_old_price.setText(activesBean.getOldPrice());
+//        holder.tv_old_price.getPaint().setAntiAlias(true);//抗锯齿
 
         if(StringHelper.notEmptyAndNull(UserInfoHelper.getUserId(mContext))) {
             if(SharedPreferencesUtil.getString(mContext,"priceType").equals("1")) {
                 holder.tv_desc.setVisibility(View.GONE);
-                holder.tv_old_price.setVisibility(View.VISIBLE);
+//                holder.tv_old_price.setVisibility(View.VISIBLE);
                 holder.tv_price.setVisibility(View.VISIBLE);
             }else {
                 holder.tv_desc.setVisibility(View.VISIBLE);
-                holder.tv_old_price.setVisibility(View.GONE);
+//                holder.tv_old_price.setVisibility(View.GONE);
                 holder.tv_price.setVisibility(View.GONE);
             }
         }else {
             holder.tv_desc.setVisibility(View.GONE);
-            holder.tv_old_price.setVisibility(View.VISIBLE);
+//            holder.tv_old_price.setVisibility(View.VISIBLE);
             holder.tv_price.setVisibility(View.VISIBLE);
         }
 
         if(activesBean.getDiscount()!=null) {
             holder.tv_coupon.setText(activesBean.getDiscount());
-            holder.rl_coupon.setVisibility(View.VISIBLE);
+//            holder.rl_coupon.setVisibility(View.VISIBLE);
         }else {
-            holder.rl_coupon.setVisibility(View.GONE);
+//            holder.rl_coupon.setVisibility(View.GONE);
         }
 
         if(activesBean.getFlag()==1) {
-            holder.iv_sale_done.setVisibility(View.VISIBLE);
-            Glide.with(mContext).load(activesBean.getSoldOutPic()).into(holder.iv_sale_done);
+//            holder.iv_sale_done.setVisibility(View.VISIBLE);
+//            Glide.with(mContext).load(activesBean.getSoldOutPic()).into(holder.iv_sale_done);
         }else {
-            holder.iv_sale_done.setVisibility(View.GONE);
+//            holder.iv_sale_done.setVisibility(View.GONE);
         }
 
         holder.rl_group.setOnClickListener(new View.OnClickListener() {
@@ -131,22 +125,22 @@ public class Skill2Adapter extends RecyclerView.Adapter<Skill2Adapter.BaseViewHo
             }
         });
 
-        holder.iv_add.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(onClick!=null) {
-                    if(StringHelper.notEmptyAndNull(UserInfoHelper.getUserId(mContext))) {
-                        if(SharedPreferencesUtil.getString(mContext,"priceType").equals("1")) {
-                            onClick.shoppingCartOnClick(pos);
-                        }else {
-                            onClick.tipClick();
-                        }
-                    }else {
-                        onClick.addDialog();
-                    }
-                }
-            }
-        });
+//        holder.iv_add.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                if(onClick!=null) {
+//                    if(StringHelper.notEmptyAndNull(UserInfoHelper.getUserId(mContext))) {
+//                        if(SharedPreferencesUtil.getString(mContext,"priceType").equals("1")) {
+//                            onClick.shoppingCartOnClick(pos);
+//                        }else {
+//                            onClick.tipClick();
+//                        }
+//                    }else {
+//                        onClick.addDialog();
+//                    }
+//                }
+//            }
+//        });
     }
 
     @Override
@@ -249,29 +243,29 @@ public class Skill2Adapter extends RecyclerView.Adapter<Skill2Adapter.BaseViewHo
     }
     public class BaseViewHolder extends RecyclerView.ViewHolder {
         private RelativeLayout rl_group;
-        private RelativeLayout rl_coupon;
-        private ImageView iv_add;
+//        private RelativeLayout rl_coupon;
+//        private ImageView iv_add;
         private ImageView iv_pic;
         private TextView tv_price;
-        private TextView tv_old_price;
+//        private TextView tv_old_price;
         private TextView tv_desc;
         private TextView tv_name;
-        private ImageView iv_sale_done;
+//        private ImageView iv_sale_done;
         private ImageView iv_flag;
         private TextView tv_coupon;
         public BaseViewHolder(View view) {
             super(view);
             rl_group = (RelativeLayout) view.findViewById(R.id.rl_group);
-            rl_coupon = (RelativeLayout) view.findViewById(R.id.rl_coupon);
+//            rl_coupon = (RelativeLayout) view.findViewById(R.id.rl_coupon);
             tv_coupon = (TextView) view.findViewById(R.id.tv_coupon);
-            iv_add = (ImageView) view.findViewById(R.id.iv_add);
+//            iv_add = (ImageView) view.findViewById(R.id.iv_add);
             iv_flag = (ImageView) view.findViewById(R.id.iv_flag);
             iv_pic = (ImageView) view.findViewById(R.id.iv_pic);
             tv_price = (TextView) view.findViewById(R.id.tv_price);
-            tv_old_price = (TextView) view.findViewById(R.id.tv_old_price);
+//            tv_old_price = (TextView) view.findViewById(R.id.tv_old_price);
             tv_name = (TextView) view.findViewById(R.id.tv_name);
             tv_desc = (TextView) view.findViewById(R.id.tv_desc);
-            iv_sale_done = (ImageView) view.findViewById(R.id.iv_sale_done);
+//            iv_sale_done = (ImageView) view.findViewById(R.id.iv_sale_done);
         }
     }
 }

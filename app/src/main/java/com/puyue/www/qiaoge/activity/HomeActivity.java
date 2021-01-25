@@ -38,6 +38,7 @@ import com.puyue.www.qiaoge.base.BaseActivity;
 import com.puyue.www.qiaoge.base.BaseModel;
 import com.puyue.www.qiaoge.constant.AppConstant;
 import com.puyue.www.qiaoge.dialog.CouponDialog;
+import com.puyue.www.qiaoge.event.FromIndexEvent;
 import com.puyue.www.qiaoge.event.GoToCartFragmentEvent;
 import com.puyue.www.qiaoge.event.GoToMarketEvent;
 import com.puyue.www.qiaoge.event.GoToMineEvent;
@@ -45,8 +46,10 @@ import com.puyue.www.qiaoge.event.LogoutEvent;
 import com.puyue.www.qiaoge.event.OnHttpCallBack;
 import com.puyue.www.qiaoge.fragment.cart.CartFragment;
 import com.puyue.www.qiaoge.fragment.cart.ReduceNumEvent;
+import com.puyue.www.qiaoge.fragment.home.CityEvent;
 import com.puyue.www.qiaoge.fragment.home.HomeFragment;
 import com.puyue.www.qiaoge.fragment.home.HomeFragmentsss;
+import com.puyue.www.qiaoge.fragment.home.InfoFragment;
 import com.puyue.www.qiaoge.fragment.market.MarketsFragment;
 import com.puyue.www.qiaoge.fragment.mine.MineFragment;
 import com.puyue.www.qiaoge.helper.AppHelper;
@@ -77,12 +80,15 @@ public class HomeActivity extends BaseActivity implements CartFragment.FragmentI
     private static final String TAB_MARKET = "tab_market";
     private static final String TAB_CART = "tab_cart";
     private static final String TAB_MINE = "tab_mine";
+    private static final String TAB_INFO = "tab_info";
     private Fragment mTabHome;
     private Fragment mTabMarket;
     private Fragment mTabCart;
+    private Fragment mTabInfo;
     private Fragment mTabMine;
     private FragmentTransaction mFragmentTransaction;
     private LinearLayout mLlHome;
+    LinearLayout ll_info;
     private ImageView mIvHome;
     private TextView mTvHome;
     private LinearLayout mLlMarket;
@@ -94,6 +100,8 @@ public class HomeActivity extends BaseActivity implements CartFragment.FragmentI
     private LinearLayout mLlMine;
     private ImageView mIvMine;
     private TextView mTvMine;
+    private ImageView iv_info;
+    private TextView tv_info;
     private long mExitTime = 0;
     private TextView mTvCarNum;
     // 弹窗
@@ -123,6 +131,8 @@ public class HomeActivity extends BaseActivity implements CartFragment.FragmentI
             mTabMarket = fragment;
         if (mTabCart == null && fragment instanceof CartFragment)
             mTabCart = fragment;
+        if (mTabInfo == null && fragment instanceof InfoFragment)
+            mTabInfo = fragment;
         if (mTabMine == null && fragment instanceof MineFragment)
             mTabMine = fragment;
         super.onAttachFragment(fragment);
@@ -201,6 +211,9 @@ public class HomeActivity extends BaseActivity implements CartFragment.FragmentI
 
     @Override
     public void findViewById() {
+        iv_info = (ImageView) findViewById(R.id.iv_info);
+        tv_info = (TextView) findViewById(R.id.tv_info);
+        ll_info = (LinearLayout) findViewById(R.id.ll_info);
         mLlHome = (LinearLayout) findViewById(R.id.layout_tab_bar_home);
         mIvHome = (ImageView) findViewById(R.id.iv_tab_bar_home_icon);
         mTvHome = (TextView) findViewById(R.id.tv_tab_bar_home_title);
@@ -304,6 +317,7 @@ public class HomeActivity extends BaseActivity implements CartFragment.FragmentI
 
     @Override
     public void setClickEvent() {
+        ll_info.setOnClickListener(noDoubleClickListener);
         mLlHome.setOnClickListener(noDoubleClickListener);
         mLlMarket.setOnClickListener(noDoubleClickListener);
         mLlCart.setOnClickListener(noDoubleClickListener);
@@ -348,6 +362,14 @@ public class HomeActivity extends BaseActivity implements CartFragment.FragmentI
                 } else {
                     initDialog();
                 }
+            }else if(view == ll_info) {
+                if (StringHelper.notEmptyAndNull(UserInfoHelper.getUserId(mContext))) {
+                    switchTab(TAB_INFO);
+                    Window window = getWindow();
+                    window.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+                } else {
+                    initDialog();
+                }
             }
         }
     };
@@ -384,11 +406,15 @@ public class HomeActivity extends BaseActivity implements CartFragment.FragmentI
         if (mTabCart != null) {
             mFragmentTransaction.hide(mTabCart);
         }
+        if (mTabInfo != null) {
+            mFragmentTransaction.hide(mTabInfo);
+        }
         if (mTabMine != null) {
             mFragmentTransaction.hide(mTabMine);
         }
         //重置所有的tabStyle
         mIvHome.setImageResource(R.mipmap.ic_tab_home_unable);
+        mTvHome.setVisibility(View.GONE);
         mTvHome.setTextColor(getResources().getColor(R.color.app_color_bottom_gray));
         mIvMarket.setImageResource(R.mipmap.ic_tab_goods_unable);
         mTvMarket.setTextColor(getResources().getColor(R.color.app_color_bottom_gray));
@@ -396,10 +422,12 @@ public class HomeActivity extends BaseActivity implements CartFragment.FragmentI
         mTvCart.setTextColor(getResources().getColor(R.color.app_color_bottom_gray));
         mIvMine.setImageResource(R.mipmap.ic_tab_mine_unable);
         mTvMine.setTextColor(getResources().getColor(R.color.app_color_bottom_gray));
+        iv_info.setImageResource(R.mipmap.ic_tab_info_un);
+        tv_info.setTextColor(getResources().getColor(R.color.app_color_bottom_gray));
         //切换被选中的tab
         switch (tab) {
-
             case TAB_HOME:
+                mTvHome.setVisibility(View.GONE);
                 if (mTabHome == null || isGet) {
                     mTabHome = new HomeFragmentsss();
                     mFragmentTransaction.add(R.id.layout_home_container, mTabHome);
@@ -412,22 +440,30 @@ public class HomeActivity extends BaseActivity implements CartFragment.FragmentI
                 mIvHome.setImageResource(R.mipmap.ic_tab_home_enable);
                 mTvHome.setTextColor(getResources().getColor(R.color.app_tab_selected));
                 getCartPoductNum();
+
+                EventBus.getDefault().post(new TopEvent());
                 break;
 
             case TAB_MARKET:
+                mTvHome.setVisibility(View.VISIBLE);
                 if (mTabMarket == null) {
                     mTabMarket = new MarketsFragment();
                     mFragmentTransaction.add(R.id.layout_home_container, mTabMarket);
+                    EventBus.getDefault().postSticky(new FromIndexEvent(""));
+                    Log.d("fsdfsewfef,...","ppppp");
                 } else {
                     mFragmentTransaction.show(mTabMarket);
                 }
 
+
                 mIvMarket.setImageResource(R.mipmap.ic_tab_goods_enable);
                 mTvMarket.setTextColor(getResources().getColor(R.color.app_tab_selected));
                 getCartPoductNum();
+
+
                 break;
             case TAB_CART:
-
+                mTvHome.setVisibility(View.VISIBLE);
                 if (mTabCart == null) {
                     mTabCart = new CartFragment();
                     mFragmentTransaction.add(R.id.layout_home_container, mTabCart);
@@ -440,6 +476,7 @@ public class HomeActivity extends BaseActivity implements CartFragment.FragmentI
                 getCartPoductNum();
                 break;
             case TAB_MINE:
+                mTvHome.setVisibility(View.VISIBLE);
                 if (mTabMine == null) {
                     mTabMine = new MineFragment();
                     mFragmentTransaction.add(R.id.layout_home_container, mTabMine);
@@ -449,6 +486,20 @@ public class HomeActivity extends BaseActivity implements CartFragment.FragmentI
 
                 mIvMine.setImageResource(R.mipmap.ic_tab_mine_enable);
                 mTvMine.setTextColor(getResources().getColor(R.color.app_tab_selected));
+                getCartPoductNum();
+                break;
+
+            case TAB_INFO:
+                mTvHome.setVisibility(View.VISIBLE);
+                if (mTabInfo == null) {
+                    mTabInfo = new InfoFragment();
+                    mFragmentTransaction.add(R.id.layout_home_container, mTabInfo);
+                } else {
+                    mFragmentTransaction.show(mTabInfo);
+                }
+
+                iv_info.setImageResource(R.mipmap.ic_tab_info_en);
+                tv_info.setTextColor(getResources().getColor(R.color.app_tab_selected));
                 getCartPoductNum();
                 break;
         }

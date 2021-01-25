@@ -125,10 +125,6 @@ public class ChooseAddressActivity extends BaseSwipeActivity implements View.OnC
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
                 requestEditDefaultAddress(list.get(position).id,null,position);
                 areaName = getIntent().getStringExtra("areaName");
-//                SharedPreferencesUtil.saveString(mActivity,"cityName",list.get(position).getCityName());
-//                SharedPreferencesUtil.saveString(mActivity,"areaName",list.get(position).getAreaName());
-//                SharedPreferencesUtil.saveString(mActivity,"changeFlag","0");
-
                 finish();
             }
         });
@@ -284,8 +280,6 @@ public class ChooseAddressActivity extends BaseSwipeActivity implements View.OnC
                                 ll_list.setVisibility(View.GONE);
                                 rl_empty.setVisibility(View.VISIBLE);
                             }
-
-//                            EventBus.getDefault().post(new AddressEvent());
                         } else {
                             AppHelper.showMsg(mContext, mModelAddress.message);
                         }

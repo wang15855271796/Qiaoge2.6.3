@@ -88,11 +88,18 @@
                 android:orientation="horizontal"
                 android:paddingTop="1dp">
 
-                <android.support.v7.widget.RecyclerView
-                    android:id="@+id/rv_market_second"
-                    android:layout_width="100dp"
-                    android:layout_height="match_parent"
-                     />
+                <android.support.v4.widget.NestedScrollView
+                    android:scrollbars="none"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent">
+
+                    <android.support.v7.widget.RecyclerView
+                        android:id="@+id/rv_market_second"
+                        android:layout_width="100dp"
+                        android:layout_height="match_parent"
+                        />
+                </android.support.v4.widget.NestedScrollView>
+
 
                 <!--筛选布局-->
                     <LinearLayout

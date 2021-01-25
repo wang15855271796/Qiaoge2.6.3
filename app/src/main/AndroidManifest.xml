@@ -282,6 +282,11 @@
 
         <activity android:name=".activity.TestActivity"
             android:screenOrientation="portrait" />
+        <activity android:name=".fragment.home.Test3Activity"
+            android:screenOrientation="portrait" />
+
+        <activity android:name=".fragment.home.TestActivity4"
+            android:screenOrientation="portrait" />
         <activity android:name=".activity.mine.account.EditAccountInputPhoneActivity"
             android:screenOrientation="portrait" />
 
@@ -313,6 +318,25 @@
 
         <activity android:name=".activity.mine.MyCollectionActivity"
             android:screenOrientation="portrait" />
+
+        <activity android:name=".activity.mine.ShopDetailActivity"
+            android:screenOrientation="portrait"
+            />
+
+        <activity android:name=".activity.mine.IssueActivity"
+            android:screenOrientation="portrait"
+            />
+
+        <activity android:name=".activity.IssueInfoActivity"
+            android:screenOrientation="portrait"
+            />
+
+        <activity android:name=".activity.ShopStartActivity"
+            android:screenOrientation="portrait"
+            />
+        <activity android:name=".activity.IssueEditInfoActivity"
+            android:screenOrientation="portrait"
+            />
         <activity android:name=".activity.mine.order.MyOrdersActivity"
             android:screenOrientation="portrait" />
         <activity android:name=".activity.mine.order.MySubOrderActivity"

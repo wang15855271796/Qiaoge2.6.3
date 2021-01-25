@@ -282,7 +282,6 @@
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content">
 
-
                                 </com.puyue.www.qiaoge.view.FlowLayout>
 
 
@@ -302,18 +301,12 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="@dimen/size_48dp">
 
-                                <ImageView
-                                    android:id="@+id/iv"
-                                    android:src="@mipmap/icon_next"
-                                    android:layout_marginLeft="@dimen/size_15dp"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content" />
 
                                 <ImageView
                                     android:id="@+id/iv2"
                                     android:layout_toRightOf="@+id/iv"
                                     android:src="@mipmap/icon_operate"
-                                    android:layout_marginLeft="@dimen/size_5dp"
+                                    android:layout_marginLeft="@dimen/size_15dp"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content" />
 
@@ -321,8 +314,7 @@
                                     android:textSize="@dimen/sp_12"
                                     android:id="@+id/tv_operate_date"
                                     android:textColor="#292621"
-                                    android:layout_marginLeft="@dimen/size_5dp"
-                                    android:layout_toRightOf="@+id/iv2"
+                                    android:layout_marginLeft="@dimen/size_85dp"
                                     android:text="现在下单，预计明天(9月20日)开始配送"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content" />
@@ -337,9 +329,8 @@
 
                                 <ImageView
                                     android:id="@+id/iv3"
-                                    android:layout_marginTop="@dimen/size_15dp"
-                                    android:layout_marginBottom="@dimen/size_15dp"
-                                    android:src="@mipmap/icon_after_next"
+                                    android:layout_centerVertical="true"
+                                    android:src="@mipmap/icon_operate"
                                     android:layout_marginLeft="@dimen/size_15dp"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content" />
@@ -348,25 +339,24 @@
                                     android:id="@+id/tv_date"
                                     android:layout_marginTop="@dimen/size_15dp"
                                     android:textSize="@dimen/sp_12"
-                                    android:textColor="#292621"
-                                    android:layout_marginLeft="@dimen/size_5dp"
-                                    android:layout_toRightOf="@+id/iv3"
+                                    android:textColor="#333333"
+                                    android:layout_marginLeft="85dp"
                                     android:text="现在下单，预计明天(9月20日)开始配送"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content" />
 
                                 <TextView
-                                    android:id="@+id/tv_address"
-                                    android:layout_below="@+id/iv3"
-                                    android:textColor="#666666"
-                                    android:visibility="gone"
+                                    android:id="@+id/tv_send_area"
+                                    android:layout_marginTop="5dp"
+                                    android:layout_below="@+id/tv_date"
+                                    android:textColor="#333333"
+                                    android:paddingTop="5dp"
+                                    android:paddingBottom="5dp"
+                                    android:drawablePadding="@dimen/size_5dp"
                                     android:layout_marginBottom="@dimen/size_10dp"
                                     android:layout_marginRight="@dimen/size_18dp"
-                                    android:layout_marginLeft="@dimen/size_5dp"
-                                    android:layout_toRightOf="@+id/iv3"
+                                    android:layout_marginLeft="85dp"
                                     android:textSize="@dimen/sp_12"
-                                    android:layout_alignParentRight="true"
-                                    android:drawableRight="@mipmap/ic_order_more"
                                     tools:text="杭州翘歌网络科技有限公司"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content" />
@@ -377,25 +367,59 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="8dp"
                                 android:background="@color/app_bg_gray" />
+                            <!--供应商-->
+                            <RelativeLayout
+                                android:id="@+id/rl_gongying"
+                                android:layout_width="match_parent"
+                                android:layout_height="@dimen/size_45dp">
+
+                                <TextView
+                                    android:id="@+id/tv3"
+                                    android:layout_centerVertical="true"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="供应商"
+                                    android:layout_marginLeft="@dimen/size_15dp"
+                                    android:textStyle="bold"
+                                    android:textColor="#333333"
+                                    android:textSize="14dp" />
+
+                                <TextView
+                                    android:layout_marginLeft="85dp"
+                                    android:id="@+id/tv_address"
+                                    android:layout_centerVertical="true"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="杭州翘歌网络"
+                                    android:layout_marginRight="@dimen/size_15dp"
+                                    android:textColor="#292621"
+                                    android:textSize="12dp" />
+
+                            </RelativeLayout>
+
+                            <View
+                                android:layout_width="match_parent"
+                                android:layout_height="8dp"
+                                android:background="@color/app_bg_gray" />
 
                             <!--产品说明-->
                             <RelativeLayout
-                                android:layout_marginLeft="15dp"
                                 android:paddingTop="@dimen/size_15dp"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content">
 
                                 <TextView
                                     android:id="@+id/tv1"
+                                    android:layout_marginLeft="@dimen/size_15dp"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:text="产品说明："
+                                    android:text="产品说明:"
                                     android:textStyle="bold"
                                     android:textColor="#333333"
                                     android:textSize="14dp" />
 
                                 <TextView
-                                    android:layout_toRightOf="@+id/tv1"
+                                    android:layout_marginLeft="85dp"
                                     android:id="@+id/tv_desc"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"

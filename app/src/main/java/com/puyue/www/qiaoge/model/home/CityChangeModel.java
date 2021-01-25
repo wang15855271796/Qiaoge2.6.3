@@ -82,7 +82,16 @@ public class CityChangeModel extends SectionEntity<CityChangeModel.DataBean>{
         private String provinceCode;
         private List<CityNamesBean> cityNames;
 
-//        public DataBean(boolean isHeader, String header) {
+        @Override
+        public String toString() {
+            return "DataBean{" +
+                    "provinceName='" + provinceName + '\'' +
+                    ", provinceCode='" + provinceCode + '\'' +
+                    ", cityNames=" + cityNames +
+                    '}';
+        }
+
+        //        public DataBean(boolean isHeader, String header) {
 //            super(isHeader, header);
 //        }
 //        public DataBean(CityChangeModel.DataBean dataBean) {
@@ -147,6 +156,15 @@ public class CityChangeModel extends SectionEntity<CityChangeModel.DataBean>{
                 this.areaNames = areaNames;
             }
 
+            @Override
+            public String toString() {
+                return "CityNamesBean{" +
+                        "cityName='" + cityName + '\'' +
+                        ", cityCode='" + cityCode + '\'' +
+                        ", areaNames=" + areaNames +
+                        '}';
+            }
+
             public static class AreaNamesBean {
                 /**
                  * areaName : 东城区
@@ -172,6 +190,7 @@ public class CityChangeModel extends SectionEntity<CityChangeModel.DataBean>{
                     this.areaCode = areaCode;
                 }
             }
+
         }
     }
 }

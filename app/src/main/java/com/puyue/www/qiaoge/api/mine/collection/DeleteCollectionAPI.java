@@ -19,11 +19,11 @@ public class DeleteCollectionAPI {
     public interface DeleteCollectionService {
         @FormUrlEncoded
         @POST(AppInterfaceAddress.DELETE_COMMON_COLLECT)
-        Observable<DeleteCollectionModel> setParams(@Field("ids") String ids);
+        Observable<DeleteCollectionModel> setParams(@Field("businessIds") String businessIds);
     }
 
-    public static Observable<DeleteCollectionModel> requestDeleteCollection(Context context, String ids) {
-        Observable<DeleteCollectionModel> deleteCollectionModelObservable = RestHelper.getBaseRetrofit(context).create(DeleteCollectionService.class).setParams(ids);
+    public static Observable<DeleteCollectionModel> requestDeleteCollection(Context context, String businessIds) {
+        Observable<DeleteCollectionModel> deleteCollectionModelObservable = RestHelper.getBaseRetrofit(context).create(DeleteCollectionService.class).setParams(businessIds);
         return deleteCollectionModelObservable;
     }
 }

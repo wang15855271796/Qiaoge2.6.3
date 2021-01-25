@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
+    android:layout_width="wrap_content"
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:layout_height="wrap_content">
@@ -11,7 +11,8 @@
 
         <LinearLayout
             android:id="@+id/ll_icon"
-            android:layout_width="120dp"
+            android:layout_marginLeft="@dimen/size_25dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
             android:layout_gravity="center"
@@ -21,9 +22,11 @@
 
             <ImageView
                 android:id="@+id/iv_icon"
-                android:layout_width="@dimen/size_40dp"
-                android:layout_height="@dimen/size_40dp"
+                android:layout_width="@dimen/size_46dp"
+                android:layout_height="@dimen/size_46dp"
                 />
+
+
 
             <TextView
                 android:id="@+id/tv_desc"
@@ -36,28 +39,7 @@
                 />
         </LinearLayout>
 
-        <ImageView
-            android:id="@+id/iv_tip"
-            android:visibility="gone"
-            android:layout_marginTop="@dimen/size_2dp"
-            android:layout_marginLeft="@dimen/size_50dp"
-            android:src="@drawable/icon_red_home"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-
-        <TextView
-            tools:text = "sss"
-            android:visibility="gone"
-            android:singleLine="true"
-            android:maxLines="1"
-
-            android:layout_marginTop="@dimen/size_3dp"
-            android:textSize="@dimen/size_8dp"
-            android:id="@+id/tv_tip"
-            android:textColor="#ffffff"
-            android:layout_marginLeft="@dimen/size_52dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
     </RelativeLayout>
+
 
 </LinearLayout>

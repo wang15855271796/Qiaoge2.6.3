@@ -34,6 +34,9 @@ import android.os.Message;
 import android.os.Parcelable;
 import android.os.SystemClock;
 import android.provider.MediaStore;
+import android.support.design.widget.AppBarLayout;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.text.format.DateFormat;
@@ -60,6 +63,8 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.PopupWindow;
+import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -79,6 +84,7 @@ import com.puyue.www.qiaoge.activity.mine.order.MyOrdersActivity;
 import com.puyue.www.qiaoge.activity.mine.order.NewOrderDetailActivity;
 import com.puyue.www.qiaoge.activity.mine.order.SelfSufficiencyOrderDetailActivity;
 
+import com.puyue.www.qiaoge.adapter.MyAdapter;
 import com.puyue.www.qiaoge.adapter.home.SearchReasultAdapter;
 import com.puyue.www.qiaoge.adapter.home.SearchResultAdapter;
 import com.puyue.www.qiaoge.adapter.market.GoodsDetailAdapter;
@@ -101,6 +107,7 @@ import com.puyue.www.qiaoge.banner.BannerConfig;
 import com.puyue.www.qiaoge.banner.GlideImageLoader;
 import com.puyue.www.qiaoge.banner.Transformer;
 import com.puyue.www.qiaoge.banner.listener.OnBannerListener;
+import com.puyue.www.qiaoge.base.BaseActivity;
 import com.puyue.www.qiaoge.base.BaseSwipeActivity;
 import com.puyue.www.qiaoge.constant.AppConstant;
 import com.puyue.www.qiaoge.event.GoToMarketEvent;
@@ -136,6 +143,7 @@ import com.puyue.www.qiaoge.model.mine.GetWalletAmountModel;
 import com.puyue.www.qiaoge.model.mine.NewWebModel;
 import com.puyue.www.qiaoge.model.mine.wallet.NewWebPhoneModel;
 import com.puyue.www.qiaoge.utils.SharedPreferencesUtil;
+import com.puyue.www.qiaoge.view.HIndicators;
 import com.tencent.mm.opensdk.modelpay.PayReq;
 import com.tencent.mm.opensdk.openapi.IWXAPI;
 import com.tencent.mm.opensdk.openapi.WXAPIFactory;
@@ -174,200 +182,91 @@ import static com.umeng.socialize.utils.ContextUtil.getContext;
 /**
  * Created by ${王涛} on 2019/9/29
  */
-public abstract class TestActivity extends FrameLayout {
-    private Context mContext;
-    private static final int LOADING = 1;
-    private static final int LOADERROR = 2;
-    private static final int NETERROR = 3;
-    private static final int LOADED = 4;
-    private static final int NODATA = 5;
-    private ImageView loadingView;
-    private LinearLayout mlinearLayoutLoading;
-    private ImageView noDataView;
-    private LinearLayout mlinearLayoutNoData;
-    private LinearLayout mlinearLayoutLoadError;
-    private ImageView netErrorView;
-    private LinearLayout mlinearLayoutNetError;
-    private View successView;
-
-    private int currentState = LOADING;
-    private FrameLayout.LayoutParams params;
-
-    public TestActivity(Context context) {
-        super(context);
-        this.mContext = context;
-        createView();
+public class TestActivity extends BaseActivity {
+//    @BindView(R.id.rv)
+//    RecyclerView rv;
+    @BindView(R.id.rl_bg)
+    RelativeLayout rl_bg;
+    @BindView(R.id.appBarLayout)
+    AppBarLayout appBarLayout;
+    @BindView(R.id.rv1)
+    RecyclerView rv1;
+//    @BindView(R.id.hIndicator)
+//    HIndicators hIndicator;
+//    @BindView(R.id.tv)
+//    TextView tv;
+//    @BindView(R.id.ll_root)
+//    ScrollView ll_root;
+    List<String> list = new ArrayList<>();
+    private int mMaxScrollSize;
+    @Override
+    public boolean handleExtra(Bundle savedInstanceState) {
+        return false;
     }
 
-    public TestActivity(Context context, AttributeSet attrs) {
-        super(context, attrs);
-        this.mContext = context;
-        createView();
+    @Override
+    public void setContentView() {
+        setContentView(R.layout.test4);
     }
 
-    public TestActivity(Context context, AttributeSet attrs, int defStyleAttr) {
-        super(context, attrs, defStyleAttr);
-    }
+    @Override
+    public void findViewById() {
+        ButterKnife.bind(this);
 
-    private void initData() {
-        currentState = LOADING;
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                SystemClock.sleep(3000);
-                int code = onLoad();
-                if (code == 200) {
-                    ((Activity) mContext).runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            currentState = LOADED;
-                            successView = onSuccessView();
-                            addView(successView, params);
-                        }
-                    });
-                } else if (code == 201) {
-                    ((Activity) mContext).runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            currentState = NODATA;
-                        }
-                    });
-
-                }else if (code == 404) {
-                    ((Activity) mContext).runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            currentState = LOADERROR;
-                        }
-                    });
-
-                } else if (code == -1) {
-                    ((Activity) mContext).runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            currentState = NETERROR;
-                        }
-                    });
-                }
-                refreshView();
-            }
-        }).start();
-    }
-
-    private void refreshView() {
-        mlinearLayoutLoading.setVisibility(currentState == LOADING ? View.VISIBLE : View.GONE);
-        mlinearLayoutNoData.setVisibility(currentState == NODATA ? View.VISIBLE : View.GONE);
-        mlinearLayoutNetError.setVisibility(currentState == NETERROR ? View.VISIBLE : View.GONE);
-        mlinearLayoutLoadError.setVisibility(currentState == LOADERROR ? View.VISIBLE : View.GONE);
-        if (successView != null) {
-            successView.setVisibility(currentState == LOADED ? View.VISIBLE : View.GONE);
+        for (int i = 0; i < 100; i++) {
+            list.add("wdddsdaaqww");
         }
-    }
 
-    public void show() {
-        initData();
-    }
-
-    private void createView() {
-        params = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT);
-        params.gravity = Gravity.CENTER;
-
-        createLoadingView();
-
-        createNoDataView();
-
-        createNetErrorView();
-
-        createLoadedErrorView();
-
-        addView(mlinearLayoutLoading, params);
-        addView(mlinearLayoutNoData, params);
-        addView(mlinearLayoutNetError, params);
-        addView(mlinearLayoutLoadError, params);
-        refreshView();
-    }
-
-    private void createNetErrorView() {
-        mlinearLayoutNetError  = new LinearLayout(mContext);
-        LinearLayout.LayoutParams linearLayoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,LinearLayout.LayoutParams.WRAP_CONTENT);
-        linearLayoutParams.gravity = Gravity.CENTER;
-        mlinearLayoutNetError.setOrientation(LinearLayout.VERTICAL);
-
-        netErrorView = new ImageView(mContext);
-//        netErrorView.setImageResource(R.drawable.net_error);
-
-        mlinearLayoutNetError.addView(netErrorView,linearLayoutParams);
-        TextView textView = new TextView(mContext);
-        textView.setText("网络错误，检查您的网络或点击重试");
-        textView.setOnClickListener(new OnClickListener() {
+//        GridLayoutManager gridLayoutManager = new GridLayoutManager(mActivity , 2);
+//        gridLayoutManager.setOrientation(RecyclerView.HORIZONTAL);
+//        rv.setLayoutManager(gridLayoutManager);
+        MyAdapter myAdapter = new MyAdapter(mActivity,list);
+//        rv.setAdapter(myAdapter);
+//        hIndicator.bindRecyclerView(rv);
+//        tv_title.setVisibility(View.GONE);
+        appBarLayout.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
             @Override
-            public void onClick(View v) {
-                currentState = LOADING;
-                show();
-                refreshView();
+            public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
+                if (mMaxScrollSize == 0){
+                    mMaxScrollSize = appBarLayout.getTotalScrollRange();
+                }
+                int currentScrollPercentage = (Math.abs(verticalOffset)) * 100
+                        / mMaxScrollSize;
+                float alpha=(float) (1 - currentScrollPercentage/100.0);
+                float alphas = 1-alpha;
+                if(verticalOffset==0) {
+                    rl_bg.setAlpha(0);
+                }else {
+                    rl_bg.setAlpha(alphas);
+                }
+//
+////                Log.d("wdasasdasd.....",verticalOffset+"ssss");
+//                Log.d("wdasasdasd.....",alphas+"");
             }
         });
+//        tv.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                ll_root.smoothScrollTo(0,0);
+//                Log.d("wdsadasdasasd","sdsds");
+//            }
+//        });
 
-        mlinearLayoutNetError.addView(textView,linearLayoutParams);
+        for (int i = 0; i < 100; i++) {
+            list.add("123");
+        }
 
-        mlinearLayoutNetError.setVisibility(View.GONE);
+        rv1.setLayoutManager(new LinearLayoutManager(mContext));
+        rv1.setAdapter(myAdapter);
     }
 
-    private void createNoDataView() {
-        mlinearLayoutNoData  = new LinearLayout(mContext);
-        LinearLayout.LayoutParams linearLayoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,LinearLayout.LayoutParams.WRAP_CONTENT);
-        linearLayoutParams.gravity = Gravity.CENTER;
-        mlinearLayoutNoData.setOrientation(LinearLayout.VERTICAL);
+    @Override
+    public void setViewData() {
 
-        noDataView = new ImageView(mContext);
-//        noDataView.setImageResource(R.drawable.nodata);
-        mlinearLayoutNoData.addView(noDataView,linearLayoutParams);
-        TextView textView = new TextView(mContext);
-        textView.setText("没有数据可供显示！");
-        mlinearLayoutNoData.addView(textView,linearLayoutParams);
-        mlinearLayoutNoData.setVisibility(View.GONE);
-    }
-    private void createLoadedErrorView() {
-        mlinearLayoutLoadError  = new LinearLayout(mContext);
-        LinearLayout.LayoutParams linearLayoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,LinearLayout.LayoutParams.WRAP_CONTENT);
-        linearLayoutParams.gravity = Gravity.CENTER;
-        mlinearLayoutLoadError.setOrientation(LinearLayout.VERTICAL);
-
-        noDataView = new ImageView(mContext);
-//        noDataView.setImageResource(R.drawable.nodata);
-        mlinearLayoutLoadError.addView(noDataView,linearLayoutParams);
-        TextView textView = new TextView(mContext);
-        textView.setText("加载失败！点击重试");
-        textView.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                currentState = LOADING;
-                show();
-                refreshView();
-            }
-        });
-        mlinearLayoutLoadError.addView(textView,linearLayoutParams);
-        mlinearLayoutLoadError.setVisibility(View.GONE);
     }
 
-    private void createLoadingView() {
-        mlinearLayoutLoading  = new LinearLayout(mContext);
-        LinearLayout.LayoutParams linearLayoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,LinearLayout.LayoutParams.WRAP_CONTENT);
-        linearLayoutParams.gravity = Gravity.CENTER;
-        mlinearLayoutLoading.setOrientation(LinearLayout.VERTICAL);
+    @Override
+    public void setClickEvent() {
 
-        loadingView = new ImageView(mContext);
-        loadingView.setImageResource(R.drawable.node);
-        AnimationDrawable animationDrawable = (AnimationDrawable) loadingView.getDrawable();
-        animationDrawable.start();
-        mlinearLayoutLoading.addView(loadingView,linearLayoutParams);
-        TextView textView = new TextView(mContext);
-        textView.setText("正在加载中");
-        mlinearLayoutLoading.addView(textView,linearLayoutParams);
-        mlinearLayoutLoading.setVisibility(View.GONE);
     }
-
-    public abstract View onSuccessView();
-
-    public abstract int onLoad();
 }
