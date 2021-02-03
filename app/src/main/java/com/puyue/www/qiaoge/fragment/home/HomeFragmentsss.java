@@ -1,40 +1,28 @@
 package com.puyue.www.qiaoge.fragment.home;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
-import android.graphics.drawable.AnimationDrawable;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.AppBarLayout;
-import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.LinearSmoothScroller;
-import android.support.v7.widget.LinearSnapHelper;
 import android.support.v7.widget.PagerSnapHelper;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
-import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewTreeObserver;
-import android.view.Window;
-import android.view.WindowManager;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
-import android.view.animation.ScaleAnimation;
 import android.widget.Button;
-import android.widget.CompoundButton;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -42,22 +30,18 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
+
 import io.reactivex.Observable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 import com.bumptech.glide.Glide;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.daimajia.slider.library.SliderTypes.BaseSliderView;
-import com.githang.statusbar.StatusBarCompat;
-import com.puyue.www.qiaoge.AutoPollRecyclerView;
 import com.puyue.www.qiaoge.NewWebViewActivity;
 import com.puyue.www.qiaoge.R;
 import com.puyue.www.qiaoge.RoundImageView;
 import com.puyue.www.qiaoge.UnicornManager;
 import com.puyue.www.qiaoge.activity.HomeActivity;
-import com.puyue.www.qiaoge.activity.Test1Activity;
-import com.puyue.www.qiaoge.activity.TestActivity;
 import com.puyue.www.qiaoge.activity.TopEvent;
 import com.puyue.www.qiaoge.activity.home.ChangeCityActivity;
 import com.puyue.www.qiaoge.activity.home.ChooseAddressActivity;
@@ -68,15 +52,9 @@ import com.puyue.www.qiaoge.activity.home.HomeGoodsListActivity;
 import com.puyue.www.qiaoge.activity.home.SearchReasultActivity;
 import com.puyue.www.qiaoge.activity.home.SearchStartActivity;
 import com.puyue.www.qiaoge.activity.home.SpecialGoodDetailActivity;
-import com.puyue.www.qiaoge.activity.home.Team1Adapter;
 import com.puyue.www.qiaoge.activity.home.TeamDetailActivity;
-import com.puyue.www.qiaoge.activity.home.ViewPagerAdapters;
-import com.puyue.www.qiaoge.activity.home.myViewPagerAdapter;
-import com.puyue.www.qiaoge.activity.mine.MessageCenterActivity;
 import com.puyue.www.qiaoge.activity.mine.login.LoginActivity;
 import com.puyue.www.qiaoge.activity.mine.login.LogoutsEvent;
-import com.puyue.www.qiaoge.activity.mine.login.RegisterActivity;
-import com.puyue.www.qiaoge.activity.mine.login.RegisterMessageActivity;
 
 import com.puyue.www.qiaoge.activity.mine.order.MyOrdersActivity;
 import com.puyue.www.qiaoge.activity.mine.wallet.MinerIntegralActivity;
@@ -88,22 +66,21 @@ import com.puyue.www.qiaoge.adapter.CommonssAdapter;
 import com.puyue.www.qiaoge.adapter.CommonsssAdapter;
 import com.puyue.www.qiaoge.adapter.CouponListAdapter;
 import com.puyue.www.qiaoge.adapter.FullAdapter;
+import com.puyue.www.qiaoge.adapter.HotAdapter;
 import com.puyue.www.qiaoge.adapter.IndexRecommendAdapter;
+import com.puyue.www.qiaoge.adapter.MyAdapter;
 import com.puyue.www.qiaoge.adapter.Skill2Adapter;
 import com.puyue.www.qiaoge.adapter.Skill3Adapter;
 import com.puyue.www.qiaoge.adapter.Skill5Adapter;
 import com.puyue.www.qiaoge.adapter.Team3Adapter;
 import com.puyue.www.qiaoge.adapter.TeamAdapter;
-import com.puyue.www.qiaoge.adapter.home.AutoPollAdapter;
 import com.puyue.www.qiaoge.adapter.home.CommonAdapter;
 import com.puyue.www.qiaoge.adapter.home.CommonProductActivity;
 import com.puyue.www.qiaoge.adapter.home.HotProductActivity;
 import com.puyue.www.qiaoge.adapter.home.ReductionProductActivity;
 import com.puyue.www.qiaoge.adapter.home.SeckillGoodActivity;
-import com.puyue.www.qiaoge.adapter.mine.ViewPagerAdapter;
 import com.puyue.www.qiaoge.api.cart.AddCartAPI;
 import com.puyue.www.qiaoge.api.home.CityChangeAPI;
-import com.puyue.www.qiaoge.api.home.DriverInfo;
 import com.puyue.www.qiaoge.api.home.IndexHomeAPI;
 import com.puyue.www.qiaoge.api.home.IndexInfoModel;
 import com.puyue.www.qiaoge.api.home.ProductListAPI;
@@ -116,39 +93,30 @@ import com.puyue.www.qiaoge.banner.GlideImageLoader;
 import com.puyue.www.qiaoge.banner.Transformer;
 import com.puyue.www.qiaoge.banner.listener.OnBannerListener;
 import com.puyue.www.qiaoge.base.BaseFragment;
-import com.puyue.www.qiaoge.base.BaseModel;
 import com.puyue.www.qiaoge.constant.AppConstant;
 import com.puyue.www.qiaoge.dialog.ChooseHomeDialog;
 import com.puyue.www.qiaoge.dialog.CouponDialog;
 import com.puyue.www.qiaoge.dialog.CouponListDialog;
 import com.puyue.www.qiaoge.dialog.HomeActivityDialog;
 import com.puyue.www.qiaoge.dialog.PrivacyDialog;
-import com.puyue.www.qiaoge.dialog.TestDialog;
 import com.puyue.www.qiaoge.dialog.TurnTableDialog;
 import com.puyue.www.qiaoge.event.AddressEvent;
 import com.puyue.www.qiaoge.event.BackEvent;
 import com.puyue.www.qiaoge.event.CouponListModel;
 import com.puyue.www.qiaoge.event.FromIndexEvent;
-import com.puyue.www.qiaoge.event.GoToCartFragmentEvent;
 import com.puyue.www.qiaoge.event.GoToMarketEvent;
 import com.puyue.www.qiaoge.event.IsTurnModel;
 import com.puyue.www.qiaoge.event.OnHttpCallBack;
 import com.puyue.www.qiaoge.event.PrivacyModel;
 import com.puyue.www.qiaoge.event.TurnModel;
-import com.puyue.www.qiaoge.event.UpDateNumEvent;
 import com.puyue.www.qiaoge.event.UpDateNumEvent0;
 import com.puyue.www.qiaoge.event.UpDateNumEvent1;
 import com.puyue.www.qiaoge.event.UpDateNumEvent10;
 import com.puyue.www.qiaoge.event.UpDateNumEvent2;
 import com.puyue.www.qiaoge.event.UpDateNumEvent3;
-import com.puyue.www.qiaoge.event.UpDateNumEvent4;
-import com.puyue.www.qiaoge.event.UpDateNumEvent5;
-import com.puyue.www.qiaoge.event.UpDateNumEvent6;
 import com.puyue.www.qiaoge.event.UpDateNumEvent7;
 import com.puyue.www.qiaoge.event.UpDateNumEvent8;
-import com.puyue.www.qiaoge.event.UpDateNumEvent9;
 import com.puyue.www.qiaoge.event.UpNumEvent;
-import com.puyue.www.qiaoge.fragment.market.TestAdapter;
 import com.puyue.www.qiaoge.helper.AppHelper;
 import com.puyue.www.qiaoge.helper.PublicRequestHelper;
 import com.puyue.www.qiaoge.helper.StringHelper;
@@ -170,23 +138,17 @@ import com.puyue.www.qiaoge.model.mine.order.MyOrderNumModel;
 import com.puyue.www.qiaoge.utils.DateUtils;
 import com.puyue.www.qiaoge.utils.LoginUtil;
 import com.puyue.www.qiaoge.utils.SharedPreferencesUtil;
+import com.puyue.www.qiaoge.utils.ToastUtil;
 import com.puyue.www.qiaoge.utils.Utils;
 
 import com.puyue.www.qiaoge.view.AutoScrollRecyclerView;
-import com.puyue.www.qiaoge.view.CustomPopWindow;
-import com.puyue.www.qiaoge.view.GlideModel;
 import com.puyue.www.qiaoge.view.HIndicators;
-import com.puyue.www.qiaoge.view.LuckPanAnimEndCallBack;
-import com.puyue.www.qiaoge.view.SnapUpCountDownTimerView;
 import com.puyue.www.qiaoge.view.SnapUpCountDownTimerViewss;
-import com.puyue.www.qiaoge.view.StatusBarUtil;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 import com.taobao.library.VerticalBannerView;
-import com.umeng.socialize.shareboard.IndicatorView;
 import com.wang.avi.AVLoadingIndicatorView;
-import com.weavey.loading.lib.LoadingLayout;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -197,16 +159,13 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Timer;
-import java.util.TimerTask;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-import butterknife.BindInt;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
-import io.reactivex.disposables.Disposable;
 import rx.Observer;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
@@ -216,14 +175,26 @@ import rx.schedulers.Schedulers;
 /**
  * Created by ${王涛} on 2020/1/4
  */
-public class HomeFragmentsss extends BaseFragment implements View.OnClickListener, BaseSliderView.OnSliderClickListener{
+public class HomeFragmentsss extends BaseFragment implements View.OnClickListener,BaseSliderView.OnSliderClickListener{
     Unbinder binder;
     @BindView(R.id.rv_auto_view1)
     AutoScrollRecyclerView rv_auto_view1;
+    @BindView(R.id.rv_coupon)
+    RecyclerView rv_coupon;
+    @BindView(R.id.rv_coupon1)
+    RecyclerView rv_coupon1;
     @BindView(R.id.rl1)
     RelativeLayout rl1;
+    @BindView(R.id.rl_full)
+    RelativeLayout rl_full;
+    @BindView(R.id.rl_team)
+    RelativeLayout rl_team;
     @BindView(R.id.ll2)
     LinearLayout ll2;
+    @BindView(R.id.content)
+    FrameLayout frameLayout;
+    @BindView(R.id.rl2)
+    RelativeLayout rl2;
     @BindView(R.id.ll1)
     LinearLayout ll1;
     @BindView(R.id.indicator)
@@ -350,6 +321,15 @@ public class HomeFragmentsss extends BaseFragment implements View.OnClickListene
     AutoScrollRecyclerView rv_auto_view;
     @BindView(R.id.rv_auto_team)
     AutoScrollRecyclerView rv_auto_team;
+    @BindView(R.id.rv_hot)
+    RecyclerView rv_hot;
+    @BindView(R.id.rv_hot1)
+    RecyclerView rv_hot1;
+    @BindView(R.id.tv_coupon_more)
+    TextView tv_coupon_more;
+    @BindView(R.id.rv_test)
+    RecyclerView rv_test;
+    HotAdapter hotAdapter;
     Skill5Adapter skill5Adapter;
     IndexRecommendAdapter indexRecommendAdapter;
     CouponDialog couponDialog;
@@ -359,7 +339,9 @@ public class HomeFragmentsss extends BaseFragment implements View.OnClickListene
     ChooseHomeDialog chooseAddressDialog;
     CommonsssAdapter commonsssAdapter;
     List<String> recommendData;
+    View footer;
 //    AnimationDrawable drawable;
+    List<String> listss = new ArrayList<>();
     //司机信息
     List<OrderModel.DataBean> driverList = new ArrayList<>();
     //八个icon集合
@@ -526,22 +508,12 @@ public class HomeFragmentsss extends BaseFragment implements View.OnClickListene
                                     currentTime = couponModel.getData().getCurrentTime();
                                     startTime = couponModel.getData().getStartTime();
 
-                                    if(data1.getActives().size()>4) {
-                                        rv_skill.setVisibility(View.GONE);
-                                        rv_auto_view.setVisibility(View.VISIBLE);
-                                    }else {
-                                        rv_skill.setVisibility(View.VISIBLE);
-                                        rv_auto_view.setVisibility(View.GONE);
-                                    }
-
-
                                     if(data1.getActives().size()==1) {
                                         skillActive1.clear();
                                         skillActive1.addAll(data1.getActives());
                                         skillAdapter = new SkillAdapter(mActivity,R.layout.item_skill_lists, skillActive1,"1");
                                         rv_skill.setAdapter(skillAdapter);
                                         rv_skill.setLayoutManager(new LinearLayoutManager(mActivity,LinearLayoutManager.HORIZONTAL, false));
-                                        recyclerViewTest.setVisibility(View.GONE);
                                         rv_skill.setVisibility(View.VISIBLE);
                                         skillAdapter.notifyDataSetChanged();
                                     }else if(data1.getActives().size()==2){
@@ -561,7 +533,6 @@ public class HomeFragmentsss extends BaseFragment implements View.OnClickListene
                                         skill3Adapter = new Skill3Adapter(R.layout.item_skill_list,skillActive3);
                                         rv_skill.setAdapter(skill3Adapter);
                                         rv_skill.setLayoutManager(new GridLayoutManager(mActivity,3));
-                                        recyclerViewTest.setVisibility(View.GONE);
                                         rv_skill.setVisibility(View.VISIBLE);
                                         skill3Adapter.notifyDataSetChanged();
                                     }else if(data1.getActives().size()==4){
@@ -575,6 +546,7 @@ public class HomeFragmentsss extends BaseFragment implements View.OnClickListene
                                         skill3Adapter.notifyDataSetChanged();
                                     }else {
                                         skillActive3.clear();
+                                        rv_skill.setVisibility(View.GONE);
                                         skillActive3.addAll(data1.getActives());
                                         skill5Adapter.notifyDataSetChanged();
                                         rv_auto_view.setVisibility(View.VISIBLE);
@@ -635,54 +607,28 @@ public class HomeFragmentsss extends BaseFragment implements View.OnClickListene
                                 data1 = couponModel.getData();
                                 if(data1!=null) {
                                     tv_desc2.setText(data1.getDesc());
-
-
                                     if(data1.getActives().size()==1) {
                                         couponActive1.clear();
                                         couponActive1.addAll(data1.getActives());
-                                        commonAdapter = new CommonAdapter(mActivity, 11 + "", R.layout.item_common_lists, couponActive1, "1");
-
+                                        commonAdapter = new CommonAdapter(R.layout.item_common_lists, couponActive1);
                                         recyclerView.setLayoutManager(new LinearLayoutManager(mActivity,LinearLayoutManager.HORIZONTAL, false));
-                                        recyclerView.setAdapter(commonAdapter);
-                                        recyclerView.setVisibility(View.VISIBLE);
-                                        recyclerViewTest.setVisibility(View.GONE);
+                                        rv_coupon.setAdapter(commonAdapter);
                                         commonAdapter.notifyDataSetChanged();
+
                                     }else if(data1.getActives().size()==2){
                                         couponActive2.clear();
                                         couponActive2.addAll(data1.getActives());
-                                        commonCouponAdapter = new CommonCouponAdapter(mActivity, 11 + "", R.layout.item_common_lists, couponActive2, "0", new CommonCouponAdapter.OnClick() {
-                                            @Override
-                                            public void shoppingCartOnClick(int position) {
-                                                int activeId = couponActive2.get(position).getActiveId();
-                                                addCar(activeId, "", 11, "1");
-                                            }
-
-                                            @Override
-                                            public void tipClick() {
-                                                showPhoneDialog(cell);
-                                            }
-
-                                            @Override
-                                            public void addDialog() {
-                                                initDialog();
-                                            }
-                                        });
-                                        recyclerViewTest.setAdapter(commonCouponAdapter);
-                                        recyclerView.setVisibility(View.GONE);
-                                        recyclerViewTest.setVisibility(View.VISIBLE);
+                                        commonCouponAdapter = new CommonCouponAdapter(mActivity, 11 + "", R.layout.item_coupon_lists, couponActive2);
+                                        rv_coupon.setLayoutManager(new LinearLayoutManager(mActivity,LinearLayoutManager.HORIZONTAL, false));
+                                        rv_coupon.setAdapter(commonCouponAdapter);
                                         commonCouponAdapter.notifyDataSetChanged();
-                                        PagerSnapHelper snapHelper = new PagerSnapHelper();
-                                        snapHelper.attachToRecyclerView(recyclerViewTest);
-                                        initRecycle();
 
                                     }else {
                                         couponActive3.clear();
                                         couponActive3.addAll(data1.getActives());
-                                        commonAdapter = new CommonAdapter(mActivity, 11 + "", R.layout.item_commons_list, couponActive3, "1");
-                                        recyclerView.setLayoutManager(new LinearLayoutManager(mActivity,LinearLayoutManager.HORIZONTAL, false));
-                                        recyclerView.setAdapter(commonAdapter);
-                                        recyclerView.setVisibility(View.VISIBLE);
-                                        recyclerViewTest.setVisibility(View.GONE);
+                                        commonAdapter = new CommonAdapter(R.layout.item_coupon_listss, couponActive3);
+                                        rv_coupon1.setLayoutManager(new LinearLayoutManager(mActivity,RecyclerView.HORIZONTAL, false));
+                                        rv_coupon1.setAdapter(commonAdapter);
                                         commonAdapter.notifyDataSetChanged();
                                     }
                                 }
@@ -706,6 +652,62 @@ public class HomeFragmentsss extends BaseFragment implements View.OnClickListene
                                 }
                             }
                             commonAdapter.notifyDataSetChanged();
+                        }
+                    }
+                });
+    }
+
+    /**
+     * 热卖集合
+     * @param pageNum
+     * @param pageSize
+     * @param type
+     */
+    List<ProductNormalModel.DataBean.ListBean>listBeans = new ArrayList<>();
+    private void getHot(int pageNum, int pageSize, String type) {
+        ProductListAPI.requestData(mActivity, pageNum, pageSize,type,null)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<ProductNormalModel>() {
+                    @Override
+                    public void onCompleted() {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onNext(ProductNormalModel getCommonProductModel) {
+                        if (getCommonProductModel.isSuccess()) {
+                            listBeans.clear();
+                            List<ProductNormalModel.DataBean.ListBean> list = getCommonProductModel.getData().getList();
+                            listBeans.addAll(list);
+
+                            if(listBeans.size()==1) {
+                                hotAdapter = new HotAdapter(R.layout.item_common_lists,listBeans);
+                                rv_hot.setLayoutManager(new LinearLayoutManager(mActivity,LinearLayoutManager.HORIZONTAL,false));
+                                rv_hot.setAdapter(hotAdapter);
+                                rv_hot1.setVisibility(View.GONE);
+                                rv_hot.setVisibility(View.VISIBLE);
+                            }else if(listBeans.size()==2) {
+                                rv_hot1.setVisibility(View.GONE);
+                                rv_hot.setVisibility(View.VISIBLE);
+                                hotAdapter = new HotAdapter(R.layout.item_coupon_lists,listBeans);
+                                rv_hot.setLayoutManager(new LinearLayoutManager(mActivity,LinearLayoutManager.HORIZONTAL,false));
+                                rv_hot.setAdapter(hotAdapter);
+                            }else {
+                                rv_hot1.setVisibility(View.VISIBLE);
+                                rv_hot.setVisibility(View.GONE);
+                                hotAdapter = new HotAdapter(R.layout.item_coupon_listss,listBeans);
+                                rv_hot1.setLayoutManager(new LinearLayoutManager(mActivity,LinearLayoutManager.HORIZONTAL,false));
+                                rv_hot1.setAdapter(hotAdapter);
+                            }
+
+                        } else {
+                            ToastUtil.showErroMsg(mActivity,getCommonProductModel.getMessage());
                         }
                     }
                 });
@@ -1073,8 +1075,8 @@ public class HomeFragmentsss extends BaseFragment implements View.OnClickListene
 
         fragmentTransaction.show(commonFragment);
 
-        if (infoFragment != null) {
-            fragmentTransaction.hide(infoFragment);
+        if (reduceFragment != null) {
+            fragmentTransaction.hide(reduceFragment);
         }
 
         if (mustFragment != null) {
@@ -1091,19 +1093,20 @@ public class HomeFragmentsss extends BaseFragment implements View.OnClickListene
     /**
      * 咨讯
      */
+    ReduceFragment reduceFragment;
     private void switchRb6() {
         fragmentTransaction = supportFragmentManager.beginTransaction();
 //        if (infoFragment == null) {
-            infoFragment = new InfoFragment();
+            reduceFragment = new ReduceFragment();
             Bundle bundle = new Bundle();
             bundle.putString("URL",questUrl);
             bundle.putInt("TYPE",2);
             bundle.putString("name","consult");
-            infoFragment.setArguments(bundle);
-            fragmentTransaction.add(R.id.content, infoFragment, InfoFragment.class.getCanonicalName());
+            reduceFragment.setArguments(bundle);
+            fragmentTransaction.add(R.id.content, reduceFragment, ReduceFragment.class.getCanonicalName());
 //        }
 
-        fragmentTransaction.show(infoFragment);
+        fragmentTransaction.show(reduceFragment);
 
         if (mustFragment != null) {
             fragmentTransaction.hide(mustFragment);
@@ -1132,8 +1135,8 @@ public class HomeFragmentsss extends BaseFragment implements View.OnClickListene
 
         fragmentTransaction.show(mustFragment);
 
-        if (infoFragment != null) {
-            fragmentTransaction.hide(infoFragment);
+        if (reduceFragment != null) {
+            fragmentTransaction.hide(reduceFragment);
         }
 
         if (newFragment != null) {
@@ -1158,8 +1161,8 @@ public class HomeFragmentsss extends BaseFragment implements View.OnClickListene
         }
         fragmentTransaction.show(newFragment);
 
-        if (infoFragment != null) {
-            fragmentTransaction.hide(infoFragment);
+        if (reduceFragment != null) {
+            fragmentTransaction.hide(reduceFragment);
         }
 
         if (mustFragment != null) {
@@ -1208,20 +1211,31 @@ public class HomeFragmentsss extends BaseFragment implements View.OnClickListene
     }
     TeamAdapter teamAdapter;
     Team3Adapter team3Adapter;
+
+    @SuppressLint("NewApi")
     @Override
     public void setViewData() {
 
+        for (int i = 0; i < 200; i++) {
+            listss.add(""+i);
+        }
+        frameLayout.setNestedScrollingEnabled(false);
+        rv_test.setLayoutManager(new LinearLayoutManager(mActivity));
+        rv_test.setAdapter(new MyAdapter(mActivity,listss));
+        //秒杀短
         skill5Adapter = new Skill5Adapter(mActivity,skillActive3);
         rv_auto_view.setAdapter(skill5Adapter);
         rv_auto_view.setLayoutManager(new GridLayoutManager(mActivity,4));
 
         //满赠1
+        PagerSnapHelper snapFull = new PagerSnapHelper();
         commonssAdapter = new CommonssAdapter(mActivity, fullActive1);
         rv_auto_view1.setAdapter(commonssAdapter);
-        rv_auto_view1.setLayoutManager(new GridLayoutManager(mActivity,1));
+        snapFull.attachToRecyclerView(rv_auto_view1);
+        initRecycles();
 
         //满赠2
-        fullAdapter = new FullAdapter(R.layout.item_full_lists,fullActive1);
+        fullAdapter = new FullAdapter(mActivity,fullActive1);
         rv_given.setAdapter(fullAdapter);
         rv_given.setLayoutManager(new GridLayoutManager(mActivity,1));
 
@@ -1242,6 +1256,7 @@ public class HomeFragmentsss extends BaseFragment implements View.OnClickListene
         rl_more4.setOnClickListener(this);
         rl_address.setOnClickListener(null);
         requestUpdate();
+        getHot(1,10,"hot");
         refreshLayout.autoRefresh();
         lav_activity_loading.show();
         couponListAdapter = new CouponListAdapter(R.layout.item_home_coupon_list,lists);
@@ -1354,11 +1369,10 @@ public class HomeFragmentsss extends BaseFragment implements View.OnClickListene
     }
 
     private Disposable mAutoTask;
-    private Disposable mAutoTasks;
     private LinearSmoothScroller mSmoothScroller;
     private LinearSmoothScroller mSmoothScrollers;
-    private int mCurrentPosition ;
-    int mCurrentPositions;
+    private int mCurrentPosition;
+
     @Override
     public void onResume() {
         super.onResume();
@@ -1366,81 +1380,18 @@ public class HomeFragmentsss extends BaseFragment implements View.OnClickListene
         fullAdapter.start();
         teamAdapter.start();
         team3Adapter.start();
-//        startAuto2();
-//        startAuto3();
+        commonssAdapter.start();
     }
 
-
-
-
-    private void startAuto3() {
-        if (mAutoTasks != null && !mAutoTasks.isDisposed()) {
-            mAutoTasks.dispose();
-        }
-        mAutoTasks = Observable.interval(5, 2, TimeUnit.SECONDS).observeOn(io.reactivex.android.schedulers.AndroidSchedulers.mainThread()).subscribe(new Consumer<Long>() {
-
-            @Override
-            public void accept(Long aLong) {
-                if (mCurrentPositions == 0) {
-                    mCurrentPositions = aLong.intValue();
-                } else {
-                    mCurrentPositions++;
-                }
-                mSmoothScrollers.setTargetPosition(mCurrentPositions);
-                RecyclerView.LayoutManager layoutManager = rv_team.getLayoutManager();
-                if (layoutManager!=null) {
-                    layoutManager.startSmoothScroll(mSmoothScrollers);
-                }
-            }
-        });
+    @Override
+    public void onStop() {
+        super.onStop();
+        banner.stopAutoPlay();
+        stopAuto();
+        fullAdapter.cancle();
+        team3Adapter.cancle();
+        commonssAdapter.cancle();
     }
-
-
-    private void startAuto2() {
-        if (mAutoTasks != null && !mAutoTasks.isDisposed()) {
-            mAutoTasks.dispose();
-        }
-        mAutoTasks = Observable.interval(5, 2, TimeUnit.SECONDS).observeOn(io.reactivex.android.schedulers.AndroidSchedulers.mainThread()).subscribe(new Consumer<Long>() {
-
-            @Override
-            public void accept(Long aLong) {
-                if (mCurrentPositions == 0) {
-                    mCurrentPositions = aLong.intValue();
-                } else {
-                    mCurrentPositions++;
-                }
-                mSmoothScrollers.setTargetPosition(mCurrentPositions);
-                RecyclerView.LayoutManager layoutManager = rv_auto_view1.getLayoutManager();
-                if (layoutManager!=null) {
-                    layoutManager.startSmoothScroll(mSmoothScrollers);
-                }
-            }
-        });
-    }
-
-//    private void startAuto1() {
-//        if (mAutoTask != null && !mAutoTask.isDisposed()) {
-//            mAutoTask.dispose();
-//        }
-//        mAutoTask = Observable.interval(5, 2, TimeUnit.SECONDS).observeOn(io.reactivex.android.schedulers.AndroidSchedulers.mainThread()).subscribe(new Consumer<Long>() {
-//
-//            @Override
-//            public void accept(Long aLong) {
-//                if (mCurrentPosition == 0) {
-//                    mCurrentPosition = aLong.intValue();
-//                } else {
-//                    mCurrentPosition++;
-//                }
-//                mSmoothScroller.setTargetPosition(mCurrentPosition);
-//                RecyclerView.LayoutManager layoutManager = rv_given.getLayoutManager();
-//                if (layoutManager!=null) {
-//                    layoutManager.startSmoothScroll(mSmoothScroller);
-//                }
-//
-//            }
-//        });
-//    }
-
 
     private void startAuto() {
         if (mAutoTask != null && !mAutoTask.isDisposed()) {
@@ -1837,25 +1788,36 @@ public class HomeFragmentsss extends BaseFragment implements View.OnClickListene
                             specialNum = indexInfoModel.getData().getSpecialNum();
                             fullGiftNum = indexInfoModel.getData().getFullGiftNum();
 
-                            if(teamNum==0&&specialNum==0&&spikeNum==0&&fullGiftNum==0) {
-                                ll_active.setVisibility(View.GONE);
-                            }else {
-                                ll_active.setVisibility(View.VISIBLE);
+                            if(teamNum!=0&&fullGiftNum!=0) {
+                                rl1.setVisibility(View.VISIBLE);
+                                rl2.setVisibility(View.GONE);
+
                             }
 
-                            if(teamNum==0) {
-                                ll2.setVisibility(View.GONE);
-                                ll1.setVisibility(View.GONE);
-                                rl1.setVisibility(View.VISIBLE);
-                            }else {
+                            if(teamNum==0&&fullGiftNum==0) {
                                 rl1.setVisibility(View.GONE);
-                                ll1.setVisibility(View.VISIBLE);
-                                ll2.setVisibility(View.VISIBLE);
+                                rl2.setVisibility(View.GONE);
+                            }
+
+                            if(teamNum!=0&&fullGiftNum==0) {
+                                rl1.setVisibility(View.GONE);
+                                rl_full.setVisibility(View.GONE);
+                                rl_team.setVisibility(View.VISIBLE);
+                                rl2.setVisibility(View.VISIBLE);
+                            }
+
+                            if(fullGiftNum!=0&&teamNum==0) {
+                                rl_full.setVisibility(View.VISIBLE);
+                                rl_team.setVisibility(View.GONE);
+                                rl1.setVisibility(View.GONE);
+                                rl2.setVisibility(View.VISIBLE);
                             }
 
 
                             getSpikeList(12);
                             getSpikeList(3);
+                            getSpikeList(2);
+                            getSpikeList(11);
                             rvIconAdapter.notifyDataSetChanged();
                             questUrl = indexInfoModel.getData().getQuestUrl();
 
@@ -2243,14 +2205,7 @@ public class HomeFragmentsss extends BaseFragment implements View.OnClickListene
 
     }
 
-    @Override
-    public void onStop() {
-        super.onStop();
-        banner.stopAutoPlay();
-        stopAuto();
-        fullAdapter.cancle();
-        team3Adapter.cancle();
-    }
+
 
 
     private void stopAuto() {
@@ -2272,8 +2227,18 @@ public class HomeFragmentsss extends BaseFragment implements View.OnClickListene
         rv_skill.setLayoutManager(layoutManager);
     }
 
-
-
+    //满赠滑动
+    private void initRecycles() {
+        LinearLayoutManager layoutManager = new LinearLayoutManager(mActivity, LinearLayoutManager.HORIZONTAL, false);
+        ScheduledExecutorService scheduledExecutorService = Executors.newScheduledThreadPool(1);
+        scheduledExecutorService.scheduleAtFixedRate(new Runnable() {
+            @Override
+            public void run() {
+                rv_auto_view1.smoothScrollToPosition(layoutManager.findFirstVisibleItemPosition()+1);
+            }
+        }, 3000, 2000, TimeUnit.MILLISECONDS);
+        rv_auto_view1.setLayoutManager(layoutManager);
+    }
     @Override
     public void onSliderClick(BaseSliderView slider) {
         String banner_url = slider.getBundle().getString("banner_url");

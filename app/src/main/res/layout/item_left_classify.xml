@@ -11,6 +11,7 @@
         android:layout_height="wrap_content">
 
         <RelativeLayout
+
             android:layout_width="90dp"
             android:id="@+id/rl"
             android:layout_height="@dimen/size_50dp">

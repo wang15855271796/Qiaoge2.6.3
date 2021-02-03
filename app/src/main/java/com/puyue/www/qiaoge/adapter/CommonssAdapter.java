@@ -3,6 +3,7 @@ package com.puyue.www.qiaoge.adapter;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Paint;
+import android.os.CountDownTimer;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentActivity;
@@ -34,9 +35,11 @@ import com.puyue.www.qiaoge.utils.SharedPreferencesUtil;
 import java.util.List;
 
 /**
- * Created by ${王涛} on 2020/8/29
+ * Created by ${王涛} on 2020/8/29(满赠)
  */
 public class CommonssAdapter extends  RecyclerView.Adapter<CommonssAdapter.BaseViewHolder> {
+    private CountDownTimer countDownTimer1;
+
     List<CouponModel.DataBean.ActivesBean> fullActive;
     Context mActivity;
     CouponModel.DataBean.ActivesBean activesBean;
@@ -59,11 +62,76 @@ public class CommonssAdapter extends  RecyclerView.Adapter<CommonssAdapter.BaseV
         try {
             activesBean = fullActive.get(position % fullActive.size());
             viewHolder.tv_name.setText(activesBean.getProductName());
-            viewHolder.tv_price.setText(activesBean.getPrice());
+            viewHolder.tv_price.setText(activesBean.getMinMaxPrice());
             Glide.with(mActivity).load(activesBean.getDefaultPic()).into(viewHolder.iv_pic);
+
+            if(activesBean.getSendGiftType().equals("赠礼")) {
+                viewHolder.iv_given.setVisibility(View.VISIBLE);
+                Glide.with(mActivity).load(activesBean.getDefaultPic()).into(viewHolder.iv_given);
+                viewHolder.tv_full_desc.setVisibility(View.VISIBLE);
+                viewHolder.tv_full_desc.setText(activesBean.getSendGiftType());
+                viewHolder.tv_fit.setVisibility(View.GONE);
+                viewHolder.tv_coupon.setVisibility(View.GONE);
+                Log.d("wdassasswww....","222");
+            }else {
+                viewHolder.tv_full_desc.setVisibility(View.GONE);
+                viewHolder.iv_given.setVisibility(View.GONE);
+                viewHolder.tv_fit.setVisibility(View.VISIBLE);
+                viewHolder.tv_fit.setText(activesBean.getRoleAmount());
+                viewHolder.tv_coupon.setVisibility(View.VISIBLE);
+                viewHolder.tv_coupon.setText(activesBean.getSendGiftInfo());
+                Log.d("wdassasswww....","333");
+            }
+
+
+            if(countDownTimer1 == null) {
+                countDownTimer1 = new CountDownTimer(5000,1000) {
+                    int i = 0;
+                    @Override
+                    public void onTick(long millisUntilFinished) {
+
+                    }
+
+                    @Override
+                    public void onFinish() {
+                        try {
+                            Glide.with(mActivity).load(fullActive.get(i).getDefaultPic()).into(viewHolder.iv_pic);
+
+                            viewHolder.tv_price.setText(fullActive.get(i).getPrice());
+                            viewHolder.tv_name.setText(fullActive.get(i).getProductName());
+
+                            if(fullActive.get(i).getSendGiftType().equals("赠礼")) {
+                                viewHolder.iv_given.setVisibility(View.VISIBLE);
+                                Glide.with(mActivity).load(fullActive.get(i).getDefaultPic()).into(viewHolder.iv_given);
+                                viewHolder.tv_full_desc.setVisibility(View.VISIBLE);
+                                viewHolder.tv_full_desc.setText(fullActive.get(i).getSendGiftType());
+                                viewHolder.tv_fit.setVisibility(View.GONE);
+                                viewHolder.tv_coupon.setVisibility(View.GONE);
+                                Log.d("wdassasswww....","222");
+                            }else {
+                                viewHolder.tv_full_desc.setVisibility(View.GONE);
+                                viewHolder.iv_given.setVisibility(View.GONE);
+                                viewHolder.tv_fit.setVisibility(View.VISIBLE);
+                                viewHolder.tv_fit.setText(fullActive.get(i).getRoleAmount());
+                                viewHolder.tv_coupon.setVisibility(View.VISIBLE);
+                                viewHolder.tv_coupon.setText(fullActive.get(i).getSendGiftInfo());
+                                Log.d("wdassasswww....","333");
+                            }
+                            i++;
+                            if(i==fullActive.size()) {
+                                i = 0;
+                            }
+                        }catch (Exception e) {
+
+                        }
+                        start();
+                    }
+                }.start();
+            }
         }catch (Exception e) {
 
         }
+
     }
 
     @Override
@@ -71,14 +139,32 @@ public class CommonssAdapter extends  RecyclerView.Adapter<CommonssAdapter.BaseV
         return Integer.MAX_VALUE;
     }
 
+    public void cancle() {
+        if (countDownTimer1 != null) {
+            countDownTimer1.cancel();
+        }
+    }
+
+    public void start() {
+        if(countDownTimer1!=null) {
+            countDownTimer1.start();
+        }
+    }
+
     public class BaseViewHolder extends RecyclerView.ViewHolder {
         RoundImageView iv_pic;
-
         TextView tv_name;
         TextView tv_price;
+        TextView tv_full_desc;
+        TextView tv_coupon;
+        TextView tv_fit;
+        RoundImageView iv_given;
         public BaseViewHolder(View view) {
             super(view);
-
+            tv_coupon = (TextView) view.findViewById(R.id.tv_coupon);
+            tv_fit = (TextView) view.findViewById(R.id.tv_fit);
+            tv_full_desc = (TextView) view.findViewById(R.id.tv_full_desc);
+            iv_given = (RoundImageView) view.findViewById(R.id.iv_given);
             iv_pic = (RoundImageView) view.findViewById(R.id.iv_pic);
             tv_name = (TextView) view.findViewById(R.id.tv_name);
             tv_price = (TextView) view.findViewById(R.id.tv_price);

@@ -7,6 +7,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -21,8 +22,10 @@ import android.widget.TextView;
 import com.puyue.www.qiaoge.R;
 import com.puyue.www.qiaoge.UnicornManager;
 import com.puyue.www.qiaoge.activity.CartActivity;
+import com.puyue.www.qiaoge.activity.home.SearchStartActivity;
 import com.puyue.www.qiaoge.activity.mine.login.LoginActivity;
 import com.puyue.www.qiaoge.adapter.HotAdapter;
+import com.puyue.www.qiaoge.adapter.HotListAdapter;
 import com.puyue.www.qiaoge.api.cart.GetCartNumAPI;
 import com.puyue.www.qiaoge.api.home.GetRegisterShopAPI;
 import com.puyue.www.qiaoge.api.home.ProductListAPI;
@@ -74,26 +77,19 @@ public class HotProductActivity extends BaseSwipeActivity implements View.OnClic
     RecyclerView recyclerView;
     @BindView(R.id.refreshLayout)
     SmartRefreshLayout refreshLayout;
-    @BindView(R.id.loading)
-    LoadingLayout loading;
-    HotAdapter hotAdapter;
+    HotListAdapter hotAdapter;
     int pageNum = 1;
     int pageSize = 10;
     @BindView(R.id.iv_back)
     ImageView iv_back;
-    @BindView(R.id.rl_num)
-    RelativeLayout rl_num;
     @BindView(R.id.tv_num)
     TextView tv_num;
-    @BindView(R.id.iv_normal)
-    ImageView iv_normal;
-    @BindView(R.id.tv_title)
-    TextView tv_title;
     @BindView(R.id.iv_carts)
     ImageView iv_carts;
+    @BindView(R.id.tv_search)
+    TextView tv_search;
     ProductNormalModel productNormalModel;
     private AlertDialog mTypedialog;
-    String flag = "hot";
     String cell;
     private String enjoyProduct;
     AnimationDrawable drawable;
@@ -107,7 +103,7 @@ public class HotProductActivity extends BaseSwipeActivity implements View.OnClic
 
     @Override
     public void setContentView() {
-        setContentView(R.layout.hot_product);
+        setContentView(R.layout.activity_hot_list);
     }
 
 
@@ -116,28 +112,22 @@ public class HotProductActivity extends BaseSwipeActivity implements View.OnClic
         ButterKnife.bind(this);
         EventBus.getDefault().register(this);
         getCustomerPhone();
-        enjoyProduct = SharedPreferencesUtil.getString(mActivity, "priceType");
-        hotAdapter = new HotAdapter(enjoyProduct,flag,R.layout.item_team_list, list, new HotAdapter.Onclick() {
-            @Override
-            public void addDialog() {
-                if (StringHelper.notEmptyAndNull(UserInfoHelper.getUserId(mContext))) {
-                }else {
-                    AppHelper.showMsg(mContext, "请先登录");
-                    mContext.startActivity(LoginActivity.getIntent(mContext, LoginActivity.class));
-                }
-            }
-
-            @Override
-            public void tipClick() {
-                showPhoneDialog(cell);
-            }
-        });
+        Window window = this.getWindow();
+        window.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+//        enjoyProduct = SharedPreferencesUtil.getString(mActivity, "priceType");
         refreshLayout.setEnableLoadMore(false);
-        recyclerView.setLayoutManager(new MyGrideLayoutManager(mContext,2));
+        recyclerView.setLayoutManager(new LinearLayoutManager(mContext));
+        hotAdapter = new HotListAdapter(R.layout.item_hot_list,list);
         recyclerView.setAdapter(hotAdapter);
         iv_back.setOnClickListener(this);
-        tv_title.setText("热销");
 
+        tv_search.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(mContext,SearchStartActivity.class);
+                startActivity(intent);
+            }
+        });
         iv_carts.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -149,13 +139,6 @@ public class HotProductActivity extends BaseSwipeActivity implements View.OnClic
                 }
 
 
-            }
-        });
-        rl_num.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(mActivity,CartActivity.class);
-                startActivity(intent);
             }
         });
 
@@ -259,14 +242,7 @@ public class HotProductActivity extends BaseSwipeActivity implements View.OnClic
 
                     @Override
                     public void onError(Throwable e) {
-                        loading.setStatus(LoadingLayout.No_Network);
-                        loading.setOnReloadListener(new LoadingLayout.OnReloadListener() {
-                            @Override
-                            public void onReload(View v) {
-                                loading.setStatus(LoadingLayout.Loading);
-                                getProductsList(1,pageSize,"hot");
-                            }
-                        });
+
                     }
 
                     @Override
@@ -282,11 +258,7 @@ public class HotProductActivity extends BaseSwipeActivity implements View.OnClic
                                 } else {
                                     hotAdapter.addData(list);
                                 }
-                                loading.setStatus(LoadingLayout.Success);
                                 drawable.stop();
-                            }else {
-                                loading.setStatus(LoadingLayout.Empty);
-
                             }
                             //判断是否有下一页
                             if (!getCommonProductModel.getData().isHasNextPage()) {
@@ -297,7 +269,6 @@ public class HotProductActivity extends BaseSwipeActivity implements View.OnClic
                             refreshLayout.setEnableLoadMore(true);
                         } else {
                             AppHelper.showMsg(mActivity, getCommonProductModel.getMessage());
-                            loading.setStatus(LoadingLayout.Error);
                         }
                     }
                 });
@@ -323,9 +294,7 @@ public class HotProductActivity extends BaseSwipeActivity implements View.OnClic
     @Override
     public void setViewData() {
         refreshLayout.autoRefresh();
-        loading.setStatus(LoadingLayout.Loading);
-        drawable = (AnimationDrawable) iv_normal.getDrawable();
-        drawable.start();
+
         getCartNum();
         mTypedialog = new AlertDialog.Builder(mActivity, R.style.DialogStyle).create();
         mTypedialog.setCancelable(false);
@@ -358,8 +327,6 @@ public class HotProductActivity extends BaseSwipeActivity implements View.OnClic
                                 tv_num.setVisibility(View.VISIBLE);
                                 tv_num.setText(getCartNumModel.getData().getNum());
                             }
-
-
 
                         } else {
                             AppHelper.showMsg(mContext, getCartNumModel.getMessage());

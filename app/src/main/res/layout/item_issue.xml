@@ -26,8 +26,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/size_91dp">
 
-                <ImageView
+                <com.puyue.www.qiaoge.RoundImageView
                     android:id="@+id/iv_pic"
+                    android:scaleType="fitXY"
                     android:layout_marginLeft="@dimen/size_12dp"
                     android:src="@mipmap/icon_default_rec"
                     android:layout_width="@dimen/size_91dp"

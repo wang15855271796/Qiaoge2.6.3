@@ -174,6 +174,7 @@ public class CouponModel {
             String sendGiftInfo;
             String productId;
             int productMainId;
+            String roleAmount;
             @Override
             public String toString() {
                 return "ActivesBean{" +
@@ -187,6 +188,14 @@ public class CouponModel {
                         ", soldOutPic='" + soldOutPic + '\'' +
                         ", discount='" + discount + '\'' +
                         '}';
+            }
+
+            public String getRoleAmount() {
+                return roleAmount;
+            }
+
+            public void setRoleAmount(String roleAmount) {
+                this.roleAmount = roleAmount;
             }
 
             public String getProductId() {

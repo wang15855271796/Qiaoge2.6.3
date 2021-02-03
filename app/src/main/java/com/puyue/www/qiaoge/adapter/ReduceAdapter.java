@@ -32,7 +32,6 @@ public class ReduceAdapter extends BaseQuickAdapter<ProductNormalModel.DataBean.
     Onclick onclick;
     private ReduceDialog reduceDialog;
     private RelativeLayout rl_group;
-    String flag;
     private TextView tv_sale;
     ImageView iv_flag;
     String enjoyProduct;
@@ -40,11 +39,11 @@ public class ReduceAdapter extends BaseQuickAdapter<ProductNormalModel.DataBean.
     TextView tv_price;
     ImageView iv_operate;
     ImageView iv_next;
-    public ReduceAdapter(String enjoyProduct,String flag, int layoutResId, @Nullable List<ProductNormalModel.DataBean.ListBean> activeList, Onclick onclick) {
+
+    public ReduceAdapter(String enjoyProduct, int layoutResId, @Nullable List<ProductNormalModel.DataBean.ListBean> activeList, Onclick onclick) {
         super(layoutResId, activeList);
         this.activesBean = activeList;
         this.onclick = onclick;
-        this.flag = flag;
         this.enjoyProduct = enjoyProduct;
     }
 
@@ -64,34 +63,6 @@ public class ReduceAdapter extends BaseQuickAdapter<ProductNormalModel.DataBean.
         Glide.with(mContext).load(item.getDefaultPic()).into(iv_pic);
         helper.setText(R.id.tv_name,item.getProductName());
         helper.setText(R.id.tv_price,item.getMinMaxPrice());
-        if(flag.equals("hot")&&!item.getSalesVolume().equals("")) {
-            tv_sale.setVisibility(View.VISIBLE);
-            tv_sale.setText(item.getSalesVolume());
-            tv_sale.setBackgroundResource(R.drawable.shape_orange);
-        }else {
-            tv_sale.setVisibility(View.GONE);
-
-        }
-
-        if(flag.equals("common")) {
-            tv_sale.setVisibility(View.GONE);
-            tv_sale.setText(item.getSalesVolume());
-            iv_flag.setVisibility(View.VISIBLE);
-
-            Glide.with(mContext).load(item.getTypeUrl()).into(iv_flag);
-        }else {
-            iv_flag.setVisibility(View.GONE);
-        }
-
-
-        if(flag.equals("reduce")&&item.getDeductAmount().equals("")) {
-            tv_sale.setVisibility(View.GONE);
-
-        }else if(flag.equals("reduce")&&!item.getDeductAmount().equals("")){
-            tv_sale.setText(item.getDeductAmount()+"");
-            tv_sale.setVisibility(View.VISIBLE);
-            tv_sale.setBackgroundResource(R.drawable.shape_orange);
-        }
 
         if(enjoyProduct.equals("1")) {
             tv_price.setVisibility(View.VISIBLE);

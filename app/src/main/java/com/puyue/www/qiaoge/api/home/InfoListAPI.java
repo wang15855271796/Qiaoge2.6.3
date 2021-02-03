@@ -91,4 +91,19 @@ public class InfoListAPI {
         InfoDetailIssue service = RestHelper.getBaseRetrofit(context).create(InfoDetailIssue.class);
         return service.getData(msgId);
     }
+
+    /**
+     * 资讯编辑
+     */
+
+    private interface InfoClassifyIssue {
+        @FormUrlEncoded
+        @POST(AppInterfaceAddress.Info_Classify)
+        Observable<BaseModel> getData(@Field("msgId") String msgId,@Field("msgType") int msgType,@Field("content") String content,@Field("pictureJson") String pictureJson,@Field("provinceCode") String provinceCode,@Field("cityCode") String cityCode,@Field("detailAddress") String detailAddress,@Field("phone")String phone);
+    }
+
+    public static Observable<BaseModel> EditInfo(Context context,String msgId,int msgType,String content,String pictureJson,String provinceCode,String cityCode,String detailAddress,String phone) {
+        InfoClassifyIssue service = RestHelper.getBaseRetrofit(context).create(InfoClassifyIssue.class);
+        return service.getData(msgId,msgType,content,pictureJson,provinceCode,cityCode,detailAddress,phone);
+    }
 }

@@ -43,10 +43,12 @@ public class TeamAdapter extends BaseQuickAdapter<CouponModel.DataBean.ActivesBe
     @Override
     protected void convert(BaseViewHolder helper, CouponModel.DataBean.ActivesBean item) {
         ImageView iv_pic = helper.getView(R.id.iv_pic);
+        TextView tv_price = helper.getView(R.id.tv_price);
         Glide.with(mContext).load(data.get(0).getDefaultPic()).into(iv_pic);
+        tv_price.setText(item.getPrice());
         TextView tv_name = helper.getView(R.id.tv_name);
         if(countDownTimer1 == null) {
-            countDownTimer1 = new CountDownTimer(8000,1000) {
+            countDownTimer1 = new CountDownTimer(5000,1000) {
                 int i = 0;
                 @Override
                 public void onTick(long millisUntilFinished) {
@@ -57,8 +59,8 @@ public class TeamAdapter extends BaseQuickAdapter<CouponModel.DataBean.ActivesBe
                 public void onFinish() {
                     try {
                         Glide.with(mContext).load(data.get(i).getDefaultPic()).into(iv_pic);
-                        tv_name.setText(data.get(i).getSendGiftType());
-                        Log.d("qwdsddsfd.....","sdasdasas");
+                        tv_name.setText(data.get(i).getProductName());
+                        tv_price.setText(data.get(i).getPrice());
                         i++;
                         if(i==data.size()) {
                             i = 0;

@@ -316,7 +316,6 @@ public class MineFragment extends BaseFragment implements AppBarLayout.OnOffsetC
             @Override
             public void onClick(View v) {
                 //置顶
-                rv1.smoothScrollToPosition(0);
                 scrollView.smoothScrollTo(0,0);
                 appBarLayout.setExpanded(true);
             }

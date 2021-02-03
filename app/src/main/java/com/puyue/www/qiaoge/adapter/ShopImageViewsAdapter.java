@@ -80,7 +80,6 @@ public class ShopImageViewsAdapter extends RecyclerView.Adapter<ShopImageViewsAd
     List<String> pictureList;
     public ShopImageViewsAdapter(Context context,onAddPicClickListener mOnAddPicClickListener) {
         this.context = context;
-//        this.pictureList = pictureList;
         this.mOnAddPicClickListener = mOnAddPicClickListener;
         mInflater = LayoutInflater.from(context);
 
@@ -103,7 +102,9 @@ public class ShopImageViewsAdapter extends RecyclerView.Adapter<ShopImageViewsAd
             viewHolder.ll_del.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+                    Log.d("wdasdwdws......","wdasasa");
                     mItemClickListener.deletPic(position);
+
                     notifyDataSetChanged();
                     int index = viewHolder.getAdapterPosition();
                     // 这里有时会返回-1造成数据下标越界,具体可参考getAdapterPosition()源码，

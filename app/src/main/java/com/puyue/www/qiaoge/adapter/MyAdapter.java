@@ -23,15 +23,16 @@ public class MyAdapter extends RecyclerView.Adapter<BaseViewHolder> {
         this.mContext = context;
         this.mData = list;
     }
+
     @Override
     public BaseViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(mContext).inflate(R.layout.item_full, parent, false);
+        View view = LayoutInflater.from(mContext).inflate(R.layout.item_test, parent, false);
         BaseViewHolder holder = new BaseViewHolder(view);
         return holder;
     }
     @Override
     public void onBindViewHolder(BaseViewHolder holder, int position) {
-        String data = mData.get(position%mData.size());
+
     }
     @Override
     public int getItemCount() {

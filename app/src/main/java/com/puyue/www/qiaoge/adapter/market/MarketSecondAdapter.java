@@ -113,7 +113,7 @@ public class MarketSecondAdapter extends BaseQuickAdapter<ClassIfyModel.DataBean
             }else {
                 recyclerView.setVisibility(View.GONE);
                 rl.setVisibility(View.VISIBLE);
-                rl_bg.setBackgroundColor(Color.parseColor("#ffffff"));
+//                rl_bg.setBackgroundColor(Color.parseColor("#ffffff"));
                 tv_name.setTextColor(Color.parseColor("#676767"));
                 tv_name.setTypeface(Typeface.defaultFromStyle(Typeface.NORMAL));
                 tv_name.setTextSize(12);
@@ -155,7 +155,7 @@ public class MarketSecondAdapter extends BaseQuickAdapter<ClassIfyModel.DataBean
                 Log.d("wdadasssdrrrrr....","7777");
                 recyclerView.setVisibility(View.GONE);
                 rl.setVisibility(View.VISIBLE);
-                rl_bg.setBackgroundColor(Color.parseColor("#ffffff"));
+//                rl_bg.setBackgroundColor(Color.parseColor("#ffffff"));
                 tv_name.setTextColor(Color.parseColor("#676767"));
                 tv_name.setTypeface(Typeface.defaultFromStyle(Typeface.NORMAL));
                 tv_name.setTextSize(12);

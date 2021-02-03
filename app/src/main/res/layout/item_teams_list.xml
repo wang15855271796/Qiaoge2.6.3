@@ -3,6 +3,7 @@
     android:layout_width="wrap_content"
     android:layout_marginLeft="@dimen/size_6dp"
     android:layout_marginTop="@dimen/size_6dp"
+    android:orientation="vertical"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_height="wrap_content">
 

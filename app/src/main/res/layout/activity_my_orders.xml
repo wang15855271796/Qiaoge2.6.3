@@ -10,7 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/size_30dp"
-        android:background="@drawable/app_border_bottom_bg">
+        android:background="#ffffff">
 
         <ImageView
             android:id="@+id/iv_my_orders_back"

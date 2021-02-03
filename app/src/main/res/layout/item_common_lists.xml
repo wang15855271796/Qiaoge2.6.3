@@ -8,11 +8,10 @@
     <RelativeLayout
         android:id="@+id/rl_group"
         android:orientation="vertical"
-        android:background="@drawable/shouye"
+        android:background="@drawable/shape_white1"
         android:layout_width="match_parent"
-        android:layout_marginLeft="@dimen/dp_10"
-        android:layout_marginRight="@dimen/dp_10"
-        android:paddingBottom="@dimen/size_15dp"
+        android:layout_marginLeft="@dimen/sp_12"
+        android:layout_marginRight="@dimen/sp_12"
         android:layout_height="wrap_content">
 
         <RelativeLayout
@@ -30,9 +29,10 @@
 
             <ImageView
                 android:id="@+id/iv_pic"
+                android:layout_margin="@dimen/size_5dp"
                 tools:src="@mipmap/icon_baidu"
-                android:layout_width="@dimen/size_92dp"
-                android:layout_height="@dimen/size_92dp" />
+                android:layout_width="@dimen/size_88dp"
+                android:layout_height="@dimen/size_88dp" />
 
             <RelativeLayout
                 android:id="@+id/rl_coupon"
@@ -94,6 +94,44 @@
             android:layout_height="wrap_content" />
 
         <TextView
+            android:text="5.2折"
+            android:id="@+id/tv_discount"
+            android:layout_marginTop="@dimen/size_2dp"
+            android:layout_below="@+id/tv_name"
+            android:layout_toRightOf="@+id/rl_pic"
+            android:textColor="#ffffff"
+            android:paddingRight="@dimen/size_5dp"
+            android:paddingLeft="@dimen/size_5dp"
+            android:textSize="@dimen/size_10dp"
+            android:background="@drawable/shape_coupon_reds"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:text="￥"
+            android:id="@+id/tv_tip"
+            android:layout_marginTop="@dimen/size_44dp"
+            android:layout_below="@+id/tv_name"
+            android:layout_toRightOf="@+id/rl_pic"
+            android:textSize="@dimen/size_15dp"
+            android:textColor="#FFFF5C00"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:text="15.0"
+            android:textColor="#FF5000"
+            android:id="@+id/tv_price"
+            android:textStyle="bold"
+            android:layout_alignBaseline="@+id/tv_tip"
+            android:layout_toRightOf="@+id/tv_tip"
+            android:layout_marginTop="@dimen/size_44dp"
+            android:textSize="@dimen/size_21dp"
+            android:layout_below="@+id/tv_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <TextView
             android:text="15.0"
             android:visibility="gone"
             android:textColor="#969696"
@@ -117,20 +155,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
 
-        <TextView
-            android:text="15.0"
-            android:visibility="gone"
-            android:textColor="#FF5000"
-            android:id="@+id/tv_price"
-            android:textStyle="bold"
-            android:layout_toRightOf="@+id/rl_pic"
-            android:layout_marginTop="15dp"
-            android:textSize="@dimen/size_14dp"
-            android:layout_below="@+id/tv_name"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+
 
         <ImageView
+            android:visibility="gone"
             android:id="@+id/iv_add"
             android:src="@mipmap/app_add"
             android:layout_marginRight="@dimen/dp_10"

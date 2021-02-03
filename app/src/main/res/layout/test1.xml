@@ -10,12 +10,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical">
 
-    <!--<com.weavey.loading.lib.LoadingLayout-->
-    <!--android:id="@+id/loading"-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="match_parent"-->
-    <!--app:isFirstVisible="true">-->
-
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -53,7 +47,7 @@
                             android:id="@+id/appbar"
                             android:fitsSystemWindows="false"
                             boy:elevation="0dp"
-                            app:layout_behavior="com.yuruiyin.appbarlayoutbehavior.AppBarLayoutBehavior"
+                            app:layout_behavior="com.puyue.www.qiaoge.fragment.home.AppBarLayoutBehavior"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:background="#f9f9f9">
@@ -167,7 +161,6 @@
                                                     </RelativeLayout>
 
                                                     <TextView
-
                                                         android:layout_marginTop="@dimen/sp_14"
                                                         android:layout_marginLeft="@dimen/dp_10"
                                                         android:layout_marginRight="@dimen/dp_10"
@@ -246,6 +239,7 @@
                                                 android:layout_height="@dimen/size_30dp" />
 
                                             <LinearLayout
+                                                android:visibility="gone"
                                                 android:orientation="vertical"
                                                 android:layout_marginTop="@dimen/dp_10"
                                                 android:layout_marginRight="@dimen/size_12dp"
@@ -296,7 +290,7 @@
 
                                             </LinearLayout>
 
-                                            <!--秒杀-->
+                                            <!--秒杀开始-->
                                             <LinearLayout
                                                 android:visibility="gone"
                                                 android:orientation="vertical"
@@ -305,6 +299,7 @@
                                                 android:layout_marginRight="@dimen/size_12dp"
                                                 android:layout_marginLeft="@dimen/size_12dp"
                                                 android:layout_width="match_parent"
+                                                android:layout_marginBottom="@dimen/dp_10"
                                                 android:layout_height="wrap_content">
 
                                                 <RelativeLayout
@@ -362,14 +357,13 @@
                                                 <com.puyue.www.qiaoge.view.AutoScrollRecyclerView
                                                     android:id="@+id/rv_auto_view"
                                                     android:padding="@dimen/size_8dp"
+                                                    android:visibility="gone"
                                                     android:layout_marginBottom="@dimen/size_15dp"
                                                     android:layout_marginRight="@dimen/size_5dp"
                                                     android:layout_marginLeft="@dimen/size_5dp"
                                                     android:background="@drawable/shape_white1"
                                                     android:layout_width="match_parent"
                                                     android:layout_height="122dp">
-
-
                                                 </com.puyue.www.qiaoge.view.AutoScrollRecyclerView>
 
                                             </LinearLayout>
@@ -377,6 +371,8 @@
 
                                             <!--满赠和拼团开始-->
                                             <RelativeLayout
+                                                android:visibility="gone"
+                                                android:id="@+id/rl1"
                                                 android:orientation="horizontal"
                                                 android:layout_marginBottom="@dimen/size_11dp"
                                                 android:layout_width="match_parent"
@@ -384,6 +380,7 @@
 
                                                 <!--满赠开始-->
                                                 <LinearLayout
+                                                    android:visibility="gone"
                                                     android:id="@+id/ll1"
                                                     android:layout_marginLeft="@dimen/size_11dp"
                                                     android:orientation="vertical"
@@ -436,6 +433,7 @@
 
                                                 <!--拼团开始-->
                                                 <LinearLayout
+
                                                     android:layout_marginRight="@dimen/size_11dp"
                                                     android:layout_alignParentRight="true"
                                                     android:id="@+id/ll2"
@@ -490,101 +488,323 @@
                                             </RelativeLayout>
                                             <!--满赠和拼团结束-->
 
-                                            <!--满赠2开始-->
-                                            <RelativeLayout
-                                                android:id="@+id/rl1"
-                                                android:layout_marginLeft="@dimen/size_11dp"
-                                                android:layout_marginRight="@dimen/size_11dp"
-                                                android:background="@drawable/shape_spike_button"
-                                                android:layout_width="match_parent"
-                                                android:layout_height="151dp">
-
-                                                <RelativeLayout
-                                                    android:id="@+id/rl_more5"
-                                                    android:layout_width="match_parent"
-                                                    android:layout_height="@dimen/size_32dp">
-
-                                                    <TextView
-                                                        android:text="满赠特惠"
-                                                        android:id="@+id/tv_full_title1"
-                                                        android:layout_marginLeft="@dimen/size_16dp"
-                                                        android:layout_centerVertical="true"
-                                                        android:textColor="#ffffff"
-                                                        android:textSize="@dimen/sp_14"
-                                                        android:layout_width="wrap_content"
-                                                        android:layout_height="wrap_content" />
-
-                                                    <ImageView
-                                                        android:layout_centerVertical="true"
-                                                        android:layout_marginRight="@dimen/size_15dp"
-                                                        android:layout_alignParentRight="true"
-                                                        android:src="@mipmap/icon_green_right"
-                                                        android:layout_width="wrap_content"
-                                                        android:layout_height="wrap_content" />
-
-                                                </RelativeLayout>
-
-                                                <com.puyue.www.qiaoge.view.AutoScrollRecyclerView
-                                                    android:id="@+id/rv_auto_view1"
-                                                    android:layout_marginBottom="@dimen/size_5dp"
-                                                    android:layout_marginLeft="@dimen/size_11dp"
-                                                    android:layout_marginRight="@dimen/size_11dp"
-                                                    android:background="@drawable/shape_white1"
-                                                    android:layout_below="@+id/rl_more5"
-                                                    android:layout_width="match_parent"
-                                                    android:layout_height="wrap_content">
-
-                                                </com.puyue.www.qiaoge.view.AutoScrollRecyclerView>
-                                            </RelativeLayout>
-                                            <!--满赠2结束-->
-
-                                            <!--拼团2开始-->
+                                            <!--拼团和满赠2-->
                                             <RelativeLayout
                                                 android:id="@+id/rl2"
-                                                android:layout_marginLeft="@dimen/size_11dp"
-                                                android:layout_marginRight="@dimen/size_11dp"
-                                                android:background="@drawable/shape_team_yellow"
                                                 android:layout_width="match_parent"
-                                                android:layout_height="151dp">
+                                                android:layout_height="wrap_content">
+
+                                                <!--满赠2开始-->
+                                                <RelativeLayout
+                                                    android:visibility="gone"
+                                                    android:id="@+id/rl_full"
+                                                    android:layout_marginLeft="@dimen/size_11dp"
+                                                    android:layout_marginRight="@dimen/size_11dp"
+                                                    android:background="@drawable/shape_spike_button"
+                                                    android:layout_width="match_parent"
+                                                    android:layout_height="151dp">
+
+                                                    <RelativeLayout
+                                                        android:id="@+id/rl_more5"
+                                                        android:layout_width="match_parent"
+                                                        android:layout_height="@dimen/size_32dp">
+
+                                                        <TextView
+                                                            android:text="满赠特惠"
+                                                            android:id="@+id/tv_full_title1"
+                                                            android:layout_marginLeft="@dimen/size_16dp"
+                                                            android:layout_centerVertical="true"
+                                                            android:textColor="#ffffff"
+                                                            android:textSize="@dimen/sp_14"
+                                                            android:layout_width="wrap_content"
+                                                            android:layout_height="wrap_content" />
+
+                                                        <ImageView
+                                                            android:layout_centerVertical="true"
+                                                            android:layout_marginRight="@dimen/size_15dp"
+                                                            android:layout_alignParentRight="true"
+                                                            android:src="@mipmap/icon_green_right"
+                                                            android:layout_width="wrap_content"
+                                                            android:layout_height="wrap_content" />
+
+                                                    </RelativeLayout>
+
+                                                    <com.puyue.www.qiaoge.view.AutoScrollRecyclerView
+                                                        android:id="@+id/rv_auto_view1"
+                                                        android:layout_marginBottom="@dimen/size_5dp"
+                                                        android:layout_marginLeft="@dimen/size_11dp"
+                                                        android:layout_marginRight="@dimen/size_11dp"
+                                                        android:background="@drawable/shape_white1"
+                                                        android:layout_below="@+id/rl_more5"
+                                                        android:layout_width="match_parent"
+                                                        android:layout_height="wrap_content">
+
+                                                    </com.puyue.www.qiaoge.view.AutoScrollRecyclerView>
+                                                </RelativeLayout>
+                                                <!--满赠2结束-->
+
+                                                <!--拼团2开始-->
+                                                <RelativeLayout
+                                                    android:visibility="gone"
+                                                    android:id="@+id/rl_team"
+                                                    android:layout_marginLeft="@dimen/size_11dp"
+                                                    android:layout_marginRight="@dimen/size_11dp"
+                                                    android:background="@drawable/shape_team_yellow"
+                                                    android:layout_width="match_parent"
+                                                    android:layout_height="151dp">
+
+                                                    <RelativeLayout
+                                                        android:id="@+id/rl_more6"
+                                                        android:layout_width="match_parent"
+                                                        android:layout_height="@dimen/size_32dp">
+
+                                                        <TextView
+                                                            android:text="拼团购买"
+                                                            android:id="@+id/tv_team_title1"
+                                                            android:layout_marginLeft="@dimen/size_16dp"
+                                                            android:layout_centerVertical="true"
+                                                            android:textColor="#ffffff"
+                                                            android:textSize="@dimen/sp_14"
+                                                            android:layout_width="wrap_content"
+                                                            android:layout_height="wrap_content" />
+
+                                                        <ImageView
+                                                            android:layout_centerVertical="true"
+                                                            android:layout_marginRight="@dimen/size_15dp"
+                                                            android:layout_alignParentRight="true"
+                                                            android:src="@mipmap/icon_green_right"
+                                                            android:layout_width="wrap_content"
+                                                            android:layout_height="wrap_content" />
+
+                                                    </RelativeLayout>
+
+                                                    <com.puyue.www.qiaoge.view.AutoScrollRecyclerView
+                                                        android:id="@+id/rv_auto_team"
+                                                        android:layout_marginBottom="@dimen/size_5dp"
+                                                        android:layout_marginLeft="@dimen/size_11dp"
+                                                        android:layout_marginRight="@dimen/size_11dp"
+                                                        android:background="@drawable/shape_white1"
+                                                        android:layout_below="@+id/rl_more6"
+                                                        android:layout_width="match_parent"
+                                                        android:layout_height="wrap_content">
+
+                                                    </com.puyue.www.qiaoge.view.AutoScrollRecyclerView>
+                                                </RelativeLayout>
+
+                                            </RelativeLayout>
+                                            <!--拼团2结束-->
+
+                                            <!--折扣-->
+                                            <LinearLayout
+                                                android:layout_marginTop="@dimen/dp_10"
+                                                android:orientation="vertical"
+                                                android:layout_marginRight="@dimen/size_12dp"
+                                                android:layout_marginLeft="@dimen/size_12dp"
+                                                android:layout_width="match_parent"
+                                                android:layout_height="wrap_content">
 
                                                 <RelativeLayout
-                                                    android:id="@+id/rl_more6"
+                                                    android:gravity="center_vertical"
+                                                    android:background="@drawable/shape_coupon_grey"
                                                     android:layout_width="match_parent"
-                                                    android:layout_height="@dimen/size_32dp">
+                                                    android:layout_height="58dp">
 
                                                     <TextView
-                                                        android:text="拼团购买"
-                                                        android:id="@+id/tv_team_title1"
-                                                        android:layout_marginLeft="@dimen/size_16dp"
-                                                        android:layout_centerVertical="true"
-                                                        android:textColor="#ffffff"
-                                                        android:textSize="@dimen/sp_14"
+                                                        android:textStyle="bold"
+                                                        android:layout_marginLeft="@dimen/size_15dp"
+                                                        android:textSize="@dimen/sp_16"
+                                                        android:textColor="#FF7F4B34"
+                                                        android:id="@+id/tv_coupon_title"
+                                                        android:text="折扣钜惠不停歇"
+                                                        android:layout_width="wrap_content"
+                                                        android:layout_height="wrap_content" />
+
+                                                    <TextView
+                                                        android:layout_marginLeft="@dimen/size_15dp"
+                                                        android:textColor="#666666"
+                                                        android:textSize="@dimen/sp_12"
+                                                        android:id="@+id/tv_small_coupon_title"
+                                                        android:text="大众认可，品质好货"
+                                                        android:layout_below="@+id/tv_coupon_title"
+                                                        android:layout_width="wrap_content"
+                                                        android:layout_height="wrap_content" />
+
+                                                    <TextView
+                                                        android:text="查看更多>"
+                                                        android:textColor="#999999"
+                                                        android:textSize="@dimen/sp_12"
+                                                        android:paddingRight="@dimen/size_5dp"
+                                                        android:paddingLeft="@dimen/size_5dp"
+                                                        android:background="@drawable/shape_white"
+                                                        android:layout_marginLeft="@dimen/size_15dp"
+                                                        android:layout_below="@+id/tv_coupon_title"
+                                                        android:layout_toRightOf="@+id/tv_small_coupon_title"
                                                         android:layout_width="wrap_content"
                                                         android:layout_height="wrap_content" />
 
                                                     <ImageView
-                                                        android:layout_centerVertical="true"
-                                                        android:layout_marginRight="@dimen/size_15dp"
+                                                        android:src="@mipmap/icon_sale"
+                                                        android:layout_marginRight="@dimen/size_17dp"
                                                         android:layout_alignParentRight="true"
-                                                        android:src="@mipmap/icon_green_right"
                                                         android:layout_width="wrap_content"
                                                         android:layout_height="wrap_content" />
 
                                                 </RelativeLayout>
 
-                                                <com.puyue.www.qiaoge.view.AutoScrollRecyclerView
-                                                    android:id="@+id/rv_auto_team"
-                                                    android:layout_marginBottom="@dimen/size_5dp"
-                                                    android:layout_marginLeft="@dimen/size_11dp"
-                                                    android:layout_marginRight="@dimen/size_11dp"
-                                                    android:background="@drawable/shape_white1"
-                                                    android:layout_below="@+id/rl_more6"
+                                                <RelativeLayout
                                                     android:layout_width="match_parent"
                                                     android:layout_height="wrap_content">
 
-                                                </com.puyue.www.qiaoge.view.AutoScrollRecyclerView>
-                                            </RelativeLayout>
-                                            <!--拼团2结束-->
+                                                    <!--新折扣-->
+                                                    <RelativeLayout
+                                                        android:id="@+id/rl_coupon"
+                                                        android:background="@drawable/shape_coupon_greys"
+                                                        android:layout_width="match_parent"
+                                                        android:layout_height="wrap_content">
+
+                                                        <android.support.v7.widget.RecyclerView
+                                                            android:id="@+id/rv_coupon"
+                                                            android:layout_marginRight="@dimen/size_12dp"
+                                                            android:layout_marginTop="@dimen/size_12dp"
+                                                            android:layout_marginBottom="@dimen/size_12dp"
+                                                            android:layout_centerVertical="true"
+                                                            android:layout_width="match_parent"
+                                                            android:layout_height="wrap_content">
+
+                                                        </android.support.v7.widget.RecyclerView>
+
+                                                        <android.support.v7.widget.RecyclerView
+                                                            android:id="@+id/rv_coupon1"
+                                                            android:layout_marginRight="@dimen/size_12dp"
+                                                            android:layout_marginTop="@dimen/size_12dp"
+                                                            android:layout_marginBottom="@dimen/size_12dp"
+                                                            android:layout_centerVertical="true"
+                                                            android:layout_width="match_parent"
+                                                            android:layout_height="wrap_content">
+
+                                                        </android.support.v7.widget.RecyclerView>
+
+                                                    </RelativeLayout>
+
+                                                    <!--热销-->
+                                                    <RelativeLayout
+                                                        android:layout_below="@+id/rl_coupon"
+                                                        android:background="@drawable/shape_coupon_greys"
+                                                        android:layout_width="match_parent"
+                                                        android:layout_height="wrap_content">
+
+                                                        <android.support.v7.widget.RecyclerView
+                                                            android:layout_marginRight="@dimen/size_12dp"
+                                                            android:layout_marginTop="@dimen/size_12dp"
+                                                            android:layout_marginBottom="@dimen/size_12dp"
+                                                            android:layout_centerVertical="true"
+                                                            android:layout_width="match_parent"
+                                                            android:layout_height="wrap_content">
+
+                                                        </android.support.v7.widget.RecyclerView>
+
+
+                                                    </RelativeLayout>
+                                                </RelativeLayout>
+
+                                            </LinearLayout>
+                                            <!--热销-->
+                                            <LinearLayout
+                                                android:layout_marginTop="@dimen/dp_10"
+                                                android:orientation="vertical"
+                                                android:layout_marginRight="@dimen/size_12dp"
+                                                android:layout_marginLeft="@dimen/size_12dp"
+                                                android:layout_width="match_parent"
+                                                android:layout_height="wrap_content">
+
+                                                <RelativeLayout
+                                                    android:gravity="center_vertical"
+                                                    android:background="@drawable/shape_coupon_grey"
+                                                    android:layout_width="match_parent"
+                                                    android:layout_height="58dp">
+
+                                                    <TextView
+                                                        android:textStyle="bold"
+                                                        android:layout_marginLeft="@dimen/size_15dp"
+                                                        android:textSize="@dimen/sp_16"
+                                                        android:textColor="#FF7F4B34"
+                                                        android:id="@+id/tv_hot_title"
+                                                        android:text="热销TOP榜单"
+                                                        android:layout_width="wrap_content"
+                                                        android:layout_height="wrap_content" />
+
+                                                    <TextView
+                                                        android:layout_marginLeft="@dimen/size_15dp"
+                                                        android:textColor="#666666"
+                                                        android:textSize="@dimen/sp_12"
+                                                        android:id="@+id/tv_small_hot_title"
+                                                        android:text="优惠多多，停不下来"
+                                                        android:layout_below="@+id/tv_hot_title"
+                                                        android:layout_width="wrap_content"
+                                                        android:layout_height="wrap_content" />
+
+                                                    <TextView
+                                                        android:id="@+id/tv_coupon_more"
+                                                        android:text="查看更多>"
+                                                        android:textColor="#999999"
+                                                        android:textSize="@dimen/sp_12"
+                                                        android:paddingRight="@dimen/size_5dp"
+                                                        android:paddingLeft="@dimen/size_5dp"
+                                                        android:background="@drawable/shape_white"
+                                                        android:layout_marginLeft="@dimen/size_15dp"
+                                                        android:layout_below="@+id/tv_hot_title"
+                                                        android:layout_toRightOf="@+id/tv_small_hot_title"
+                                                        android:layout_width="wrap_content"
+                                                        android:layout_height="wrap_content" />
+
+                                                    <ImageView
+                                                        android:src="@mipmap/icon_sale"
+                                                        android:layout_marginRight="@dimen/size_17dp"
+                                                        android:layout_alignParentRight="true"
+                                                        android:layout_width="wrap_content"
+                                                        android:layout_height="wrap_content" />
+
+                                                </RelativeLayout>
+
+                                                <RelativeLayout
+                                                    android:layout_width="match_parent"
+                                                    android:layout_height="wrap_content">
+
+                                                    <!--热销-->
+                                                    <RelativeLayout
+                                                        android:id="@+id/rl_hot"
+                                                        android:background="@drawable/shape_coupon_greys"
+                                                        android:layout_width="match_parent"
+                                                        android:layout_height="wrap_content">
+
+                                                        <android.support.v7.widget.RecyclerView
+                                                            android:id="@+id/rv_hot"
+                                                            android:layout_marginRight="@dimen/size_12dp"
+                                                            android:layout_marginTop="@dimen/size_12dp"
+                                                            android:layout_marginBottom="@dimen/size_12dp"
+                                                            android:layout_centerVertical="true"
+                                                            android:layout_width="match_parent"
+                                                            android:layout_height="wrap_content">
+
+                                                        </android.support.v7.widget.RecyclerView>
+
+                                                        <android.support.v7.widget.RecyclerView
+                                                            android:id="@+id/rv_hot1"
+                                                            android:layout_marginRight="@dimen/size_12dp"
+                                                            android:layout_marginTop="@dimen/size_12dp"
+                                                            android:layout_marginBottom="@dimen/size_12dp"
+                                                            android:layout_centerVertical="true"
+                                                            android:layout_width="match_parent"
+                                                            android:layout_height="wrap_content">
+
+                                                        </android.support.v7.widget.RecyclerView>
+
+                                                    </RelativeLayout>
+
+
+                                                </RelativeLayout>
+
+                                            </LinearLayout>
                                             <LinearLayout
                                                 android:visibility="gone"
                                                 android:layout_marginTop="10dp"
@@ -829,12 +1049,29 @@
                             boy:layout_behavior="@string/appbar_scrolling_view_behavior"
                             android:layout_height="wrap_content">
 
-                            <FrameLayout
-                                android:id="@+id/content"
+                            <LinearLayout
+                                android:orientation="vertical"
                                 android:layout_width="match_parent"
-                                android:layout_height="match_parent">
+                                android:layout_height="wrap_content">
 
-                            </FrameLayout>
+                                <android.support.v7.widget.RecyclerView
+                                    android:id="@+id/rv_test"
+                                    android:visibility="gone"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content">
+
+
+                                </android.support.v7.widget.RecyclerView>
+
+                                <FrameLayout
+                                    android:id="@+id/content"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent">
+
+                                </FrameLayout>
+                            </LinearLayout>
+
+
                         </android.support.v4.widget.NestedScrollView>
 
 

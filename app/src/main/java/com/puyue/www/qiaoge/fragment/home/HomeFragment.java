@@ -1,27 +1,33 @@
 package com.puyue.www.qiaoge.fragment.home;
 
+import android.animation.IntEvaluator;
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.AppBarLayout;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
+import android.support.v4.widget.NestedScrollView;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.LinearSmoothScroller;
 import android.support.v7.widget.PagerSnapHelper;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
+import android.util.DisplayMetrics;
 import android.util.Log;
-import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewTreeObserver;
-import android.view.animation.Animation;
-import android.view.animation.ScaleAnimation;
+import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
@@ -29,42 +35,49 @@ import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import io.reactivex.Observable;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Consumer;
 import com.bumptech.glide.Glide;
+import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.daimajia.slider.library.SliderTypes.BaseSliderView;
+import com.example.xrecyclerview.DensityUtil;
 import com.puyue.www.qiaoge.NewWebViewActivity;
 import com.puyue.www.qiaoge.R;
 import com.puyue.www.qiaoge.RoundImageView;
 import com.puyue.www.qiaoge.UnicornManager;
+import com.puyue.www.qiaoge.activity.HomeActivity;
+import com.puyue.www.qiaoge.activity.TopEvent;
 import com.puyue.www.qiaoge.activity.home.ChangeCityActivity;
 import com.puyue.www.qiaoge.activity.home.ChooseAddressActivity;
 import com.puyue.www.qiaoge.activity.home.CommonGoodsDetailActivity;
 import com.puyue.www.qiaoge.activity.home.CouponDetailActivity;
+import com.puyue.www.qiaoge.activity.home.FullGiftActivity;
 import com.puyue.www.qiaoge.activity.home.HomeGoodsListActivity;
+import com.puyue.www.qiaoge.activity.home.SearchReasultActivity;
 import com.puyue.www.qiaoge.activity.home.SearchStartActivity;
 import com.puyue.www.qiaoge.activity.home.SpecialGoodDetailActivity;
 import com.puyue.www.qiaoge.activity.home.TeamDetailActivity;
-import com.puyue.www.qiaoge.activity.mine.MessageCenterActivity;
 import com.puyue.www.qiaoge.activity.mine.login.LoginActivity;
 import com.puyue.www.qiaoge.activity.mine.login.LogoutsEvent;
+
 import com.puyue.www.qiaoge.activity.mine.order.MyOrdersActivity;
 import com.puyue.www.qiaoge.activity.mine.wallet.MinerIntegralActivity;
 import com.puyue.www.qiaoge.activity.mine.wallet.MyWalletNewActivity;
+
 import com.puyue.www.qiaoge.adapter.CommonCouponAdapter;
-import com.puyue.www.qiaoge.adapter.CommonTestAdapter;
 import com.puyue.www.qiaoge.adapter.CommonsAdapter;
 import com.puyue.www.qiaoge.adapter.CommonssAdapter;
-import com.puyue.www.qiaoge.adapter.Coupon2Adapter;
-import com.puyue.www.qiaoge.adapter.Coupon3Adapter;
-import com.puyue.www.qiaoge.adapter.CouponAdapter;
+import com.puyue.www.qiaoge.adapter.CommonsssAdapter;
 import com.puyue.www.qiaoge.adapter.CouponListAdapter;
-import com.puyue.www.qiaoge.adapter.Full2Adapter;
-import com.puyue.www.qiaoge.adapter.Full3Adapter;
-import com.puyue.www.qiaoge.adapter.FullActivitesAdapter;
 import com.puyue.www.qiaoge.adapter.FullAdapter;
+import com.puyue.www.qiaoge.adapter.HotAdapter;
+import com.puyue.www.qiaoge.adapter.IndexRecommendAdapter;
+import com.puyue.www.qiaoge.adapter.MyAdapter;
 import com.puyue.www.qiaoge.adapter.Skill2Adapter;
 import com.puyue.www.qiaoge.adapter.Skill3Adapter;
+import com.puyue.www.qiaoge.adapter.Skill5Adapter;
 import com.puyue.www.qiaoge.adapter.Team3Adapter;
-import com.puyue.www.qiaoge.adapter.Team4Adapter;
 import com.puyue.www.qiaoge.adapter.TeamAdapter;
 import com.puyue.www.qiaoge.adapter.home.CommonAdapter;
 import com.puyue.www.qiaoge.adapter.home.CommonProductActivity;
@@ -73,7 +86,6 @@ import com.puyue.www.qiaoge.adapter.home.ReductionProductActivity;
 import com.puyue.www.qiaoge.adapter.home.SeckillGoodActivity;
 import com.puyue.www.qiaoge.api.cart.AddCartAPI;
 import com.puyue.www.qiaoge.api.home.CityChangeAPI;
-import com.puyue.www.qiaoge.api.home.DriverInfo;
 import com.puyue.www.qiaoge.api.home.IndexHomeAPI;
 import com.puyue.www.qiaoge.api.home.IndexInfoModel;
 import com.puyue.www.qiaoge.api.home.ProductListAPI;
@@ -86,7 +98,6 @@ import com.puyue.www.qiaoge.banner.GlideImageLoader;
 import com.puyue.www.qiaoge.banner.Transformer;
 import com.puyue.www.qiaoge.banner.listener.OnBannerListener;
 import com.puyue.www.qiaoge.base.BaseFragment;
-import com.puyue.www.qiaoge.base.BaseModel;
 import com.puyue.www.qiaoge.constant.AppConstant;
 import com.puyue.www.qiaoge.dialog.ChooseHomeDialog;
 import com.puyue.www.qiaoge.dialog.CouponDialog;
@@ -97,6 +108,8 @@ import com.puyue.www.qiaoge.dialog.TurnTableDialog;
 import com.puyue.www.qiaoge.event.AddressEvent;
 import com.puyue.www.qiaoge.event.BackEvent;
 import com.puyue.www.qiaoge.event.CouponListModel;
+import com.puyue.www.qiaoge.event.FromIndexEvent;
+import com.puyue.www.qiaoge.event.GoToMarketEvent;
 import com.puyue.www.qiaoge.event.IsTurnModel;
 import com.puyue.www.qiaoge.event.OnHttpCallBack;
 import com.puyue.www.qiaoge.event.PrivacyModel;
@@ -114,6 +127,7 @@ import com.puyue.www.qiaoge.helper.PublicRequestHelper;
 import com.puyue.www.qiaoge.helper.StringHelper;
 import com.puyue.www.qiaoge.helper.UserInfoHelper;
 import com.puyue.www.qiaoge.model.IsShowModel;
+import com.puyue.www.qiaoge.model.OrderModel;
 import com.puyue.www.qiaoge.model.SendModel;
 import com.puyue.www.qiaoge.model.cart.AddCartModel;
 import com.puyue.www.qiaoge.model.cart.GetCartNumModel;
@@ -126,12 +140,19 @@ import com.puyue.www.qiaoge.model.home.RecommendModel;
 import com.puyue.www.qiaoge.model.mine.UpdateModel;
 import com.puyue.www.qiaoge.model.mine.order.HomeBaseModel;
 import com.puyue.www.qiaoge.model.mine.order.MyOrderNumModel;
+import com.puyue.www.qiaoge.utils.DateUtils;
 import com.puyue.www.qiaoge.utils.LoginUtil;
 import com.puyue.www.qiaoge.utils.SharedPreferencesUtil;
-import com.puyue.www.qiaoge.view.GlideModel;
-import com.puyue.www.qiaoge.view.SnapUpCountDownTimerView;
+import com.puyue.www.qiaoge.utils.ToastUtil;
+import com.puyue.www.qiaoge.utils.Utils;
+
+import com.puyue.www.qiaoge.view.AutoScrollRecyclerView;
+import com.puyue.www.qiaoge.view.HIndicators;
+import com.puyue.www.qiaoge.view.SnapUpCountDownTimerViewss;
+import com.puyue.www.qiaoge.view.selectmenu.MyScrollView;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.listener.OnLoadMoreListener;
 import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 import com.taobao.library.VerticalBannerView;
 import com.wang.avi.AVLoadingIndicatorView;
@@ -140,6 +161,7 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -156,39 +178,60 @@ import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
-import static cn.com.chinatelecom.account.api.CtAuth.mContext;
 
 /**
- * Created by ${王涛} on 2020/9/9
+ * Created by ${王涛} on 2020/1/4
  */
-public class HomeFragment extends BaseFragment implements View.OnClickListener, BaseSliderView.OnSliderClickListener{
+public class HomeFragment extends BaseFragment implements View.OnClickListener,BaseSliderView.OnSliderClickListener {
     Unbinder binder;
+    @BindView(R.id.rv_auto_view1)
+    AutoScrollRecyclerView rv_auto_view1;
+    @BindView(R.id.rv_coupon)
+    RecyclerView rv_coupon;
+    @BindView(R.id.rv_coupon1)
+    RecyclerView rv_coupon1;
+    @BindView(R.id.rl1)
+    RelativeLayout rl1;
+    @BindView(R.id.rl_full)
+    RelativeLayout rl_full;
+    @BindView(R.id.rl_team)
+    RelativeLayout rl_team;
+    @BindView(R.id.ll2)
+    LinearLayout ll2;
+    @BindView(R.id.rl2)
+    RelativeLayout rl2;
+    @BindView(R.id.ll1)
+    LinearLayout ll1;
+    @BindView(R.id.indicator)
+    HIndicators indicator;
     @BindView(R.id.rv_icon)
     RecyclerView rv_icon;
+    @BindView(R.id.rootview)
+    FrameLayout rootview;
     @BindView(R.id.tv_city)
     TextView tv_city;
     @BindView(R.id.tv_search)
     TextView tv_search;
-    @BindView(R.id.iv_bg)
-    ImageView iv_bg;
+    @BindView(R.id.rv_search)
+    RelativeLayout rv_search;
     @BindView(R.id.tv_num)
     TextView tv_num;
     @BindView(R.id.banner)
     Banner banner;
     @BindView(R.id.ll_driver)
     LinearLayout ll_driver;
-    @BindView(R.id.iv_pic)
-    ImageView iv_pic;
     @BindView(R.id.smart)
     SmartRefreshLayout refreshLayout;
     @BindView(R.id.rl_message)
     RelativeLayout rl_message;
     @BindView(R.id.homeMessage)
     ImageView homeMessage;
-    @BindView(R.id.rv_type)
-    RecyclerView rv_type;
-    @BindView(R.id.rg_new)
-    RadioGroup rg_new;
+    @BindView(R.id.rl_more)
+    RelativeLayout rl_more;
+    @BindView(R.id.rl_more3)
+    RelativeLayout rl_more3;
+    @BindView(R.id.rl_more4)
+    RelativeLayout rl_more4;
     @BindView(R.id.rb_new)
     RadioButton rb_new;
     @BindView(R.id.rb_must_common)
@@ -199,6 +242,10 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener, 
     RadioButton rb_common;
     @BindView(R.id.ll_line)
     LinearLayout ll_line;
+    @BindView(R.id.rv_team)
+    AutoScrollRecyclerView rv_team;
+    @BindView(R.id.rv_given)
+    AutoScrollRecyclerView rv_given;
     @BindView(R.id.v1)
     View v1;
     @BindView(R.id.v2)
@@ -223,28 +270,11 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener, 
     LinearLayout ll_active;
     @BindView(R.id.iv_empty)
     RoundImageView iv_empty;
-    @BindView(R.id.recyclerViewTest)
-    RecyclerView recyclerViewTest;
-    @BindView(R.id.recyclerView)
-    RecyclerView recyclerView;
-    @BindView(R.id.tv_more)
-    TextView tv_more;
+    @BindView(R.id.iv_search)
+    RelativeLayout iv_search;
     @BindView(R.id.snap)
-    SnapUpCountDownTimerView snap;
-    @BindView(R.id.tv_time)
-    TextView tv_time;
-    @BindView(R.id.tv_desc2)
-    TextView tv_desc2;
-    @BindView(R.id.tv_desc)
-    TextView tv_desc;
-    @BindView(R.id.tv_desc3)
-    TextView tv_desc3;
-    @BindView(R.id.rl_more)
-    RelativeLayout rl_more;
-    @BindView(R.id.rl_more2)
-    RelativeLayout rl_more2;
-    @BindView(R.id.rl_more3)
-    RelativeLayout rl_more3;
+    SnapUpCountDownTimerViewss snap;
+    int topHeight;
     @BindView(R.id.verticalBanner)
     VerticalBannerView verticalBanner;
     @BindView(R.id.lav_activity_loading)
@@ -255,28 +285,63 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener, 
     TextView tv_change;
     @BindView(R.id.tv_change_address)
     TextView tv_change_address;
-    @BindView(R.id.toolbar1)
-    Toolbar toolbar1;
-//    List<String> actives;
-    @BindView(R.id.tv_search1)
-    TextView tv_search1;
-    @BindView(R.id.rb_1)
-    TextView rb_1;
-    @BindView(R.id.rb_2)
-    TextView rb_2;
-    @BindView(R.id.rb_3)
-    TextView rb_3;
-//    @BindView(R.id.rb_4)
-//    TextView rb_4;
-//    @BindView(R.id.rl_coupon2)
-//    RelativeLayout rl_coupon2;
+    @BindView(R.id.tv_skill_title)
+    TextView tv_skill_title;
+    @BindView(R.id.tv_times)
+    TextView tv_times;
+    @BindView(R.id.tv_amount)
+    TextView tv_amount;
+    @BindView(R.id.rv_recommend)
+    RecyclerView rv_recommend;
+    @BindView(R.id.ll_bgc)
+    LinearLayout ll_bgc;
+    @BindView(R.id.rv_skill)
+    RecyclerView rv_skill;
+    @BindView(R.id.rg_new)
+    RadioGroup rg_new;
+    private FrameLayout.LayoutParams layoutParams;
+    private int evaluatemargin;
+    private int evaluatetop;
+    @BindView(R.id.rv_auto_view)
+    AutoScrollRecyclerView rv_auto_view;
+    @BindView(R.id.rv_auto_team)
+    AutoScrollRecyclerView rv_auto_team;
+    @BindView(R.id.rv_hot)
+    RecyclerView rv_hot;
+    @BindView(R.id.rv_hot1)
+    RecyclerView rv_hot1;
+    @BindView(R.id.tv_coupon_more)
+    TextView tv_coupon_more;
+    @BindView(R.id.rv_test)
+    MyRecycleView rv_test;
+    @BindView(R.id.rv_bar)
+    RelativeLayout rv_bar;
+    @BindView(R.id.llFixed)
+    LinearLayout llFixed;
+    @BindView(R.id.inside_fixed_bar_parent)
+    RelativeLayout insideFixedBarParent;
+    @BindView(R.id.scroll)
+    MyScrollView scroll;
+    @BindView(R.id.rl_inside_fixed)
+    RelativeLayout rl_inside_fixed;
+    int pageNum = 1;
+    int pageSize = 10;
+    HotAdapter hotAdapter;
+    Skill5Adapter skill5Adapter;
+    ProductNormalModel productNormalModel;
+    private NewAdapter newAdapter;
+    IndexRecommendAdapter indexRecommendAdapter;
     CouponDialog couponDialog;
+    FullAdapter fullAdapter;
     private String cell; // 客服电话
     private PrivacyDialog privacyDialog;
     ChooseHomeDialog chooseAddressDialog;
-
+    CommonsssAdapter commonsssAdapter;
+    List<String> recommendData;
+    //    AnimationDrawable drawable;
+    List<ProductNormalModel.DataBean.ListBean> listss = new ArrayList<>();
     //司机信息
-    List<DriverInfo.DataBean> driverList = new ArrayList<>();
+    List<OrderModel.DataBean> driverList = new ArrayList<>();
     //八个icon集合
     List<IndexInfoModel.DataBean.IconsBean> iconList = new ArrayList<>();
     //秒杀集合
@@ -289,6 +354,8 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener, 
     List<HomeNewRecommendModel.DataBean.ListBean> newList = new ArrayList<>();
     //banner集合
     private List<String> bannerList = new ArrayList<>();
+    //首页顶部推荐集合
+    private List<String> recommendList = new ArrayList<>();
     private RvIconAdapter rvIconAdapter;
     Context context;
     int PageNum = 1;
@@ -307,7 +374,6 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener, 
     private IndexInfoModel.DataBean data;
     //分类列表
     private List<IndexInfoModel.DataBean.ClassifyListBean> classifyList = new ArrayList<>();
-    private TypesAdapter typeAdapter;
     NewFragment newFragment;
     MustFragment mustFragment;
     InfoFragment infoFragment;
@@ -318,15 +384,16 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener, 
     private CommonCouponAdapter commonCouponAdapter;
     private CommonsAdapter commonsAdapter;
     private CommonAdapter commonAdapter;
-    CouponAdapter couponAdapter;
-    Coupon2Adapter coupon2Adapter;
-    Coupon3Adapter coupon3Adapter;
-    FullAdapter fullAdapter;
-    Full2Adapter full2Adapter;
-    Full3Adapter full3Adapter;
-    TeamAdapter teamAdapter;
-    Team3Adapter team3Adapter;
-    Team4Adapter team4Adapter;
+    private List<CouponModel.DataBean.ActivesBean> actives = new ArrayList<>();
+    private List<CouponModel.DataBean.ActivesBean> skillActive3 = new ArrayList<>();
+    private List<CouponModel.DataBean.ActivesBean> skillActive2 = new ArrayList<>();
+    private List<CouponModel.DataBean.ActivesBean> skillActive1 = new ArrayList<>();
+    private List<CouponModel.DataBean.ActivesBean> couponActive1 = new ArrayList<>();
+    private List<CouponModel.DataBean.ActivesBean> couponActive2 = new ArrayList<>();
+    private List<CouponModel.DataBean.ActivesBean> couponActive3 = new ArrayList<>();
+    private List<CouponModel.DataBean.ActivesBean> teamActive1 = new ArrayList<>();
+    private List<CouponModel.DataBean.ActivesBean> fullActive1 = new ArrayList<>();
+
     private int spikeNum;
     private int teamNum;
     private int specialNum;
@@ -352,8 +419,13 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener, 
     private boolean isUpdate;
     private HomeActivityDialog homeActivityDialog;
     CommonssAdapter commonssAdapter;
-    List<String> recommendData;
-    PagerSnapHelper snapHelper = new PagerSnapHelper();
+
+    private static final float ENDMARGINLEFT = 50;
+    private static final float ENDMARGINTOP = 5;
+    private static final float STARTMARGINLEFT = 20;
+    private static final float STARTMARGINTOP = 80;
+
+
     public static HomeFragmentsss getInstance() {
         HomeFragmentsss fragment = new HomeFragmentsss();
         Bundle bundle = new Bundle();
@@ -363,19 +435,15 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener, 
 
     @Override
     public int setLayoutId() {
-        return R.layout.test3;
+        return R.layout.test2;
 
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        return super.onOptionsItemSelected(item);
-    }
 
     private void requestOrderNumTwo() {
         MyOrderNumAPI.requestOrderNum(mActivity)
                 .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .observeOn(rx.android.schedulers.AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<MyOrderNumModel>() {
                     @Override
                     public void onCompleted() {
@@ -409,13 +477,12 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener, 
             tv_num.setVisibility(View.GONE);
         }
     }
-    CommonTestAdapter commonTestAdapter;
-    private void getSpikeList(int type) {
-        IndexHomeAPI.getCouponList(mActivity,type+"")
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<CouponModel>() {
 
+    private void getSpikeList(int type) {
+        IndexHomeAPI.getCouponList(mActivity, type + "")
+                .subscribeOn(Schedulers.io())
+                .observeOn(rx.android.schedulers.AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<CouponModel>() {
 
                     @Override
                     public void onCompleted() {
@@ -429,300 +496,211 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener, 
 
                     @Override
                     public void onNext(CouponModel couponModel) {
-                        if(couponModel.isSuccess()) {
-                            lav_activity_loading.hide();
-                            lav_activity_loading.setVisibility(View.GONE);
-                            List<CouponModel.DataBean.ActivesBean> actives = couponModel.getData().getActives();
-                            if(type==2) {
-                                rb_1.setBackgroundResource(R.drawable.shape_orange);
-                                rb_2.setBackgroundResource(R.drawable.shape_white_home);
-                                rb_3.setBackgroundResource(R.drawable.shape_white_home);
-//                                rb_4.setBackgroundResource(R.drawable.shape_white_home);
+                        if (couponModel.isSuccess()) {
+                            actives.clear();
+                            if (type == 2) {
+                                data1 = couponModel.getData();
+                                if (data1 != null) {
+                                    tv_skill_title.setText(data1.getTitle());
+                                    currentTime = couponModel.getData().getCurrentTime();
+                                    startTime = couponModel.getData().getStartTime();
 
-                                rb_1.setTextColor(Color.parseColor("#ffffff"));
-                                rb_2.setTextColor(Color.parseColor("#FF680A"));
-                                rb_3.setTextColor(Color.parseColor("#FF680A"));
-//                                rb_4.setTextColor(Color.parseColor("#FF680A"));
-                                if(actives.size()==1) {
-//                                    skillAdapter = new SkillAdapter(mActivity,R.layout.item_skill_lists, actives,"1", new SkillAdapter.OnClick() {
-//                                        @Override
-//                                        public void shoppingCartOnClick(int position) {
-//                                            int activeId = actives.get(position).getActiveId();
-//                                            addCar(activeId, "", 2, "1");
-//                                        }
-//
-//                                        @Override
-//                                        public void tipClick() {
-//                                            showPhoneDialog(cell);
-//                                        }
-//
-//                                        @Override
-//                                        public void addDialog() {
-//                                            initDialog();
-//                                        }
-//                                    });
-                                    recyclerView.setVisibility(View.VISIBLE);
-                                    recyclerViewTest.setVisibility(View.GONE);
-                                    recyclerView.setAdapter(skillAdapter);
-                                    recyclerView.setLayoutManager(new LinearLayoutManager(mActivity, LinearLayoutManager.HORIZONTAL, false));
-                                }else if(actives.size()==2){
-                                    skill2Adapter = new Skill2Adapter(mActivity,R.layout.item_skill_lists, actives,"0");
-                                    recyclerView.setVisibility(View.GONE);
-                                    recyclerViewTest.setVisibility(View.VISIBLE);
-                                    recyclerViewTest.setAdapter(skill2Adapter);
-                                    snapHelper.attachToRecyclerView(recyclerViewTest);
-                                    initRecycle();
+                                    if (data1.getActives().size() == 1) {
+                                        skillActive1.clear();
+                                        skillActive1.addAll(data1.getActives());
+                                        skillAdapter = new SkillAdapter(mActivity, R.layout.item_skill_lists, skillActive1, "1");
+                                        rv_skill.setAdapter(skillAdapter);
+                                        rv_skill.setLayoutManager(new LinearLayoutManager(mActivity, LinearLayoutManager.HORIZONTAL, false));
+                                        rv_skill.setVisibility(View.VISIBLE);
+                                        skillAdapter.notifyDataSetChanged();
+                                    } else if (data1.getActives().size() == 2) {
+                                        skillActive2.clear();
+                                        skillActive2.addAll(data1.getActives());
+                                        skill2Adapter = new Skill2Adapter(mActivity, R.layout.item_skill_lists, skillActive2, "0");
+                                        rv_skill.setAdapter(skill2Adapter);
+//                                        recyclerView.setVisibility(View.GONE);
+                                        rv_skill.setVisibility(View.VISIBLE);
+                                        skill2Adapter.notifyDataSetChanged();
+                                        initRecycle();
 
-                                }else if(actives.size()==3){
-                                    List<CouponModel.DataBean.ActivesBean> actives1 = couponModel.getData().getActives();
-                                    skill3Adapter = new Skill3Adapter(R.layout.item_skill_list, actives1);
-                                    recyclerView.setVisibility(View.VISIBLE);
-                                    recyclerViewTest.setVisibility(View.GONE);
-                                    recyclerView.setAdapter(skill3Adapter);
-                                    recyclerView.setLayoutManager(new LinearLayoutManager(mActivity, LinearLayoutManager.HORIZONTAL, false));
+                                    } else if (data1.getActives().size() == 3) {
+                                        skillActive3.clear();
+                                        skillActive3.addAll(data1.getActives());
+                                        skill3Adapter = new Skill3Adapter(R.layout.item_skill_list, skillActive3);
+                                        rv_skill.setAdapter(skill3Adapter);
+                                        rv_skill.setLayoutManager(new GridLayoutManager(mActivity, 3));
+                                        rv_skill.setVisibility(View.VISIBLE);
+                                        skill3Adapter.notifyDataSetChanged();
+                                    } else if (data1.getActives().size() == 4) {
+                                        skillActive3.clear();
+                                        skillActive3.addAll(data1.getActives());
+                                        skill3Adapter = new Skill3Adapter(R.layout.item_skill_list4, skillActive3);
+                                        rv_skill.setAdapter(skill3Adapter);
+                                        rv_skill.setLayoutManager(new GridLayoutManager(mActivity, 4));
+                                        rv_skill.setVisibility(View.VISIBLE);
+                                        skill3Adapter.notifyDataSetChanged();
+                                    } else {
+                                        skillActive3.clear();
+                                        rv_skill.setVisibility(View.GONE);
+                                        skillActive3.addAll(data1.getActives());
+                                        skill5Adapter.notifyDataSetChanged();
+                                        rv_auto_view.setVisibility(View.VISIBLE);
+                                    }
+
+
+                                    endTime = couponModel.getData().getEndTime();
+                                    String current = DateUtils.formatDate(currentTime, "MM月dd日HH时mm分ss秒");
+                                    String start = DateUtils.formatDate(startTime, "MM月dd日HH时mm分ss秒");
+                                    try {
+                                        currents = Utils.stringToDate(current, "MM月dd日HH时mm分ss秒");
+                                        starts = Utils.stringToDate(start, "MM月dd日HH时mm分ss秒");
+                                    } catch (ParseException e) {
+                                        e.printStackTrace();
+                                    }
+
+
+                                    if (currentTime > startTime) {
+                                        //秒杀开始
+                                        if (startTime != 0 && endTime != 0) {
+                                            snap.setVisibility(View.VISIBLE);
+                                            snap.setTime(true, currentTime, startTime, endTime);
+                                            snap.changeBackGround(ContextCompat.getColor(mActivity, R.color.white));
+                                            snap.changeTypeColor(ContextCompat.getColor(mActivity, R.color.color_F6551A));
+
+                                            snap.start();
+                                        } else {
+
+                                            snap.setVisibility(View.GONE);
+                                        }
+                                    } else {
+                                        //未开始
+                                        boolean exceed2 = DateUtils.isExceed2(currents, starts);
+                                        if (exceed2) {
+                                            //大于2
+
+                                            snap.setVisibility(View.GONE);
+                                        } else {
+                                            //小于2
+                                            if (startTime != 0 && endTime != 0) {
+                                                snap.setVisibility(View.VISIBLE);
+                                                snap.setTime(true, currentTime, startTime, endTime);
+                                                snap.changeBackGround(ContextCompat.getColor(mActivity, R.color.white));
+                                                snap.changeTypeColor(ContextCompat.getColor(mActivity, R.color.color_F6551A));
+
+                                                snap.start();
+                                            } else {
+
+                                                snap.setVisibility(View.GONE);
+                                            }
+                                        }
+                                    }
+
                                 }
 
-                            }else if(type==11) {
-                                rb_1.setBackgroundResource(R.drawable.shape_white_home);
-                                rb_2.setBackgroundResource(R.drawable.shape_orange);
-                                rb_3.setBackgroundResource(R.drawable.shape_white_home);
-//                                rb_4.setBackgroundResource(R.drawable.shape_white_home);
+                            } else if (type == 11) {
+                                data1 = couponModel.getData();
+                                if (data1 != null) {
+                                    if (data1.getActives().size() == 1) {
+                                        couponActive1.clear();
+                                        couponActive1.addAll(data1.getActives());
+                                        commonAdapter = new CommonAdapter(R.layout.item_common_lists, couponActive1);
+//                                        recyclerView.setLayoutManager(new LinearLayoutManager(mActivity,LinearLayoutManager.HORIZONTAL, false));
+                                        rv_coupon.setAdapter(commonAdapter);
+                                        commonAdapter.notifyDataSetChanged();
 
-                                rb_1.setTextColor(Color.parseColor("#FF680A"));
-                                rb_2.setTextColor(Color.parseColor("#ffffff"));
-                                rb_3.setTextColor(Color.parseColor("#FF680A"));
-//                                rb_4.setTextColor(Color.parseColor("#FF680A"));
+                                    } else if (data1.getActives().size() == 2) {
+                                        couponActive2.clear();
+                                        couponActive2.addAll(data1.getActives());
+                                        commonCouponAdapter = new CommonCouponAdapter(mActivity, 11 + "", R.layout.item_coupon_lists, couponActive2);
+                                        rv_coupon.setLayoutManager(new LinearLayoutManager(mActivity, LinearLayoutManager.HORIZONTAL, false));
+                                        rv_coupon.setAdapter(commonCouponAdapter);
+                                        commonCouponAdapter.notifyDataSetChanged();
 
-                                if(actives.size()==1) {
-                                    couponAdapter = new CouponAdapter(mActivity, 11 + "", R.layout.item_common_lists, actives, "1", new CouponAdapter.OnClick() {
-                                        @Override
-                                        public void shoppingCartOnClick(int position) {
-                                            int activeId = actives.get(position).getActiveId();
-                                            addCar(activeId, "", 11, "1");
-                                        }
-
-                                        @Override
-                                        public void tipClick() {
-                                            showPhoneDialog(cell);
-                                        }
-
-                                        @Override
-                                        public void addDialog() {
-                                            initDialog();
-                                        }
-                                    });
-                                    recyclerView.setVisibility(View.VISIBLE);
-                                    recyclerViewTest.setVisibility(View.GONE);
-                                    recyclerView.setAdapter(couponAdapter);
-                                    recyclerView.setLayoutManager(new LinearLayoutManager(mActivity, LinearLayoutManager.HORIZONTAL, false));
-
-                                }else if(actives.size()==2){
-                                    coupon2Adapter = new Coupon2Adapter(mActivity, 11 + "", R.layout.item_common_lists, actives, "0", new Coupon2Adapter.OnClick() {
-                                        @Override
-                                        public void shoppingCartOnClick(int position) {
-                                            int activeId = actives.get(position).getActiveId();
-                                            addCar(activeId, "", 11, "1");
-                                        }
-
-                                        @Override
-                                        public void tipClick() {
-                                            showPhoneDialog(cell);
-                                        }
-
-                                        @Override
-                                        public void addDialog() {
-                                            initDialog();
-                                        }
-                                    });
-                                    recyclerView.setVisibility(View.GONE);
-                                    recyclerViewTest.setVisibility(View.VISIBLE);
-                                    recyclerViewTest.setAdapter(coupon2Adapter);
-                                    snapHelper.attachToRecyclerView(recyclerViewTest);
-                                    initRecycle();
-                                }else {
-                                    coupon3Adapter = new Coupon3Adapter(mActivity, 11 + "", R.layout.item_commons_list, actives, "1", new Coupon3Adapter.OnClick() {
-                                        @Override
-                                        public void shoppingCartOnClick(int position) {
-                                            int activeId = actives.get(position).getActiveId();
-                                            addCar(activeId, "", 11, "1");
-                                        }
-
-                                        @Override
-                                        public void tipClick() {
-                                            showPhoneDialog(cell);
-                                        }
-
-                                        @Override
-                                        public void addDialog() {
-                                            initDialog();
-                                        }
-                                    });
-                                    recyclerView.setVisibility(View.VISIBLE);
-                                    recyclerViewTest.setVisibility(View.GONE);
-                                    recyclerView.setAdapter(coupon3Adapter);
-                                    recyclerView.setLayoutManager(new LinearLayoutManager(mActivity, LinearLayoutManager.HORIZONTAL, false));
+                                    } else {
+                                        couponActive3.clear();
+                                        couponActive3.addAll(data1.getActives());
+                                        commonAdapter = new CommonAdapter(R.layout.item_coupon_listss, couponActive3);
+                                        rv_coupon1.setLayoutManager(new LinearLayoutManager(mActivity, RecyclerView.HORIZONTAL, false));
+                                        rv_coupon1.setAdapter(commonAdapter);
+                                        commonAdapter.notifyDataSetChanged();
+                                    }
                                 }
-//
-                            }else if(type==12) {
-                                rb_1.setBackgroundResource(R.drawable.shape_white_home);
-                                rb_2.setBackgroundResource(R.drawable.shape_white_home);
-                                rb_3.setBackgroundResource(R.drawable.shape_white_home);
-//                                rb_4.setBackgroundResource(R.drawable.shape_orange);
-
-                                rb_1.setTextColor(Color.parseColor("#FF680A"));
-                                rb_2.setTextColor(Color.parseColor("#FF680A"));
-                                rb_3.setTextColor(Color.parseColor("#FF680A"));
-//                                rb_4.setTextColor(Color.parseColor("#ffffff"));
-
-                                if(actives.size()==1) {
-//                                    fullAdapter = new FullAdapter(mActivity, 12 + "", R.layout.item_full_list, actives, "1", new FullAdapter.OnClick() {
-//                                        @Override
-//                                        public void shoppingCartOnClick(int position) {
-//
-//                                        }
-//
-//                                        @Override
-//                                        public void tipClick() {
-//                                            showPhoneDialog(cell);
-//                                        }
-//
-//                                        @Override
-//                                        public void addDialog() {
-//                                            initDialog();
-//                                        }
-//                                    });
-//                                    recyclerView.setVisibility(View.VISIBLE);
-//                                    recyclerViewTest.setVisibility(View.GONE);
-//                                    recyclerView.setAdapter(fullAdapter);
-//                                    recyclerView.setLayoutManager(new LinearLayoutManager(mActivity, LinearLayoutManager.HORIZONTAL, false));
-                                }else if(actives.size()==2) {
-                                    full2Adapter = new Full2Adapter(mActivity, 12 + "", R.layout.item_full_list, actives, "0", new Full2Adapter.OnClick() {
-                                        @Override
-                                        public void shoppingCartOnClick(int position) {
-                                        }
-
-                                        @Override
-                                        public void tipClick() {
-                                            showPhoneDialog(cell);
-                                        }
-
-                                        @Override
-                                        public void addDialog() {
-                                            initDialog();
-                                        }
-                                    });
-                                    recyclerView.setVisibility(View.GONE);
-                                    recyclerViewTest.setVisibility(View.VISIBLE);
-                                    recyclerViewTest.setAdapter(full2Adapter);
-                                    snapHelper.attachToRecyclerView(recyclerViewTest);
-                                    initRecycle();
-
-                                }else if(actives.size()==3) {
-                                    full3Adapter = new Full3Adapter(mActivity, 12 + "", R.layout.item_full_list, actives, "1", new Full3Adapter.OnClick() {
-                                        @Override
-                                        public void shoppingCartOnClick(int position) {
-                                        }
-
-                                        @Override
-                                        public void tipClick() {
-                                            showPhoneDialog(cell);
-                                        }
-
-                                        @Override
-                                        public void addDialog() {
-                                            initDialog();
-                                        }
-                                    });
-                                    recyclerView.setVisibility(View.VISIBLE);
-                                    recyclerViewTest.setVisibility(View.GONE);
-                                    recyclerView.setAdapter(full3Adapter);
-                                    recyclerView.setLayoutManager(new LinearLayoutManager(mActivity, LinearLayoutManager.HORIZONTAL, false));
-                                }
-
-                            }else {
-                                rb_1.setBackgroundResource(R.drawable.shape_white_home);
-                                rb_2.setBackgroundResource(R.drawable.shape_white_home);
-                                rb_3.setBackgroundResource(R.drawable.shape_orange);
-//                                rb_4.setBackgroundResource(R.drawable.shape_white_home);
-
-                                rb_1.setTextColor(Color.parseColor("#FF680A"));
-                                rb_2.setTextColor(Color.parseColor("#FF680A"));
-                                rb_3.setTextColor(Color.parseColor("#ffffff"));
-//                                rb_4.setTextColor(Color.parseColor("#FF680A"));
-
-                                if(actives.size()==1) {
-//                                    teamAdapter = new TeamAdapter(mActivity, 3 + "", R.layout.item_skill_lists, actives, "1", new TeamAdapter.OnClick() {
-//                                        @Override
-//                                        public void shoppingCartOnClick(int position) {
-//                                            int activeId = actives.get(position).getActiveId();
-//                                            addCar(activeId, "", 3, "1");
-//                                        }
-//
-//                                        @Override
-//                                        public void tipClick() {
-//                                            showPhoneDialog(cell);
-//                                        }
-//
-//                                        @Override
-//                                        public void addDialog() {
-//                                            initDialog();
-//                                        }
-//                                    });
-                                    recyclerView.setVisibility(View.VISIBLE);
-                                    recyclerViewTest.setVisibility(View.GONE);
-                                    recyclerView.setAdapter(teamAdapter);
-                                    recyclerView.setLayoutManager(new LinearLayoutManager(mActivity, LinearLayoutManager.HORIZONTAL, false));
-                                }else if(actives.size()==2) {
-//                                    team3Adapter = new Team3Adapter(mActivity, 3 + "", R.layout.item_skill_lists, actives, "1", new Team3Adapter.OnClick() {
-//                                        @Override
-//                                        public void shoppingCartOnClick(int position) {
-//                                            int activeId = actives.get(position).getActiveId();
-//                                            addCar(activeId, "", 3, "0");
-//                                        }
-//
-//                                        @Override
-//                                        public void tipClick() {
-//                                            showPhoneDialog(cell);
-//                                        }
-//
-//                                        @Override
-//                                        public void addDialog() {
-//                                            initDialog();
-//                                        }
-//                                    });
-
-                                    recyclerViewTest.setAdapter(team3Adapter);
-                                    recyclerView.setVisibility(View.GONE);
-                                    recyclerViewTest.setVisibility(View.VISIBLE);
+                            } else if (type == 3) {
+                                data1 = couponModel.getData();
+                                if (data1 != null) {
+                                    teamActive1.clear();
+                                    teamActive1.addAll(data1.getActives());
+                                    teamAdapter.notifyDataSetChanged();
                                     team3Adapter.notifyDataSetChanged();
-                                    PagerSnapHelper snapHelper = new PagerSnapHelper();
-                                    snapHelper.attachToRecyclerView(recyclerViewTest);
-                                    initRecycle();
-
-                                }else if(actives.size()==3) {
-                                    team4Adapter = new Team4Adapter(mActivity, 3 + "", R.layout.item_skill_lists, actives, "1", new Team4Adapter.OnClick() {
-                                        @Override
-                                        public void shoppingCartOnClick(int position) {
-                                            int activeId = actives.get(position).getActiveId();
-                                            addCar(activeId, "", 3, "1");
-                                        }
-
-                                        @Override
-                                        public void tipClick() {
-                                            showPhoneDialog(cell);
-                                        }
-
-                                        @Override
-                                        public void addDialog() {
-                                            initDialog();
-                                        }
-                                    });
-                                    recyclerView.setVisibility(View.VISIBLE);
-                                    recyclerViewTest.setVisibility(View.GONE);
-                                    recyclerView.setAdapter(team4Adapter);
-                                    recyclerView.setLayoutManager(new LinearLayoutManager(mActivity, LinearLayoutManager.HORIZONTAL, false));
+                                }
+                            } else if (type == 12) {
+                                data1 = couponModel.getData();
+                                if (data1 != null) {
+                                    fullActive1.clear();
+                                    fullActive1.addAll(data1.getActives());
+                                    commonssAdapter.notifyDataSetChanged();
+                                    fullAdapter.notifyDataSetChanged();
                                 }
                             }
+                            commonAdapter.notifyDataSetChanged();
+                        }
+                    }
+                });
+    }
+
+    /**
+     * 热卖集合
+     *
+     * @param pageNum
+     * @param pageSize
+     * @param type
+     */
+    List<ProductNormalModel.DataBean.ListBean> listBeans = new ArrayList<>();
+
+    private void getHot(int pageNum, int pageSize, String type) {
+        ProductListAPI.requestData(mActivity, pageNum, pageSize, type, null)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<ProductNormalModel>() {
+                    @Override
+                    public void onCompleted() {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onNext(ProductNormalModel getCommonProductModel) {
+                        if (getCommonProductModel.isSuccess()) {
+                            listBeans.clear();
+                            List<ProductNormalModel.DataBean.ListBean> list = getCommonProductModel.getData().getList();
+                            listBeans.addAll(list);
+
+                            if (listBeans.size() == 1) {
+                                hotAdapter = new HotAdapter(R.layout.item_common_lists, listBeans);
+                                rv_hot.setLayoutManager(new LinearLayoutManager(mActivity, LinearLayoutManager.HORIZONTAL, false));
+                                rv_hot.setAdapter(hotAdapter);
+                                rv_hot1.setVisibility(View.GONE);
+                                rv_hot.setVisibility(View.VISIBLE);
+                            } else if (listBeans.size() == 2) {
+                                rv_hot1.setVisibility(View.GONE);
+                                rv_hot.setVisibility(View.VISIBLE);
+                                hotAdapter = new HotAdapter(R.layout.item_coupon_lists, listBeans);
+                                rv_hot.setLayoutManager(new LinearLayoutManager(mActivity, LinearLayoutManager.HORIZONTAL, false));
+                                rv_hot.setAdapter(hotAdapter);
+                            } else {
+                                rv_hot1.setVisibility(View.VISIBLE);
+                                rv_hot.setVisibility(View.GONE);
+                                hotAdapter = new HotAdapter(R.layout.item_coupon_listss, listBeans);
+                                rv_hot1.setLayoutManager(new LinearLayoutManager(mActivity, LinearLayoutManager.HORIZONTAL, false));
+                                rv_hot1.setAdapter(hotAdapter);
+                            }
+
+                        } else {
+                            ToastUtil.showErroMsg(mActivity, getCommonProductModel.getMessage());
                         }
                     }
                 });
@@ -748,34 +726,6 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener, 
         couponDialog.show();
     }
 
-    private void addCar(int businessId, String productCombinationPriceVOList, int businessType, String totalNum) {
-        AddCartAPI.requestData(mActivity, businessId, productCombinationPriceVOList, businessType, String.valueOf(totalNum))
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<AddCartModel>() {
-                    @Override
-                    public void onCompleted() {
-
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-
-                    }
-
-                    @Override
-                    public void onNext(AddCartModel addCartModel) {
-                        if (addCartModel.success) {
-                            AppHelper.showMsg(mActivity, "成功加入购物车");
-                            getCartNum();
-                        } else {
-                            AppHelper.showMsg(mActivity, addCartModel.message);
-                        }
-
-                    }
-                });
-    }
-
 
     @Override
     public void onDestroy() {
@@ -784,36 +734,102 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener, 
         EventBus.getDefault().unregister(this);
     }
 
-
     @Override
     public void initViews(View view) {
         binder = ButterKnife.bind(this, view);
+//        rl_bar.post(new Runnable() {
+//            @Override
+//            public void run() {
+//                int height_rv = rl_bar.getHeight();
+//                int height_iv = rl_scroll.getHeight();
+//                scrollLength = Math.abs(height_iv - height_rv);
+//                //把顶部bar设置为透明
+//                rl_bar.getBackground().setAlpha(0);
+//                int height = DensityUtil.px2dip(height_iv, mActivity);
+//
+//                topHeight = DensityUtil.dip2px(height-60,getActivity());
+//
+//                scroll.setScrollChangeListener(new MyScrollView.ScrollChangedListener() {
+//                    @Override
+//                    public void onScrollChangedListener(int x, int y, int oldX, int oldY) {
+//                        int abs_y = Math.abs(y);
+//                        if (y >= topHeight) {
+//                            if (rl_top.getParent() != ll_fixed) {
+//                                rl_parent.removeView(rl_top);
+//                                ll_fixed.addView(rl_top);
+//                                rv_test.setNestedScrollingEnabled(true);
+//
+//                            }
+//                        } else {
+//                            if (rl_top.getParent() != rl_parent) {
+//                                ll_fixed.removeView(rl_top);
+//                                rl_parent.addView(rl_top);
+//                                rv_test.setNestedScrollingEnabled(false);
+//                            }
+//                        }
+//
+//                        //滑动距离小于顶部栏从透明到不透明所需的距离
+//                        if ((scrollLength - abs_y) > 0) {
+//                            //估值器
+//                            IntEvaluator evaluator = new IntEvaluator();
+//                            float percent = (float) (scrollLength - abs_y) / scrollLength;
+//
+//                            if (percent <= 1) {
+//                                //透明度
+//                                int evaluate = evaluator.evaluate(percent, 255, 0);
+//                                rl_bar.getBackground().setAlpha(evaluate);
+//                                //搜索栏左右margin值
+//                                evaluatemargin = evaluator.evaluate(percent, DensityUtil.dip2px(ENDMARGINLEFT,mActivity), DensityUtil.dip2px(STARTMARGINLEFT,mActivity));
+//                                Log.d("dasdasdwdsds.....",evaluatemargin+"aa");
+//                                //搜索栏顶部margin值
+//                                evaluatetop = evaluator.evaluate(percent,  DensityUtil.dip2px(ENDMARGINTOP,mActivity), DensityUtil.dip2px(STARTMARGINTOP,mActivity));
+//                                Log.d("dasdasdwdsds.....",evaluatemargin+"bb");
+//                                layoutParams = (RelativeLayout.LayoutParams) rv_search.getLayoutParams();
+//                                layoutParams.setMargins(evaluatemargin, evaluatetop, evaluatemargin, 0);
+////                                rv_search.requestLayout();
+//                            }
+//
+//                        } else {
+//                            rl_bar.getBackground().setAlpha(255);
+//                            if(layoutParams!=null){
+//                                layoutParams.setMargins(DensityUtil.dip2px(ENDMARGINLEFT,mActivity),DensityUtil.dip2px(5,mActivity), DensityUtil.dip2px(ENDMARGINLEFT,mActivity), 0);
+////                                rv_search.requestLayout();
+//                            }
+//                        }
+//                    }
+//                });
+//
+//
+//            }
+//        });
+
+
         EventBus.getDefault().register(this);
         context = getActivity();
         token = UserInfoHelper.getUserId(mActivity);
         isShow();
-        getProductsList(1,10,"commonBuy");
+        getProductsList(1, 10, "commonBuy");
         requestOrderNumTwo();
         appbar.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
             @Override
             public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
-                if(Math.abs(verticalOffset)>30) {
-                    toolbar1.setVisibility(View.VISIBLE);
-                }else {
-                    toolbar1.setVisibility(View.GONE);
+                if (Math.abs(verticalOffset) > 30) {
+//                    toolbar1.setVisibility(View.VISIBLE);
+                } else {
+//                    toolbar1.setVisibility(View.GONE);
                 }
 
                 int totalScrollRange = appBarLayout.getTotalScrollRange();
-                if(totalScrollRange ==Math.abs(verticalOffset)) {
+                if (totalScrollRange == Math.abs(verticalOffset)) {
                     flag = true;
-                }else {
+                } else {
                     flag = false;
                 }
 
-                if(flag) {
+                if (flag) {
                     ll_small_title.setVisibility(View.GONE);
                     ll_line.setVisibility(View.VISIBLE);
-                }else {
+                } else {
                     ll_small_title.setVisibility(View.VISIBLE);
                     ll_line.setVisibility(View.GONE);
 
@@ -821,40 +837,38 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener, 
 
             }
         });
-
 
 
         ll_small_title.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
-                if(flag) {
+                if (flag) {
                     ll_small_title.setVisibility(View.GONE);
                     ll_line.setVisibility(View.VISIBLE);
-                    if(rb_new.isChecked()) {
+                    if (rb_new.isChecked()) {
                         v1.setVisibility(View.VISIBLE);
                         v2.setVisibility(View.INVISIBLE);
                         v3.setVisibility(View.INVISIBLE);
                         v4.setVisibility(View.INVISIBLE);
 
-                    }else if(rb_must_common.isChecked()){
+                    } else if (rb_must_common.isChecked()) {
                         v1.setVisibility(View.INVISIBLE);
                         v2.setVisibility(View.VISIBLE);
                         v3.setVisibility(View.INVISIBLE);
                         v4.setVisibility(View.INVISIBLE);
-
-                    }else if(rb_info.isChecked()){
+                    } else if (rb_info.isChecked()) {
                         v1.setVisibility(View.INVISIBLE);
                         v2.setVisibility(View.INVISIBLE);
                         v3.setVisibility(View.VISIBLE);
                         v4.setVisibility(View.INVISIBLE);
 
-                    }else if(rb_common.isChecked()){
+                    } else if (rb_common.isChecked()) {
                         v1.setVisibility(View.INVISIBLE);
                         v2.setVisibility(View.INVISIBLE);
                         v3.setVisibility(View.INVISIBLE);
                         v4.setVisibility(View.VISIBLE);
                     }
-                }else {
+                } else {
                     ll_small_title.setVisibility(View.VISIBLE);
                     ll_line.setVisibility(View.GONE);
 
@@ -862,9 +876,6 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener, 
             }
         });
 
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(mActivity);
-        linearLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
-        recyclerView.setLayoutManager(linearLayoutManager);
 
         rg_new.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
@@ -874,9 +885,9 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener, 
                         rb_info.setTextColor(Color.parseColor("#333333"));
                         rb_common.setTextColor(Color.parseColor("#333333"));
                         rb_must_common.setTextColor(Color.parseColor("#333333"));
-                        rb_new.setTextColor(Color.parseColor("#FF5000"));
+                        rb_new.setTextColor(Color.parseColor("#17BD60"));
                         tv_title1.setTextColor(Color.parseColor("#ffffff"));
-                        tv_title1.setBackgroundResource(R.drawable.shape_orange);
+                        tv_title1.setBackgroundResource(R.drawable.shape_greenss);
 
                         tv_title2.setTextColor(Color.parseColor("#999999"));
                         tv_title2.setBackgroundResource(R.drawable.shape_white);
@@ -886,7 +897,8 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener, 
 
                         tv_title4.setTextColor(Color.parseColor("#999999"));
                         tv_title4.setBackgroundResource(R.drawable.shape_white);
-                        switchRb4();
+                        listss.clear();
+                        getProductsLists(1, 10, "new");
 
                         break;
 
@@ -896,9 +908,9 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener, 
                         rb_must_common.setTextColor(Color.parseColor("#333333"));
                         rb_new.setTextColor(Color.parseColor("#333333"));
 
-                        rb_must_common.setTextColor(Color.parseColor("#FF5000"));
+                        rb_must_common.setTextColor(Color.parseColor("#17BD60"));
                         tv_title2.setTextColor(Color.parseColor("#ffffff"));
-                        tv_title2.setBackgroundResource(R.drawable.shape_orange);
+                        tv_title2.setBackgroundResource(R.drawable.shape_greenss);
 
                         tv_title1.setTextColor(Color.parseColor("#999999"));
                         tv_title1.setBackgroundResource(R.drawable.shape_white);
@@ -908,11 +920,11 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener, 
 
                         tv_title4.setTextColor(Color.parseColor("#999999"));
                         tv_title4.setBackgroundResource(R.drawable.shape_white);
-                        switchRb5();
+
                         break;
 
                     case R.id.rb_info:
-                        rb_info.setTextColor(Color.parseColor("#FF5000"));
+                        rb_info.setTextColor(Color.parseColor("#17BD60"));
                         rb_common.setTextColor(Color.parseColor("#333333"));
                         rb_must_common.setTextColor(Color.parseColor("#333333"));
                         rb_new.setTextColor(Color.parseColor("#333333"));
@@ -923,16 +935,17 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener, 
                         tv_title1.setBackgroundResource(R.drawable.shape_white);
 
                         tv_title3.setTextColor(Color.parseColor("#ffffff"));
-                        tv_title3.setBackgroundResource(R.drawable.shape_orange);
+                        tv_title3.setBackgroundResource(R.drawable.shape_greenss);
 
                         tv_title4.setTextColor(Color.parseColor("#999999"));
                         tv_title4.setBackgroundResource(R.drawable.shape_white);
-                        switchRb6();
+                        listss.clear();
+                        getProductsLists(1, 10, "reduct");
                         break;
 
                     case R.id.rb_common:
                         rb_info.setTextColor(Color.parseColor("#333333"));
-                        rb_common.setTextColor(Color.parseColor("#FF5000"));
+                        rb_common.setTextColor(Color.parseColor("#17BD60"));
                         rb_must_common.setTextColor(Color.parseColor("#333333"));
                         rb_new.setTextColor(Color.parseColor("#333333"));
                         rb_info.setTextColor(Color.parseColor("#333333"));
@@ -947,37 +960,33 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener, 
                         tv_title3.setBackgroundResource(R.drawable.shape_white);
 
                         tv_title4.setTextColor(Color.parseColor("#ffffff"));
-                        tv_title4.setBackgroundResource(R.drawable.shape_orange);
-
-                        switchRb7();
-
+                        tv_title4.setBackgroundResource(R.drawable.shape_greenss);
+                        listss.clear();
+                        getProductsLists(1, 10, "commonBuy");
                         break;
                 }
             }
         });
 
 
+        //顶部推荐
+        indexRecommendAdapter = new IndexRecommendAdapter(R.layout.item_index_recommend, recommendList);
+        rv_recommend.setLayoutManager(new LinearLayoutManager(mActivity, LinearLayoutManager.HORIZONTAL, false));
+        rv_recommend.setAdapter(indexRecommendAdapter);
 
-        //六个品种点击
-        typeAdapter = new TypesAdapter(classifyList);
-        GridLayoutManager gridLayoutManager = new GridLayoutManager(mActivity , 2);
-        rv_type.setLayoutManager(gridLayoutManager);
-        rv_type.setAdapter(typeAdapter);
-
-        gridLayoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
+        indexRecommendAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
-            public int getSpanSize(int position) {
-                return classifyList.get(position).getSpanSize();
+            public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
+                Intent intent = new Intent(mActivity, SearchReasultActivity.class);
+                intent.putExtra(AppConstant.SEARCHWORD, recommendList.get(position));
+                startActivity(intent);
             }
         });
 
-        tv_search1.setOnClickListener(this);
+
         tv_search.setOnClickListener(this);
         rl_message.setOnClickListener(this);
         tv_city.setOnClickListener(this);
-        rl_more.setOnClickListener(this);
-        rl_more2.setOnClickListener(this);
-        rl_more3.setOnClickListener(this);
         tv_change.setOnClickListener(this);
         tv_change_address.setOnClickListener(this);
     }
@@ -985,7 +994,7 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener, 
     private void isShow() {
         CityChangeAPI.isShow(mActivity)
                 .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .observeOn(rx.android.schedulers.AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<IsShowModel>() {
 
                     @Override
@@ -1000,12 +1009,12 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener, 
 
                     @Override
                     public void onNext(IsShowModel isShowModel) {
-                        if(isShowModel.isSuccess()) {
-                            if(isShowModel.data!=null) {
-                                SharedPreferencesUtil.saveString(mContext,"priceType",isShowModel.getData().enjoyProduct);
+                        if (isShowModel.isSuccess()) {
+                            if (isShowModel.data != null) {
+                                SharedPreferencesUtil.saveString(mActivity, "priceType", isShowModel.getData().enjoyProduct);
                             }
-                        }else {
-                            AppHelper.showMsg(mContext,isShowModel.getMessage());
+                        } else {
+                            AppHelper.showMsg(mActivity, isShowModel.getMessage());
                         }
                     }
                 });
@@ -1017,7 +1026,7 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener, 
     private void getPrivacy() {
         IndexHomeAPI.getPrivacy(mActivity)
                 .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .observeOn(rx.android.schedulers.AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<PrivacyModel>() {
 
                     @Override
@@ -1033,27 +1042,27 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener, 
                     @Override
                     public void onNext(PrivacyModel privacyModel) {
 
-                        if(privacyModel.isSuccess()) {
+                        if (privacyModel.isSuccess()) {
                             String content = privacyModel.getData().getContent();
-                            privacyDialog = new PrivacyDialog(mActivity,content);
-                            if(privacyModel.getData().getOpen().equals("1")) {
+                            privacyDialog = new PrivacyDialog(mActivity, content);
+                            if (privacyModel.getData().getOpen().equals("1")) {
                                 privacyDialog.show();
-                            }else {
+                            } else {
                                 privacyDialog.dismiss();
                                 getCouponList();
                             }
 
-                        }else {
-                            AppHelper.showMsg(mActivity,privacyModel.getMessage());
+                        } else {
+                            AppHelper.showMsg(mActivity, privacyModel.getMessage());
                         }
                     }
                 });
     }
 
     private void getProductsList(int pageNums, int pageSize, String type) {
-        ProductListAPI.requestData(mActivity, pageNums, pageSize,type,null)
+        ProductListAPI.requestData(mActivity, pageNums, pageSize, type, null)
                 .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .observeOn(rx.android.schedulers.AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<ProductNormalModel>() {
                     @Override
                     public void onCompleted() {
@@ -1068,150 +1077,16 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener, 
                     @Override
                     public void onNext(ProductNormalModel getCommonProductModel) {
                         if (getCommonProductModel.isSuccess()) {
-                            if(getCommonProductModel.getData().getList().size()>0) {
-                                switchRb7();
+                            if (getCommonProductModel.getData().getList().size() > 0) {
                                 rb_common.setChecked(true);
-                            }else {
-                                switchRb4();
+                            } else {
                                 rb_new.setChecked(true);
                             }
-                        }else {
-                            AppHelper.showMsg(mActivity,getCommonProductModel.getMessage());
+                        } else {
+                            AppHelper.showMsg(mActivity, getCommonProductModel.getMessage());
                         }
                     }
                 });
-    }
-
-//    private void hideFragment() {
-//        if (newFragment!=null){
-//            //隐藏
-//            fragmentTransaction.hide(newFragment);
-//        }
-//        if (mustFragment!=null){
-//            //隐藏
-//            fragmentTransaction.hide(mustFragment);
-//        }
-//        if (infoFragment!=null){
-//            //隐藏
-//            fragmentTransaction.hide(infoFragment);
-//        }
-//        if (commonFragment!=null){
-//            //隐藏
-//            fragmentTransaction.hide(commonFragment);
-//        }
-//    }
-
-
-    /**
-     * 常用清单
-     */
-    private void switchRb7() {
-        fragmentTransaction = supportFragmentManager.beginTransaction();
-        if (commonFragment == null) {
-            commonFragment = new CommonFragment();
-            fragmentTransaction.add(R.id.content, commonFragment, CommonFragment.class.getCanonicalName());
-        }
-
-        fragmentTransaction.show(commonFragment);
-
-        if (infoFragment != null) {
-            fragmentTransaction.hide(infoFragment);
-        }
-
-        if (mustFragment != null) {
-            fragmentTransaction.hide(mustFragment);
-        }
-
-        if (newFragment != null) {
-            fragmentTransaction.hide(newFragment);
-        }
-
-        fragmentTransaction.commitAllowingStateLoss();
-    }
-
-    /**
-     * 咨讯
-     */
-    private void switchRb6() {
-        fragmentTransaction = supportFragmentManager.beginTransaction();
-//        if (infoFragment == null) {
-        infoFragment = new InfoFragment();
-        Bundle bundle = new Bundle();
-        bundle.putString("URL",questUrl);
-        bundle.putInt("TYPE",2);
-        bundle.putString("name","consult");
-        infoFragment.setArguments(bundle);
-        fragmentTransaction.add(R.id.content, infoFragment, InfoFragment.class.getCanonicalName());
-//        }
-
-        fragmentTransaction.show(infoFragment);
-
-        if (mustFragment != null) {
-            fragmentTransaction.hide(mustFragment);
-        }
-
-        if (newFragment != null) {
-            fragmentTransaction.hide(newFragment);
-        }
-
-        if (commonFragment != null) {
-            fragmentTransaction.hide(commonFragment);
-        }
-
-        fragmentTransaction.commitAllowingStateLoss();
-    }
-
-    /**
-     * 必买
-     */
-    private void switchRb5() {
-        fragmentTransaction = supportFragmentManager.beginTransaction();
-        if (mustFragment == null) {
-            mustFragment = new MustFragment();
-            fragmentTransaction.add(R.id.content, mustFragment, MustFragment.class.getCanonicalName());
-        }
-
-        fragmentTransaction.show(mustFragment);
-
-        if (infoFragment != null) {
-            fragmentTransaction.hide(infoFragment);
-        }
-
-        if (newFragment != null) {
-            fragmentTransaction.hide(newFragment);
-        }
-
-        if (commonFragment != null) {
-            fragmentTransaction.hide(commonFragment);
-        }
-
-        fragmentTransaction.commitAllowingStateLoss();
-    }
-
-    /**
-     * 新品
-     */
-    private void switchRb4() {
-        fragmentTransaction = supportFragmentManager.beginTransaction();
-        if (newFragment == null) {
-            newFragment = new NewFragment();
-            fragmentTransaction.add(R.id.content, newFragment, NewFragment.class.getCanonicalName());
-        }
-        fragmentTransaction.show(newFragment);
-
-        if (infoFragment != null) {
-            fragmentTransaction.hide(infoFragment);
-        }
-
-        if (mustFragment != null) {
-            fragmentTransaction.hide(mustFragment);
-        }
-
-        if (commonFragment != null) {
-            fragmentTransaction.hide(commonFragment);
-        }
-
-        fragmentTransaction.commitAllowingStateLoss();
     }
 
 
@@ -1248,20 +1123,151 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener, 
 
     }
 
+    TeamAdapter teamAdapter;
+    Team3Adapter team3Adapter;
+    int i;
+
     @Override
     public void setViewData() {
+
+        rv_bar.post(new Runnable() {
+            @Override
+            public void run() {
+                int height = iv_search.getHeight();
+                i = DensityUtil.px2dip(height, mActivity);
+                int height_rv = rv_bar.getHeight();
+                int height_iv = iv_search.getHeight();
+
+                scrollLength = Math.abs(height_iv - height_rv);
+                //把顶部bar设置为透明
+                rv_bar.getBackground().setAlpha(0);
+
+                topHeight = DensityUtil.dip2px(i - 50, mActivity);
+
+                scroll.setScrollChangeListener(new MyScrollView.ScrollChangedListener() {
+
+                    @Override
+                    public void onScrollChangedListener(int x, int y, int oldX, int oldY) {
+                        int abs_y = Math.abs(y);
+                        Log.d("dasdasdwdsds.....", abs_y + "aa");
+                        if (y >= topHeight) {
+                            if (rl_inside_fixed.getParent() != llFixed) {
+                                insideFixedBarParent.removeView(rl_inside_fixed);
+                                llFixed.addView(rl_inside_fixed);
+                                rv_test.setNestedScrollingEnabled(true);
+
+                            }
+                        } else {
+                            if (rl_inside_fixed.getParent() != insideFixedBarParent) {
+                                llFixed.removeView(rl_inside_fixed);
+                                insideFixedBarParent.addView(rl_inside_fixed);
+                                rv_test.setNestedScrollingEnabled(false);
+                            }
+                        }
+
+                        //滑动距离小于顶部栏从透明到不透明所需的距离
+                        if ((scrollLength - abs_y) > 0) {
+                            //估值器
+                            IntEvaluator evaluator = new IntEvaluator();
+                            float percent = (float) (scrollLength - abs_y) / scrollLength;
+
+                            if (percent <= 1) {
+                                //透明度
+                                int evaluate = evaluator.evaluate(percent, 255, 0);
+
+                                rv_bar.getBackground().setAlpha(evaluate);
+                                //搜索栏左右margin值
+                                evaluatemargin = evaluator.evaluate(percent, DensityUtil.dip2px(ENDMARGINLEFT, mActivity), DensityUtil.dip2px(STARTMARGINLEFT, mActivity));
+
+                                //搜索栏顶部margin值
+                                evaluatetop = evaluator.evaluate(percent, DensityUtil.dip2px(ENDMARGINTOP, mActivity), DensityUtil.dip2px(STARTMARGINTOP, mActivity));
+//                                Log.d("dasdasdwdsds.....",evaluatemargin+"bb");
+                                layoutParams = (FrameLayout.LayoutParams) rv_search.getLayoutParams();
+                                layoutParams.setMargins(evaluatemargin, evaluatetop, evaluatemargin, 0);
+                                rv_search.requestLayout();
+                            }
+
+                        } else {
+                            rv_bar.getBackground().setAlpha(255);
+                            if (layoutParams != null) {
+                                layoutParams.setMargins(DensityUtil.dip2px(ENDMARGINLEFT, mActivity), DensityUtil.dip2px(5, mActivity), DensityUtil.dip2px(ENDMARGINLEFT, mActivity), 0);
+                                rv_search.requestLayout();
+                            }
+                        }
+                    }
+                });
+            }
+        });
+        //秒杀短
+        skill5Adapter = new Skill5Adapter(mActivity, skillActive3);
+        rv_auto_view.setAdapter(skill5Adapter);
+        rv_auto_view.setLayoutManager(new GridLayoutManager(mActivity, 4));
+
+        //满赠1
+        PagerSnapHelper snapFull = new PagerSnapHelper();
+        commonssAdapter = new CommonssAdapter(mActivity, fullActive1);
+        rv_auto_view1.setAdapter(commonssAdapter);
+        snapFull.attachToRecyclerView(rv_auto_view1);
+        initRecycles();
+
+        //满赠2
+        fullAdapter = new FullAdapter(mActivity, fullActive1);
+        rv_given.setAdapter(fullAdapter);
+        rv_given.setLayoutManager(new GridLayoutManager(mActivity, 1));
+
+        //组合
+        teamAdapter = new TeamAdapter(R.layout.item_team_lists, teamActive1);
+        rv_team.setLayoutManager(new GridLayoutManager(mActivity, 1));
+        rv_team.setAdapter(teamAdapter);
+
+        //组合2
+        team3Adapter = new Team3Adapter(R.layout.item_teams_list, teamActive1);
+        rv_team.setLayoutManager(new GridLayoutManager(mActivity, 1));
+        rv_team.setAdapter(team3Adapter);
+
+
+        rl_more.setOnClickListener(this);
+
+        rl_more3.setOnClickListener(this);
+        rl_more4.setOnClickListener(this);
         rl_address.setOnClickListener(null);
         requestUpdate();
+        getHot(1, 10, "hot");
         refreshLayout.autoRefresh();
         lav_activity_loading.show();
-        couponListAdapter = new CouponListAdapter(R.layout.item_home_coupon_list,lists);
+        couponListAdapter = new CouponListAdapter(R.layout.item_home_coupon_list, lists);
         getPrivacys();
         getCustomerPhone();
         isSend();
-
+        hotKey();
+        classifyList();
+        getOrder();
         mTypedialog = new AlertDialog.Builder(mActivity, R.style.DialogStyle).create();
         mTypedialog.setCancelable(false);
 
+
+        mSmoothScroller = new LinearSmoothScroller(mActivity) {
+            @Override
+            protected int getVerticalSnapPreference() {
+                return LinearSmoothScroller.SNAP_TO_START;
+            }
+
+            @Override
+            protected float calculateSpeedPerPixel(DisplayMetrics displayMetrics) {
+                return 3f / (displayMetrics.density);
+            }
+        };
+        mSmoothScrollers = new LinearSmoothScroller(mActivity) {
+            @Override
+            protected int getVerticalSnapPreference() {
+                return LinearSmoothScroller.SNAP_TO_START;
+            }
+
+            @Override
+            protected float calculateSpeedPerPixel(DisplayMetrics displayMetrics) {
+                return 3f / (displayMetrics.density);
+            }
+        };
         refreshLayout.setOnRefreshListener(new OnRefreshListener() {
             @Override
             public void onRefresh(@NonNull RefreshLayout refreshLayout) {
@@ -1271,20 +1277,124 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener, 
                 skillAdvList.clear();
                 driverList.clear();
                 isSend();
+                hotKey();
                 getBaseLists();
                 isTurn();
                 getCustomerPhone();
-                getDriveInfo();
+                getProductsLists(1, 10, "new");
+//                getDriveInfo();
+                classifyList();
                 EventBus.getDefault().post(new BackEvent());
                 refreshLayout.finishRefresh();
             }
         });
+
+        refreshLayout.setOnLoadMoreListener(new OnLoadMoreListener() {
+            @Override
+            public void onLoadMore(@NonNull RefreshLayout refreshLayout) {
+                if (rb_common.isChecked()) {
+                    getProductsLists(pageNum, pageSize, "commonBuy");
+                } else if (rb_new.isChecked()) {
+                    getProductsLists(pageNum, pageSize, "new");
+                }
+
+            }
+        });
+
+        rvIconAdapter = new RvIconAdapter(R.layout.item_home_icon, classifyList);
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(context, 2, RecyclerView.HORIZONTAL, false);
+
+        rvIconAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
+                context.startActivity(new Intent(context, HomeActivity.class));
+                EventBus.getDefault().post(new GoToMarketEvent());
+                EventBus.getDefault().postSticky(new FromIndexEvent(classifyList.get(position).getId() + ""));
+            }
+        });
+        rv_icon.setLayoutManager(gridLayoutManager);
+        rv_icon.setAdapter(rvIconAdapter);
+
+        rv_icon.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                indicator.bindRecyclerView(rv_icon);
+            }
+        });
+
+        rv_test.setNestedScrollingEnabled(false);
+        newAdapter = new NewAdapter(R.layout.item_team_list, listss, new NewAdapter.Onclick() {
+            @Override
+            public void addDialog() {
+                if (StringHelper.notEmptyAndNull(UserInfoHelper.getUserId(mActivity))) {
+
+                } else {
+                    initDialog();
+                }
+            }
+
+            @Override
+            public void tipClick() {
+                showPhoneDialog(cell);
+            }
+        });
+
+        rv_test.setLayoutManager(new MyGrideLayoutManager(mActivity, 2));
+        rv_test.setAdapter(newAdapter);
+        rv_test.setNestedScrollingEnabled(false);
     }
+
+
+    private void getProductsLists(int pageNums, int pageSize, String type) {
+
+        ProductListAPI.requestData(mActivity, pageNums, pageSize, type, null)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<ProductNormalModel>() {
+                    @Override
+                    public void onCompleted() {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onNext(ProductNormalModel getCommonProductModel) {
+                        productNormalModel = getCommonProductModel;
+                        if (getCommonProductModel.isSuccess()) {
+                            if (getCommonProductModel.getData().getList().size() > 0) {
+                                List<ProductNormalModel.DataBean.ListBean> list = getCommonProductModel.getData().getList();
+                                listss.addAll(list);
+                                newAdapter.notifyDataSetChanged();
+                            }
+                        } else {
+                            AppHelper.showMsg(mActivity, getCommonProductModel.getMessage());
+                        }
+                    }
+                });
+    }
+
+    int scrollLength;
+    int height;
+
+    @Override
+    public void onMultiWindowModeChanged(boolean isInMultiWindowMode) {
+        super.onMultiWindowModeChanged(isInMultiWindowMode);
+//        int height = rl_root.getHeight();
+//        height = DensityUtil.px2dip(heights,mActivity);
+
+
+    }
+
 
     private void getPrivacys() {
         IndexHomeAPI.getPrivacy(mActivity)
                 .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .observeOn(rx.android.schedulers.AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<PrivacyModel>() {
 
                     @Override
@@ -1300,28 +1410,74 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener, 
                     @Override
                     public void onNext(PrivacyModel privacyModel) {
 
-                        if(privacyModel.isSuccess()) {
+                        if (privacyModel.isSuccess()) {
                             String content = privacyModel.getData().getContent();
-                            privacyDialog = new PrivacyDialog(mActivity,content);
-                            if(!SharedPreferencesUtil.getString(mActivity,"once").equals("0")) {
+                            privacyDialog = new PrivacyDialog(mActivity, content);
+                            if (!SharedPreferencesUtil.getString(mActivity, "once").equals("0")) {
                                 privacyDialog.show();
-                            }else {
+                            } else {
                                 privacyDialog.dismiss();
                             }
 
-                        }else {
-                            AppHelper.showMsg(mActivity,privacyModel.getMessage());
+                        } else {
+                            AppHelper.showMsg(mActivity, privacyModel.getMessage());
                         }
                     }
                 });
     }
 
+    private Disposable mAutoTask;
+    private LinearSmoothScroller mSmoothScroller;
+    private LinearSmoothScroller mSmoothScrollers;
+    private int mCurrentPosition;
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        startAuto();
+        fullAdapter.start();
+        teamAdapter.start();
+        team3Adapter.start();
+        commonssAdapter.start();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        banner.stopAutoPlay();
+        stopAuto();
+        fullAdapter.cancle();
+        team3Adapter.cancle();
+        commonssAdapter.cancle();
+    }
+
+    private void startAuto() {
+        if (mAutoTask != null && !mAutoTask.isDisposed()) {
+            mAutoTask.dispose();
+        }
+        mAutoTask = Observable.interval(5, 2, TimeUnit.SECONDS).observeOn(io.reactivex.android.schedulers.AndroidSchedulers.mainThread()).subscribe(new Consumer<Long>() {
+
+            @Override
+            public void accept(Long aLong) {
+                if (mCurrentPosition == 0) {
+                    mCurrentPosition = aLong.intValue();
+                } else {
+                    mCurrentPosition++;
+                }
+                mSmoothScroller.setTargetPosition(mCurrentPosition);
+                RecyclerView.LayoutManager layoutManager = rv_auto_view.getLayoutManager();
+                if (layoutManager != null) {
+                    layoutManager.startSmoothScroll(mSmoothScroller);
+                }
+
+            }
+        });
+    }
 
     private void isSend() {
         IndexHomeAPI.isSend(mActivity)
                 .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .observeOn(rx.android.schedulers.AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<SendModel>() {
                     @Override
                     public void onCompleted() {
@@ -1335,15 +1491,15 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener, 
 
                     @Override
                     public void onNext(SendModel sendModel) {
-                        if(sendModel.isSuccess()) {
-                            if(sendModel.isData()) {
+                        if (sendModel.isSuccess()) {
+                            if (sendModel.isData()) {
                                 rl_address.setVisibility(View.GONE);
-                            }else {
+                            } else {
                                 rl_address.setVisibility(View.VISIBLE);
                             }
 
-                        }else {
-                            AppHelper.showMsg(mActivity,sendModel.getMessage());
+                        } else {
+                            AppHelper.showMsg(mActivity, sendModel.getMessage());
                         }
                     }
                 });
@@ -1352,7 +1508,7 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener, 
     private void isTurn() {
         IndexHomeAPI.isTurn(mActivity)
                 .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .observeOn(rx.android.schedulers.AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<IsTurnModel>() {
                     @Override
                     public void onCompleted() {
@@ -1366,16 +1522,16 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener, 
 
                     @Override
                     public void onNext(IsTurnModel turnModel) {
-                        if(turnModel.isSuccess()) {
+                        if (turnModel.isSuccess()) {
                             int isShow = turnModel.getData();
                             //1显示 0不显示
-                            if(isShow==1) {
+                            if (isShow == 1) {
                                 getTurn();
-                            }else {
+                            } else {
                                 getPrivacy();
                             }
-                        }else {
-                            AppHelper.showMsg(mActivity,turnModel.getMessage());
+                        } else {
+                            AppHelper.showMsg(mActivity, turnModel.getMessage());
                         }
                     }
                 });
@@ -1388,7 +1544,7 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener, 
     private void getCouponList() {
         IndexHomeAPI.getCouponLists(mActivity)
                 .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .observeOn(rx.android.schedulers.AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<CouponListModel>() {
                     @Override
                     public void onCompleted() {
@@ -1402,22 +1558,22 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener, 
 
                     @Override
                     public void onNext(CouponListModel couponListModel) {
-                        if(couponListModel.isSuccess()) {
-                            if(couponListModel.getData()!=null) {
+                        if (couponListModel.isSuccess()) {
+                            if (couponListModel.getData() != null) {
                                 couponListModels = couponListModel;
                                 lists = couponListModel.getData().getGifts();
                                 couponListAdapter.notifyDataSetChanged();
-                                couponListDialog = new CouponListDialog(mActivity,couponListModel,lists);
+                                couponListDialog = new CouponListDialog(mActivity, couponListModel, lists);
 
-                                if(lists.size()>0) {
+                                if (lists.size() > 0) {
                                     couponListDialog.show();
-                                }else {
+                                } else {
                                     couponListDialog.dismiss();
                                     QueryHomePropup();
                                 }
 
-                            }else {
-                                AppHelper.showMsg(context,couponListModel.getMessage());
+                            } else {
+                                AppHelper.showMsg(context, couponListModel.getMessage());
                             }
                         }
                     }
@@ -1425,13 +1581,12 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener, 
     }
 
     /**
-     *
      * 首页活动弹窗
      */
     private void QueryHomePropup() {
         QueryHomePropupAPI.requestQueryHomePropup(mActivity)
                 .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .observeOn(rx.android.schedulers.AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<QueryHomePropupModel>() {
                     @Override
                     public void onCompleted() {
@@ -1446,12 +1601,12 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener, 
                     @Override
                     public void onNext(QueryHomePropupModel queryHomePropupModel) {
                         if (queryHomePropupModel.isSuccess()) {
-                            if(queryHomePropupModel.getData().getHomePropup()!=null) {
+                            if (queryHomePropupModel.getData().getHomePropup() != null) {
                                 QueryHomePropupModel.DataBean.HomePropupBean homePropup = queryHomePropupModel.getData().getHomePropup();
-                                homeActivityDialog = new HomeActivityDialog(mActivity,homePropup);
+                                homeActivityDialog = new HomeActivityDialog(mActivity, homePropup);
                                 if (queryHomePropupModel.getData().isPropup()) {
                                     homeActivityDialog.show();
-                                }else {
+                                } else {
                                     homeActivityDialog.dismiss();
                                 }
                             }
@@ -1462,13 +1617,14 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener, 
                     }
                 });
     }
+
     /**
      * 转盘数据
      */
     private void getTurn() {
         IndexHomeAPI.getTurn(mActivity)
                 .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .observeOn(rx.android.schedulers.AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<TurnModel>() {
                     @Override
                     public void onCompleted() {
@@ -1482,17 +1638,17 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener, 
 
                     @Override
                     public void onNext(TurnModel turnModel) {
-                        if(turnModel.isSuccess()) {
+                        if (turnModel.isSuccess()) {
                             data2 = turnModel.getData();
                             List<String> list = new ArrayList<>();
-                            for (int i = 0; i <data2.size() ; i++) {
+                            for (int i = 0; i < data2.size(); i++) {
                                 list.add(data2.get(i).getPoolNo());
                             }
 
-                            turnTableDialog = new TurnTableDialog(mActivity,list);
+                            turnTableDialog = new TurnTableDialog(mActivity, list);
                             turnTableDialog.show();
-                        }else {
-                            AppHelper.showMsg(mActivity,turnModel.getMessage());
+                        } else {
+                            AppHelper.showMsg(mActivity, turnModel.getMessage());
                         }
                     }
                 });
@@ -1503,14 +1659,15 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener, 
      */
     private AlertDialog mDialog;
     TextView tv_phone;
-    TextView tv_times;
+    TextView tv_timess;
+
     public void showPhoneDialog(final String cell) {
-        mDialog = new AlertDialog.Builder(mContext).create();
+        mDialog = new AlertDialog.Builder(getActivity()).create();
         mDialog.show();
         mDialog.getWindow().setContentView(R.layout.dialog_shouye_tip);
         tv_phone = mDialog.getWindow().findViewById(R.id.tv_phone);
-        tv_times = mDialog.getWindow().findViewById(R.id.tv_time);
-        tv_phone.setText("客服热线 ("+cell+")");
+        tv_timess = mDialog.getWindow().findViewById(R.id.tv_time);
+        tv_phone.setText("客服热线 (" + cell + ")");
 
         tv_phone.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -1521,10 +1678,10 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener, 
                 mDialog.dismiss();
             }
         });
-        tv_times.setOnClickListener(new View.OnClickListener() {
+        tv_timess.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                UnicornManager.inToUnicorn(mContext);
+                UnicornManager.inToUnicorn(getActivity());
                 mDialog.dismiss();
             }
         });
@@ -1551,13 +1708,14 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener, 
 
 
     /**
-     * 获取司机信息
+     * 订单状态
      */
-    private void getDriveInfo() {
-        IndexHomeAPI.getDriverInfo(mActivity)
+
+    private void getOrder() {
+        IndexHomeAPI.indexOrder(mActivity)
                 .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<DriverInfo>() {
+                .observeOn(rx.android.schedulers.AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<OrderModel>() {
                     @Override
                     public void onCompleted() {
 
@@ -1569,27 +1727,87 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener, 
                     }
 
                     @Override
-                    public void onNext(DriverInfo driverInfo) {
-                        if(driverInfo.isSuccess()) {
-
-                            if(driverInfo.getData().size()!=0) {
+                    public void onNext(OrderModel indexInfoModel) {
+                        if (indexInfoModel.isSuccess()) {
+                            if (indexInfoModel.getData().size() != 0) {
                                 driverList.clear();
-                                driverList.addAll(driverInfo.getData());
-                                if(!cell.equals("")) {
-                                    ll_driver.setVisibility(View.VISIBLE);
-//                                    verticalBannerAdapter = new VerticalBannerAdapter(cell,driverList,getContext());
-                                    verticalBanner.setAdapter(verticalBannerAdapter);
-                                    verticalBanner.start();
-
-                                }else {
-                                    ll_driver.setVisibility(View.GONE);
-                                }
-
-                            }else {
+                                driverList.addAll(indexInfoModel.getData());
+                                verticalBannerAdapter = new VerticalBannerAdapter(cell, driverList, getContext());
+                                verticalBanner.setAdapter(verticalBannerAdapter);
+                                verticalBanner.start();
+                                ll_driver.setVisibility(View.VISIBLE);
+                            } else {
                                 ll_driver.setVisibility(View.GONE);
                             }
                         }
+                    }
+                });
+    }
 
+    /**
+     * 搜索热词
+     */
+    List<IndexInfoModel.DataBean.ClassifyListBean> classifyLists;
+
+    private void classifyList() {
+        IndexHomeAPI.classifyList(mActivity)
+                .subscribeOn(Schedulers.io())
+                .observeOn(rx.android.schedulers.AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<IndexInfoModel>() {
+                    @Override
+                    public void onCompleted() {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onNext(IndexInfoModel indexInfoModel) {
+                        if (indexInfoModel.isSuccess()) {
+                            classifyLists = indexInfoModel.getData().getClassifyList();
+                            classifyList.addAll(classifyLists);
+                            rvIconAdapter.notifyDataSetChanged();
+                        } else {
+                            AppHelper.showMsg(mActivity, indexInfoModel.getMessage());
+                        }
+                    }
+                });
+    }
+
+    /**
+     *
+     */
+    /**
+     * 搜索热词
+     */
+    private void hotKey() {
+        IndexHomeAPI.recommendList(mActivity)
+                .subscribeOn(Schedulers.io())
+                .observeOn(rx.android.schedulers.AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<RecommendModel>() {
+                    @Override
+                    public void onCompleted() {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onNext(RecommendModel recommendModel) {
+                        if (recommendModel.isSuccess()) {
+                            recommendList.clear();
+                            recommendData = recommendModel.getData();
+                            recommendList.addAll(recommendData);
+                            indexRecommendAdapter.notifyDataSetChanged();
+                        } else {
+                            AppHelper.showMsg(mActivity, recommendModel.getMessage());
+                        }
                     }
                 });
     }
@@ -1600,7 +1818,7 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener, 
     private void getBaseLists() {
         IndexHomeAPI.getIndexInfo(mActivity)
                 .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .observeOn(rx.android.schedulers.AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<IndexInfoModel>() {
                     @Override
                     public void onCompleted() {
@@ -1614,151 +1832,58 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener, 
 
                     @Override
                     public void onNext(IndexInfoModel indexInfoModel) {
-
-                        if(indexInfoModel.isSuccess()) {
+                        if (indexInfoModel.isSuccess()) {
                             data = indexInfoModel.getData();
-                            classifyList.clear();
-                            classifyList.addAll(data.getClassifyList());
-                            if(indexInfoModel.getData().getHomeBackPic()!=null) {
-                                GlideModel.disPlayPlaceHolder(mActivity,indexInfoModel.getData().getHomeBackPic(),iv_bg);
-                            }
-
-                            for (int i = 0; i <classifyList.size() ; i++) {
-                                if(classifyList.size()%2 == 1 && i == classifyList.size()-1) {
-                                    classifyList.get(i).setItemType(1);
-                                    classifyList.get(i).setSpanSize(2);
-                                }else {
-                                    classifyList.get(i).setItemType(0);
-                                    classifyList.get(i).setSpanSize(1);
-
-                                }
-                            }
-
-                            typeAdapter.notifyDataSetChanged();
-                            if(classifyList.size()>0) {
-                                rv_type.setVisibility(View.VISIBLE);
-                            }else {
-                                rv_type.setVisibility(View.GONE);
-
-                            }
-
 
                             iconList.clear();
                             iconList.addAll(data.getIcons());
-                            if(data.getDeductAmountStr()!=null) {
+                            if (data.getDeductAmountStr() != null) {
                                 deductAmountStr = data.getDeductAmountStr();
                             }
-                            if(!data.getOfferStr().equals("")) {
-                                offerStr = data.getOfferStr();
-                                Animation scaleAnimation = new ScaleAnimation(0.0f, 1.0f, 0.0f, 1.0f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
-                                scaleAnimation.setDuration(3000);
-                                scaleAnimation.setFillAfter(true);
-                                scaleAnimation.setFillBefore(false);
-                                scaleAnimation.setRepeatCount(-1);
-                                scaleAnimation.setRepeatMode(Animation.REVERSE);
-                                scaleAnimation.setStartOffset(0);
-                                scaleAnimation.setInterpolator(mActivity, android.R.anim.decelerate_interpolator);//设置动画插入器
 
 
-                            }else {
-
-
-                            }
-
-                            //八个icon Adapter 142603
-//                            rvIconAdapter = new RvIconAdapter(R.layout.item_home_icon,classifyList);
-                            rv_icon.setLayoutManager(new GridLayoutManager(context,4));
-                            rv_icon.setAdapter(rvIconAdapter);
-                            rvIconAdapter.notifyDataSetChanged();
-                            if(iconList.size()>0) {
-                                rv_icon.setVisibility(View.VISIBLE);
-                            }else {
-                                rv_icon.setVisibility(View.GONE);
-                            }
-
-
+                            tv_times.setText("最快" + indexInfoModel.getData().getSendTime() + "小时送达");
+                            tv_amount.setText("满" + indexInfoModel.getData().getSendAmount() + "元免配送费");
                             spikeNum = indexInfoModel.getData().getSpikeNum();
                             teamNum = indexInfoModel.getData().getTeamNum();
                             specialNum = indexInfoModel.getData().getSpecialNum();
                             fullGiftNum = indexInfoModel.getData().getFullGiftNum();
 
+                            if (teamNum != 0 && fullGiftNum != 0) {
+                                rl1.setVisibility(View.VISIBLE);
+                                rl2.setVisibility(View.GONE);
 
-                            if(spikeNum>0) {
-                                rb_1.setVisibility(View.VISIBLE);
-
-                            }else {
-                                rb_1.setVisibility(View.GONE);
                             }
 
-//                            if(specialNum>0) {
-//                                rl_coupon2.setVisibility(View.VISIBLE);
-//                            }else {
-//                                rl_coupon2.setVisibility(View.GONE);
-//                            }
-//
-//                            if(fullGiftNum>0) {
-//                                rb_4.setVisibility(View.VISIBLE);
-//                            }else {
-//                                rb_4.setVisibility(View.GONE);
-//                            }
-
-                            if(teamNum>0) {
-                                rb_3.setVisibility(View.VISIBLE);
-                            }else {
-                                rb_3.setVisibility(View.GONE);
+                            if (teamNum == 0 && fullGiftNum == 0) {
+                                rl1.setVisibility(View.GONE);
+                                rl2.setVisibility(View.GONE);
                             }
 
-                            if(teamNum==0&&specialNum==0&&spikeNum==0&&fullGiftNum==0) {
-                                ll_active.setVisibility(View.GONE);
-                            }else {
-                                ll_active.setVisibility(View.VISIBLE);
+                            if (teamNum != 0 && fullGiftNum == 0) {
+                                rl1.setVisibility(View.GONE);
+                                rl_full.setVisibility(View.GONE);
+                                rl_team.setVisibility(View.VISIBLE);
+                                rl2.setVisibility(View.VISIBLE);
+                            }
+
+                            if (fullGiftNum != 0 && teamNum == 0) {
+                                rl_full.setVisibility(View.VISIBLE);
+                                rl_team.setVisibility(View.GONE);
+                                rl1.setVisibility(View.GONE);
+                                rl2.setVisibility(View.VISIBLE);
                             }
 
 
-
-
-                            rb_1.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    getSpikeList(2);
-                                }
-                            });
-
-                            rb_2.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    getSpikeList(11);
-                                }
-                            });
-
-                            rb_3.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    getSpikeList(3);
-                                }
-                            });
-
-//                            rb_4.setOnClickListener(new View.OnClickListener() {
-//                                @Override
-//                                public void onClick(View v) {
-//                                    getSpikeList(12);
-//                                }
-//                            });
-
-                            if(spikeNum>0) {
-                                getSpikeList(2);
-                            }else if(specialNum>0) {
-                                getSpikeList(11);
-                            }else if(fullGiftNum>0) {
-                                getSpikeList(12);
-                            }else {
-                                getSpikeList(3);
-                            }
-
+                            getSpikeList(12);
+                            getSpikeList(3);
+                            getSpikeList(2);
+                            getSpikeList(11);
+                            rvIconAdapter.notifyDataSetChanged();
                             questUrl = indexInfoModel.getData().getQuestUrl();
 
+                            //----------------------------
                             tv_city.setText(data.getAddress());
-                            Glide.with(mActivity).load(data.getOtherInfo()).into(iv_pic);
                             list.clear();
                             list1.clear();
                             for (int i = 0; i < indexInfoModel.getData().getBanners().size(); i++) {
@@ -1767,7 +1892,7 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener, 
                             }
 
                             for (int i = 0; i < indexInfoModel.getData().getBanners().size(); i++) {
-                                if(indexInfoModel.getData().getBanners().get(i).getShowType()==2) {
+                                if (indexInfoModel.getData().getBanners().get(i).getShowType() == 2) {
                                     list1.add(data.getBanners().get(i).getDetailPic());
                                 }
                             }
@@ -1784,25 +1909,30 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener, 
                                 banner.setDelayTime(3000);
                                 banner.setIndicatorGravity(BannerConfig.RIGHT);
                                 ClickBanner(data.getBanners());
+                                banner.start();
+
+                                List<IndexInfoModel.DataBean.BannersBean> banners = data.getBanners();
+
+
                                 banner.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
                                     @Override
                                     public void onPageScrolled(int i, float v, int i1) {
-
+//                                        Log.d("wwwwwwww........","1111");
                                     }
 
                                     @Override
-                                    public void onPageSelected(int i) {
-
+                                    public void onPageSelected(int pos) {
+                                        if (!TextUtils.isEmpty(banners.get(pos).getRgbColor())) {
+                                            String rgbColor = banners.get(pos).getRgbColor();
+                                            ll_bgc.setBackgroundColor(Color.parseColor("#" + rgbColor));
+                                        }
                                     }
 
                                     @Override
                                     public void onPageScrollStateChanged(int i) {
-
+//                                        Log.d("wwwwwwww........","3333");
                                     }
                                 });
-
-                                banner.start();
-
 
                             } else {
                                 banner.setVisibility(View.GONE);
@@ -1810,9 +1940,8 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener, 
 
                             }
                             lav_activity_loading.hide();
+                        } else {
 
-
-                        }else {
                             AppHelper.showMsg(mActivity, indexInfoModel.getMessage());
                             lav_activity_loading.hide();
                         }
@@ -1825,7 +1954,7 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener, 
             @Override
             public void OnBannerClick(int position) {
                 showType = banners.get(position).getShowType();
-                if(showType==1|| banners.get(position).getLinkSrc()!=null) {
+                if (showType == 1 || banners.get(position).getLinkSrc() != null) {
                     //链接 banners.get(position).getLinkSrc()
                     Intent intent = new Intent(getActivity(), NewWebViewActivity.class);
                     intent.putExtra("URL", banners.get(position).getLinkSrc());
@@ -1833,67 +1962,66 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener, 
                     intent.putExtra("name", "");
 //                    Log.d("wsdsssssssss.........", banners.get(position).getLinkSrc());
                     startActivity(intent);
-                }
-                else if(showType == 2|| banners.get(position).getDetailPic()!=null) {
+                } else if (showType == 2 || banners.get(position).getDetailPic() != null) {
                     //图片
                     AppHelper.showPhotoDetailDialog(mActivity, list1, position);
-                }else if(showType == 3|| banners.get(position).getProdPage()!=null) {
+                } else if (showType == 3 || banners.get(position).getProdPage() != null) {
                     //H5页面
-                    if(AppConstant.KILL_PROD.equals(banners.get(position).getProdPage())) {
+                    if (AppConstant.KILL_PROD.equals(banners.get(position).getProdPage())) {
                         Intent intent = new Intent(getActivity(), HomeGoodsListActivity.class);
                         startActivity(intent);
-                    }else if(AppConstant.HOT_PROD.equals(banners.get(position).getProdPage())){
+                    } else if (AppConstant.HOT_PROD.equals(banners.get(position).getProdPage())) {
                         Intent intent = new Intent(getActivity(), HotProductActivity.class);
                         startActivity(intent);
-                    }else if(AppConstant.COMMON_PROD.equals(banners.get(position).getProdPage())){
+                    } else if (AppConstant.COMMON_PROD.equals(banners.get(position).getProdPage())) {
                         Intent intent = new Intent(getActivity(), CommonProductActivity.class);
                         startActivity(intent);
-                    }else if(AppConstant.DEDUCT_PROD.equals(banners.get(position).getProdPage())){
+                    } else if (AppConstant.DEDUCT_PROD.equals(banners.get(position).getProdPage())) {
                         Intent intent = new Intent(getActivity(), ReductionProductActivity.class);
                         startActivity(intent);
-                    }else if(AppConstant.SPECIAL_PROD.equals(banners.get(position).getProdPage())){
+                    } else if (AppConstant.SPECIAL_PROD.equals(banners.get(position).getProdPage())) {
                         Intent intent = new Intent(getActivity(), CouponDetailActivity.class);
                         startActivity(intent);
-                    }else if(AppConstant.TEAM_PROD.equals(banners.get(position).getProdPage())){
+                    } else if (AppConstant.TEAM_PROD.equals(banners.get(position).getProdPage())) {
                         Intent intent = new Intent(getActivity(), TeamDetailActivity.class);
                         startActivity(intent);
-                    }else if(AppConstant.BALANCE.equals(banners.get(position).getProdPage())){
+                    } else if (AppConstant.BALANCE.equals(banners.get(position).getProdPage())) {
                         Intent intent = new Intent(getActivity(), MyWalletNewActivity.class);
                         startActivity(intent);
-                    }else if(AppConstant.POINT.equals(banners.get(position).getProdPage())){
+                    } else if (AppConstant.POINT.equals(banners.get(position).getProdPage())) {
                         Intent intent = new Intent(getActivity(), MinerIntegralActivity.class);
                         startActivity(intent);
-                    }else if(AppConstant.GIFT.equals(banners.get(position).getProdPage())){
+                    } else if (AppConstant.GIFT.equals(banners.get(position).getProdPage())) {
                         Intent intent = new Intent(getActivity(), MyOrdersActivity.class);
                         startActivity(intent);
                     }
-                }else if(showType ==4 ) {
+                } else if (showType == 4) {
                     //商品
                     int businessId = Integer.parseInt(banners.get(position).getBusinessId());
                     Intent intent = new Intent(getActivity(), CommonGoodsDetailActivity.class);
                     intent.putExtra(AppConstant.ACTIVEID, businessId);
-                    intent.putExtra("priceType", SharedPreferencesUtil.getString(mActivity,"priceType"));
+                    intent.putExtra("priceType", SharedPreferencesUtil.getString(mActivity, "priceType"));
                     startActivity(intent);
-                }else if(showType ==5 ) {
+                } else if (showType == 5) {
                     //活动
                     String businessType = banners.get(position).getBusinessType();
                     int businessId = Integer.parseInt(banners.get(position).getBusinessId());
-                    if(businessType.equals("2")) {
+                    if (businessType.equals("2")) {
                         Intent intent = new Intent(getActivity(), SeckillGoodActivity.class);
 //                        intent.putExtra(AppConstant.NUM,businessId);
-                        intent.putExtra("num","-1");
-                        intent.putExtra("priceType", SharedPreferencesUtil.getString(mActivity,"priceType"));
-                        intent.putExtra(AppConstant.ACTIVEID,businessId);
+                        intent.putExtra("num", "-1");
+                        intent.putExtra("priceType", SharedPreferencesUtil.getString(mActivity, "priceType"));
+                        intent.putExtra(AppConstant.ACTIVEID, businessId);
                         startActivity(intent);
-                    }else if(businessType.equals("3")) {
+                    } else if (businessType.equals("3")) {
                         Intent intent = new Intent(getActivity(), SpecialGoodDetailActivity.class);
                         intent.putExtra(AppConstant.ACTIVEID, businessId);
-                        intent.putExtra("priceType", SharedPreferencesUtil.getString(mActivity,"priceType"));
+                        intent.putExtra("priceType", SharedPreferencesUtil.getString(mActivity, "priceType"));
                         startActivity(intent);
-                    }else if(businessType.equals("11")) {
+                    } else if (businessType.equals("11")) {
                         Intent intent = new Intent(getActivity(), SpecialGoodDetailActivity.class);
-                        intent.putExtra("priceType", SharedPreferencesUtil.getString(mActivity,"priceType"));
-                        intent.putExtra(AppConstant.ACTIVEID,businessId);
+                        intent.putExtra("priceType", SharedPreferencesUtil.getString(mActivity, "priceType"));
+                        intent.putExtra(AppConstant.ACTIVEID, businessId);
                         startActivity(intent);
                     }
 
@@ -1902,13 +2030,14 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener, 
             }
         });
     }
+
     /**
      * 获取更新
      */
     private void requestUpdate() {
         UpdateAPI.requestUpdate(getContext(), AppHelper.getVersion(getContext()))
                 .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .observeOn(rx.android.schedulers.AndroidSchedulers.mainThread())
                 .subscribe(new Observer<UpdateModel>() {
                     @Override
                     public void onCompleted() {
@@ -2015,51 +2144,53 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener, 
     public void setClickEvent() {
 
     }
+
     @Override
     public void onStart() {
         super.onStart();
         //开始轮播
         banner.startAutoPlay();
-        typeAdapter.start();
     }
 
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.tv_search:
-                Intent intent = new Intent(context,SearchStartActivity.class);
+                Intent intent = new Intent(context, SearchStartActivity.class);
                 intent.putExtra(AppConstant.SEARCHTYPE, AppConstant.HOME_SEARCH);
                 intent.putExtra("flag", "first");
                 intent.putExtra("good_buy", "");
                 startActivity(intent);
                 break;
 
-            case R.id.tv_search1:
-                Intent intent1 = new Intent(context,SearchStartActivity.class);
-                intent1.putExtra(AppConstant.SEARCHTYPE, AppConstant.HOME_SEARCH);
-                intent1.putExtra("flag", "first");
-                intent1.putExtra("good_buy", "");
-                startActivity(intent1);
-                break;
+//            case R.id.tv_search1:
+//                Intent intent1 = new Intent(context,SearchStartActivity.class);
+//                intent1.putExtra(AppConstant.SEARCHTYPE, AppConstant.HOME_SEARCH);
+//                intent1.putExtra("flag", "first");
+//                intent1.putExtra("good_buy", "");
+//                startActivity(intent1);
+//                break;
 
             case R.id.rl_message:
-                if (StringHelper.notEmptyAndNull(UserInfoHelper.getUserId(getActivity()))) {
-                    Intent intents = new Intent(getActivity(), MessageCenterActivity.class);
-                    startActivityForResult(intents, 101);
-//                    Intent intent2 = new Intent(getActivity(), Test1Activity.class);
-//                    startActivity(intent2);
-
-                } else {
-                    initDialog();
-                }
+                Intent intent2 = new Intent(context, TestActivity4.class);
+                startActivity(intent2);
+//                if (StringHelper.notEmptyAndNull(UserInfoHelper.getUserId(getActivity()))) {
+//                    Intent intents = new Intent(getActivity(), MessageCenterActivity.class);
+//                    startActivityForResult(intents, 101);
+////                    Intent intent2 = new Intent(getActivity(), Test1Activity.class);
+////                    startActivity(intent2);
+//
+//                } else {
+//                    initDialog();
+//                }
                 break;
 
             case R.id.tv_city:
                 //选择城市
-                if(data!=null) {
+                if (data != null) {
                     Intent messageIntent = new Intent(getActivity(), ChooseAddressActivity.class);
-                    messageIntent.putExtra("cityName",data.getCityName());
-                    messageIntent.putExtra("areaName",data.getAreaName());
+                    messageIntent.putExtra("cityName", data.getCityName());
+                    messageIntent.putExtra("areaName", data.getAreaName());
 //                    startActivityForResult(messageIntent, 104);
                     startActivity(messageIntent);
                 }
@@ -2078,24 +2209,22 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener, 
 
                 break;
 
-            case R.id.rl_more2:
-                //精选折扣
-                Intent specialIntent = new Intent(getActivity(), CouponDetailActivity.class);
-                startActivity(specialIntent);
-                break;
-
             case R.id.rl_more3:
                 //超值组合
                 Intent teamIntent = new Intent(getActivity(), TeamDetailActivity.class);
                 startActivity(teamIntent);
                 break;
-
+            case R.id.rl_more4:
+                //满赠
+                Intent fullIntent = new Intent(getActivity(), FullGiftActivity.class);
+                startActivity(fullIntent);
+                break;
             case R.id.tv_change:
                 Intent changeCityIntent = new Intent(getActivity(), ChangeCityActivity.class);
                 startActivityForResult(changeCityIntent, 105);
                 break;
             case R.id.tv_change_address:
-                chooseAddressDialog = new ChooseHomeDialog(mActivity,"");
+                chooseAddressDialog = new ChooseHomeDialog(mActivity, "");
                 chooseAddressDialog.show();
 
                 break;
@@ -2123,7 +2252,6 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener, 
             skillAdvList.clear();
             getBaseLists();
             EventBus.getDefault().post(new BackEvent());
-            Log.d("dwssssssssssss...","4444");
         }
 
         if (requestCode == 105) {
@@ -2132,13 +2260,12 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener, 
 
     }
 
-    @Override
-    public void onStop() {
-        super.onStop();
-        banner.stopAutoPlay();
-        typeAdapter.cancle();
 
-
+    private void stopAuto() {
+        if (mAutoTask != null && !mAutoTask.isDisposed()) {
+            mAutoTask.dispose();
+            mAutoTask = null;
+        }
     }
 
     private void initRecycle() {
@@ -2147,13 +2274,24 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener, 
         scheduledExecutorService.scheduleAtFixedRate(new Runnable() {
             @Override
             public void run() {
-                recyclerViewTest.smoothScrollToPosition(layoutManager.findFirstVisibleItemPosition()+1);
+                rv_skill.smoothScrollToPosition(layoutManager.findFirstVisibleItemPosition() + 1);
             }
         }, 2000, 2000, TimeUnit.MILLISECONDS);
-        recyclerViewTest.setLayoutManager(layoutManager);
+        rv_skill.setLayoutManager(layoutManager);
     }
 
-
+    //满赠滑动
+    private void initRecycles() {
+        LinearLayoutManager layoutManager = new LinearLayoutManager(mActivity, LinearLayoutManager.HORIZONTAL, false);
+        ScheduledExecutorService scheduledExecutorService = Executors.newScheduledThreadPool(1);
+        scheduledExecutorService.scheduleAtFixedRate(new Runnable() {
+            @Override
+            public void run() {
+                rv_auto_view1.smoothScrollToPosition(layoutManager.findFirstVisibleItemPosition() + 1);
+            }
+        }, 3000, 2000, TimeUnit.MILLISECONDS);
+        rv_auto_view1.setLayoutManager(layoutManager);
+    }
 
     @Override
     public void onSliderClick(BaseSliderView slider) {
@@ -2184,31 +2322,39 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener, 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void cartNum(UpNumEvent event) {
         getCartNum();
+
     }
+
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void cartNum0(UpDateNumEvent0 event) {
         getCartNum();
     }
+
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void cartNum1(UpDateNumEvent1 event) {
         getCartNum();
     }
+
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void cartNum2(UpDateNumEvent2 event) {
         getCartNum();
     }
+
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void cartNum3(UpDateNumEvent3 event) {
         getCartNum();
     }
+
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void cartNum7(UpDateNumEvent7 event) {
         getCartNum();
     }
+
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void cartNum8(UpDateNumEvent8 event) {
         getCartNum();
     }
+
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void cartNum10(UpDateNumEvent10 event) {
         getCartNum();
@@ -2219,36 +2365,13 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener, 
     public void cityEvent(CityEvent event) {
         refreshLayout.autoRefresh();
         chooseAddressDialog.dismiss();
+//        rootview.setTranslationY(0);
 
     }
 
-    private class myOnPageChangeListener implements ViewPager.OnPageChangeListener {
-        @Override
-        public void onPageScrolled(int i, float v, int i1) {
-
-        }
-
-        @Override
-        public void onPageSelected(int position) {
-            switch (position){
-                case 0:
-                    rg_new.check(R.id.rb_new);
-                    break;
-                case 1:
-                    rg_new.check(R.id.rb_must_common);
-                    break;
-                case 2:
-                    rg_new.check(R.id.rb_info);
-                    break;
-                case 3:
-                    rg_new.check(R.id.rb_common);
-                    break;
-            }
-        }
-
-        @Override
-        public void onPageScrollStateChanged(int i) {
-
-        }
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void topEvent(TopEvent event) {
+        appbar.setExpanded(true);
+//        nestedScrollView.smoothScrollTo(0,0);
     }
 }

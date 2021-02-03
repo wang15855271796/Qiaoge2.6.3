@@ -86,7 +86,6 @@ public class CascadingMenuViews extends LinearLayout {
                     @Override
                     public void onItemClick(View view, int position) {
                         secondItem = menuItem.get(position).getCityNames();
-//                        Log.d("wdasasdasd........",menuItem.toString());
                         // 通知适配器刷新
                         secondMenuListViewAdapter.notifyDataSetChanged();
                         secondMenuListViewAdapter.setSelectedPositionNoNotify(0, secondItem);
@@ -94,6 +93,16 @@ public class CascadingMenuViews extends LinearLayout {
                         if (mOnSelectListener != null) {
                             mOnSelectListener.getValue(menuItem.get(position));
                         }
+
+                        secondMenuListViewAdapter.setOnItemClickListener(new MenuItemAdapter.OnItemClickListener() {
+
+                            @Override
+                            public void onItemClick(View view, final int position) {
+                                if (mOnSelectListener != null) {
+                                    mOnSelectListener.getValues(secondItem.get(position));
+                                }
+                            }
+                        });
                     }
                 });
 
@@ -104,15 +113,7 @@ public class CascadingMenuViews extends LinearLayout {
         secondMenuListViewAdapter.setTextSize(15);
         secondMenuListViewAdapter.setSelectedPositionNoNotify(secondPosition, secondItem);
         secondMenuListView.setAdapter(secondMenuListViewAdapter);
-        secondMenuListViewAdapter.setOnItemClickListener(new MenuItemAdapter.OnItemClickListener() {
 
-                    @Override
-                    public void onItemClick(View view, final int position) {
-                        if (mOnSelectListener != null) {
-                            mOnSelectListener.getValues(secondItem.get(position));
-                        }
-                    }
-                });
 
     }
 

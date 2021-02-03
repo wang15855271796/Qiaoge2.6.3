@@ -2,11 +2,12 @@
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:id="@+id/inside_fixed_bar_parent"
+    android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <RelativeLayout
-        android:id="@+id/rl_top"
+        android:id="@+id/rl_inside_fixed"
         android:layout_width="match_parent"
         android:layout_height="@dimen/size_60dp"
         android:background="#ffffff"
@@ -69,7 +70,7 @@
                     android:layout_weight="1"
                     android:button="@null"
                     android:gravity="center"
-                    android:text="行业资讯"/>
+                    android:text="降价商品"/>
 
                 <RadioButton
                     android:background="@null"
@@ -134,7 +135,7 @@
                 android:textColor="#999999"
                 android:textSize="13dp"
                 android:layout_marginTop="@dimen/size_35dp"
-                android:text="资讯快报"
+                android:text="最高降99元"
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:gravity="center_horizontal"

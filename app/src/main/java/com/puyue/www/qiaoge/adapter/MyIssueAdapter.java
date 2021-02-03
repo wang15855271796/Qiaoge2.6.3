@@ -14,6 +14,7 @@ import com.bumptech.glide.Glide;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.puyue.www.qiaoge.R;
+import com.puyue.www.qiaoge.RoundImageView;
 import com.puyue.www.qiaoge.activity.IssueEditInfoActivity;
 import com.puyue.www.qiaoge.activity.IssueInfoActivity;
 import com.puyue.www.qiaoge.activity.mine.IssueActivity;
@@ -42,7 +43,7 @@ public class MyIssueAdapter extends BaseQuickAdapter<InfoListModel.DataBean.List
 
     @Override
     protected void convert(BaseViewHolder helper, InfoListModel.DataBean.ListBean item) {
-        ImageView iv_pic = helper.getView(R.id.iv_pic);
+        RoundImageView iv_pic = helper.getView(R.id.iv_pic);
         Glide.with(mContext).load(item.getPictureList().get(0)).into(iv_pic);
         ImageView iv_status = helper.getView(R.id.iv_status);
         TextView tv_deleted = helper.getView(R.id.tv_deleted);

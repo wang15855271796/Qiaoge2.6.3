@@ -29,22 +29,22 @@
 
             <ImageView
                 android:src="@mipmap/ic_home_good_cart"
-                android:id="@+id/tv_delete"
+                android:id="@+id/iv_carts"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
-                android:layout_marginRight="10dp"
+                android:layout_marginRight="23dp"
                 android:gravity="center"
                 android:layout_marginTop="@dimen/size_40dp"
                 android:textColor="@color/white" />
 
             <TextView
-                android:id="@+id/tv_number"
+                android:id="@+id/tv_num"
                 android:layout_width="15dp"
 
                 android:layout_height="15dp"
                 android:layout_alignParentRight="true"
-                android:layout_marginRight="5dp"
+                android:layout_marginRight="15dp"
                 android:layout_marginTop="@dimen/size_35dp"
                 android:background="@drawable/shape_car_num"
                 android:gravity="center"
@@ -102,10 +102,18 @@
         </RelativeLayout>
     </RelativeLayout>
 
+    <com.scwang.smartrefresh.layout.SmartRefreshLayout
+        android:id="@+id/refreshLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recyclerView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
     </android.support.v7.widget.RecyclerView>
+
+    </com.scwang.smartrefresh.layout.SmartRefreshLayout>
 </LinearLayout>

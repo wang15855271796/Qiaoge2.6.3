@@ -645,9 +645,12 @@ public class ReturnGoodActivity extends BaseSwipeActivity {
                     // 图片选择结果回调
                     images = PictureSelector.obtainMultipleResult(data);
                     selectList.addAll(images);
+
                     for (int i = 0; i < images.size(); i++) {
                         picList.add(images.get(i).getCompressPath());
                     }
+                    Log.d("wdasssddddddd....",picList.size()+"aa");
+                    Log.d("wdasssddddddd....",selectList.size()+"bb");
                     adapter.setList(selectList);
                     adapter.notifyDataSetChanged();
                     upImage(filesToMultipartBodyParts(picList));

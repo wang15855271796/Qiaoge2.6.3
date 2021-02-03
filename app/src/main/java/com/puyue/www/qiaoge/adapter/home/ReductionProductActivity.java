@@ -130,7 +130,7 @@ public class ReductionProductActivity extends BaseSwipeActivity implements View.
         EventBus.getDefault().register(this);
         getCustomerPhone();
         enjoyProduct = SharedPreferencesUtil.getString(mActivity, "priceType");
-        reduceAdapter = new ReduceAdapter(enjoyProduct,flag,R.layout.item_team_list, list, new ReduceAdapter.Onclick() {
+        reduceAdapter = new ReduceAdapter(enjoyProduct,R.layout.item_team_list, list, new ReduceAdapter.Onclick() {
             @Override
             public void addDialog() {
                 if (StringHelper.notEmptyAndNull(UserInfoHelper.getUserId(mContext))) {
@@ -149,10 +149,6 @@ public class ReductionProductActivity extends BaseSwipeActivity implements View.
         });
 
         refreshLayout.setEnableLoadMore(false);
-        recyclerView.setLayoutManager(new MyGrideLayoutManager(mContext,2));
-        recyclerView.setAdapter(reduceAdapter);
-        iv_back.setOnClickListener(this);
-        tv_title.setText("降价商品");
         iv_carts.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

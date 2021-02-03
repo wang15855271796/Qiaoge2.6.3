@@ -149,7 +149,6 @@
 
                     <TextView
                         android:id="@+id/tv_message_style"
-                        android:text="请选择消息类型"
                         android:layout_marginRight="@dimen/size_18dp"
                         android:layout_alignParentRight="true"
                         android:textColor="#333333"
@@ -186,7 +185,7 @@
 
                     <EditText
                         android:id="@+id/et_phone"
-                        android:hint="请输入电话号码"
+
                         android:layout_marginRight="@dimen/size_18dp"
                         android:layout_alignParentRight="true"
                         android:textColor="#333333"
@@ -222,7 +221,6 @@
                     <EditText
                         android:background="@null"
                         android:id="@+id/tv_address"
-                        android:hint="请输入详细地址"
                         android:layout_marginRight="@dimen/size_18dp"
                         android:layout_alignParentRight="true"
                         android:textColor="#333333"

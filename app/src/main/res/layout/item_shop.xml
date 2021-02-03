@@ -8,10 +8,10 @@
     <RelativeLayout
         android:layout_marginTop="@dimen/size_12dp"
         android:id="@+id/rl_group"
-        android:layout_marginRight="@dimen/size_12dp"
+        android:layout_marginLeft="@dimen/size_12dp"
         android:orientation="vertical"
         android:background="@drawable/shape_white1"
-        android:layout_width="171dp"
+        android:layout_width="wrap_content"
         android:layout_height="280dp">
 
         <com.puyue.www.qiaoge.view.RoundImageView

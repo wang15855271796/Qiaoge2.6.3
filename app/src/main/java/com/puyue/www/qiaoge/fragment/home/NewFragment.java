@@ -109,6 +109,7 @@ public class NewFragment extends BaseFragment {
 
         recyclerView.setLayoutManager(new MyGrideLayoutManager(mActivity,2));
         recyclerView.setAdapter(newAdapter);
+        recyclerView.setNestedScrollingEnabled(false);
         refreshLayout.setOnRefreshListener(new OnRefreshListener() {
             @Override
             public void onRefresh(@NonNull RefreshLayout refreshLayout) {

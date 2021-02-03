@@ -2,6 +2,7 @@ package com.puyue.www.qiaoge.activity;
 
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
@@ -15,6 +16,7 @@ import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.PopupWindow;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.google.gson.Gson;
@@ -24,17 +26,27 @@ import com.luck.picture.lib.config.PictureMimeType;
 import com.luck.picture.lib.entity.LocalMedia;
 import com.puyue.www.qiaoge.R;
 import com.puyue.www.qiaoge.adapter.ShopImageViewsAdapter;
+import com.puyue.www.qiaoge.api.home.CityChangeAPI;
 import com.puyue.www.qiaoge.api.home.InfoListAPI;
 import com.puyue.www.qiaoge.api.home.InfoListModel;
 import com.puyue.www.qiaoge.api.mine.order.SendImageAPI;
 import com.puyue.www.qiaoge.base.BaseModel;
 import com.puyue.www.qiaoge.base.BaseSwipeActivity;
+import com.puyue.www.qiaoge.dialog.ShopStyleDialog;
+import com.puyue.www.qiaoge.event.ShopStyleEvent;
 import com.puyue.www.qiaoge.helper.AppHelper;
 import com.puyue.www.qiaoge.model.InfoDetailIssueModel;
+import com.puyue.www.qiaoge.model.home.CityChangeModel;
 import com.puyue.www.qiaoge.model.mine.order.SendImageModel;
 import com.puyue.www.qiaoge.pictureselectordemo.FullyGridLayoutManager;
 import com.puyue.www.qiaoge.pictureselectordemo.ShopImageViewAdapter;
 import com.puyue.www.qiaoge.utils.ToastUtil;
+import com.puyue.www.qiaoge.view.CascadingMenuPopWindow;
+import com.puyue.www.qiaoge.view.CascadingMenuViewOnSelectListener;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -55,6 +67,8 @@ import rx.schedulers.Schedulers;
 public class IssueEditInfoActivity extends BaseSwipeActivity {
     @BindView(R.id.et)
     EditText et;
+    @BindView(R.id.iv_back)
+    ImageView iv_back;
     @BindView(R.id.tv_area)
     TextView tv_area;
     @BindView(R.id.recyclerView)
@@ -65,9 +79,14 @@ public class IssueEditInfoActivity extends BaseSwipeActivity {
     EditText et_phone;
     @BindView(R.id.tv_address)
     TextView tv_address;
+    @BindView(R.id.rl)
+    RelativeLayout rl;
+    @BindView(R.id.tv_sure)
+    TextView tv_sure;
     String msgId;
     ShopImageViewsAdapter shopImageViewAdapter;
     private List<String> picList = new ArrayList();
+    String returnPic;
     @Override
     public boolean handleExtra(Bundle savedInstanceState) {
         return false;
@@ -85,11 +104,70 @@ public class IssueEditInfoActivity extends BaseSwipeActivity {
 
     @Override
     public void setViewData() {
+        EventBus.getDefault().register(this);
         msgId = getIntent().getStringExtra("msgId");
         getCityList(msgId);
+        getCityList();
+
+        iv_back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+
+        rl.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ShopStyleDialog shopStyleDialog = new ShopStyleDialog(mContext);
+                shopStyleDialog.show();
+            }
+        });
+
+        tv_sure.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                IssueInfo(msgId,et.getText().toString(),tv_address.getText().toString(),et_phone.getText().toString());
+            }
+        });
 
     }
-    String returnPic;
+
+    private void IssueInfo(String msgIds,String content,String address,String phone) {
+        InfoListAPI.EditInfo(mContext,msgIds,position,content,returnPic,provinceCode,cityCode,address,phone)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<BaseModel>() {
+                    @Override
+                    public void onCompleted() {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                    }
+
+                    @Override
+                    public void onNext(BaseModel infoListModel) {
+                        if (infoListModel.success) {
+                            ToastUtil.showSuccessMsg(mContext,infoListModel.message);
+                            finish();
+                        } else {
+                            AppHelper.showMsg(mContext, infoListModel.message);
+                        }
+                    }
+                });
+    }
+
+
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        EventBus.getDefault().unregister(this);
+    }
+
+
     private void upImage(List<MultipartBody.Part> parts) {
         SendImageAPI.requestImgDetail(mContext, parts)
                 .subscribeOn(Schedulers.io())
@@ -102,23 +180,21 @@ public class IssueEditInfoActivity extends BaseSwipeActivity {
 
                     @Override
                     public void onError(Throwable e) {
-
+                        Log.d("wdasdasdssds.......",e.getMessage());
                     }
 
                     @Override
                     public void onNext(SendImageModel baseModel) {
+
                         if (baseModel.success) {
                             returnPic = "";
-                            if (baseModel.data != null) {
-//                                for (int i = 0; i < baseModel.data.length; i++) {
-//                                    returnPic += baseModel.data[i] + ",";
-//                                }
-                                String[] data = baseModel.data;
 
+                            if (baseModel.data != null) {
+                                String[] data = baseModel.data;
                                 Gson gson = new Gson();
                                 returnPic = gson.toJson(data);
                             }
-                            Log.i("wwwwbbb", "onNext: " + returnPic);
+                            Log.d("wdadasdadasdsdsds.....",returnPic+"111");
                             //  sendMgs();
                         } else {
                             AppHelper.showMsg(mContext, baseModel.message);
@@ -134,15 +210,68 @@ public class IssueEditInfoActivity extends BaseSwipeActivity {
             RequestBody requestBody = RequestBody.create(MediaType.parse("multipart/form-data"), file);
             MultipartBody.Part part = MultipartBody.Part.createFormData("detailFiles", file.getName(), requestBody);
             parts.add(part);
+
         }
         return parts;
     }
 
+    CascadingMenuPopWindow cascadingMenuPopWindow;
+
+    String provinceCode;
+    String provinceName;
+    String cityName;
+    String cityCode;
     @Override
     public void setClickEvent() {
-
+        tv_area.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                cascadingMenuPopWindow = new CascadingMenuPopWindow(mActivity, listCity);
+                cascadingMenuPopWindow.setMenuViewOnSelectListener(new NMCascadingMenuViewOnSelectListener());
+                cascadingMenuPopWindow.showAsDropDown(et, 5, 5);
+                cascadingMenuPopWindow.setOutsideTouchable(true);
+                cascadingMenuPopWindow.setBackgroundDrawable(new BitmapDrawable());
+                cascadingMenuPopWindow.setTouchable(true);
+                cascadingMenuPopWindow.setOnDismissListener(new popupDismissListener());
+                backgroundAlpha(0.3f);
+            }
+        });
     }
 
+
+
+    ArrayList<CityChangeModel.DataBean> listCity = new ArrayList<>();
+    private void getCityList() {
+        CityChangeAPI.requestCity(mContext)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<CityChangeModel>() {
+                    @Override
+                    public void onCompleted() {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                    }
+
+                    @Override
+                    public void onNext(CityChangeModel cityChangeModel) {
+                        if (cityChangeModel.isSuccess()) {
+                            listCity.clear();
+                            List<CityChangeModel.DataBean> data = cityChangeModel.getData();
+                            listCity.addAll(data);
+
+                        } else {
+                            AppHelper.showMsg(mContext, cityChangeModel.getMessage());
+                        }
+                    }
+                });
+    }
+
+
+    List<String> pictureList;
+    InfoDetailIssueModel.DataBean data;
     private void getCityList(String msgId) {
         InfoListAPI.InfoDetailIssue(mContext,msgId)
                 .subscribeOn(Schedulers.io())
@@ -160,13 +289,19 @@ public class IssueEditInfoActivity extends BaseSwipeActivity {
                     @Override
                     public void onNext(InfoDetailIssueModel infoListModel) {
                         if (infoListModel.isSuccess()) {
-                            InfoDetailIssueModel.DataBean data = infoListModel.getData();
+                            data = infoListModel.getData();
                             et.setText(data.getContent());
+
+                            cityCode = data.getCityCode();
+                            provinceCode = data.getProvinceCode();
                             tv_area.setText(data.getAreaName()+data.getCityName());
-                            tv_message_style.setText(data.getMsgTypeName());
+                            tv_message_style.setText(data.getMsgTypeName()+"");
+
                             et_phone.setText(data.getContactPhone());
                             tv_address.setText(data.getDetailAddress());
-                            List<String> pictureList = data.getPictureList();
+                            pictureList = data.getPictureList();
+
+
                             GridLayoutManager manager = new GridLayoutManager(mContext,3);
                             shopImageViewAdapter = new ShopImageViewsAdapter(mContext, new ShopImageViewsAdapter.onAddPicClickListener() {
                                 @Override
@@ -206,7 +341,14 @@ public class IssueEditInfoActivity extends BaseSwipeActivity {
                                 @Override
                                 public void deletPic(int position) {
                                     pictureList.remove(position);
-                                    upImage(filesToMultipartBodyParts(pictureList));
+                                    String[] msg = pictureList.toArray(new String[pictureList.size()]);
+                                    Gson gson = new Gson();
+                                    returnPic = gson.toJson(msg);
+//                                    returnPic += returnPic;
+//                                    List<MultipartBody.Part> parts = filesToMultipartBodyParts(pictureList);
+//                                    Log.d("wdadasdadasdsdsds.....",returnPic+"000");
+//                                    upImage(parts);
+
                                 }
                             });
 
@@ -255,7 +397,7 @@ public class IssueEditInfoActivity extends BaseSwipeActivity {
                         //相册
                         PictureSelector.create(IssueEditInfoActivity.this)
                                 .openGallery(PictureMimeType.ofImage())
-                                .maxSelectNum(maxSelectNum - selectList.size())
+                                .maxSelectNum(maxSelectNum - pictureList.size())
                                 .minSelectNum(1)
                                 .imageSpanCount(4)
                                 .compress(true)
@@ -292,16 +434,30 @@ public class IssueEditInfoActivity extends BaseSwipeActivity {
         if (resultCode == RESULT_OK) {
             switch (requestCode) {
                 case PictureConfig.CHOOSE_REQUEST:
+
+//                    images = PictureSelector.obtainMultipleResult(data);
+//                    selectList.addAll(images);
+//
+//                    for (int i = 0; i < images.size(); i++) {
+//                        picList.add(images.get(i).getCompressPath());
+//                    }
+//                    adapter.setList(selectList);
+//                    adapter.notifyDataSetChanged();
+//                    upImage(filesToMultipartBodyParts(picList));
+
+
                     // 图片选择结果回调
                     images = PictureSelector.obtainMultipleResult(data);
+
                     for (int i = 0; i < images.size(); i++) {
                         picList.add(images.get(i).getCompressPath());
                     }
-//                    Log.d("wddassssss......",picList.toString());
-                    shopImageViewAdapter.setLists(picList);
-//                    shopImageViewAdapter.notifyDataSetChanged();
-//                    upImage(filesToMultipartBodyParts(picList));
-                    break;
+                    selectList.addAll(picList);
+                    shopImageViewAdapter.setLists(selectList);
+                    List<MultipartBody.Part> parts = filesToMultipartBodyParts(picList);
+                    upImage(parts);
+
+
             }
         }
     }
@@ -312,4 +468,51 @@ public class IssueEditInfoActivity extends BaseSwipeActivity {
             pop = null;
         }
     }
+
+    String datum;
+    int position = 0;
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void getTotal(ShopStyleEvent shopStyleEvent) {
+        datum = shopStyleEvent.getDatum();
+        position = shopStyleEvent.getPosition();
+        tv_message_style.setText(shopStyleEvent.getDatum());
+    }
+
+    private class popupDismissListener implements PopupWindow.OnDismissListener {
+        @Override
+        public void onDismiss() {
+            backgroundAlpha(1f);
+        }
+    }
+
+
+    public void backgroundAlpha(float bgAlpha) {
+        WindowManager.LayoutParams lp = mActivity.getWindow().getAttributes();
+        lp.alpha = bgAlpha; //0.0-1.0
+        mActivity.getWindow().setAttributes(lp);
+    }
+
+    // 级联菜单选择回调接口
+    class NMCascadingMenuViewOnSelectListener implements CascadingMenuViewOnSelectListener {
+        @Override
+        public void getValue(CityChangeModel.DataBean area) {
+            provinceName = area.getProvinceName();
+            provinceCode = area.getProvinceCode();
+        }
+
+        @Override
+        public void getValues(CityChangeModel.DataBean.CityNamesBean area) {
+            backgroundAlpha(1);
+            cityName = area.getCityName();
+            tv_area.setText(provinceName+cityName);
+            cityCode = area.getCityCode();
+        }
+
+        @Override
+        public void cloese() {
+            backgroundAlpha(1);
+        }
+
+    }
+
 }

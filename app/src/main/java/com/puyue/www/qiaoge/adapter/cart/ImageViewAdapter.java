@@ -11,6 +11,7 @@ import com.bumptech.glide.Glide;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.puyue.www.qiaoge.R;
+import com.puyue.www.qiaoge.RoundImageView;
 import com.puyue.www.qiaoge.view.GlideModel;
 import com.squareup.picasso.Picasso;
 
@@ -21,7 +22,7 @@ import java.util.List;
  */
 public class ImageViewAdapter extends BaseQuickAdapter<String,BaseViewHolder> {
 
-    private ImageView imageView;
+    private RoundImageView imageView;
     public ImageViewAdapter(int layoutResId, @Nullable List<String> data) {
         super(layoutResId, data);
     }

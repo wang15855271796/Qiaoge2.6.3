@@ -16,6 +16,10 @@ public class AppInterfaceAddress {
 //    queryReturnProdIsContainFullGift
 
     /**
+     *资讯编辑
+     */
+    public static final String Info_Classify = "message/updateMessage";
+    /**
      * 首页顶部分类
      */
     public static final String Index_Classify = "common/getHomeBasicData";
