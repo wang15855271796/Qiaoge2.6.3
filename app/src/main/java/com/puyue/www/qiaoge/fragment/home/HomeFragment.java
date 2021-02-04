@@ -440,45 +440,45 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener, 
                                 rb_3.setTextColor(Color.parseColor("#FF680A"));
                                 rb_4.setTextColor(Color.parseColor("#FF680A"));
                                 if(actives.size()==1) {
-                                    skillAdapter = new SkillAdapter(mActivity,R.layout.item_skill_lists, actives,"1", new SkillAdapter.OnClick() {
-                                        @Override
-                                        public void shoppingCartOnClick(int position) {
-                                            int activeId = actives.get(position).getActiveId();
-                                            addCar(activeId, "", 2, "1");
-                                        }
-
-                                        @Override
-                                        public void tipClick() {
-                                            showPhoneDialog(cell);
-                                        }
-
-                                        @Override
-                                        public void addDialog() {
-                                            initDialog();
-                                        }
-                                    });
+//                                    skillAdapter = new SkillAdapter(mActivity,R.layout.item_skill_lists, actives,"1", new SkillAdapter.OnClick() {
+//                                        @Override
+//                                        public void shoppingCartOnClick(int position) {
+//                                            int activeId = actives.get(position).getActiveId();
+//                                            addCar(activeId, "", 2, "1");
+//                                        }
+//
+//                                        @Override
+//                                        public void tipClick() {
+//                                            showPhoneDialog(cell);
+//                                        }
+//
+//                                        @Override
+//                                        public void addDialog() {
+//                                            initDialog();
+//                                        }
+//                                    });
                                     recyclerView.setVisibility(View.VISIBLE);
                                     recyclerViewTest.setVisibility(View.GONE);
                                     recyclerView.setAdapter(skillAdapter);
                                     recyclerView.setLayoutManager(new LinearLayoutManager(mActivity, LinearLayoutManager.HORIZONTAL, false));
                                 }else if(actives.size()==2){
-                                    skill2Adapter = new Skill2Adapter(mActivity,R.layout.item_skill_lists, actives,"0", new Skill2Adapter.OnClick() {
-                                        @Override
-                                        public void shoppingCartOnClick(int position) {
-                                            int activeId = actives.get(position).getActiveId();
-                                            addCar(activeId, "", 2, "1");
-                                        }
-
-                                        @Override
-                                        public void tipClick() {
-                                            showPhoneDialog(cell);
-                                        }
-
-                                        @Override
-                                        public void addDialog() {
-                                            initDialog();
-                                        }
-                                    });
+//                                    skill2Adapter = new Skill2Adapter(mActivity,R.layout.item_skill_lists, actives,"0", new Skill2Adapter.OnClick() {
+//                                        @Override
+//                                        public void shoppingCartOnClick(int position) {
+//                                            int activeId = actives.get(position).getActiveId();
+//                                            addCar(activeId, "", 2, "1");
+//                                        }
+//
+//                                        @Override
+//                                        public void tipClick() {
+//                                            showPhoneDialog(cell);
+//                                        }
+//
+//                                        @Override
+//                                        public void addDialog() {
+//                                            initDialog();
+//                                        }
+//                                    });
                                     recyclerView.setVisibility(View.GONE);
                                     recyclerViewTest.setVisibility(View.VISIBLE);
                                     recyclerViewTest.setAdapter(skill2Adapter);
@@ -487,23 +487,23 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener, 
 
                                 }else if(actives.size()==3){
                                     List<CouponModel.DataBean.ActivesBean> actives1 = couponModel.getData().getActives();
-                                    skill3Adapter = new Skill3Adapter(mActivity,R.layout.item_skill_list, actives1,"1", new Skill3Adapter.OnClick() {
-                                        @Override
-                                        public void shoppingCartOnClick(int position) {
-                                            int activeId = actives1.get(position).getActiveId();
-                                            addCar(activeId, "", 2, "1");
-                                        }
-
-                                        @Override
-                                        public void tipClick() {
-                                            showPhoneDialog(cell);
-                                        }
-
-                                        @Override
-                                        public void addDialog() {
-                                            initDialog();
-                                        }
-                                    });
+//                                    skill3Adapter = new Skill3Adapter(mActivity,R.layout.item_skill_list, actives1,"1", new Skill3Adapter.OnClick() {
+//                                        @Override
+//                                        public void shoppingCartOnClick(int position) {
+//                                            int activeId = actives1.get(position).getActiveId();
+//                                            addCar(activeId, "", 2, "1");
+//                                        }
+//
+//                                        @Override
+//                                        public void tipClick() {
+//                                            showPhoneDialog(cell);
+//                                        }
+//
+//                                        @Override
+//                                        public void addDialog() {
+//                                            initDialog();
+//                                        }
+//                                    });
                                     recyclerView.setVisibility(View.VISIBLE);
                                     recyclerViewTest.setVisibility(View.GONE);
                                     recyclerView.setAdapter(skill3Adapter);
@@ -603,22 +603,22 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener, 
                                 rb_4.setTextColor(Color.parseColor("#ffffff"));
 
                                 if(actives.size()==1) {
-                                    fullAdapter = new FullAdapter(mActivity, 12 + "", R.layout.item_full_list, actives, "1", new FullAdapter.OnClick() {
-                                        @Override
-                                        public void shoppingCartOnClick(int position) {
-
-                                        }
-
-                                        @Override
-                                        public void tipClick() {
-                                            showPhoneDialog(cell);
-                                        }
-
-                                        @Override
-                                        public void addDialog() {
-                                            initDialog();
-                                        }
-                                    });
+//                                    fullAdapter = new FullAdapter(mActivity, 12 + "", R.layout.item_full_list, actives, "1", new FullAdapter.OnClick() {
+//                                        @Override
+//                                        public void shoppingCartOnClick(int position) {
+//
+//                                        }
+//
+//                                        @Override
+//                                        public void tipClick() {
+//                                            showPhoneDialog(cell);
+//                                        }
+//
+//                                        @Override
+//                                        public void addDialog() {
+//                                            initDialog();
+//                                        }
+//                                    });
                                     recyclerView.setVisibility(View.VISIBLE);
                                     recyclerViewTest.setVisibility(View.GONE);
                                     recyclerView.setAdapter(fullAdapter);
@@ -679,45 +679,45 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener, 
                                 rb_4.setTextColor(Color.parseColor("#FF680A"));
 
                                 if(actives.size()==1) {
-                                    teamAdapter = new TeamAdapter(mActivity, 3 + "", R.layout.item_skill_lists, actives, "1", new TeamAdapter.OnClick() {
-                                        @Override
-                                        public void shoppingCartOnClick(int position) {
-                                            int activeId = actives.get(position).getActiveId();
-                                            addCar(activeId, "", 3, "1");
-                                        }
-
-                                        @Override
-                                        public void tipClick() {
-                                            showPhoneDialog(cell);
-                                        }
-
-                                        @Override
-                                        public void addDialog() {
-                                            initDialog();
-                                        }
-                                    });
+//                                    teamAdapter = new TeamAdapter(mActivity, 3 + "", R.layout.item_skill_lists, actives, "1", new TeamAdapter.OnClick() {
+//                                        @Override
+//                                        public void shoppingCartOnClick(int position) {
+//                                            int activeId = actives.get(position).getActiveId();
+//                                            addCar(activeId, "", 3, "1");
+//                                        }
+//
+//                                        @Override
+//                                        public void tipClick() {
+//                                            showPhoneDialog(cell);
+//                                        }
+//
+//                                        @Override
+//                                        public void addDialog() {
+//                                            initDialog();
+//                                        }
+//                                    });
                                     recyclerView.setVisibility(View.VISIBLE);
                                     recyclerViewTest.setVisibility(View.GONE);
                                     recyclerView.setAdapter(teamAdapter);
                                     recyclerView.setLayoutManager(new LinearLayoutManager(mActivity, LinearLayoutManager.HORIZONTAL, false));
                                 }else if(actives.size()==2) {
-                                    team3Adapter = new Team3Adapter(mActivity, 3 + "", R.layout.item_skill_lists, actives, "1", new Team3Adapter.OnClick() {
-                                        @Override
-                                        public void shoppingCartOnClick(int position) {
-                                            int activeId = actives.get(position).getActiveId();
-                                            addCar(activeId, "", 3, "0");
-                                        }
-
-                                        @Override
-                                        public void tipClick() {
-                                            showPhoneDialog(cell);
-                                        }
-
-                                        @Override
-                                        public void addDialog() {
-                                            initDialog();
-                                        }
-                                    });
+//                                    team3Adapter = new Team3Adapter(mActivity, 3 + "", R.layout.item_skill_lists, actives, "1", new Team3Adapter.OnClick() {
+//                                        @Override
+//                                        public void shoppingCartOnClick(int position) {
+//                                            int activeId = actives.get(position).getActiveId();
+//                                            addCar(activeId, "", 3, "0");
+//                                        }
+//
+//                                        @Override
+//                                        public void tipClick() {
+//                                            showPhoneDialog(cell);
+//                                        }
+//
+//                                        @Override
+//                                        public void addDialog() {
+//                                            initDialog();
+//                                        }
+//                                    });
 
                                     recyclerViewTest.setAdapter(team3Adapter);
                                     recyclerView.setVisibility(View.GONE);
@@ -1591,7 +1591,7 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener, 
                                 driverList.addAll(driverInfo.getData());
                                 if(!cell.equals("")) {
                                     ll_driver.setVisibility(View.VISIBLE);
-                                    verticalBannerAdapter = new VerticalBannerAdapter(cell,driverList,getContext());
+//                                    verticalBannerAdapter = new VerticalBannerAdapter(cell,driverList,getContext());
                                     verticalBanner.setAdapter(verticalBannerAdapter);
                                     verticalBanner.start();
 
@@ -1680,7 +1680,7 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener, 
                             }
 
                             //八个icon Adapter 142603
-                            rvIconAdapter = new RvIconAdapter(R.layout.item_home_icon,iconList,deductAmountStr);
+                            rvIconAdapter = new RvIconAdapter(R.layout.item_home_icon,classifyList);
                             rv_icon.setLayoutManager(new GridLayoutManager(context,4));
                             rv_icon.setAdapter(rvIconAdapter);
 

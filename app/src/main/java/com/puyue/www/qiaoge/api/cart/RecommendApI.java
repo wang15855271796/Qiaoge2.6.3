@@ -48,12 +48,13 @@ public class RecommendApI {
         @POST(AppInterfaceAddress.SEARCHRESULT)
         Observable<SearchResultsModel> getData(@Field("productName") String productName,
                                                @Field("pageNum") int pageNum,
-                                               @Field("pageSize") int pageSize);
+                                               @Field("pageSize") int pageSize,
+                                               @Field("isSelf") int isSelf);
     }
 
-    public static Observable<SearchResultsModel> requestData(Context context, String productName, int pageNum, int pageSize ) {
+    public static Observable<SearchResultsModel> requestData(Context context, String productName, int pageNum, int pageSize,int isSelf) {
         SearchResultService service = RestHelper.getBaseRetrofit(context).create(SearchResultService.class);
-        return service.getData(productName,pageNum,pageSize);
+        return service.getData(productName,pageNum,pageSize,isSelf);
     }
 
     /**

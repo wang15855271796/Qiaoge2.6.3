@@ -1,5 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
+    <declare-styleable name="lwvWheelView">
+        <attr name="HIndicator_hi_bgColor" format="color|reference"/>
+        <attr name="HIndicator_hi_indicatorColor" format="color|reference"/>
+    </declare-styleable>
+
+
     <declare-styleable name="SuperTextView">
         <attr name="corner" format="dimension" />
         <attr name="left_top_corner" format="boolean" />

@@ -198,6 +198,17 @@
         <activity android:name=".adapter.home.HotProductActivity"
             android:screenOrientation="portrait" />
 
+        <activity android:name=".activity.home.ShopDetailActivity"
+            android:screenOrientation="portrait"
+            />
+
+        <activity android:name=".activity.home.IssueActivity"
+            android:screenOrientation="portrait"
+            />
+
+        <activity android:name=".activity.home.IssueInfoActivity"
+            android:screenOrientation="portrait"
+            />
         <activity android:name=".adapter.home.CommonProductActivity"
             android:screenOrientation="portrait" />
 

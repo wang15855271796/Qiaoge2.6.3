@@ -10,6 +10,7 @@ import com.puyue.www.qiaoge.event.PrivacyModel;
 import com.puyue.www.qiaoge.event.TurnModel;
 import com.puyue.www.qiaoge.event.TurnReceiveModel;
 import com.puyue.www.qiaoge.helper.RestHelper;
+import com.puyue.www.qiaoge.model.OrderModel;
 import com.puyue.www.qiaoge.model.SendModel;
 import com.puyue.www.qiaoge.model.home.CouponModel;
 import com.puyue.www.qiaoge.model.home.GetCustomerPhoneModel;
@@ -17,6 +18,7 @@ import com.puyue.www.qiaoge.model.home.HomeNewRecommendModel;
 import com.puyue.www.qiaoge.model.home.IndexHomeModel;
 import com.puyue.www.qiaoge.model.home.MustModel;
 import com.puyue.www.qiaoge.model.home.ProductNormalModel;
+import com.puyue.www.qiaoge.model.home.RecommendModel;
 import com.puyue.www.qiaoge.model.home.SpikeNewQueryModel;
 import com.puyue.www.qiaoge.model.mine.order.HomeBaseModel;
 
@@ -235,5 +237,48 @@ public class IndexHomeAPI {
         SendService readService = RestHelper.getBaseRetrofit(context).create(SendService.class);
         return readService.getData();
     }
+
+    /**
+     * 首页顶部推荐
+     */
+    private interface TopRecommendService {
+        @POST(AppInterfaceAddress.Recommend_List)
+        Observable<RecommendModel> getData();
+    }
+
+
+    public static Observable<RecommendModel> recommendList(Context context) {
+        TopRecommendService readService = RestHelper.getBaseRetrofit(context).create(TopRecommendService.class);
+        return readService.getData();
+    }
+
+    /**
+     * 首页顶部分类
+     */
+    private interface TopClassifyService {
+        @POST(AppInterfaceAddress.Index_Classify)
+        Observable<IndexInfoModel> getData();
+    }
+
+
+    public static Observable<IndexInfoModel> classifyList(Context context) {
+        TopClassifyService readService = RestHelper.getBaseRetrofit(context).create(TopClassifyService.class);
+        return readService.getData();
+    }
+
+    /**
+     * 首页订单信息
+     */
+
+    private interface IndexOrderService {
+        @POST(AppInterfaceAddress.Index_Order)
+        Observable<OrderModel> getData();
+    }
+
+    public static Observable<OrderModel> indexOrder(Context context) {
+        IndexOrderService readService = RestHelper.getBaseRetrofit(context).create(IndexOrderService.class);
+        return readService.getData();
+    }
+
 
 }

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
+    xmlns:anroid="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_height="wrap_content">
@@ -9,78 +10,18 @@
     <RelativeLayout
         android:id="@+id/rl_group"
         android:orientation="vertical"
-        android:background="@drawable/shouye"
         android:layout_width="match_parent"
         android:layout_marginRight="@dimen/dp_10"
-        android:layout_marginLeft="@dimen/dp_10"
-        android:paddingBottom="@dimen/size_15dp"
-        android:layout_height="120dp">
+        android:layout_marginLeft="8dp"
+        android:layout_height="114dp">
 
-        <RelativeLayout
-            android:id="@+id/rl_pic"
-            android:visibility="gone"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-
-            <ImageView
-                android:visibility="gone"
-                android:layout_centerInParent="true"
-                android:id="@+id/iv_sale_done"
-                android:layout_marginRight="@dimen/dp_10"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-
-            <RelativeLayout
-                android:id="@+id/rl_coupon"
-                android:background="@drawable/shape_ring"
-                android:layout_width="30dp"
-                android:layout_alignParentRight="true"
-                android:layout_marginTop="70dp"
-                android:layout_marginRight="15dp"
-                android:layout_height="30dp"
-                >
-
-                <TextView
-                    tools:text="30"
-                    android:textColor="@color/white"
-                    android:textStyle="bold"
-                    android:layout_centerInParent="true"
-                    android:id="@+id/tv_coupon"
-                    android:textSize="9dp"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@mipmap/ic_back_arrow" />
-
-            </RelativeLayout>
-
-        </RelativeLayout>
-
-        <ImageView
-            android:id="@+id/iv_flag"
-            android:layout_marginTop="@dimen/dp_10"
-            android:layout_marginLeft="@dimen/dp_10"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-
-        <ImageView
+        <com.puyue.www.qiaoge.RoundImageView
             android:id="@+id/iv_pic"
-            android:layout_marginLeft="@dimen/dp_10"
+            android:scaleType="fitXY"
             android:layout_centerVertical="true"
-            tools:src="@mipmap/icon_baidu"
-            android:layout_width="@dimen/size_92dp"
-            android:layout_height="@dimen/size_92dp" />
-
-
-        <TextView
-            tools:text="销量1000"
-            android:paddingLeft="5dp"
-            android:id="@+id/tv_sale"
-            android:paddingRight="@dimen/size_5dp"
-            android:textColor="#ffffff"
-            android:textSize="@dimen/dp_10"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:src="@mipmap/icon_baidu"
+            android:layout_width="@dimen/size_97dp"
+            android:layout_height="@dimen/size_97dp" />
 
 
         <TextView
@@ -99,37 +40,113 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
 
-        <TextView
-            android:id="@+id/tv_full_desc"
-            android:background="@drawable/shape_green_button"
-            android:textColor="#F54022"
-            android:padding="@dimen/size_2dp"
-            android:singleLine="true"
-            android:maxLines="1"
-            android:layout_marginRight="@dimen/size_15dp"
-            android:ellipsize="end"
-            android:textSize="@dimen/size_10dp"
-            android:layout_marginTop="@dimen/size_10dp"
+        <RelativeLayout
             android:layout_marginLeft="@dimen/dp_10"
-            android:layout_toRightOf="@+id/iv_pic"
+            android:layout_centerInParent="true"
             android:layout_below="@+id/tv_name"
-            tools:text="满200元赠送10元优惠券"
+            android:layout_toRightOf="@+id/iv_pic"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content">
 
-        <TextView
-            android:text="15.0"
+            <TextView
+                android:layout_centerHorizontal="true"
+                android:textColor="#FF34CE3A"
+                android:maxLines="1"
+                android:id="@+id/tv_descs"
+                android:layout_marginRight="@dimen/dp_10"
+                android:layout_marginTop="@dimen/size_20dp"
+                android:ellipsize="end"
+                android:textSize="@dimen/sp_12"
+                android:text="满赠优惠券"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:text="15.0"
+                android:textColor="#ffffff"
+                android:id="@+id/tv_price"
+                android:textStyle="bold"
+                android:paddingTop="1dp"
+                android:paddingBottom="1dp"
+                android:paddingRight="@dimen/size_20dp"
+                android:paddingLeft="@dimen/size_20dp"
+                android:background="@drawable/shape_green_full"
+                android:layout_marginTop="@dimen/size_7dp"
+                android:textSize="@dimen/size_16dp"
+                android:layout_below="@+id/tv_descs"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+        </RelativeLayout>
+
+        <!--送券-->
+        <RelativeLayout
             android:visibility="gone"
-            android:textColor="#FF5000"
-            android:id="@+id/tv_price"
-            android:textStyle="bold"
-            android:layout_toRightOf="@+id/iv_pic"
-            android:layout_marginTop="@dimen/size_50dp"
-            android:layout_marginLeft="@dimen/dp_10"
-            android:textSize="@dimen/size_16dp"
+            android:layout_marginBottom="@dimen/size_10dp"
+            android:id="@+id/rl_coupon"
+            android:layout_alignParentRight="true"
             android:layout_below="@+id/tv_name"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_width="@dimen/size_60dp"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:layout_centerHorizontal="true"
+                android:id="@+id/tv_fit"
+                android:layout_marginTop="@dimen/size_20dp"
+                android:textColor="#FFFF6006"
+                android:text="满1000"
+                android:textSize="@dimen/sp_12"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:layout_alignParentBottom="true"
+                android:id="@+id/tv_coupon"
+                android:text="1000优惠券"
+                android:gravity="center"
+                android:textColor="#ffffff"
+                android:textSize="@dimen/dp_10"
+                android:background="@mipmap/icon_full_bg"
+                android:layout_marginTop="5dp"
+                android:layout_below="@+id/tv_fit"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/size_26dp" />
+        </RelativeLayout>
+
+        <!--赠礼-->
+        <RelativeLayout
+            android:visibility="gone"
+            android:id="@+id/rl_gift"
+            android:layout_alignParentRight="true"
+            android:layout_below="@+id/tv_name"
+            android:layout_width="wrap_content"
+            android:layout_marginBottom="@dimen/dp_10"
+            android:layout_height="wrap_content">
+
+            <com.puyue.www.qiaoge.RoundImageView
+                android:id="@+id/iv_given"
+                android:src="@mipmap/icon_baidu"
+                android:layout_alignParentBottom="true"
+                android:layout_width="@dimen/size_62dp"
+                android:layout_height="@dimen/size_62dp" />
+
+            <TextView
+                android:text="赠礼"
+                android:id="@+id/tv_full_desc"
+                android:paddingLeft="@dimen/size_5dp"
+                android:paddingRight="5dp"
+                android:paddingTop="@dimen/size_2dp"
+                android:paddingBottom="@dimen/size_2dp"
+                android:textColor="#ffffff"
+                android:textSize="@dimen/size_10dp"
+                android:background="@drawable/shape_full_reds"
+                android:layout_marginLeft="@dimen/dp_10"
+                android:layout_alignParentBottom="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </RelativeLayout>
+
+
 
         <TextView
             android:text="15.0"
@@ -140,7 +157,6 @@
             android:layout_marginTop="@dimen/size_3dp"
             android:layout_marginLeft="@dimen/dp_10"
             android:textSize="@dimen/size_12dp"
-            android:layout_below="@+id/tv_price"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 

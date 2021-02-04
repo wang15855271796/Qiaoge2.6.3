@@ -6,6 +6,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Log;
@@ -37,6 +38,7 @@ import com.puyue.www.qiaoge.activity.mine.wallet.MinerIntegralActivity;
 import com.puyue.www.qiaoge.activity.mine.wallet.MyWalletDetailActivity;
 import com.puyue.www.qiaoge.activity.mine.wallet.MyWalletNewActivity;
 import com.puyue.www.qiaoge.api.home.GetCustomerPhoneAPI;
+import com.puyue.www.qiaoge.api.home.IndexHomeAPI;
 import com.puyue.www.qiaoge.api.mine.AccountCenterAPI;
 import com.puyue.www.qiaoge.api.mine.UpdateAPI;
 import com.puyue.www.qiaoge.api.mine.order.MyOrderListAPI;
@@ -49,6 +51,7 @@ import com.puyue.www.qiaoge.event.CouponEvent;
 import com.puyue.www.qiaoge.event.GoToMineEvent;
 import com.puyue.www.qiaoge.event.MessageEvent;
 import com.puyue.www.qiaoge.fragment.home.CityEvent;
+import com.puyue.www.qiaoge.fragment.home.MustAdapter;
 import com.puyue.www.qiaoge.helper.AppHelper;
 import com.puyue.www.qiaoge.helper.NetWorkHelper;
 import com.puyue.www.qiaoge.helper.StringHelper;
@@ -56,11 +59,15 @@ import com.puyue.www.qiaoge.helper.UserInfoHelper;
 import com.puyue.www.qiaoge.listener.NoDoubleClickListener;
 import com.puyue.www.qiaoge.model.OrderNumsModel;
 import com.puyue.www.qiaoge.model.home.GetCustomerPhoneModel;
+import com.puyue.www.qiaoge.model.home.MustModel;
 import com.puyue.www.qiaoge.model.mine.AccountCenterModel;
 import com.puyue.www.qiaoge.model.mine.UpdateModel;
 import com.puyue.www.qiaoge.model.mine.order.CommonModel;
 import com.puyue.www.qiaoge.model.mine.order.MineCenterModel;
 import com.puyue.www.qiaoge.model.mine.order.MyOrderNumModel;
+import com.puyue.www.qiaoge.view.ObservableScrollView;
+import com.puyue.www.qiaoge.view.OutScollerview;
+import com.puyue.www.qiaoge.view.ScrollViewListener;
 import com.puyue.www.qiaoge.view.SuperTextView;
 
 import org.greenrobot.eventbus.EventBus;
@@ -122,7 +129,6 @@ public class MineFragment extends BaseFragment {
     private RelativeLayout couponsLayout;//优惠券
     private TextView couponsNum; // 优惠券数量
     private TextView textCouponsPoint;// 钱包优惠券
-    private ImageView imageViewBanner;
     private RelativeLayout accountAddress;
     private RelativeLayout accountManagement;
     private String MyBannerUrl = "";
@@ -148,6 +154,7 @@ public class MineFragment extends BaseFragment {
     private TextView tv_order;//查看全部订单
     private ImageView iv_order;
     private ImageView iv_setting;//设置
+    private ImageView iv_setting1;//设置
     private LinearLayout ll_setting;//设置
     private TextView tv_use_deduct;//使用优惠券
     private ImageView iv_use_deduct;//使用优惠券
@@ -164,9 +171,9 @@ public class MineFragment extends BaseFragment {
     TextView tv_number1;
     TextView tv_number2;
     private boolean isChecked;
-
+    ObservableScrollView scroll;
     private ImageView iv_message;
-
+    private ImageView iv_message1;
 
     private SparseArray<RecyclerView> mPageMap = new SparseArray<>();
 
@@ -174,14 +181,14 @@ public class MineFragment extends BaseFragment {
 
 
     private PagerAdapter mPagerAdapter = null;
-
-
+    ImageView iv_back;
+    MustAdapter mustAdapter;
     private MyOrderNumModel mModelMyOrderNum;
-
+    RecyclerView rv1;
     private LinearLayout ll_self_sufficiency;
     private LinearLayout ll_deliver_order;
     TextView tv_number;
-
+    RelativeLayout rl_bg;
     public static MineFragment getInstance() {
         MineFragment fragment = new MineFragment();
         Bundle bundle = new Bundle();
@@ -211,6 +218,10 @@ public class MineFragment extends BaseFragment {
     public void findViewById(View view) {
 
         EventBus.getDefault().register(this);
+        scroll = (view.findViewById(R.id.scroll));
+        rl_bg = (view.findViewById(R.id.rl_bg));
+        iv_back = (view.findViewById(R.id.iv_back));
+        rv1 = (view.findViewById(R.id.rv1));
         rl_zizhi = (view.findViewById(R.id.rl_zizhi));
         tv_number1 = (view.findViewById(R.id.tv_number1));
         tv_number2 = (view.findViewById(R.id.tv_number2));
@@ -238,7 +249,6 @@ public class MineFragment extends BaseFragment {
 
         couponsNum = (view.findViewById(R.id.couponsNum));
         textCouponsPoint = (view.findViewById(R.id.textCouponsPoint));
-        imageViewBanner = (view.findViewById(R.id.imageViewBanner));
         mViewCollectionNum = (view.findViewById(R.id.textCollectionMount));//我的收藏数量
         mViewWaitPaymentNum = (view.findViewById(R.id.view_mine_order_wait_pay));//待付款数量
         mViewWaitShipmentNum = (view.findViewById(R.id.view_mine_order_wait_shipments));//待发货数量
@@ -269,6 +279,8 @@ public class MineFragment extends BaseFragment {
         iv_order = (view.findViewById(R.id.iv_order));
         iv_setting = (view.findViewById(R.id.iv_setting));
         ll_setting = (view.findViewById(R.id.ll_setting));
+        iv_setting1 = (view.findViewById(R.id.iv_setting1));
+
         tv_use_deduct = (view.findViewById(R.id.tv_use_deduct));
         iv_use_deduct = (view.findViewById(R.id.iv_use_deduct));
         ll_amount = (view.findViewById(R.id.ll_amount));
@@ -278,10 +290,20 @@ public class MineFragment extends BaseFragment {
         tv_vip_more = (view.findViewById(R.id.tv_vip_more));
         iv_vip_more = (view.findViewById(R.id.iv_vip_more));
         iv_message = (view.findViewById(R.id.iv_message));
-
+        iv_message1 = (view.findViewById(R.id.iv_message1));
         ll_deliver_order = (view.findViewById(R.id.ll_deliver_order));
         ll_self_sufficiency = (view.findViewById(R.id.ll_self_sufficiency));
 
+        scroll.setScrollViewListener(new ScrollViewListener() {
+            @Override
+            public void onScrollChanged(ObservableScrollView scrollView, int x, int y, int oldx, int oldy) {
+                if(y==0) {
+                    rl_bg.setVisibility(View.GONE);
+                }else {
+                    rl_bg.setVisibility(View.VISIBLE);
+                }
+            }
+        });
     }
 
     @Override
@@ -316,10 +338,21 @@ public class MineFragment extends BaseFragment {
                 mViewMessageNum.setVisibility(View.GONE);
             }
         }
+        mustAdapter = new MustAdapter(R.layout.item_team_list, list, new MustAdapter.Onclick() {
+            @Override
+            public void addDialog() {
+            }
 
-
+            @Override
+            public void tipClick() {
+                showPhoneDialog(cell);
+            }
+        });
+        rv1.setLayoutManager(new GridLayoutManager(mActivity,2));
+        rv1.setAdapter(mustAdapter);
         requestUpdate();
         getCustomerPhone();
+        getProductsList();
         getOrderNum();
     }
 
@@ -330,6 +363,14 @@ public class MineFragment extends BaseFragment {
             public void onClick(View v) {
                 Intent intent = new Intent(mActivity,IntelliGencyActivity.class);
                 startActivity(intent);
+            }
+        });
+
+        iv_back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d("wszdsdasdasds...","000");
+                scroll.smoothScrollTo(0,0);
             }
         });
         mIvAvatar.setOnClickListener(noDoubleClickListener);
@@ -348,7 +389,6 @@ public class MineFragment extends BaseFragment {
         couponsLayout.setOnClickListener(noDoubleClickListener);//优惠券
         accountAddress.setOnClickListener(noDoubleClickListener);//我的地址
         accountManagement.setOnClickListener(noDoubleClickListener);//子账号管理
-        imageViewBanner.setOnClickListener(noDoubleClickListener);
         mineIntegral.setOnClickListener(noDoubleClickListener);
         relativeLayoutVip.setOnClickListener(noDoubleClickListener);
         tv_order.setOnClickListener(noDoubleClickListener);
@@ -356,6 +396,7 @@ public class MineFragment extends BaseFragment {
         iv_setting.setOnClickListener(noDoubleClickListener);
         ll_setting.setOnClickListener(noDoubleClickListener);
         //  vipDay.setOnClickListener(noDoubleClickListener);
+        iv_setting1.setOnClickListener(noDoubleClickListener);
         tv_use_deduct.setOnClickListener(noDoubleClickListener);
         iv_use_deduct.setOnClickListener(noDoubleClickListener);
         ll_inviteAward.setOnClickListener(noDoubleClickListener);
@@ -384,8 +425,60 @@ public class MineFragment extends BaseFragment {
                 }
             }
         });
+        iv_message1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (StringHelper.notEmptyAndNull(UserInfoHelper.getUserId(getActivity()))) {
+//                    startActivity(MessageCenterActivity.getIntent(getContext(), MessageCenterActivity.class));
+                    //写一个携带返回结果的跳转
+                    Intent intent = new Intent(getActivity(), MessageCenterActivity.class);
+                    startActivityForResult(intent, 101);
+//                    this.startActivityForResult()
+                } else {
+                    AppHelper.showMsg(getActivity(), "请先登录");
+                    startActivity(LoginActivity.getIntent(getActivity(), LoginActivity.class));
+                }
+            }
+        });
     }
 
+    /**
+     * 必买列表(王涛)
+     * @param
+     */
+
+    private List<MustModel.DataBean> list = new ArrayList<>();
+    private void getProductsList() {
+        IndexHomeAPI.getMust(mActivity)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<MustModel>() {
+                    @Override
+                    public void onCompleted() {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onNext(MustModel getCommonProductModel) {
+                        if (getCommonProductModel.isSuccess()) {
+                            list.clear();
+                            mustAdapter.notifyDataSetChanged();
+                            if(getCommonProductModel.getData().size()>0) {
+                                list.addAll(getCommonProductModel.getData());
+                                mustAdapter.notifyDataSetChanged();
+                            }
+
+                        } else {
+                            AppHelper.showMsg(mActivity, getCommonProductModel.getMessage());
+                        }
+                    }
+                });
+    }
 
     private void updateOrderNum() {
         //消息中心
@@ -577,19 +670,7 @@ public class MineFragment extends BaseFragment {
                 Intent intent = new Intent(getContext(),SubAccountActivity.class);
                 startActivity(intent);
 
-            } else if (view == imageViewBanner) {
-                if (StringHelper.notEmptyAndNull(MyBannerUrl)) {
-                    //我直接让他跳转到NewWebViewActivity 中去。
-//                    String newWebViewUrl="http://116.62.67.230:8082/apph5/html/member.html";
-                    Intent intent = new Intent(getActivity(), NewWebViewActivity.class);
-                    intent.putExtra("URL", MyBannerUrl);
-                    intent.putExtra("TYPE", 2);
-                    intent.putExtra("name","consult");
-                    startActivity(intent);
-                }
-            } else if (view == ll_account)
-
-            {//积分
+            } else if (view == ll_account) {//积分
                 startActivity(CommonH5Activity.getIntent(getContext(), MinerIntegralActivity.class));
             } else if (view == mineIntegral)
 
@@ -642,6 +723,28 @@ public class MineFragment extends BaseFragment {
                 Intent intent = new Intent(getContext(),MyCouponsActivity.class);
                 intent.putExtra("couponsNum",String.valueOf(mModelMyOrderNum.getData().getDeductNum()));
                 startActivity(intent);
+            }else if(view == iv_setting1) {
+                //我的账户
+
+                if (mStateCode == -10000) {
+                    //异地登录了,需要清除应用内部的userId,让用户重新登录
+
+                    startActivity(LoginActivity.getIntent(getContext(), LoginActivity.class));
+                } else if (mStateCode == -10001) {
+                    //用户userId过期,也是需要清除userId,让用户重新登录
+                    startActivity(LoginActivity.getIntent(getContext(), LoginActivity.class));
+                } else {
+                    if (StringHelper.notEmptyAndNull(UserInfoHelper.getUserId(getContext()))) {
+                        //有userId,跳转个人中心
+                        startActivity(AccountCenterActivity.getIntent(getContext(), AccountCenterActivity.class));
+                    } else {
+                        //没有userId
+                        //这个项目登录和输入密码在一个界面,不用在这里判断用户是否登录过,在登录界面判断有没有存过userCell即可
+                        //所以跳转登录界面
+
+                        startActivity(LoginActivity.getIntent(getContext(), LoginActivity.class));
+                    }
+                }
             }
 
         }

@@ -16,6 +16,42 @@ public class AppInterfaceAddress {
 //    queryReturnProdIsContainFullGift
 
     /**
+     *资讯编辑
+     */
+    public static final String Info_Classify = "message/updateMessage";
+    /**
+     * 首页顶部分类
+     */
+    public static final String Index_Classify = "common/getHomeBasicData";
+    /**
+     *  顶部首页推荐
+     */
+    public static final String Recommend_List = "common/getProdHotKey";
+    /**
+     *获取资讯详情
+     */
+    public static final String Info_Issue_detail = "message/detail";
+    /**
+     * 发布资讯
+     */
+    public static final String Info_Issue = "message/addMessage";
+    /**
+     *删除资讯
+     */
+    public static final String Info_Deleted = "message/deleteMessage";
+    /**
+     * 我的资讯列表
+     */
+    public static final String Info_My_List = "message/mylist";
+    /**
+     * 资讯详情
+     */
+    public static final String Info_Detail = "message/detail";
+    /**
+     *  资讯列表
+     */
+    public static final String Info_List = "message/getList";
+    /**
      *未登录 更换手机号码
      */
     public static final String UnLogin_Change_Phone = "auth/changePhone";
@@ -213,6 +249,10 @@ public class AppInterfaceAddress {
     public static final String INDEXHOME = "common/basicHomeIndexInfo";
 
     /**
+     * 首页订单信息
+     */
+    public static final String Index_Order = "user/getHomeOrders";
+    /**
      * 必买清单
      */
 
@@ -305,7 +345,10 @@ public class AppInterfaceAddress {
      * 选择可用省市区
      */
     public static final String GET_ENABLEAREA_LIST = "common/area/getEnableAreaList";
-    public static final String GET_COLLECTION_LIST = "commonCollect/myCollectProd";
+    /**
+     * 我的收藏列表
+     */
+    public static final String GET_COLLECTION_LIST = "commonCollect/myCollectList";
     /**
      *子账户订单列表
      *
@@ -394,7 +437,7 @@ public class AppInterfaceAddress {
     public static final String AND_VERSION = "auth/andVersion";
     public static final String GETCARTNUM = "cart/getCartNum";
     public static final String GETCUSTOMERPHONE = "auth/getCustomerPhone";
-    public static final String DELETE_COMMON_COLLECT = "commonCollect/deleteCommonCollect";
+    public static final String DELETE_COMMON_COLLECT = "commonCollect/batchCancelCollect";
     public static final String UPDATEUSERINVITATION = "auth/updateUserInvitation";
     public static final String QUERY_USER_DEDUCTBYSTATE = "gift/queryUserDeductByState";
     public static final String USER_CHOOSE_DEDUCT = "gift/queryAppOrderChooseGiftList";//gift/userChooseDeduct

@@ -285,7 +285,7 @@ public class IndexInfoModel {
              * businessId : null
              * businessType : null
              */
-
+            String rgbColor;
             private int showType;
             private String defaultPic;
             private String linkSrc;
@@ -293,6 +293,14 @@ public class IndexInfoModel {
             private String prodPage;
             private String businessId;
             private String businessType;
+
+            public String getRgbColor() {
+                return rgbColor;
+            }
+
+            public void setRgbColor(String rgbColor) {
+                this.rgbColor = rgbColor;
+            }
 
             public int getShowType() {
                 return showType;
@@ -422,7 +430,7 @@ public class IndexInfoModel {
             private String secTitle;
             private List<String> prodPics;
             private int itemType;
-//
+            //
             public String getSecTitle() {
                 return secTitle;
             }

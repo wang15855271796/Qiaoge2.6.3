@@ -37,8 +37,6 @@ public class CommonCouponAdapter extends RecyclerView.Adapter<CommonCouponAdapte
     //根据flag 判断返回集合大小还是最大值 0返回最大值 1，返回集合大小
     String flag;
     ImageView iv_flag;
-    private TextView tv_old_price;
-    private TextView tv_coupon;
     RelativeLayout rl_coupon;
     String style;
     Context mContext;
@@ -51,13 +49,12 @@ public class CommonCouponAdapter extends RecyclerView.Adapter<CommonCouponAdapte
     private int pos;
     private CouponModel.DataBean.ActivesBean activesBean;
 
-    public CommonCouponAdapter(Context context,String style, int layoutResId, List<CouponModel.DataBean.ActivesBean> actives,String flag,CommonCouponAdapter.OnClick onClick) {
+    public CommonCouponAdapter(Context context,String style, int layoutResId, List<CouponModel.DataBean.ActivesBean> actives) {
         this.mContext = context;
         this.style = style;
         this.layoutResId = layoutResId;
         this.actives = actives;
-        this.flag = flag;
-        this.onClick = onClick;
+
     }
 
 
@@ -74,29 +71,21 @@ public class CommonCouponAdapter extends RecyclerView.Adapter<CommonCouponAdapte
 
         try{
             pos = position%actives.size();
-            Log.d("wasaaaaaaaaaaaaaa...",pos+"bb");
             activesBean = actives.get(position%actives.size());
 
             Glide.with(mContext).load(activesBean.getDefaultPic()).into(holder.iv_pic);
             holder.tv_name.setText(activesBean.getActiveName());
             holder.tv_price.setText(activesBean.getPrice());
-            holder.tv_old_price.getPaint().setFlags(Paint.STRIKE_THRU_TEXT_FLAG);
-            holder.tv_old_price.setText(activesBean.getOldPrice());
-            holder.tv_old_price.getPaint().setAntiAlias(true);//抗锯齿
-
             if(StringHelper.notEmptyAndNull(UserInfoHelper.getUserId(mContext))) {
                 if(SharedPreferencesUtil.getString(mContext,"priceType").equals("1")) {
                     holder.tv_desc.setVisibility(View.GONE);
-                    holder.tv_old_price.setVisibility(View.VISIBLE);
                     holder.tv_price.setVisibility(View.VISIBLE);
                 }else {
                     holder.tv_desc.setVisibility(View.VISIBLE);
-                    holder.tv_old_price.setVisibility(View.GONE);
                     holder.tv_price.setVisibility(View.GONE);
                 }
             }else {
                 holder.tv_desc.setVisibility(View.GONE);
-                holder.tv_old_price.setVisibility(View.VISIBLE);
                 holder.tv_price.setVisibility(View.VISIBLE);
             }
 
@@ -163,12 +152,7 @@ public class CommonCouponAdapter extends RecyclerView.Adapter<CommonCouponAdapte
 
     @Override
     public int getItemCount() {
-        if(flag.equals("0")) {
-            return Integer.MAX_VALUE;
-        }else {
-            return actives.size();
-        }
-
+        return actives.size();
     }
 
     public void setOnclick(OnClick onClick) {
@@ -186,7 +170,6 @@ public class CommonCouponAdapter extends RecyclerView.Adapter<CommonCouponAdapte
         private ImageView iv_add;
         private ImageView iv_pic;
         private TextView tv_price;
-        private TextView tv_old_price;
         private TextView tv_desc;
         private TextView tv_name;
         private ImageView iv_sale_done;
@@ -201,7 +184,6 @@ public class CommonCouponAdapter extends RecyclerView.Adapter<CommonCouponAdapte
             iv_flag = (ImageView) view.findViewById(R.id.iv_flag);
             iv_pic = (ImageView) view.findViewById(R.id.iv_pic);
             tv_price = (TextView) view.findViewById(R.id.tv_price);
-            tv_old_price = (TextView) view.findViewById(R.id.tv_old_price);
             tv_name = (TextView) view.findViewById(R.id.tv_name);
             tv_desc = (TextView) view.findViewById(R.id.tv_desc);
             iv_sale_done = (ImageView) view.findViewById(R.id.iv_sale_done);

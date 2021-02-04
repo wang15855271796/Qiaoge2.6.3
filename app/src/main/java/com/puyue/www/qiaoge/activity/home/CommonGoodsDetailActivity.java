@@ -574,6 +574,7 @@ public class CommonGoodsDetailActivity extends BaseSwipeActivity {
                                     showPhoneDialog(cell);
                                 }
                             });
+                            Log.d("wdasassds.........","1222");
                             if(model.getData().getTypeUrl()==null||model.getData().getTypeUrl().equals("")) {
                                 iv_flag.setVisibility(View.GONE);
                             }else {
