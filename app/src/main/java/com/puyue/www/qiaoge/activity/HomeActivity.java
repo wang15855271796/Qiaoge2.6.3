@@ -430,7 +430,7 @@ public class HomeActivity extends BaseActivity implements CartFragment.FragmentI
             case TAB_HOME:
                 mTvHome.setVisibility(View.GONE);
                 if (mTabHome == null || isGet) {
-                    mTabHome = new HomeFragment10();
+                    mTabHome = new HomeFragment11();
                     mFragmentTransaction.add(R.id.layout_home_container, mTabHome);
                     isGet = false;
                 } else {
