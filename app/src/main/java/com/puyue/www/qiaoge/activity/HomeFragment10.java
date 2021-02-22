@@ -1,4 +1,4 @@
-package com.puyue.www.qiaoge.fragment.home;
+package com.puyue.www.qiaoge.activity;
 
 import android.animation.IntEvaluator;
 import android.app.AlertDialog;
@@ -6,9 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
-import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -19,19 +17,11 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.LinearSmoothScroller;
 import android.support.v7.widget.PagerSnapHelper;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.Log;
-import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
-import android.view.Window;
-import android.view.WindowManager;
-import android.view.animation.Animation;
-import android.view.animation.ScaleAnimation;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -41,51 +31,32 @@ import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
 import com.chad.library.adapter.base.BaseQuickAdapter;
-import com.chad.library.adapter.base.BaseViewHolder;
 import com.daimajia.slider.library.SliderTypes.BaseSliderView;
 import com.example.xrecyclerview.DensityUtil;
 import com.puyue.www.qiaoge.NewWebViewActivity;
 import com.puyue.www.qiaoge.R;
 import com.puyue.www.qiaoge.RoundImageView;
 import com.puyue.www.qiaoge.UnicornManager;
-import com.puyue.www.qiaoge.activity.HomeActivity;
-import com.puyue.www.qiaoge.activity.ScrollEvent;
-import com.puyue.www.qiaoge.activity.cart.ExchangeActivity;
-import com.puyue.www.qiaoge.activity.home.AllGoodsFragment;
 import com.puyue.www.qiaoge.activity.home.ChangeCityActivity;
 import com.puyue.www.qiaoge.activity.home.ChooseAddressActivity;
 import com.puyue.www.qiaoge.activity.home.CommonGoodsDetailActivity;
 import com.puyue.www.qiaoge.activity.home.CouponDetailActivity;
 import com.puyue.www.qiaoge.activity.home.FullGiftActivity;
 import com.puyue.www.qiaoge.activity.home.HomeGoodsListActivity;
-import com.puyue.www.qiaoge.activity.home.MyIssueAdapter;
-import com.puyue.www.qiaoge.activity.home.OperateFragment;
-import com.puyue.www.qiaoge.activity.home.SearchReasultActivity;
 import com.puyue.www.qiaoge.activity.home.SearchStartActivity;
 import com.puyue.www.qiaoge.activity.home.SpecialGoodDetailActivity;
 import com.puyue.www.qiaoge.activity.home.TeamDetailActivity;
-import com.puyue.www.qiaoge.activity.home.UnOperateFragment;
-import com.puyue.www.qiaoge.activity.mine.MessageCenterActivity;
 import com.puyue.www.qiaoge.activity.mine.login.LoginActivity;
 import com.puyue.www.qiaoge.activity.mine.login.LogoutsEvent;
 import com.puyue.www.qiaoge.activity.mine.order.MyOrdersActivity;
 import com.puyue.www.qiaoge.activity.mine.wallet.MinerIntegralActivity;
 import com.puyue.www.qiaoge.activity.mine.wallet.MyWalletNewActivity;
 import com.puyue.www.qiaoge.adapter.CommonCouponAdapter;
-import com.puyue.www.qiaoge.adapter.CommonTestAdapter;
 import com.puyue.www.qiaoge.adapter.CommonsAdapter;
 import com.puyue.www.qiaoge.adapter.CommonssAdapter;
 import com.puyue.www.qiaoge.adapter.CommonsssAdapter;
-import com.puyue.www.qiaoge.adapter.Coupon2Adapter;
-import com.puyue.www.qiaoge.adapter.Coupon3Adapter;
-import com.puyue.www.qiaoge.adapter.CouponAdapter;
 import com.puyue.www.qiaoge.adapter.CouponListAdapter;
-import com.puyue.www.qiaoge.adapter.ExchangeAdapter;
-import com.puyue.www.qiaoge.adapter.Full2Adapter;
-import com.puyue.www.qiaoge.adapter.Full3Adapter;
-import com.puyue.www.qiaoge.adapter.FullActivitesAdapter;
 import com.puyue.www.qiaoge.adapter.FullAdapter;
 import com.puyue.www.qiaoge.adapter.HotAdapter;
 import com.puyue.www.qiaoge.adapter.MyAdapter;
@@ -93,16 +64,13 @@ import com.puyue.www.qiaoge.adapter.Skill2Adapter;
 import com.puyue.www.qiaoge.adapter.Skill3Adapter;
 import com.puyue.www.qiaoge.adapter.Skill5Adapter;
 import com.puyue.www.qiaoge.adapter.Team3Adapter;
-import com.puyue.www.qiaoge.adapter.Team4Adapter;
 import com.puyue.www.qiaoge.adapter.TeamAdapter;
 import com.puyue.www.qiaoge.adapter.home.CommonAdapter;
 import com.puyue.www.qiaoge.adapter.home.CommonProductActivity;
 import com.puyue.www.qiaoge.adapter.home.HotProductActivity;
 import com.puyue.www.qiaoge.adapter.home.ReductionProductActivity;
 import com.puyue.www.qiaoge.adapter.home.SeckillGoodActivity;
-import com.puyue.www.qiaoge.api.cart.AddCartAPI;
 import com.puyue.www.qiaoge.api.home.CityChangeAPI;
-import com.puyue.www.qiaoge.api.home.DriverInfo;
 import com.puyue.www.qiaoge.api.home.IndexHomeAPI;
 import com.puyue.www.qiaoge.api.home.IndexInfoModel;
 import com.puyue.www.qiaoge.api.home.ProductListAPI;
@@ -140,15 +108,24 @@ import com.puyue.www.qiaoge.event.UpDateNumEvent3;
 import com.puyue.www.qiaoge.event.UpDateNumEvent7;
 import com.puyue.www.qiaoge.event.UpDateNumEvent8;
 import com.puyue.www.qiaoge.event.UpNumEvent;
+import com.puyue.www.qiaoge.fragment.home.CityEvent;
+import com.puyue.www.qiaoge.fragment.home.CommonFragment;
+import com.puyue.www.qiaoge.fragment.home.HomeFragment;
+import com.puyue.www.qiaoge.fragment.home.IndexRecommendAdapter;
+import com.puyue.www.qiaoge.fragment.home.InfoFragment;
+import com.puyue.www.qiaoge.fragment.home.MustFragment;
+import com.puyue.www.qiaoge.fragment.home.NewAdapter;
+import com.puyue.www.qiaoge.fragment.home.NewFragment;
+import com.puyue.www.qiaoge.fragment.home.RvIconAdapter;
+import com.puyue.www.qiaoge.fragment.home.SkillAdapter;
+import com.puyue.www.qiaoge.fragment.home.VerticalBannerAdapter;
 import com.puyue.www.qiaoge.helper.AppHelper;
 import com.puyue.www.qiaoge.helper.PublicRequestHelper;
-import com.puyue.www.qiaoge.helper.StatusBarUtil;
 import com.puyue.www.qiaoge.helper.StringHelper;
 import com.puyue.www.qiaoge.helper.UserInfoHelper;
 import com.puyue.www.qiaoge.model.IsShowModel;
 import com.puyue.www.qiaoge.model.OrderModel;
 import com.puyue.www.qiaoge.model.SendModel;
-import com.puyue.www.qiaoge.model.cart.AddCartModel;
 import com.puyue.www.qiaoge.model.cart.GetCartNumModel;
 import com.puyue.www.qiaoge.model.home.CouponModel;
 import com.puyue.www.qiaoge.model.home.GetCustomerPhoneModel;
@@ -165,13 +142,8 @@ import com.puyue.www.qiaoge.utils.SharedPreferencesUtil;
 import com.puyue.www.qiaoge.utils.ToastUtil;
 import com.puyue.www.qiaoge.utils.Utils;
 import com.puyue.www.qiaoge.view.AutoScrollRecyclerView;
-import com.puyue.www.qiaoge.view.GlideModel;
 import com.puyue.www.qiaoge.view.HIndicators;
-import com.puyue.www.qiaoge.view.ObservableScrollView;
-import com.puyue.www.qiaoge.view.ScrollViewListener;
-import com.puyue.www.qiaoge.view.SnapUpCountDownTimerView;
 import com.puyue.www.qiaoge.view.SnapUpCountDownTimerViewss;
-import com.puyue.www.qiaoge.view.selectmenu.MyScrollView;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
@@ -192,7 +164,6 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
-import butterknife.BindViews;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import io.reactivex.Observable;
@@ -203,13 +174,11 @@ import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
-import static cn.com.chinatelecom.account.api.CtAuth.mContext;
-
 /**
- * Created by ${王涛} on 2020/9/9
+ * Created by ${王涛} on 2021/2/22
  */
-public class HomeFragment extends BaseFragment implements View.OnClickListener,BaseSliderView.OnSliderClickListener {
-    Unbinder binder;
+public class HomeFragment10 extends BaseFragment implements View.OnClickListener,BaseSliderView.OnSliderClickListener{
+    Unbinder bind;
     @BindView(R.id.rv_auto_view1)
     AutoScrollRecyclerView rv_auto_view1;
     @BindView(R.id.rv_coupon)
@@ -232,12 +201,14 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener,B
     HIndicators indicator;
     @BindView(R.id.rv_icon)
     RecyclerView rv_icon;
-    @BindView(R.id.rootview)
-    FrameLayout rootview;
     @BindView(R.id.tv_city)
     TextView tv_city;
     @BindView(R.id.tv_search)
     TextView tv_search;
+    @BindView(R.id.rl_search)
+    RelativeLayout rl_search;
+    @BindView(R.id.iv_location)
+    ImageView iv_location;
     @BindView(R.id.tv_num)
     TextView tv_num;
     @BindView(R.id.banner)
@@ -298,10 +269,6 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener,B
     RoundImageView iv_empty;
     @BindView(R.id.snap)
     SnapUpCountDownTimerViewss snap;
-    int topHeight;
-    int topHeight2;
-//    @BindView(R.id.verticalBanner)
-//    VerticalBannerView verticalBanner;
     @BindView(R.id.lav_activity_loading)
     AVLoadingIndicatorView lav_activity_loading;
     @BindView(R.id.rl_address)
@@ -326,9 +293,6 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener,B
     RadioGroup rg_new;
     @BindView(R.id.ll_skill)
     LinearLayout ll_skill;
-    private RelativeLayout.LayoutParams layoutParams;
-    private int evaluatemargin;
-    private int evaluatetop;
     @BindView(R.id.rv_auto_view)
     AutoScrollRecyclerView rv_auto_view;
     @BindView(R.id.rv_auto_team)
@@ -351,6 +315,33 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener,B
     TextView tv_look_more;
     @BindView(R.id.verticalBanner)
     VerticalBannerView verticalBanner;
+
+
+    @BindView(R.id.appbar)
+    AppBarLayout appbar;
+    @BindView(R.id.ll_scroll)
+    LinearLayout ll_scroll;
+    @BindView(R.id.rl_grand)
+    RelativeLayout rl_grand;
+    @BindView(R.id.ll_fixed)
+    LinearLayout ll_fixed;
+    @BindView(R.id.ll_parent)
+    RelativeLayout ll_parent;
+    @BindView(R.id.rl_inSide)
+    RelativeLayout rl_inSide;
+    @BindView(R.id.rl_bar)
+    RelativeLayout rl_bar;
+
+    List<String> list = new ArrayList<>();
+    private static final float ENDMARGINLEFT = 50;
+    private static final float ENDMARGINTOP = 5;
+    private static final float STARTMARGINLEFT = 20;
+    private static final float STARTMARGINTOP = 72;
+    private int evaluatemargin;
+    private int evaluatetop;
+    private RelativeLayout.LayoutParams layoutParams;
+    int scrollLength;
+
     HotAdapter hotAdapter;
     Skill5Adapter skill5Adapter;
     ProductNormalModel productNormalModel;
@@ -358,6 +349,8 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener,B
     IndexRecommendAdapter indexRecommendAdapter;
     CouponDialog couponDialog;
     FullAdapter fullAdapter;
+    TeamAdapter teamAdapter;
+    Team3Adapter team3Adapter;
     private String cell; // 客服电话
     private PrivacyDialog privacyDialog;
     ChooseHomeDialog chooseAddressDialog;
@@ -393,8 +386,6 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener,B
     private String url;//更新所用的url
     private AlertDialog mTypedialog;
     boolean flag;
-    //banner集合
-    List<String> list = new ArrayList<>();
     List<String> list1 = new ArrayList<>();
     private IndexInfoModel.DataBean data;
     //分类列表
@@ -445,109 +436,61 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener,B
     private HomeActivityDialog homeActivityDialog;
     CommonssAdapter commonssAdapter;
 
-    @BindView(R.id.ll_scroll)
-    LinearLayout ll_scroll;
-    @BindView(R.id.rl_inSide)
-    RelativeLayout rl_inSide;
-    @BindView(R.id.rl_search)
-    RelativeLayout rl_search;
-    @BindView(R.id.rl_bar)
-    RelativeLayout rl_bar;
-    @BindView(R.id.iv_location)
-    ImageView iv_location;
-    @BindView(R.id.ll_parent)
-    RelativeLayout ll_parent;
-    @BindView(R.id.ll_fixed)
-    LinearLayout ll_fixed;
-    @BindView(R.id.scroll)
-    ObservableScrollView scroll;
-    @BindView(R.id.rl_grand)
-    RelativeLayout rl_grand;
-    private static final float ENDMARGINLEFT = 50;
-    private static final float ENDMARGINTOP = 5;
-    private static final float STARTMARGINLEFT = 20;
-    private static final float STARTMARGINTOP = 70;
-    int grand_height;
+
     @Override
     public int setLayoutId() {
-        return R.layout.test3;
+        return R.layout.test10;
     }
 
     @Override
     public void initViews(View view) {
+
     }
 
+    int topHeight;
+    int scrollLength1;
+    int topHeight1;
     @Override
     public void findViewById(View view) {
-        ButterKnife.bind(this,view);
+         bind = ButterKnife.bind(this, view);
 
-        for (int j = 0; j < 50; j++) {
+        for (int i = 0; i < 30; i++) {
             list.add("ss");
         }
-
         initFragment();
         setListener();
-        rl_grand.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+
+
+        ll_scroll.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
-                rl_bar.getBackground().setAlpha(0);
-                int parent_height = ll_scroll.getHeight();
                 int bar_height = rl_bar.getHeight();
-                scrollLength = Math.abs(parent_height-bar_height);
-                grand_height = rl_grand.getHeight()-DensityUtil.dip2px(72,mActivity);
-                rl_grand.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                int scroll_height = ll_scroll.getHeight();
+                scrollLength = Math.abs(scroll_height - bar_height);
+                topHeight = DensityUtil.dip2px(scrollLength, mActivity);
 
+                int grand_height = rl_grand.getHeight();
+                scrollLength1 = Math.abs(grand_height - bar_height);
+                topHeight1 = DensityUtil.dip2px(scrollLength1, mActivity);
                 ll_scroll.getViewTreeObserver().removeOnGlobalLayoutListener(this);
             }
         });
 
-        scroll.setScrollViewListener(new ScrollViewListener() {
+
+        appbar.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
             @Override
-            public void onScrollChanged(ObservableScrollView scrollView, int x, int y, int oldx, int oldy) {
+            public void onOffsetChanged(AppBarLayout appBarLayout, int y) {
                 int abs_y = Math.abs(y);
-                if (y >= grand_height) {
-                    flag = true;
-                    ll_small_title.setVisibility(View.GONE);
-                    ll_line.setVisibility(View.VISIBLE);
-
-
-                    if(rb_must_common.isChecked()) {
-                        v1.setVisibility(View.VISIBLE);
-                        v2.setVisibility(View.INVISIBLE);
-                        v3.setVisibility(View.INVISIBLE);
-                        v4.setVisibility(View.INVISIBLE);
-
-                    }else if(rb_new.isChecked()) {
-                        v1.setVisibility(View.INVISIBLE);
-                        v2.setVisibility(View.VISIBLE);
-                        v3.setVisibility(View.INVISIBLE);
-                        v4.setVisibility(View.INVISIBLE);
-                    }else if(rb_reduce.isChecked()) {
-                        v1.setVisibility(View.INVISIBLE);
-                        v2.setVisibility(View.INVISIBLE);
-                        v3.setVisibility(View.VISIBLE);
-                        v4.setVisibility(View.INVISIBLE);
-                    }else if(rb_common.isChecked()){
-                        v1.setVisibility(View.INVISIBLE);
-                        v2.setVisibility(View.INVISIBLE);
-                        v3.setVisibility(View.INVISIBLE);
-                        v4.setVisibility(View.VISIBLE);
-                    }
-
+                int appbarScrollLength = Math.abs(DensityUtil.dip2px(y, mActivity));
+                if (appbarScrollLength >= topHeight1) {
                     if (rl_inSide.getParent() != ll_fixed) {
                         ll_parent.removeView(rl_inSide);
                         ll_fixed.addView(rl_inSide);
-                        EventBus.getDefault().post(new ScrollEvent(true));
                     }
-
                 } else {
-                    flag = false;
-                    ll_small_title.setVisibility(View.VISIBLE);
-                    ll_line.setVisibility(View.GONE);
                     if (rl_inSide.getParent() != ll_parent) {
                         ll_fixed.removeView(rl_inSide);
                         ll_parent.addView(rl_inSide);
-                        EventBus.getDefault().post(new ScrollEvent(false));
                     }
                 }
 
@@ -556,17 +499,18 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener,B
                     //估值器
                     IntEvaluator evaluator = new IntEvaluator();
                     float percent = (float) (scrollLength - abs_y) / scrollLength;
+
                     if (percent <= 1) {
                         //透明度
-                        int evaluates = evaluator.evaluate(percent, 255, 0);
-                        int evaluate = evaluates;
+                        int evaluate = evaluator.evaluate(percent, 255, 0);
                         rl_bar.getBackground().setAlpha(evaluate);
                         //搜索栏左右margin值
                         evaluatemargin = evaluator.evaluate(percent, DensityUtil.dip2px(ENDMARGINLEFT,mActivity), DensityUtil.dip2px(STARTMARGINLEFT,mActivity));
-
                         //搜索栏顶部margin值
-                        evaluatetop = evaluator.evaluate(percent,  DensityUtil.dip2px(5,mActivity), DensityUtil.dip2px(STARTMARGINTOP,mActivity));
+                        evaluatetop = evaluator.evaluate(percent,  DensityUtil.dip2px(ENDMARGINTOP,mActivity), DensityUtil.dip2px(STARTMARGINTOP,mActivity));
+
                         layoutParams = (RelativeLayout.LayoutParams) rl_search.getLayoutParams();
+                        layoutParams.setMargins(evaluatemargin, evaluatetop, evaluatemargin, 0);
                         if(evaluatetop<100) {
                             layoutParams.setMargins(evaluatemargin, 80, evaluatemargin, 0);
                             rl_search.requestLayout();
@@ -576,8 +520,8 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener,B
                         }
                         iv_location.setImageResource(R.mipmap.icon_address2);
                         tv_city.setAlpha(percent);
+                        rl_search.requestLayout();
                     }
-
                 } else {
                     rl_bar.getBackground().setAlpha(255);
                     if(layoutParams!=null){
@@ -586,6 +530,7 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener,B
                         iv_location.setImageResource(R.mipmap.icon_address1);
                         tv_city.setAlpha(0);
                     }
+
                 }
             }
         });
@@ -726,121 +671,10 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener,B
             }
         });
 
-//        rg_new.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-//            @Override
-//            public void onCheckedChanged(RadioGroup group, int checkedId) {
-//                switch (checkedId) {
-//                    case R.id.rb_new:
-//                        rb_info.setTextColor(Color.parseColor("#333333"));
-//                        rb_common.setTextColor(Color.parseColor("#333333"));
-//                        rb_must_common.setTextColor(Color.parseColor("#333333"));
-//                        rb_new.setTextColor(Color.parseColor("#17BD60"));
-//                        tv_title1.setTextColor(Color.parseColor("#ffffff"));
-//                        tv_title1.setBackgroundResource(R.drawable.shape_greenss);
-//
-//                        tv_title2.setTextColor(Color.parseColor("#999999"));
-//                        tv_title2.setBackgroundResource(R.drawable.shape_white);
-//
-//                        tv_title3.setTextColor(Color.parseColor("#999999"));
-//                        tv_title3.setBackgroundResource(R.drawable.shape_white);
-//
-//                        tv_title4.setTextColor(Color.parseColor("#999999"));
-//                        tv_title4.setBackgroundResource(R.drawable.shape_white);
-//                        switchRb4();
-//
-//                        break;
-//
-//                    case R.id.rb_must_common:
-//                        rb_info.setTextColor(Color.parseColor("#333333"));
-//                        rb_common.setTextColor(Color.parseColor("#333333"));
-//                        rb_must_common.setTextColor(Color.parseColor("#333333"));
-//                        rb_new.setTextColor(Color.parseColor("#333333"));
-//
-//                        rb_must_common.setTextColor(Color.parseColor("#17BD60"));
-//                        tv_title2.setTextColor(Color.parseColor("#ffffff"));
-//                        tv_title2.setBackgroundResource(R.drawable.shape_greenss);
-//
-//                        tv_title1.setTextColor(Color.parseColor("#999999"));
-//                        tv_title1.setBackgroundResource(R.drawable.shape_white);
-//
-//                        tv_title3.setTextColor(Color.parseColor("#999999"));
-//                        tv_title3.setBackgroundResource(R.drawable.shape_white);
-//
-//                        tv_title4.setTextColor(Color.parseColor("#999999"));
-//                        tv_title4.setBackgroundResource(R.drawable.shape_white);
-//                        switchRb5();
-//                        break;
-//
-//                    case R.id.rb_info:
-//                        rb_info.setTextColor(Color.parseColor("#17BD60"));
-//                        rb_common.setTextColor(Color.parseColor("#333333"));
-//                        rb_must_common.setTextColor(Color.parseColor("#333333"));
-//                        rb_new.setTextColor(Color.parseColor("#333333"));
-//                        tv_title2.setTextColor(Color.parseColor("#999999"));
-//                        tv_title2.setBackgroundResource(R.drawable.shape_white);
-//
-//                        tv_title1.setTextColor(Color.parseColor("#999999"));
-//                        tv_title1.setBackgroundResource(R.drawable.shape_white);
-//
-//                        tv_title3.setTextColor(Color.parseColor("#ffffff"));
-//                        tv_title3.setBackgroundResource(R.drawable.shape_greenss);
-//
-//                        tv_title4.setTextColor(Color.parseColor("#999999"));
-//                        tv_title4.setBackgroundResource(R.drawable.shape_white);
-//                        switchRb6();
-//                        break;
-//
-//                    case R.id.rb_common:
-//                        rb_info.setTextColor(Color.parseColor("#333333"));
-//                        rb_common.setTextColor(Color.parseColor("#17BD60"));
-//                        rb_must_common.setTextColor(Color.parseColor("#333333"));
-//                        rb_new.setTextColor(Color.parseColor("#333333"));
-//                        rb_info.setTextColor(Color.parseColor("#333333"));
-//
-//                        tv_title2.setTextColor(Color.parseColor("#999999"));
-//                        tv_title2.setBackgroundResource(R.drawable.shape_white);
-//
-//                        tv_title1.setTextColor(Color.parseColor("#999999"));
-//                        tv_title1.setBackgroundResource(R.drawable.shape_white);
-//
-//                        tv_title3.setTextColor(Color.parseColor("#999999"));
-//                        tv_title3.setBackgroundResource(R.drawable.shape_white);
-//
-//                        tv_title4.setTextColor(Color.parseColor("#ffffff"));
-//                        tv_title4.setBackgroundResource(R.drawable.shape_greenss);
-//
-//                        switchRb7();
-//
-//                        break;
-//                }
-//            }
-//        });
     }
-
-    private void setListener() {
-        rg_new.setOnCheckedChangeListener(new MyOnCheckedChangeListener());
-        //设置默认选中框架页面
-        rg_new.check(R.id.rb_must_common);
-    }
-
-    private List<Fragment> mBaseFragment;
-    private void initFragment() {
-        mBaseFragment = new ArrayList<>();
-        mBaseFragment.add(MustFragment.getInstance());
-        mBaseFragment.add(NewFragment.getInstance());
-        mBaseFragment.add(ReductionProductActivity.getInstance());
-        mBaseFragment.add(CommonFragment.getInstance());
-    }
-
-    int i;
-    int i2;
-    int scrollLength;
-    TeamAdapter teamAdapter;
-    Team3Adapter team3Adapter;
 
     @Override
     public void setViewData() {
-
 
     }
 
@@ -848,6 +682,8 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener,B
     public void setClickEvent() {
 
     }
+
+
 
     private void requestOrderNumTwo() {
         MyOrderNumAPI.requestOrderNum(mActivity)
@@ -1333,6 +1169,7 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener,B
         team3Adapter.cancle();
         commonssAdapter.cancle();
     }
+
 
     private void startAuto() {
         if (mAutoTask != null && !mAutoTask.isDisposed()) {
@@ -2051,6 +1888,7 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener,B
             }
         });
     }
+
     @Override
     public void onDestroy() {
         super.onDestroy();
@@ -2320,8 +2158,7 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener,B
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void topEvent(TopEvent event) {
-        scroll.smoothScrollTo(0,0);
-        Log.d("wdasdasdsdas....","asd");
+
     }
 
     int position;
@@ -2433,7 +2270,7 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener,B
                 }
                 //2.添加to
                 if(to != null){
-                    ft.add(R.id.content,to).commit();
+                    ft.add(R.id.fl_container,to).commit();
                 }
             }else{ //to已经被添加
                 //1.from隐藏
@@ -2451,4 +2288,19 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener,B
         Fragment fragment = mBaseFragment.get(position);
         return fragment;
     }
+    private void setListener() {
+        rg_new.setOnCheckedChangeListener(new MyOnCheckedChangeListener());
+        //设置默认选中框架页面
+        rg_new.check(R.id.rb_must_common);
+    }
+
+    private List<Fragment> mBaseFragment;
+    private void initFragment() {
+        mBaseFragment = new ArrayList<>();
+        mBaseFragment.add(MustFragment.getInstance());
+        mBaseFragment.add(NewFragment.getInstance());
+        mBaseFragment.add(ReductionProductActivity.getInstance());
+        mBaseFragment.add(CommonFragment.getInstance());
+    }
+
 }

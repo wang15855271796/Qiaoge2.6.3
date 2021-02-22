@@ -28,7 +28,7 @@ import java.util.List;
 /**
  * Created by ${王涛} on 2020/1/14
  */
-class VerticalBannerAdapter extends BaseBannerAdapter<OrderModel.DataBean> {
+public class VerticalBannerAdapter extends BaseBannerAdapter<OrderModel.DataBean> {
     private TextView tv_order_state;
     private TextView tv_pay;
     private TextView tv_time;

@@ -19,6 +19,7 @@ import com.bumptech.glide.Glide;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.puyue.www.qiaoge.R;
+import com.puyue.www.qiaoge.activity.home.CouponDetailActivity;
 import com.puyue.www.qiaoge.activity.home.SpecialGoodDetailActivity;
 import com.puyue.www.qiaoge.constant.AppConstant;
 import com.puyue.www.qiaoge.helper.StringHelper;
@@ -41,7 +42,7 @@ public class CommonAdapter extends BaseQuickAdapter<CouponModel.DataBean.Actives
     @Override
     protected void convert(BaseViewHolder helper, CouponModel.DataBean.ActivesBean item) {
         LinearLayout ll_root =  helper.getView(R.id.ll_root);
-        LinearLayout rl_more = helper.getView(R.id.ll_more);
+        LinearLayout ll_more = helper.getView(R.id.ll_more);
         ImageView iv_pic = helper.getView(R.id.iv_pic);
         TextView tv_price = helper.getView(R.id.tv_price);
         TextView tv_name = helper.getView(R.id.tv_name);
@@ -60,12 +61,12 @@ public class CommonAdapter extends BaseQuickAdapter<CouponModel.DataBean.Actives
 
         if(data.size()>=3) {
             if(helper.getAdapterPosition()==data.size()-1) {
-                rl_more.setVisibility(View.VISIBLE);
+                ll_more.setVisibility(View.VISIBLE);
             }else {
-                rl_more.setVisibility(View.GONE);
+                ll_more.setVisibility(View.GONE);
             }
         }else {
-            rl_more.setVisibility(View.GONE);
+            ll_more.setVisibility(View.GONE);
         }
 
         ll_root.setOnClickListener(new View.OnClickListener() {
@@ -75,6 +76,14 @@ public class CommonAdapter extends BaseQuickAdapter<CouponModel.DataBean.Actives
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK );
                 intent.putExtra(AppConstant.ACTIVEID, item.getActiveId());
                 intent.putExtra("priceType",SharedPreferencesUtil.getString(mContext,"priceType"));
+                mContext.startActivity(intent);
+            }
+        });
+
+        ll_more.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(mContext,CouponDetailActivity.class);
                 mContext.startActivity(intent);
             }
         });

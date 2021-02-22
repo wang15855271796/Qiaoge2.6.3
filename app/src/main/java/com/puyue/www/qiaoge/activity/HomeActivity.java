@@ -126,7 +126,7 @@ public class HomeActivity extends BaseActivity implements CartFragment.FragmentI
     @Override
     public void onAttachFragment(Fragment fragment) {
         //重新让新的Fragment指向了原本未被销毁的fragment，它就是onAttach方法对应的Fragment对象
-        if (mTabHome == null && fragment instanceof HomeFragmentsss)
+        if (mTabHome == null && fragment instanceof HomeFragment9)
             mTabHome = fragment;
         if (mTabMarket == null && fragment instanceof MarketsFragment)
             mTabMarket = fragment;
@@ -430,7 +430,7 @@ public class HomeActivity extends BaseActivity implements CartFragment.FragmentI
             case TAB_HOME:
                 mTvHome.setVisibility(View.GONE);
                 if (mTabHome == null || isGet) {
-                    mTabHome = new HomeFragmentsss();
+                    mTabHome = new HomeFragment10();
                     mFragmentTransaction.add(R.id.layout_home_container, mTabHome);
                     isGet = false;
                 } else {

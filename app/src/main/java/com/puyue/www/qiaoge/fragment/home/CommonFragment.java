@@ -93,7 +93,6 @@ public class CommonFragment extends BaseFragment {
                 }else {
                     initDialog();
                 }
-
             }
 
             @Override

@@ -46,6 +46,18 @@ public class Skill3Adapter extends BaseQuickAdapter<CouponModel.DataBean.Actives
         Glide.with(mContext).load(item.getDefaultPic()).into(iv_pic);
         helper.setText(R.id.tv_name,item.getActiveName());
         helper.setText(R.id.tv_price,item.getPrice());
+        RelativeLayout rl_group = helper.getView(R.id.rl_group);
+
+        rl_group.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(mContext,SeckillGoodActivity.class);
+                intent.putExtra(AppConstant.ACTIVEID,item.getActiveId());
+                intent.putExtra("priceType",SharedPreferencesUtil.getString(mContext,"priceType"));
+                intent.putExtra("num","-1");
+                mContext.startActivity(intent);
+            }
+        });
     }
 
 

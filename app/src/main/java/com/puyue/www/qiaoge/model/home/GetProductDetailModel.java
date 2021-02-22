@@ -110,6 +110,10 @@ public class GetProductDetailModel {
         String sendTimeStr;
         String supplierId;
         String sendTimeTpl;
+        String address;
+        String selfProd;
+        String cityName;
+        String areaName;
         @Override
         public String toString() {
             return "DataBean{" +
@@ -131,6 +135,38 @@ public class GetProductDetailModel {
                     ", detailPic=" + detailPic +
                     ", topPic=" + topPic +
                     '}';
+        }
+
+        public String getCityName() {
+            return cityName;
+        }
+
+        public void setCityName(String cityName) {
+            this.cityName = cityName;
+        }
+
+        public String getAreaName() {
+            return areaName;
+        }
+
+        public void setAreaName(String areaName) {
+            this.areaName = areaName;
+        }
+
+        public String getSelfProd() {
+            return selfProd;
+        }
+
+        public void setSelfProd(String selfProd) {
+            this.selfProd = selfProd;
+        }
+
+        public String getAddress() {
+            return address;
+        }
+
+        public void setAddress(String address) {
+            this.address = address;
         }
 
         public String getSendTimeTpl() {

@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 
 import com.puyue.www.qiaoge.R;
+import com.puyue.www.qiaoge.activity.ScrollEvent;
 import com.puyue.www.qiaoge.activity.mine.login.LoginActivity;
 import com.puyue.www.qiaoge.activity.mine.login.RegisterActivity;
 import com.puyue.www.qiaoge.activity.mine.login.RegisterMessageActivity;
@@ -85,7 +86,7 @@ public class NewFragment extends BaseFragment {
             EventBus.getDefault().register(this);
         }
         bind = ButterKnife.bind(this, view);
-        refreshLayout.setEnableLoadMore(false);
+        recyclerView.setNestedScrollingEnabled(false);
         emptyView = View.inflate(mActivity, R.layout.layout_empty, null);
         getProductsList(pageNum,11,"new");
         newAdapter = new NewAdapter(R.layout.item_team_list, list, new NewAdapter.Onclick() {
@@ -218,6 +219,10 @@ public class NewFragment extends BaseFragment {
         refreshLayout.autoRefresh();
     }
 
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void scrolls(ScrollEvent event) {
+        recyclerView.setNestedScrollingEnabled(event.isFlag());
+    }
 
     private void getCustomerPhone() {
         PublicRequestHelper.getCustomerPhone(mActivity, new OnHttpCallBack<GetCustomerPhoneModel>() {

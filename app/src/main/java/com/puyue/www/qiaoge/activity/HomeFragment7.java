@@ -1,4 +1,4 @@
-package com.puyue.www.qiaoge.fragment.home;
+package com.puyue.www.qiaoge.activity;
 
 import android.animation.IntEvaluator;
 import android.app.AlertDialog;
@@ -10,8 +10,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.GridLayoutManager;
@@ -51,9 +49,7 @@ import com.puyue.www.qiaoge.R;
 import com.puyue.www.qiaoge.RoundImageView;
 import com.puyue.www.qiaoge.UnicornManager;
 import com.puyue.www.qiaoge.activity.HomeActivity;
-import com.puyue.www.qiaoge.activity.ScrollEvent;
 import com.puyue.www.qiaoge.activity.cart.ExchangeActivity;
-import com.puyue.www.qiaoge.activity.home.AllGoodsFragment;
 import com.puyue.www.qiaoge.activity.home.ChangeCityActivity;
 import com.puyue.www.qiaoge.activity.home.ChooseAddressActivity;
 import com.puyue.www.qiaoge.activity.home.CommonGoodsDetailActivity;
@@ -61,12 +57,9 @@ import com.puyue.www.qiaoge.activity.home.CouponDetailActivity;
 import com.puyue.www.qiaoge.activity.home.FullGiftActivity;
 import com.puyue.www.qiaoge.activity.home.HomeGoodsListActivity;
 import com.puyue.www.qiaoge.activity.home.MyIssueAdapter;
-import com.puyue.www.qiaoge.activity.home.OperateFragment;
-import com.puyue.www.qiaoge.activity.home.SearchReasultActivity;
 import com.puyue.www.qiaoge.activity.home.SearchStartActivity;
 import com.puyue.www.qiaoge.activity.home.SpecialGoodDetailActivity;
 import com.puyue.www.qiaoge.activity.home.TeamDetailActivity;
-import com.puyue.www.qiaoge.activity.home.UnOperateFragment;
 import com.puyue.www.qiaoge.activity.mine.MessageCenterActivity;
 import com.puyue.www.qiaoge.activity.mine.login.LoginActivity;
 import com.puyue.www.qiaoge.activity.mine.login.LogoutsEvent;
@@ -140,6 +133,16 @@ import com.puyue.www.qiaoge.event.UpDateNumEvent3;
 import com.puyue.www.qiaoge.event.UpDateNumEvent7;
 import com.puyue.www.qiaoge.event.UpDateNumEvent8;
 import com.puyue.www.qiaoge.event.UpNumEvent;
+import com.puyue.www.qiaoge.fragment.home.CityEvent;
+import com.puyue.www.qiaoge.fragment.home.CommonFragment;
+import com.puyue.www.qiaoge.fragment.home.IndexRecommendAdapter;
+import com.puyue.www.qiaoge.fragment.home.InfoFragment;
+import com.puyue.www.qiaoge.fragment.home.MustFragment;
+import com.puyue.www.qiaoge.fragment.home.NewAdapter;
+import com.puyue.www.qiaoge.fragment.home.NewFragment;
+import com.puyue.www.qiaoge.fragment.home.RvIconAdapter;
+import com.puyue.www.qiaoge.fragment.home.SkillAdapter;
+import com.puyue.www.qiaoge.fragment.home.VerticalBannerAdapter;
 import com.puyue.www.qiaoge.helper.AppHelper;
 import com.puyue.www.qiaoge.helper.PublicRequestHelper;
 import com.puyue.www.qiaoge.helper.StatusBarUtil;
@@ -208,7 +211,7 @@ import static cn.com.chinatelecom.account.api.CtAuth.mContext;
 /**
  * Created by ${王涛} on 2020/9/9
  */
-public class HomeFragment extends BaseFragment implements View.OnClickListener,BaseSliderView.OnSliderClickListener {
+public class HomeFragment7 extends BaseFragment implements View.OnClickListener,BaseSliderView.OnSliderClickListener {
     Unbinder binder;
     @BindView(R.id.rv_auto_view1)
     AutoScrollRecyclerView rv_auto_view1;
@@ -254,16 +257,14 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener,B
     RelativeLayout rl_more;
     @BindView(R.id.rl_more3)
     RelativeLayout rl_more3;
-    @BindView(R.id.rl_more6)
-    RelativeLayout rl_more6;
     @BindView(R.id.rl_more4)
     RelativeLayout rl_more4;
     @BindView(R.id.rb_new)
     RadioButton rb_new;
     @BindView(R.id.rb_must_common)
     RadioButton rb_must_common;
-    @BindView(R.id.rb_reduce)
-    RadioButton rb_reduce;
+    @BindView(R.id.rb_info)
+    RadioButton rb_info;
     @BindView(R.id.rb_common)
     RadioButton rb_common;
     @BindView(R.id.ll_line)
@@ -300,8 +301,8 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener,B
     SnapUpCountDownTimerViewss snap;
     int topHeight;
     int topHeight2;
-//    @BindView(R.id.verticalBanner)
-//    VerticalBannerView verticalBanner;
+    @BindView(R.id.verticalBanner)
+    VerticalBannerView verticalBanner;
     @BindView(R.id.lav_activity_loading)
     AVLoadingIndicatorView lav_activity_loading;
     @BindView(R.id.rl_address)
@@ -349,8 +350,8 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener,B
     ImageView iv_team2_right;
     @BindView(R.id.tv_look_more)
     TextView tv_look_more;
-    @BindView(R.id.verticalBanner)
-    VerticalBannerView verticalBanner;
+    int pageNum = 1;
+    int pageSize = 10;
     HotAdapter hotAdapter;
     Skill5Adapter skill5Adapter;
     ProductNormalModel productNormalModel;
@@ -461,22 +462,22 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener,B
     LinearLayout ll_fixed;
     @BindView(R.id.scroll)
     ObservableScrollView scroll;
-    @BindView(R.id.rl_grand)
-    RelativeLayout rl_grand;
+    @BindView(R.id.rl_scroll1)
+    RelativeLayout rl_scroll1;
     private static final float ENDMARGINLEFT = 50;
     private static final float ENDMARGINTOP = 5;
     private static final float STARTMARGINLEFT = 20;
     private static final float STARTMARGINTOP = 70;
-    int grand_height;
     @Override
     public int setLayoutId() {
-        return R.layout.test3;
+        return R.layout.test7;
     }
 
     @Override
     public void initViews(View view) {
     }
 
+    int i2;
     @Override
     public void findViewById(View view) {
         ButterKnife.bind(this,view);
@@ -485,151 +486,119 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener,B
             list.add("ss");
         }
 
-        initFragment();
-        setListener();
-        rl_grand.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+        rl_bar.post(new Runnable() {
             @Override
-            public void onGlobalLayout() {
+            public void run() {
+                int height = ll_scroll.getHeight();
+                i = DensityUtil.px2dip(height,mActivity);
+                int height_rv = rl_bar.getHeight();
+                int height_iv = ll_scroll.getHeight();
+
+                int height1 = rl_scroll1.getHeight();
+                i2 = DensityUtil.px2dip(height1,mActivity);
+
+                scrollLength = Math.abs(height_iv - height_rv);
+                //把顶部bar设置为透明
                 rl_bar.getBackground().setAlpha(0);
-                int parent_height = ll_scroll.getHeight();
-                int bar_height = rl_bar.getHeight();
-                scrollLength = Math.abs(parent_height-bar_height);
-                grand_height = rl_grand.getHeight()-DensityUtil.dip2px(72,mActivity);
-                rl_grand.getViewTreeObserver().removeOnGlobalLayoutListener(this);
 
-                ll_scroll.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-            }
-        });
+                topHeight = DensityUtil.dip2px(i-72,mActivity);
+                topHeight2 = DensityUtil.dip2px(i2-72,mActivity);
+                scroll.setScrollViewListener(new ScrollViewListener() {
+                    @Override
+                    public void onScrollChanged(ObservableScrollView scrollView, int x, int y, int oldx, int oldy) {
+                        int abs_y = Math.abs(y);
+                        if(abs_y>scrollLength) {
 
-        scroll.setScrollViewListener(new ScrollViewListener() {
-            @Override
-            public void onScrollChanged(ObservableScrollView scrollView, int x, int y, int oldx, int oldy) {
-                int abs_y = Math.abs(y);
-                if (y >= grand_height) {
-                    flag = true;
-                    ll_small_title.setVisibility(View.GONE);
-                    ll_line.setVisibility(View.VISIBLE);
-
-
-                    if(rb_must_common.isChecked()) {
-                        v1.setVisibility(View.VISIBLE);
-                        v2.setVisibility(View.INVISIBLE);
-                        v3.setVisibility(View.INVISIBLE);
-                        v4.setVisibility(View.INVISIBLE);
-
-                    }else if(rb_new.isChecked()) {
-                        v1.setVisibility(View.INVISIBLE);
-                        v2.setVisibility(View.VISIBLE);
-                        v3.setVisibility(View.INVISIBLE);
-                        v4.setVisibility(View.INVISIBLE);
-                    }else if(rb_reduce.isChecked()) {
-                        v1.setVisibility(View.INVISIBLE);
-                        v2.setVisibility(View.INVISIBLE);
-                        v3.setVisibility(View.VISIBLE);
-                        v4.setVisibility(View.INVISIBLE);
-                    }else if(rb_common.isChecked()){
-                        v1.setVisibility(View.INVISIBLE);
-                        v2.setVisibility(View.INVISIBLE);
-                        v3.setVisibility(View.INVISIBLE);
-                        v4.setVisibility(View.VISIBLE);
-                    }
-
-                    if (rl_inSide.getParent() != ll_fixed) {
-                        ll_parent.removeView(rl_inSide);
-                        ll_fixed.addView(rl_inSide);
-                        EventBus.getDefault().post(new ScrollEvent(true));
-                    }
-
-                } else {
-                    flag = false;
-                    ll_small_title.setVisibility(View.VISIBLE);
-                    ll_line.setVisibility(View.GONE);
-                    if (rl_inSide.getParent() != ll_parent) {
-                        ll_fixed.removeView(rl_inSide);
-                        ll_parent.addView(rl_inSide);
-                        EventBus.getDefault().post(new ScrollEvent(false));
-                    }
-                }
-
-                //滑动距离小于顶部栏从透明到不透明所需的距离
-                if ((scrollLength - abs_y) > 0) {
-                    //估值器
-                    IntEvaluator evaluator = new IntEvaluator();
-                    float percent = (float) (scrollLength - abs_y) / scrollLength;
-                    if (percent <= 1) {
-                        //透明度
-                        int evaluates = evaluator.evaluate(percent, 255, 0);
-                        int evaluate = evaluates;
-                        rl_bar.getBackground().setAlpha(evaluate);
-                        //搜索栏左右margin值
-                        evaluatemargin = evaluator.evaluate(percent, DensityUtil.dip2px(ENDMARGINLEFT,mActivity), DensityUtil.dip2px(STARTMARGINLEFT,mActivity));
-
-                        //搜索栏顶部margin值
-                        evaluatetop = evaluator.evaluate(percent,  DensityUtil.dip2px(5,mActivity), DensityUtil.dip2px(STARTMARGINTOP,mActivity));
-                        layoutParams = (RelativeLayout.LayoutParams) rl_search.getLayoutParams();
-                        if(evaluatetop<100) {
-                            layoutParams.setMargins(evaluatemargin, 80, evaluatemargin, 0);
-                            rl_search.requestLayout();
                         }else {
-                            layoutParams.setMargins(evaluatemargin, evaluatetop, evaluatemargin, 0);
-                            rl_search.requestLayout();
-                        }
-                        iv_location.setImageResource(R.mipmap.icon_address2);
-                        tv_city.setAlpha(percent);
-                    }
 
-                } else {
-                    rl_bar.getBackground().setAlpha(255);
-                    if(layoutParams!=null){
-                        layoutParams.setMargins(DensityUtil.dip2px(ENDMARGINLEFT,mActivity),80, DensityUtil.dip2px(ENDMARGINLEFT,mActivity), 0);
-                        rl_search.requestLayout();
-                        iv_location.setImageResource(R.mipmap.icon_address1);
-                        tv_city.setAlpha(0);
+                        }
+
+                        if (y >= topHeight2) {
+                            if (rl_inSide.getParent() != ll_fixed) {
+                                ll_parent.removeView(rl_inSide);
+                                ll_fixed.addView(rl_inSide);
+                            }
+                        } else {
+                            if (rl_inSide.getParent() != ll_parent) {
+                                ll_fixed.removeView(rl_inSide);
+                                ll_parent.addView(rl_inSide);
+                            }
+                        }
+
+                        //滑动距离小于顶部栏从透明到不透明所需的距离
+                        if ((scrollLength - abs_y) > 0) {
+                            //估值器
+                            IntEvaluator evaluator = new IntEvaluator();
+                            float percent = (float) (scrollLength - abs_y) / scrollLength;
+                            if (percent <= 1) {
+                                //透明度
+                                int evaluates = evaluator.evaluate(percent, 255, 0);
+                                int evaluate = evaluates;
+                                rl_bar.getBackground().setAlpha(evaluate);
+                                //搜索栏左右margin值
+                                evaluatemargin = evaluator.evaluate(percent, DensityUtil.dip2px(ENDMARGINLEFT,mActivity), DensityUtil.dip2px(STARTMARGINLEFT,mActivity));
+
+                                //搜索栏顶部margin值
+                                evaluatetop = evaluator.evaluate(percent,  DensityUtil.dip2px(5,mActivity), DensityUtil.dip2px(STARTMARGINTOP,mActivity));
+
+                                Log.d("dasdasdwdsds.....",DensityUtil.dip2px(STARTMARGINTOP,mActivity)+"cc");
+                                Log.d("dasdasdwdsds.....",evaluatetop+"dd");
+                                layoutParams = (RelativeLayout.LayoutParams) rl_search.getLayoutParams();
+                                if(evaluatetop<100) {
+                                    layoutParams.setMargins(evaluatemargin, 80, evaluatemargin, 0);
+                                    rl_search.requestLayout();
+                                }else {
+                                    layoutParams.setMargins(evaluatemargin, evaluatetop, evaluatemargin, 0);
+                                    rl_search.requestLayout();
+                                }
+                                iv_location.setImageResource(R.mipmap.icon_address2);
+                                tv_city.setAlpha(percent);
+                            }
+
+                        } else {
+                            rl_bar.getBackground().setAlpha(255);
+                            if(layoutParams!=null){
+                                layoutParams.setMargins(DensityUtil.dip2px(ENDMARGINLEFT,mActivity),80, DensityUtil.dip2px(ENDMARGINLEFT,mActivity), 0);
+                                rl_search.requestLayout();
+                                iv_location.setImageResource(R.mipmap.icon_address1);
+                                tv_city.setAlpha(0);
+                            }
+                        }
                     }
-                }
+                });
             }
         });
 
-
+        //秒杀短
         skill5Adapter = new Skill5Adapter(mActivity, skillActive3);
-        rv_auto_view.setAdapter(skill5Adapter);
-        rv_auto_view.setLayoutManager(new GridLayoutManager(mActivity, 4));
+
 
         //满赠1
         PagerSnapHelper snapFull = new PagerSnapHelper();
         commonssAdapter = new CommonssAdapter(mActivity, fullActive1);
-        rv_auto_view1.setAdapter(commonssAdapter);
-        snapFull.attachToRecyclerView(rv_auto_view1);
+
+
         initRecycles();
 
         //满赠2
         fullAdapter = new FullAdapter(mActivity, fullActive1);
-        rv_given.setAdapter(fullAdapter);
-        rv_given.setLayoutManager(new GridLayoutManager(mActivity, 1));
+
 
         //组合
         teamAdapter = new TeamAdapter(R.layout.item_team_lists, teamActive1);
-        rv_auto_team.setLayoutManager(new GridLayoutManager(mActivity, 1));
-        rv_auto_team.setAdapter(teamAdapter);
+
 
         //组合2
         team3Adapter = new Team3Adapter(R.layout.item_teams_list, teamActive1);
-        rv_team.setLayoutManager(new GridLayoutManager(mActivity, 1));
-        rv_team.setAdapter(team3Adapter);
+
 
         //顶部推荐
         indexRecommendAdapter = new IndexRecommendAdapter(R.layout.item_index_recommend, recommendList);
-        rv_recommend.setLayoutManager(new LinearLayoutManager(mActivity, LinearLayoutManager.HORIZONTAL, false));
-        rv_recommend.setAdapter(indexRecommendAdapter);
 
-        rl_more.setOnClickListener(this);
         tv_search.setOnClickListener(this);
-        rl_more3.setOnClickListener(this);
-        rl_more6.setOnClickListener(this);
-        rl_more4.setOnClickListener(this);
+
         rl_address.setOnClickListener(null);
         requestUpdate();
-        getHot(1, 10, "hot");
         refreshLayout.autoRefresh();
         lav_activity_loading.show();
         couponListAdapter = new CouponListAdapter(R.layout.item_home_coupon_list, lists);
@@ -639,7 +608,7 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener,B
         hotKey();
         classifyList();
         getOrder();
-        getProductsList(1,10,"commonBuy");
+        getHot(1, 10, "hot");
         mTypedialog = new AlertDialog.Builder(mActivity, R.style.DialogStyle).create();
         mTypedialog.setCancelable(false);
 
@@ -698,16 +667,7 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener,B
                 EventBus.getDefault().postSticky(new FromIndexEvent(classifyList.get(position).getId() + ""));
             }
         });
-        rv_icon.setLayoutManager(gridLayoutManager);
-        rv_icon.setAdapter(rvIconAdapter);
 
-        rv_icon.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
-                super.onScrolled(recyclerView, dx, dy);
-                indicator.bindRecyclerView(rv_icon);
-            }
-        });
 
 
         newAdapter = new NewAdapter(R.layout.item_team_list, listss, new NewAdapter.Onclick() {
@@ -726,114 +686,10 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener,B
             }
         });
 
-//        rg_new.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-//            @Override
-//            public void onCheckedChanged(RadioGroup group, int checkedId) {
-//                switch (checkedId) {
-//                    case R.id.rb_new:
-//                        rb_info.setTextColor(Color.parseColor("#333333"));
-//                        rb_common.setTextColor(Color.parseColor("#333333"));
-//                        rb_must_common.setTextColor(Color.parseColor("#333333"));
-//                        rb_new.setTextColor(Color.parseColor("#17BD60"));
-//                        tv_title1.setTextColor(Color.parseColor("#ffffff"));
-//                        tv_title1.setBackgroundResource(R.drawable.shape_greenss);
-//
-//                        tv_title2.setTextColor(Color.parseColor("#999999"));
-//                        tv_title2.setBackgroundResource(R.drawable.shape_white);
-//
-//                        tv_title3.setTextColor(Color.parseColor("#999999"));
-//                        tv_title3.setBackgroundResource(R.drawable.shape_white);
-//
-//                        tv_title4.setTextColor(Color.parseColor("#999999"));
-//                        tv_title4.setBackgroundResource(R.drawable.shape_white);
-//                        switchRb4();
-//
-//                        break;
-//
-//                    case R.id.rb_must_common:
-//                        rb_info.setTextColor(Color.parseColor("#333333"));
-//                        rb_common.setTextColor(Color.parseColor("#333333"));
-//                        rb_must_common.setTextColor(Color.parseColor("#333333"));
-//                        rb_new.setTextColor(Color.parseColor("#333333"));
-//
-//                        rb_must_common.setTextColor(Color.parseColor("#17BD60"));
-//                        tv_title2.setTextColor(Color.parseColor("#ffffff"));
-//                        tv_title2.setBackgroundResource(R.drawable.shape_greenss);
-//
-//                        tv_title1.setTextColor(Color.parseColor("#999999"));
-//                        tv_title1.setBackgroundResource(R.drawable.shape_white);
-//
-//                        tv_title3.setTextColor(Color.parseColor("#999999"));
-//                        tv_title3.setBackgroundResource(R.drawable.shape_white);
-//
-//                        tv_title4.setTextColor(Color.parseColor("#999999"));
-//                        tv_title4.setBackgroundResource(R.drawable.shape_white);
-//                        switchRb5();
-//                        break;
-//
-//                    case R.id.rb_info:
-//                        rb_info.setTextColor(Color.parseColor("#17BD60"));
-//                        rb_common.setTextColor(Color.parseColor("#333333"));
-//                        rb_must_common.setTextColor(Color.parseColor("#333333"));
-//                        rb_new.setTextColor(Color.parseColor("#333333"));
-//                        tv_title2.setTextColor(Color.parseColor("#999999"));
-//                        tv_title2.setBackgroundResource(R.drawable.shape_white);
-//
-//                        tv_title1.setTextColor(Color.parseColor("#999999"));
-//                        tv_title1.setBackgroundResource(R.drawable.shape_white);
-//
-//                        tv_title3.setTextColor(Color.parseColor("#ffffff"));
-//                        tv_title3.setBackgroundResource(R.drawable.shape_greenss);
-//
-//                        tv_title4.setTextColor(Color.parseColor("#999999"));
-//                        tv_title4.setBackgroundResource(R.drawable.shape_white);
-//                        switchRb6();
-//                        break;
-//
-//                    case R.id.rb_common:
-//                        rb_info.setTextColor(Color.parseColor("#333333"));
-//                        rb_common.setTextColor(Color.parseColor("#17BD60"));
-//                        rb_must_common.setTextColor(Color.parseColor("#333333"));
-//                        rb_new.setTextColor(Color.parseColor("#333333"));
-//                        rb_info.setTextColor(Color.parseColor("#333333"));
-//
-//                        tv_title2.setTextColor(Color.parseColor("#999999"));
-//                        tv_title2.setBackgroundResource(R.drawable.shape_white);
-//
-//                        tv_title1.setTextColor(Color.parseColor("#999999"));
-//                        tv_title1.setBackgroundResource(R.drawable.shape_white);
-//
-//                        tv_title3.setTextColor(Color.parseColor("#999999"));
-//                        tv_title3.setBackgroundResource(R.drawable.shape_white);
-//
-//                        tv_title4.setTextColor(Color.parseColor("#ffffff"));
-//                        tv_title4.setBackgroundResource(R.drawable.shape_greenss);
-//
-//                        switchRb7();
-//
-//                        break;
-//                }
-//            }
-//        });
-    }
 
-    private void setListener() {
-        rg_new.setOnCheckedChangeListener(new MyOnCheckedChangeListener());
-        //设置默认选中框架页面
-        rg_new.check(R.id.rb_must_common);
-    }
-
-    private List<Fragment> mBaseFragment;
-    private void initFragment() {
-        mBaseFragment = new ArrayList<>();
-        mBaseFragment.add(MustFragment.getInstance());
-        mBaseFragment.add(NewFragment.getInstance());
-        mBaseFragment.add(ReductionProductActivity.getInstance());
-        mBaseFragment.add(CommonFragment.getInstance());
     }
 
     int i;
-    int i2;
     int scrollLength;
     TeamAdapter teamAdapter;
     Team3Adapter team3Adapter;
@@ -868,7 +724,7 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener,B
                     public void onNext(MyOrderNumModel myOrderNumModel) {
                         mModelMyOrderNum = myOrderNumModel;
                         if (mModelMyOrderNum.success) {
-                            updateOrderNum();
+
 
                         } else {
                             AppHelper.showMsg(mActivity, mModelMyOrderNum.message);
@@ -877,15 +733,7 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener,B
                 });
     }
 
-    private void updateOrderNum() {
-        //消息中心
-        if (mModelMyOrderNum.getData().getNotice() > 0) {
-            tv_num.setVisibility(View.VISIBLE);
-            tv_num.setText("  " + mModelMyOrderNum.getData().getNotice() + "  ");
-        } else {
-            tv_num.setVisibility(View.GONE);
-        }
-    }
+
 
     private void getSpikeList(int type) {
         IndexHomeAPI.getCouponList(mActivity, type + "")
@@ -910,7 +758,7 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener,B
                             if (type == 2) {
                                 data1 = couponModel.getData();
                                 if (data1 != null) {
-                                    tv_skill_title.setText(data1.getTitle());
+
                                     currentTime = couponModel.getData().getCurrentTime();
                                     startTime = couponModel.getData().getStartTime();
 
@@ -918,18 +766,14 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener,B
                                         skillActive1.clear();
                                         skillActive1.addAll(data1.getActives());
                                         skillAdapter = new SkillAdapter(mActivity, R.layout.item_skill_lists, skillActive1, "1");
-                                        rv_skill.setAdapter(skillAdapter);
-                                        rv_skill.setLayoutManager(new LinearLayoutManager(mActivity, LinearLayoutManager.HORIZONTAL, false));
-                                        rv_skill.setVisibility(View.VISIBLE);
+
                                         skillAdapter.notifyDataSetChanged();
-                                        ll_skill.setVisibility(View.VISIBLE);
+
                                     } else if (data1.getActives().size() == 2) {
                                         skillActive2.clear();
                                         skillActive2.addAll(data1.getActives());
                                         skill2Adapter = new Skill2Adapter(mActivity, R.layout.item_skill_lists, skillActive2, "0");
-                                        rv_skill.setAdapter(skill2Adapter);
-                                        ll_skill.setVisibility(View.VISIBLE);
-                                        rv_skill.setVisibility(View.VISIBLE);
+
                                         skill2Adapter.notifyDataSetChanged();
                                         initRecycle();
 
@@ -937,27 +781,20 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener,B
                                         skillActive3.clear();
                                         skillActive3.addAll(data1.getActives());
                                         skill3Adapter = new Skill3Adapter(R.layout.item_skill_list, skillActive3);
-                                        rv_skill.setAdapter(skill3Adapter);
-                                        rv_skill.setLayoutManager(new GridLayoutManager(mActivity, 3));
-                                        rv_skill.setVisibility(View.VISIBLE);
-                                        ll_skill.setVisibility(View.VISIBLE);
+
+
                                         skill3Adapter.notifyDataSetChanged();
                                     } else if (data1.getActives().size() == 4) {
                                         skillActive3.clear();
                                         skillActive3.addAll(data1.getActives());
                                         skill3Adapter = new Skill3Adapter(R.layout.item_skill_list4, skillActive3);
-                                        rv_skill.setAdapter(skill3Adapter);
-                                        rv_skill.setLayoutManager(new GridLayoutManager(mActivity, 4));
-                                        rv_skill.setVisibility(View.VISIBLE);
                                         skill3Adapter.notifyDataSetChanged();
-                                        ll_skill.setVisibility(View.VISIBLE);
+
                                     } else if(data1.getActives().size() > 4) {
                                         skillActive3.clear();
-                                        rv_skill.setVisibility(View.GONE);
                                         skillActive3.addAll(data1.getActives());
                                         skill5Adapter.notifyDataSetChanged();
-                                        rv_auto_view.setVisibility(View.VISIBLE);
-                                        ll_skill.setVisibility(View.VISIBLE);
+
                                     }
 
 
@@ -975,15 +812,10 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener,B
                                     if (currentTime > startTime) {
                                         //秒杀开始
                                         if (startTime != 0 && endTime != 0) {
-                                            snap.setVisibility(View.VISIBLE);
-                                            snap.setTime(true, currentTime, startTime, endTime);
-                                            snap.changeBackGround(ContextCompat.getColor(mActivity, R.color.white));
-                                            snap.changeTypeColor(ContextCompat.getColor(mActivity, R.color.color_F6551A));
 
-                                            snap.start();
                                         } else {
 
-                                            snap.setVisibility(View.GONE);
+
                                         }
                                     } else {
                                         //未开始
@@ -991,25 +823,14 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener,B
                                         if (exceed2) {
                                             //大于2
 
-                                            snap.setVisibility(View.GONE);
+
                                         } else {
-                                            //小于2
-                                            if (startTime != 0 && endTime != 0) {
-                                                snap.setVisibility(View.VISIBLE);
-                                                snap.setTime(true, currentTime, startTime, endTime);
-                                                snap.changeBackGround(ContextCompat.getColor(mActivity, R.color.white));
-                                                snap.changeTypeColor(ContextCompat.getColor(mActivity, R.color.color_F6551A));
 
-                                                snap.start();
-                                            } else {
-
-                                                snap.setVisibility(View.GONE);
-                                            }
                                         }
                                     }
 
                                 }else {
-                                    ll_skill.setVisibility(View.GONE);
+
                                 }
 
                             } else if (type == 11) {
@@ -1019,15 +840,13 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener,B
                                         couponActive1.clear();
                                         couponActive1.addAll(data1.getActives());
                                         commonAdapter = new CommonAdapter(R.layout.item_common_lists, couponActive1);
-                                        rv_coupon.setAdapter(commonAdapter);
+
                                         commonAdapter.notifyDataSetChanged();
 
                                     } else if (data1.getActives().size() == 2) {
                                         couponActive2.clear();
                                         couponActive2.addAll(data1.getActives());
                                         commonCouponAdapter = new CommonCouponAdapter(mActivity, 11 + "", R.layout.item_coupon_lists, couponActive2);
-                                        rv_coupon.setLayoutManager(new LinearLayoutManager(mActivity, LinearLayoutManager.HORIZONTAL, false));
-                                        rv_coupon.setAdapter(commonCouponAdapter);
                                         commonCouponAdapter.notifyDataSetChanged();
 
                                     } else {
@@ -1042,7 +861,7 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener,B
                             } else if (type == 3) {
                                 data1 = couponModel.getData();
                                 if (data1 != null) {
-                                    tv_team_title.setText(data1.getTitle());
+
                                     teamActive1.clear();
                                     teamActive1.addAll(data1.getActives());
                                     teamAdapter.notifyDataSetChanged();
@@ -1097,22 +916,13 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener,B
 
                             if (listBeans.size() == 1) {
                                 hotAdapter = new HotAdapter(R.layout.item_common_lists, listBeans);
-                                rv_hot.setLayoutManager(new LinearLayoutManager(mActivity, LinearLayoutManager.HORIZONTAL, false));
-                                rv_hot.setAdapter(hotAdapter);
-                                rv_hot1.setVisibility(View.GONE);
-                                rv_hot.setVisibility(View.VISIBLE);
+
                             } else if (listBeans.size() == 2) {
-                                rv_hot1.setVisibility(View.GONE);
-                                rv_hot.setVisibility(View.VISIBLE);
+
                                 hotAdapter = new HotAdapter(R.layout.item_coupon_lists, listBeans);
-                                rv_hot.setLayoutManager(new LinearLayoutManager(mActivity, LinearLayoutManager.HORIZONTAL, false));
-                                rv_hot.setAdapter(hotAdapter);
+
                             } else {
-                                rv_hot1.setVisibility(View.VISIBLE);
-                                rv_hot.setVisibility(View.GONE);
                                 hotAdapter = new HotAdapter(R.layout.item_coupon_listss, listBeans);
-                                rv_hot1.setLayoutManager(new LinearLayoutManager(mActivity, LinearLayoutManager.HORIZONTAL, false));
-                                rv_hot1.setAdapter(hotAdapter);
                             }
 
                         } else {
@@ -1327,7 +1137,7 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener,B
     @Override
     public void onStop() {
         super.onStop();
-        banner.stopAutoPlay();
+
         stopAuto();
         fullAdapter.cancle();
         team3Adapter.cancle();
@@ -1348,10 +1158,7 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener,B
                     mCurrentPosition++;
                 }
                 mSmoothScroller.setTargetPosition(mCurrentPosition);
-                RecyclerView.LayoutManager layoutManager = rv_auto_view.getLayoutManager();
-                if (layoutManager != null) {
-                    layoutManager.startSmoothScroll(mSmoothScroller);
-                }
+
 
             }
         });
@@ -1568,9 +1375,6 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener,B
                 mDialog.dismiss();
             }
         });
-
-        tv_look_more.setOnClickListener(this);
-        tv_coupon_more.setOnClickListener(this);
     }
 
 
@@ -1621,7 +1425,7 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener,B
                                 verticalBannerAdapter = new VerticalBannerAdapter(cell, driverList, getContext());
                                 verticalBanner.setAdapter(verticalBannerAdapter);
                                 verticalBanner.start();
-                                ll_driver.setVisibility(View.VISIBLE);
+                                ll_driver.setVisibility(View.GONE);
                             } else {
                                 ll_driver.setVisibility(View.GONE);
                             }
@@ -1724,6 +1528,114 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener,B
             }
         });
     }
+
+    /**
+     * 常用清单
+     */
+    private void switchRb7() {
+        fragmentTransaction = supportFragmentManager.beginTransaction();
+        if (commonFragment == null) {
+            commonFragment = new CommonFragment();
+            fragmentTransaction.add(R.id.content, commonFragment, CommonFragment.class.getCanonicalName());
+        }
+
+        fragmentTransaction.show(commonFragment);
+
+        if (infoFragment != null) {
+            fragmentTransaction.hide(infoFragment);
+        }
+
+        if (mustFragment != null) {
+            fragmentTransaction.hide(mustFragment);
+        }
+
+        if (newFragment != null) {
+            fragmentTransaction.hide(newFragment);
+        }
+
+        fragmentTransaction.commitAllowingStateLoss();
+    }
+
+    /**
+     * 咨讯
+     */
+    private void switchRb6() {
+        fragmentTransaction = supportFragmentManager.beginTransaction();
+        if (infoFragment == null) {
+            infoFragment = new InfoFragment();
+        }
+        fragmentTransaction.add(R.id.content, infoFragment, InfoFragment.class.getCanonicalName());
+
+        fragmentTransaction.show(infoFragment);
+
+        if (mustFragment != null) {
+            fragmentTransaction.hide(mustFragment);
+        }
+
+        if (newFragment != null) {
+            fragmentTransaction.hide(newFragment);
+        }
+
+        if (commonFragment != null) {
+            fragmentTransaction.hide(commonFragment);
+        }
+
+        fragmentTransaction.commitAllowingStateLoss();
+    }
+
+    /**
+     * 必买
+     */
+    private void switchRb5() {
+        fragmentTransaction = supportFragmentManager.beginTransaction();
+        if (mustFragment == null) {
+            mustFragment = new MustFragment();
+            fragmentTransaction.add(R.id.content, mustFragment, MustFragment.class.getCanonicalName());
+        }
+
+        fragmentTransaction.show(mustFragment);
+
+        if (infoFragment != null) {
+            fragmentTransaction.hide(infoFragment);
+        }
+
+        if (newFragment != null) {
+            fragmentTransaction.hide(newFragment);
+        }
+
+        if (commonFragment != null) {
+            fragmentTransaction.hide(commonFragment);
+        }
+
+        fragmentTransaction.commitAllowingStateLoss();
+    }
+
+    /**
+     * 新品
+     */
+    private void switchRb4() {
+        fragmentTransaction = supportFragmentManager.beginTransaction();
+        if (newFragment == null) {
+            newFragment = new NewFragment();
+            fragmentTransaction.add(R.id.content, newFragment, NewFragment.class.getCanonicalName());
+        }
+        fragmentTransaction.show(newFragment);
+
+        if (infoFragment != null) {
+            fragmentTransaction.hide(infoFragment);
+        }
+
+        if (mustFragment != null) {
+            fragmentTransaction.hide(mustFragment);
+        }
+
+        if (commonFragment != null) {
+            fragmentTransaction.hide(commonFragment);
+        }
+
+        fragmentTransaction.commitAllowingStateLoss();
+    }
+
     /**
      * 获取首页信息
      */
@@ -1754,36 +1666,34 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener,B
                             }
 
 
-                            tv_times.setText("最快" + indexInfoModel.getData().getSendTime() + "小时送达");
-                            tv_amount.setText("满" + indexInfoModel.getData().getSendAmount() + "元免配送费");
+
                             spikeNum = indexInfoModel.getData().getSpikeNum();
                             teamNum = indexInfoModel.getData().getTeamNum();
                             specialNum = indexInfoModel.getData().getSpecialNum();
                             fullGiftNum = indexInfoModel.getData().getFullGiftNum();
 
                             if (teamNum != 0 && fullGiftNum != 0) {
-                                rl1.setVisibility(View.VISIBLE);
-                                rl2.setVisibility(View.GONE);
+
+
 
                             }
 
                             if (teamNum == 0 && fullGiftNum == 0) {
-                                rl1.setVisibility(View.GONE);
-                                rl2.setVisibility(View.GONE);
+
+
                             }
 
                             if (teamNum != 0 && fullGiftNum == 0) {
-                                rl1.setVisibility(View.GONE);
-                                rl_full.setVisibility(View.GONE);
-                                rl_team.setVisibility(View.VISIBLE);
-                                rl2.setVisibility(View.VISIBLE);
+
+
+
+
                             }
 
                             if (fullGiftNum != 0 && teamNum == 0) {
-                                rl_full.setVisibility(View.VISIBLE);
-                                rl_team.setVisibility(View.GONE);
-                                rl1.setVisibility(View.GONE);
-                                rl2.setVisibility(View.VISIBLE);
+
+
+
                             }
 
 
@@ -1809,47 +1719,20 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener,B
                                 }
                             }
                             if (data.getBanners().size() > 0) {
-                                iv_empty.setVisibility(View.GONE);
-                                banner.setVisibility(View.VISIBLE);
-                                banner.setBannerStyle(BannerConfig.NUM_INDICATOR);
-                                banner.setImageLoader(new GlideImageLoader());
+
+
                                 bannerList.clear();
                                 bannerList.addAll(list);
-                                banner.setImages(bannerList);
-                                banner.setBannerAnimation(Transformer.DepthPage);
-                                banner.isAutoPlay(true);
-                                banner.setDelayTime(3000);
-                                banner.setIndicatorGravity(BannerConfig.RIGHT);
+
                                 ClickBanner(data.getBanners());
-                                banner.start();
 
                                 List<IndexInfoModel.DataBean.BannersBean> banners = data.getBanners();
 
 
-                                banner.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-                                    @Override
-                                    public void onPageScrolled(int i, float v, int i1) {
-//                                        Log.d("wwwwwwww........","1111");
-                                    }
 
-                                    @Override
-                                    public void onPageSelected(int pos) {
-                                        if (!TextUtils.isEmpty(banners.get(pos).getRgbColor())) {
-                                            String rgbColor = banners.get(pos).getRgbColor();
-                                            ll_bgc.setBackgroundColor(Color.parseColor("#" + rgbColor));
-//                                            StatusBarUtil.setColor(mActivity,Color.parseColor("#" + rgbColor),0);
-                                        }
-                                    }
-
-                                    @Override
-                                    public void onPageScrollStateChanged(int i) {
-//                                        Log.d("wwwwwwww........","3333");
-                                    }
-                                });
 
                             } else {
-                                banner.setVisibility(View.GONE);
-                                iv_empty.setVisibility(View.VISIBLE);
+
 
                             }
                             lav_activity_loading.hide();
@@ -1863,85 +1746,7 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener,B
     }
 
     private void ClickBanner(List<IndexInfoModel.DataBean.BannersBean> banners) {
-        banner.setOnBannerListener(new OnBannerListener() {
-            @Override
-            public void OnBannerClick(int position) {
-                showType = banners.get(position).getShowType();
-                if (showType == 1 || banners.get(position).getLinkSrc() != null) {
-                    //链接 banners.get(position).getLinkSrc()
-                    Intent intent = new Intent(getActivity(), NewWebViewActivity.class);
-                    intent.putExtra("URL", banners.get(position).getLinkSrc());
-                    intent.putExtra("TYPE", 2);
-                    intent.putExtra("name", "");
-//                    Log.d("wsdsssssssss.........", banners.get(position).getLinkSrc());
-                    startActivity(intent);
-                } else if (showType == 2 || banners.get(position).getDetailPic() != null) {
-                    //图片
-                    AppHelper.showPhotoDetailDialog(mActivity, list1, position);
-                } else if (showType == 3 || banners.get(position).getProdPage() != null) {
-                    //H5页面
-                    if (AppConstant.KILL_PROD.equals(banners.get(position).getProdPage())) {
-                        Intent intent = new Intent(getActivity(), HomeGoodsListActivity.class);
-                        startActivity(intent);
-                    } else if (AppConstant.HOT_PROD.equals(banners.get(position).getProdPage())) {
-                        Intent intent = new Intent(getActivity(), HotProductActivity.class);
-                        startActivity(intent);
-                    } else if (AppConstant.COMMON_PROD.equals(banners.get(position).getProdPage())) {
-                        Intent intent = new Intent(getActivity(), CommonProductActivity.class);
-                        startActivity(intent);
-                    } else if (AppConstant.DEDUCT_PROD.equals(banners.get(position).getProdPage())) {
-                        Intent intent = new Intent(getActivity(), ReductionProductActivity.class);
-                        startActivity(intent);
-                    } else if (AppConstant.SPECIAL_PROD.equals(banners.get(position).getProdPage())) {
-                        Intent intent = new Intent(getActivity(), CouponDetailActivity.class);
-                        startActivity(intent);
-                    } else if (AppConstant.TEAM_PROD.equals(banners.get(position).getProdPage())) {
-                        Intent intent = new Intent(getActivity(), TeamDetailActivity.class);
-                        startActivity(intent);
-                    } else if (AppConstant.BALANCE.equals(banners.get(position).getProdPage())) {
-                        Intent intent = new Intent(getActivity(), MyWalletNewActivity.class);
-                        startActivity(intent);
-                    } else if (AppConstant.POINT.equals(banners.get(position).getProdPage())) {
-                        Intent intent = new Intent(getActivity(), MinerIntegralActivity.class);
-                        startActivity(intent);
-                    } else if (AppConstant.GIFT.equals(banners.get(position).getProdPage())) {
-                        Intent intent = new Intent(getActivity(), MyOrdersActivity.class);
-                        startActivity(intent);
-                    }
-                } else if (showType == 4) {
-                    //商品
-                    int businessId = Integer.parseInt(banners.get(position).getBusinessId());
-                    Intent intent = new Intent(getActivity(), CommonGoodsDetailActivity.class);
-                    intent.putExtra(AppConstant.ACTIVEID, businessId);
-                    intent.putExtra("priceType", SharedPreferencesUtil.getString(mActivity, "priceType"));
-                    startActivity(intent);
-                } else if (showType == 5) {
-                    //活动
-                    String businessType = banners.get(position).getBusinessType();
-                    int businessId = Integer.parseInt(banners.get(position).getBusinessId());
-                    if (businessType.equals("2")) {
-                        Intent intent = new Intent(getActivity(), SeckillGoodActivity.class);
-//                        intent.putExtra(AppConstant.NUM,businessId);
-                        intent.putExtra("num", "-1");
-                        intent.putExtra("priceType", SharedPreferencesUtil.getString(mActivity, "priceType"));
-                        intent.putExtra(AppConstant.ACTIVEID, businessId);
-                        startActivity(intent);
-                    } else if (businessType.equals("3")) {
-                        Intent intent = new Intent(getActivity(), SpecialGoodDetailActivity.class);
-                        intent.putExtra(AppConstant.ACTIVEID, businessId);
-                        intent.putExtra("priceType", SharedPreferencesUtil.getString(mActivity, "priceType"));
-                        startActivity(intent);
-                    } else if (businessType.equals("11")) {
-                        Intent intent = new Intent(getActivity(), SpecialGoodDetailActivity.class);
-                        intent.putExtra("priceType", SharedPreferencesUtil.getString(mActivity, "priceType"));
-                        intent.putExtra(AppConstant.ACTIVEID, businessId);
-                        startActivity(intent);
-                    }
 
-                }
-
-            }
-        });
     }
 
     /**
@@ -2054,7 +1859,7 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener,B
     @Override
     public void onDestroy() {
         super.onDestroy();
-//        verticalBanner.stop();
+
         EventBus.getDefault().unregister(this);
     }
 
@@ -2062,7 +1867,7 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener,B
     public void onStart() {
         super.onStart();
         //开始轮播
-        banner.startAutoPlay();
+
     }
 
     @Override
@@ -2084,19 +1889,6 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener,B
 //                startActivity(intent1);
 //                break;
 
-            case R.id.rl_message:
-//                Intent intent2 = new Intent(context, TestActivity4.class);
-//                startActivity(intent2);
-//                if (StringHelper.notEmptyAndNull(UserInfoHelper.getUserId(getActivity()))) {
-//                    Intent intents = new Intent(getActivity(), MessageCenterActivity.class);
-//                    startActivityForResult(intents, 101);
-////                    Intent intent2 = new Intent(getActivity(), Test1Activity.class);
-////                    startActivity(intent2);
-//
-//                } else {
-//                    initDialog();
-//                }
-                break;
 
             case R.id.tv_city:
                 //选择城市
@@ -2111,34 +1903,7 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener,B
 
                 break;
 
-            case R.id.rl_more:
-                //秒杀专区
-                if (StringHelper.notEmptyAndNull(UserInfoHelper.getUserId(getActivity()))) {
-                    Intent secIntent = new Intent(getActivity(), HomeGoodsListActivity.class);
-                    startActivity(secIntent);
-                } else {
-                    initDialog();
-                }
 
-
-                break;
-
-            case R.id.rl_more3:
-                //超值组合
-                Intent teamIntent = new Intent(getActivity(), TeamDetailActivity.class);
-                startActivity(teamIntent);
-                break;
-
-            case R.id.rl_more6:
-                //超值组合
-                Intent teamIntents = new Intent(getActivity(), TeamDetailActivity.class);
-                startActivity(teamIntents);
-                break;
-            case R.id.rl_more4:
-                //满赠
-                Intent fullIntent = new Intent(getActivity(), FullGiftActivity.class);
-                startActivity(fullIntent);
-                break;
 
             case R.id.tv_change:
                 Intent changeCityIntent = new Intent(getActivity(), ChangeCityActivity.class);
@@ -2150,35 +1915,9 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener,B
                 chooseAddressDialog.show();
                 break;
 
-            case R.id.iv_full2_right:
-                Intent intent1 = new Intent(mActivity,FullGiftActivity.class);
-                startActivity(intent1);
-                break;
 
-            case R.id.iv_full_right:
-                Intent intent2 = new Intent(mActivity,FullGiftActivity.class);
-                startActivity(intent2);
-                break;
 
-            case R.id.iv_team_right:
-                Intent intent3 = new Intent(mActivity,TeamDetailActivity.class);
-                startActivity(intent3);
-                break;
 
-            case R.id.iv_team2_right:
-                Intent intent4 = new Intent(mActivity,TeamDetailActivity.class);
-                startActivity(intent4);
-                break;
-
-            case R.id.tv_look_more:
-                Intent intent5 = new Intent(mActivity,CouponDetailActivity.class);
-                startActivity(intent5);
-                break;
-
-            case R.id.tv_coupon_more:
-                Intent intent6 = new Intent(mActivity,CouponDetailActivity.class);
-                startActivity(intent6);
-                break;
         }
     }
 
@@ -2189,10 +1928,9 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener,B
             if (resultCode == 102) {
                 int newPosition = data.getIntExtra("NewPosition", 5);//NewPosition
                 if (newPosition > 0) {
-                    tv_num.setVisibility(View.VISIBLE);
-                    tv_num.setText("  " + newPosition + "  ");
+
                 } else {
-                    tv_num.setVisibility(View.GONE);
+
                 }
             }
         }
@@ -2225,10 +1963,10 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener,B
         scheduledExecutorService.scheduleAtFixedRate(new Runnable() {
             @Override
             public void run() {
-                rv_skill.smoothScrollToPosition(layoutManager.findFirstVisibleItemPosition() + 1);
+
             }
         }, 2000, 2000, TimeUnit.MILLISECONDS);
-        rv_skill.setLayoutManager(layoutManager);
+
     }
 
     //满赠滑动
@@ -2238,10 +1976,10 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener,B
         scheduledExecutorService.scheduleAtFixedRate(new Runnable() {
             @Override
             public void run() {
-                rv_auto_view1.smoothScrollToPosition(layoutManager.findFirstVisibleItemPosition() + 1);
+
             }
         }, 5000, 4000, TimeUnit.MILLISECONDS);
-        rv_auto_view1.setLayoutManager(layoutManager);
+
     }
 
     @Override
@@ -2316,139 +2054,14 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener,B
     public void cityEvent(CityEvent event) {
         refreshLayout.autoRefresh();
         chooseAddressDialog.dismiss();
+//        rootview.setTranslationY(0);
+
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void topEvent(TopEvent event) {
-        scroll.smoothScrollTo(0,0);
-        Log.d("wdasdasdsdas....","asd");
+//        appbar.setExpanded(true);
+//        nestedScrollView.smoothScrollTo(0,0);
     }
 
-    int position;
-    private class MyOnCheckedChangeListener implements RadioGroup.OnCheckedChangeListener {
-        @Override
-        public void onCheckedChanged(RadioGroup group, int checkedId) {
-            switch (checkedId) {
-                case R.id.rb_new:
-                    position = 1;
-                    rb_reduce.setTextColor(Color.parseColor("#333333"));
-                    rb_common.setTextColor(Color.parseColor("#333333"));
-                    rb_must_common.setTextColor(Color.parseColor("#333333"));
-                    rb_new.setTextColor(Color.parseColor("#17BD60"));
-                    tv_title1.setTextColor(Color.parseColor("#ffffff"));
-                    tv_title1.setBackgroundResource(R.drawable.shape_greenss);
-
-                    tv_title2.setTextColor(Color.parseColor("#999999"));
-                    tv_title2.setBackgroundResource(R.drawable.shape_white);
-
-                    tv_title3.setTextColor(Color.parseColor("#999999"));
-                    tv_title3.setBackgroundResource(R.drawable.shape_white);
-
-                    tv_title4.setTextColor(Color.parseColor("#999999"));
-                    tv_title4.setBackgroundResource(R.drawable.shape_white);
-
-
-                    break;
-
-                case R.id.rb_must_common:
-                    position = 0;
-                    rb_reduce.setTextColor(Color.parseColor("#333333"));
-                    rb_common.setTextColor(Color.parseColor("#333333"));
-                    rb_new.setTextColor(Color.parseColor("#333333"));
-                    rb_must_common.setTextColor(Color.parseColor("#17BD60"));
-
-                    tv_title2.setTextColor(Color.parseColor("#ffffff"));
-                    tv_title2.setBackgroundResource(R.drawable.shape_greenss);
-
-                    tv_title1.setTextColor(Color.parseColor("#999999"));
-                    tv_title1.setBackgroundResource(R.drawable.shape_white);
-
-                    tv_title3.setTextColor(Color.parseColor("#999999"));
-                    tv_title3.setBackgroundResource(R.drawable.shape_white);
-
-                    tv_title4.setTextColor(Color.parseColor("#999999"));
-                    tv_title4.setBackgroundResource(R.drawable.shape_white);
-
-                    break;
-
-                case R.id.rb_reduce:
-                    position = 2;
-                    rb_reduce.setTextColor(Color.parseColor("#17BD60"));
-                    rb_common.setTextColor(Color.parseColor("#333333"));
-                    rb_must_common.setTextColor(Color.parseColor("#333333"));
-                    rb_new.setTextColor(Color.parseColor("#333333"));
-                    tv_title2.setTextColor(Color.parseColor("#999999"));
-                    tv_title2.setBackgroundResource(R.drawable.shape_white);
-
-                    tv_title1.setTextColor(Color.parseColor("#999999"));
-                    tv_title1.setBackgroundResource(R.drawable.shape_white);
-
-                    tv_title3.setTextColor(Color.parseColor("#ffffff"));
-                    tv_title3.setBackgroundResource(R.drawable.shape_greenss);
-
-                    tv_title4.setTextColor(Color.parseColor("#999999"));
-                    tv_title4.setBackgroundResource(R.drawable.shape_white);
-
-                    break;
-
-                case R.id.rb_common:
-                    position = 3;
-                    rb_reduce.setTextColor(Color.parseColor("#333333"));
-                    rb_common.setTextColor(Color.parseColor("#17BD60"));
-                    rb_must_common.setTextColor(Color.parseColor("#333333"));
-                    rb_new.setTextColor(Color.parseColor("#333333"));
-                    rb_reduce.setTextColor(Color.parseColor("#333333"));
-
-                    tv_title2.setTextColor(Color.parseColor("#999999"));
-                    tv_title2.setBackgroundResource(R.drawable.shape_white);
-
-                    tv_title1.setTextColor(Color.parseColor("#999999"));
-                    tv_title1.setBackgroundResource(R.drawable.shape_white);
-
-                    tv_title3.setTextColor(Color.parseColor("#999999"));
-                    tv_title3.setBackgroundResource(R.drawable.shape_white);
-
-                    tv_title4.setTextColor(Color.parseColor("#ffffff"));
-                    tv_title4.setBackgroundResource(R.drawable.shape_greenss);
-
-                    break;
-            }
-            //根据位置得到对应的Fragment
-            Fragment to = getFragment();
-            //替换到Fragment
-            switchFrament(mContent,to);
-        }
-    }
-
-    private Fragment mContent;
-    private void switchFrament(Fragment from,Fragment to) {
-        if(from != to){ //才切换
-            mContent = to;
-            FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction(); //开启事务
-            //判断to有没有被添加
-            if(!to.isAdded()){//to没有被添加
-                //1.from隐藏
-                if(from != null){
-                    ft.hide(from);
-                }
-                //2.添加to
-                if(to != null){
-                    ft.add(R.id.content,to).commit();
-                }
-            }else{ //to已经被添加
-                //1.from隐藏
-                if(from != null){
-                    ft.hide(from);
-                }
-                //2.显示to
-                if(to != null){
-                    ft.show(to).commit();
-                }
-            }
-        }
-    }
-    private Fragment getFragment() {
-        Fragment fragment = mBaseFragment.get(position);
-        return fragment;
-    }
 }

@@ -32,6 +32,7 @@ import com.puyue.www.qiaoge.event.UpDateNumEvent;
 import com.puyue.www.qiaoge.event.UpDateNumEvent5;
 import com.puyue.www.qiaoge.event.UpNumEvent;
 import com.puyue.www.qiaoge.fragment.home.MyGrideLayoutManager;
+import com.puyue.www.qiaoge.fragment.home.NewFragment;
 import com.puyue.www.qiaoge.helper.AppHelper;
 import com.puyue.www.qiaoge.helper.PublicRequestHelper;
 import com.puyue.www.qiaoge.helper.StringHelper;
@@ -93,6 +94,13 @@ public class ReductionProductActivity extends BaseSwipeActivity implements View.
     String flag = "reduce";
     String enjoyProduct;
     String cell;
+
+    public static NewFragment getInstance() {
+        NewFragment fragment = new NewFragment();
+        Bundle bundle = new Bundle();
+        fragment.setArguments(bundle);
+        return fragment;
+    }
     //降价集合
     private List<ProductNormalModel.DataBean.ListBean> list = new ArrayList<>();
     @Override

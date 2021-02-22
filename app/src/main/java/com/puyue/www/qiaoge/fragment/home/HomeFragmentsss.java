@@ -315,18 +315,18 @@ public class HomeFragmentsss extends BaseFragment implements View.OnClickListene
     RecyclerView rv_hot1;
     @BindView(R.id.tv_coupon_more)
     TextView tv_coupon_more;
-    @BindView(R.id.rv_test)
-    MyRecycleView rv_test;
+//    @BindView(R.id.rv_test)
+//    MyRecycleView rv_test;
     @BindView(R.id.rv_bar)
     RelativeLayout rv_bar;
     @BindView(R.id.llFixed)
     LinearLayout llFixed;
-    @BindView(R.id.inside_fixed_bar_parent)
-    RelativeLayout insideFixedBarParent;
+    @BindView(R.id.ll_parent)
+    RelativeLayout ll_parent;
     @BindView(R.id.scroll)
     MyScrollView scroll;
-    @BindView(R.id.rl_inside_fixed)
-    RelativeLayout rl_inside_fixed;
+    @BindView(R.id.rl_inSide)
+    RelativeLayout rl_inSide;
     @BindView(R.id.iv_full2_right)
     ImageView iv_full2_right;
     @BindView(R.id.iv_full_right)
@@ -335,6 +335,8 @@ public class HomeFragmentsss extends BaseFragment implements View.OnClickListene
     ImageView iv_team_right;
     @BindView(R.id.iv_team2_right)
     ImageView iv_team2_right;
+    @BindView(R.id.tv_look_more)
+    TextView tv_look_more;
     int pageNum = 1;
     int pageSize = 10;
     HotAdapter hotAdapter;
@@ -621,7 +623,6 @@ public class HomeFragmentsss extends BaseFragment implements View.OnClickListene
                                         couponActive1.clear();
                                         couponActive1.addAll(data1.getActives());
                                         commonAdapter = new CommonAdapter(R.layout.item_common_lists, couponActive1);
-//                                        recyclerView.setLayoutManager(new LinearLayoutManager(mActivity,LinearLayoutManager.HORIZONTAL, false));
                                         rv_coupon.setAdapter(commonAdapter);
                                         commonAdapter.notifyDataSetChanged();
 
@@ -756,6 +757,7 @@ public class HomeFragmentsss extends BaseFragment implements View.OnClickListene
     @Override
     public void initViews(View view) {
         binder = ButterKnife.bind(this, view);
+
 //        rl_bar.post(new Runnable() {
 //            @Override
 //            public void run() {
@@ -917,7 +919,7 @@ public class HomeFragmentsss extends BaseFragment implements View.OnClickListene
                         tv_title4.setTextColor(Color.parseColor("#999999"));
                         tv_title4.setBackgroundResource(R.drawable.shape_white);
                         listss.clear();
-                        getProductsLists(1, 10, "new");
+                        switchRb4();
 
                         break;
 
@@ -939,7 +941,7 @@ public class HomeFragmentsss extends BaseFragment implements View.OnClickListene
 
                         tv_title4.setTextColor(Color.parseColor("#999999"));
                         tv_title4.setBackgroundResource(R.drawable.shape_white);
-
+                        switchRb5();
                         break;
 
                     case R.id.rb_info:
@@ -959,7 +961,7 @@ public class HomeFragmentsss extends BaseFragment implements View.OnClickListene
                         tv_title4.setTextColor(Color.parseColor("#999999"));
                         tv_title4.setBackgroundResource(R.drawable.shape_white);
                         listss.clear();
-                        getProductsLists(1, 10, "reduct");
+                        switchRb6();
                         break;
 
                     case R.id.rb_common:
@@ -981,7 +983,7 @@ public class HomeFragmentsss extends BaseFragment implements View.OnClickListene
                         tv_title4.setTextColor(Color.parseColor("#ffffff"));
                         tv_title4.setBackgroundResource(R.drawable.shape_greenss);
                         listss.clear();
-                        getProductsLists(1, 10, "commonBuy");
+                        switchRb7();
                         break;
                 }
             }
@@ -1012,6 +1014,8 @@ public class HomeFragmentsss extends BaseFragment implements View.OnClickListene
         iv_full_right.setOnClickListener(this);
         iv_team_right.setOnClickListener(this);
         iv_team2_right.setOnClickListener(this);
+        tv_look_more.setOnClickListener(this);
+        tv_coupon_more.setOnClickListener(this);
     }
 
     private void isShow() {
@@ -1174,17 +1178,16 @@ public class HomeFragmentsss extends BaseFragment implements View.OnClickListene
                         int abs_y = Math.abs(y);
                         Log.d("dasdasdwdsds.....", abs_y + "aa");
                         if (y >= topHeight) {
-                            if (rl_inside_fixed.getParent() != llFixed) {
-                                insideFixedBarParent.removeView(rl_inside_fixed);
-                                llFixed.addView(rl_inside_fixed);
-                                rv_test.setNestedScrollingEnabled(true);
+                            if (rl_inSide.getParent() != llFixed) {
+                                ll_parent.removeView(rl_inSide);
+                                llFixed.addView(rl_inSide);
+
 
                             }
                         } else {
-                            if (rl_inside_fixed.getParent() != insideFixedBarParent) {
-                                llFixed.removeView(rl_inside_fixed);
-                                insideFixedBarParent.addView(rl_inside_fixed);
-                                rv_test.setNestedScrollingEnabled(false);
+                            if (rl_inSide.getParent() != ll_parent) {
+                                llFixed.removeView(rl_inSide);
+                                ll_parent.addView(rl_inSide);
                             }
                         }
 
@@ -1312,17 +1315,17 @@ public class HomeFragmentsss extends BaseFragment implements View.OnClickListene
             }
         });
 
-        refreshLayout.setOnLoadMoreListener(new OnLoadMoreListener() {
-            @Override
-            public void onLoadMore(@NonNull RefreshLayout refreshLayout) {
-                if (rb_common.isChecked()) {
-                    getProductsLists(pageNum, pageSize, "commonBuy");
-                } else if (rb_new.isChecked()) {
-                    getProductsLists(pageNum, pageSize, "new");
-                }
-
-            }
-        });
+//        refreshLayout.setOnLoadMoreListener(new OnLoadMoreListener() {
+//            @Override
+//            public void onLoadMore(@NonNull RefreshLayout refreshLayout) {
+//                if (rb_common.isChecked()) {
+//                    getProductsLists(pageNum, pageSize, "commonBuy");
+//                } else if (rb_new.isChecked()) {
+//                    getProductsLists(pageNum, pageSize, "new");
+//                }
+//
+//            }
+//        });
 
         rvIconAdapter = new RvIconAdapter(R.layout.item_home_icon,classifyList);
         GridLayoutManager gridLayoutManager = new GridLayoutManager(context, 2, RecyclerView.HORIZONTAL, false);
@@ -1346,7 +1349,7 @@ public class HomeFragmentsss extends BaseFragment implements View.OnClickListene
             }
         });
 
-        rv_test.setNestedScrollingEnabled(false);
+
         newAdapter = new NewAdapter(R.layout.item_team_list, listss, new NewAdapter.Onclick() {
             @Override
             public void addDialog() {
@@ -1363,9 +1366,6 @@ public class HomeFragmentsss extends BaseFragment implements View.OnClickListene
             }
         });
 
-        rv_test.setLayoutManager(new MyGrideLayoutManager(mActivity, 2));
-        rv_test.setAdapter(newAdapter);
-        rv_test.setNestedScrollingEnabled(false);
     }
 
 
@@ -1835,6 +1835,114 @@ public class HomeFragmentsss extends BaseFragment implements View.OnClickListene
                 });
     }
 
+
+    /**
+     * 常用清单
+     */
+    private void switchRb7() {
+        fragmentTransaction = supportFragmentManager.beginTransaction();
+        if (commonFragment == null) {
+            commonFragment = new CommonFragment();
+            fragmentTransaction.add(R.id.content, commonFragment, CommonFragment.class.getCanonicalName());
+        }
+
+        fragmentTransaction.show(commonFragment);
+
+        if (infoFragment != null) {
+            fragmentTransaction.hide(infoFragment);
+        }
+
+        if (mustFragment != null) {
+            fragmentTransaction.hide(mustFragment);
+        }
+
+        if (newFragment != null) {
+            fragmentTransaction.hide(newFragment);
+        }
+
+        fragmentTransaction.commitAllowingStateLoss();
+    }
+
+    /**
+     * 咨讯
+     */
+    private void switchRb6() {
+        fragmentTransaction = supportFragmentManager.beginTransaction();
+        if (infoFragment == null) {
+            infoFragment = new InfoFragment();
+        }
+        fragmentTransaction.add(R.id.content, infoFragment, InfoFragment.class.getCanonicalName());
+
+        fragmentTransaction.show(infoFragment);
+
+        if (mustFragment != null) {
+            fragmentTransaction.hide(mustFragment);
+        }
+
+        if (newFragment != null) {
+            fragmentTransaction.hide(newFragment);
+        }
+
+        if (commonFragment != null) {
+            fragmentTransaction.hide(commonFragment);
+        }
+
+        fragmentTransaction.commitAllowingStateLoss();
+    }
+
+    /**
+     * 必买
+     */
+    private void switchRb5() {
+        fragmentTransaction = supportFragmentManager.beginTransaction();
+        if (mustFragment == null) {
+            mustFragment = new MustFragment();
+            fragmentTransaction.add(R.id.content, mustFragment, MustFragment.class.getCanonicalName());
+        }
+
+        fragmentTransaction.show(mustFragment);
+
+        if (infoFragment != null) {
+            fragmentTransaction.hide(infoFragment);
+        }
+
+        if (newFragment != null) {
+            fragmentTransaction.hide(newFragment);
+        }
+
+        if (commonFragment != null) {
+            fragmentTransaction.hide(commonFragment);
+        }
+
+        fragmentTransaction.commitAllowingStateLoss();
+    }
+
+    /**
+     * 新品
+     */
+    private void switchRb4() {
+        fragmentTransaction = supportFragmentManager.beginTransaction();
+        if (newFragment == null) {
+            newFragment = new NewFragment();
+            fragmentTransaction.add(R.id.content, newFragment, NewFragment.class.getCanonicalName());
+        }
+        fragmentTransaction.show(newFragment);
+
+        if (infoFragment != null) {
+            fragmentTransaction.hide(infoFragment);
+        }
+
+        if (mustFragment != null) {
+            fragmentTransaction.hide(mustFragment);
+        }
+
+        if (commonFragment != null) {
+            fragmentTransaction.hide(commonFragment);
+        }
+
+        fragmentTransaction.commitAllowingStateLoss();
+    }
+
     /**
      * 获取首页信息
      */
@@ -2214,6 +2322,7 @@ public class HomeFragmentsss extends BaseFragment implements View.OnClickListene
                     Intent messageIntent = new Intent(getActivity(), ChooseAddressActivity.class);
                     messageIntent.putExtra("cityName", data.getCityName());
                     messageIntent.putExtra("areaName", data.getAreaName());
+                    messageIntent.putExtra("fromPage", "0");
 //                    startActivityForResult(messageIntent, 104);
                     startActivity(messageIntent);
                 }
@@ -2237,15 +2346,18 @@ public class HomeFragmentsss extends BaseFragment implements View.OnClickListene
                 Intent teamIntent = new Intent(getActivity(), TeamDetailActivity.class);
                 startActivity(teamIntent);
                 break;
+
             case R.id.rl_more4:
                 //满赠
                 Intent fullIntent = new Intent(getActivity(), FullGiftActivity.class);
                 startActivity(fullIntent);
                 break;
+
             case R.id.tv_change:
                 Intent changeCityIntent = new Intent(getActivity(), ChangeCityActivity.class);
                 startActivityForResult(changeCityIntent, 105);
                 break;
+
             case R.id.tv_change_address:
                 chooseAddressDialog = new ChooseHomeDialog(mActivity, "");
                 chooseAddressDialog.show();
@@ -2255,17 +2367,30 @@ public class HomeFragmentsss extends BaseFragment implements View.OnClickListene
                 Intent intent1 = new Intent(mActivity,FullGiftActivity.class);
                 startActivity(intent1);
                 break;
+
             case R.id.iv_full_right:
                 Intent intent2 = new Intent(mActivity,FullGiftActivity.class);
                 startActivity(intent2);
                 break;
+
             case R.id.iv_team_right:
                 Intent intent3 = new Intent(mActivity,TeamDetailActivity.class);
                 startActivity(intent3);
                 break;
+
             case R.id.iv_team2_right:
                 Intent intent4 = new Intent(mActivity,TeamDetailActivity.class);
                 startActivity(intent4);
+                break;
+
+            case R.id.tv_look_more:
+                Intent intent5 = new Intent(mActivity,CouponDetailActivity.class);
+                startActivity(intent5);
+                break;
+
+            case R.id.tv_coupon_more:
+                Intent intent6 = new Intent(mActivity,CouponDetailActivity.class);
+                startActivity(intent6);
                 break;
         }
     }

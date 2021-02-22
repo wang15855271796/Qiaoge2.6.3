@@ -42,13 +42,31 @@ public class TeamAdapter extends BaseQuickAdapter<CouponModel.DataBean.ActivesBe
 
     @Override
     protected void convert(BaseViewHolder helper, CouponModel.DataBean.ActivesBean item) {
-        Log.d("wdssddddd.......","111");
+        RelativeLayout rl_group = helper.getView(R.id.rl_group);
         ImageView iv_pic = helper.getView(R.id.iv_pic);
         TextView tv_price = helper.getView(R.id.tv_price);
         Glide.with(mContext).load(data.get(0).getDefaultPic()).into(iv_pic);
         tv_price.setText(item.getPrice());
         TextView tv_name = helper.getView(R.id.tv_name);
+        ImageView iv_sale_done = helper.getView(R.id.iv_sale_done);
         tv_name.setText(item.getActiveName());
+
+        if(item.getFlag()==1) {
+            iv_sale_done.setVisibility(View.VISIBLE);
+            Glide.with(mContext).load(item.getSoldOutPic()).into(iv_sale_done);
+        }else {
+            iv_sale_done.setVisibility(View.GONE);
+        }
+        rl_group.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(mContext,SpecialGoodDetailActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK );
+                intent.putExtra(AppConstant.ACTIVEID, item.getActiveId());
+                intent.putExtra("priceType",SharedPreferencesUtil.getString(mContext,"priceType"));
+                mContext.startActivity(intent);
+            }
+        });
         if(countDownTimer1 == null) {
             countDownTimer1 = new CountDownTimer(5000,1000) {
                 int i = 0;

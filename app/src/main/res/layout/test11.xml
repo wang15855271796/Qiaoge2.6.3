@@ -1,14 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:boy="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:boy="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/rootview"
     android:fitsSystemWindows="false"
-    android:focusableInTouchMode="true"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical">
 
     <com.scwang.smartrefresh.layout.SmartRefreshLayout
@@ -21,36 +18,38 @@
             android:id="@+id/header"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="?attr/actionBarSize"/>
+            />
 
-        <RelativeLayout
-            android:orientation="vertical"
+
+        <LinearLayout
             android:layout_width="match_parent"
+            android:orientation="vertical"
             android:layout_height="match_parent">
 
-            <com.puyue.www.qiaoge.view.ObservableScrollView
-                android:id="@+id/scroll"
+            <android.support.design.widget.CoordinatorLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
-                <LinearLayout
+                <android.support.design.widget.AppBarLayout
+                    android:id="@+id/appbar"
+                    app:layout_behavior="com.puyue.www.qiaoge.AppBarLayoutBehavior"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical">
+                    android:layout_height="wrap_content">
+
 
                     <RelativeLayout
                         android:orientation="vertical"
                         android:id="@+id/rl_grand"
                         android:layout_width="match_parent"
+                        boy:layout_scrollFlags="scroll|exitUntilCollapsed"
                         android:layout_height="wrap_content">
 
                         <LinearLayout
                             android:id="@+id/ll_scroll"
                             android:orientation="vertical"
                             android:layout_width="match_parent"
-                            android:layout_height="150dp">
+                            android:layout_height="200dp"/>
 
-                        </LinearLayout>
 
                         <LinearLayout
                             android:orientation="vertical"
@@ -871,108 +870,99 @@
 
                     <include layout="@layout/view_bar"/>
 
-                    <!--底部fragment区域-->
-                    <FrameLayout
-                        android:id="@+id/content"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent">
+                </android.support.design.widget.AppBarLayout>
 
-                    </FrameLayout>
-
-                </LinearLayout>
-
-            </com.puyue.www.qiaoge.view.ObservableScrollView>
-
-            <RelativeLayout
-                android:id="@+id/rl_bar"
-                android:layout_width="match_parent"
-                android:layout_height="72dp"
-                android:background="#ffffff">
-
-            </RelativeLayout>
-
-
-            <LinearLayout
-                android:orientation="vertical"
-                android:id="@+id/ll_fixed"
-                android:layout_marginTop="72dp"
-                android:layout_width="match_parent"
-                android:layout_height="60dp">
-
-            </LinearLayout>
-
-            <!--移动搜索框-->
-            <RelativeLayout
-                android:id="@+id/rl_search"
-                android:layout_width="match_parent"
-                android:layout_height="40dp"
-                android:layout_marginLeft="12dp"
-                android:layout_marginRight="12dp"
-                android:layout_marginTop="70dp"
-                >
-
-                <TextView
-                    android:layout_centerVertical="true"
-                    android:id="@+id/tv_search"
+                <FrameLayout
+                    android:id="@+id/fl_container"
+                    boy:layout_behavior="@string/appbar_scrolling_view_behavior"
                     android:layout_width="match_parent"
-                    android:layout_height="@dimen/size_33dp"
-                    android:background="@drawable/shape_goods_progress_fill"
-                    android:drawableLeft="@mipmap/ic_market_search"
-                    android:drawablePadding="@dimen/size_10dp"
-                    android:paddingLeft="12dp"
-                    android:paddingTop="8dp"
-                    android:paddingBottom="8dp"
-                    android:text="@string/inputCommodityName"
-                    android:textColor="#666666"
-                    android:textSize="@dimen/size_14dp" />
-            </RelativeLayout>
+                    android:layout_height="match_parent"/>
 
-            <!--顶部提示信息-->
-            <RelativeLayout
-                android:layout_marginTop="@dimen/size_35dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
 
-                <ImageView
-                    android:id="@+id/iv_location"
-                    android:layout_marginLeft="15dp"
-                    android:src="@mipmap/icon_address2"
-                    android:layout_width="19dp"
-                    android:layout_height="@dimen/size_23dp" />
+            </android.support.design.widget.CoordinatorLayout>
 
-                <TextView
-                    android:layout_toRightOf="@+id/iv_location"
-                    android:id="@+id/tv_city"
-                    android:layout_marginLeft="@dimen/size_5dp"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="杭州.余杭区"
-                    android:textColor="#ffffff"
-                    android:textSize="18dp" />
+        </LinearLayout>
 
-                <ImageView
-                    android:layout_alignBaseline="@+id/tv_city"
-                    android:layout_marginLeft="@dimen/size_5dp"
-                    android:layout_toRightOf="@+id/tv_city"
-                    android:src="@mipmap/ic_home_location_img"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
-            </RelativeLayout>
-
-        </RelativeLayout>
 
     </com.scwang.smartrefresh.layout.SmartRefreshLayout>
 
-    <com.wang.avi.AVLoadingIndicatorView
-        android:id="@+id/lav_activity_loading"
-        android:layout_centerInParent="true"
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <RelativeLayout
+            android:id="@+id/rl_bar"
+            android:background="#ffffff"
+            android:layout_width="match_parent"
+            android:layout_height="72dp"/>
+
+        <LinearLayout
+            android:id="@+id/ll_fixed"
+            android:background="@color/colorPrimary"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/size_60dp"/>
+
+    </LinearLayout>
+
+    <!--移动搜索框-->
+    <RelativeLayout
+        android:id="@+id/rl_search"
+        android:layout_marginTop="@dimen/dp_72"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_marginLeft="12dp"
+        android:layout_marginRight="12dp"
+        >
+        <TextView
+            android:layout_centerVertical="true"
+            android:id="@+id/tv_search"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/size_33dp"
+            android:background="@drawable/shape_goods_progress_fill"
+            android:drawableLeft="@mipmap/ic_market_search"
+            android:drawablePadding="@dimen/size_10dp"
+            android:paddingLeft="12dp"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp"
+            android:text="@string/inputCommodityName"
+            android:textColor="#666666"
+            android:textSize="@dimen/size_14dp" />
+
+    </RelativeLayout>
+
+    <!--顶部提示信息-->
+    <RelativeLayout
+        android:layout_marginTop="@dimen/size_35dp"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:indicatorName="BallPulseIndicator"
-        android:visibility="gone"
-        style="@style/AVLoadingIndicatorView.Large"
-        app:indicatorColor="#f40"
-        />
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/iv_location"
+            android:layout_marginLeft="15dp"
+            android:src="@mipmap/icon_address2"
+            android:layout_width="19dp"
+            android:layout_height="@dimen/size_23dp" />
+
+        <TextView
+            android:layout_toRightOf="@+id/iv_location"
+            android:id="@+id/tv_city"
+            android:layout_marginLeft="@dimen/size_5dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="杭州.余杭区"
+            android:textColor="#ffffff"
+            android:textSize="18dp" />
+
+        <ImageView
+            android:layout_alignBaseline="@+id/tv_city"
+            android:layout_marginLeft="@dimen/size_5dp"
+            android:layout_toRightOf="@+id/tv_city"
+            android:src="@mipmap/ic_home_location_img"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </RelativeLayout>
 
     <!--底部切换城市-->
     <RelativeLayout
@@ -1046,5 +1036,15 @@
 
     </RelativeLayout>
 
-</FrameLayout>
+    <com.wang.avi.AVLoadingIndicatorView
+        android:id="@+id/lav_activity_loading"
+        android:layout_centerInParent="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:indicatorName="BallPulseIndicator"
+        android:visibility="gone"
+        style="@style/AVLoadingIndicatorView.Large"
+        app:indicatorColor="#f40"
+        />
 
+</RelativeLayout>

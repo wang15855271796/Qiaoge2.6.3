@@ -40,7 +40,7 @@
 
                     <RelativeLayout
                         android:orientation="vertical"
-                        android:id="@+id/rl_grand"
+                        android:id="@+id/rl_scroll1"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content">
 
@@ -178,10 +178,11 @@
                                 </LinearLayout>
 
                                 <LinearLayout
+                                    android:visibility="gone"
                                     android:id="@+id/ll_driver"
                                     android:orientation="vertical"
                                     android:layout_width="match_parent"
-                                    android:layout_height="wrap_content">
+                                    android:layout_height="@dimen/size_90dp">
 
                                     <LinearLayout
                                         android:orientation="vertical"
@@ -206,6 +207,7 @@
                                 <!--秒杀开始-->
                                 <LinearLayout
                                     android:id="@+id/ll_skill"
+                                    android:visibility="gone"
                                     android:orientation="vertical"
                                     android:layout_marginTop="@dimen/size_10dp"
                                     android:background="@drawable/shape_skill_reds"
@@ -284,6 +286,7 @@
                                 <!--满赠和拼团开始-->
                                 <RelativeLayout
                                     android:id="@+id/rl1"
+                                    android:visibility="gone"
                                     android:orientation="horizontal"
                                     android:layout_marginBottom="@dimen/size_11dp"
                                     android:layout_width="match_parent"
@@ -402,6 +405,7 @@
 
                                 <!--拼团和满赠2-->
                                 <RelativeLayout
+                                    android:visibility="gone"
                                     android:id="@+id/rl2"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content">
@@ -582,9 +586,8 @@
                                                 android:layout_marginBottom="@dimen/size_12dp"
                                                 android:layout_centerVertical="true"
                                                 android:layout_width="match_parent"
-                                                android:layout_height="wrap_content">
+                                                android:layout_height="wrap_content"/>
 
-                                            </android.support.v7.widget.RecyclerView>
 
                                             <android.support.v7.widget.RecyclerView
                                                 android:id="@+id/rv_coupon1"
@@ -593,9 +596,8 @@
                                                 android:layout_marginBottom="@dimen/size_12dp"
                                                 android:layout_centerVertical="true"
                                                 android:layout_width="match_parent"
-                                                android:layout_height="wrap_content">
+                                                android:layout_height="wrap_content"/>
 
-                                            </android.support.v7.widget.RecyclerView>
 
                                         </RelativeLayout>
                                     </RelativeLayout>
@@ -603,6 +605,7 @@
                                 </LinearLayout>
                                 <!--热销-->
                                 <LinearLayout
+                                    android:visibility="gone"
                                     android:layout_marginTop="@dimen/dp_10"
                                     android:orientation="vertical"
                                     android:layout_marginRight="@dimen/size_12dp"
@@ -872,12 +875,12 @@
                     <include layout="@layout/view_bar"/>
 
                     <!--底部fragment区域-->
-                    <FrameLayout
-                        android:id="@+id/content"
+                    <LinearLayout
+                        android:background="#999999"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent">
+                        android:layout_height="800dp">
 
-                    </FrameLayout>
+                    </LinearLayout>
 
                 </LinearLayout>
 

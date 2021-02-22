@@ -151,6 +151,17 @@ public class FullAdapter extends RecyclerView.Adapter<FullAdapter.BaseViewHolder
 
         }
 
+        viewHolder.rl_group.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(mActivity,CommonGoodsDetailActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK );
+                intent.putExtra(AppConstant.ACTIVEID, activesBean.getProductMainId());
+                intent.putExtra("priceType",SharedPreferencesUtil.getString(mActivity,"priceType"));
+                mActivity.startActivity(intent);
+            }
+        });
+
     }
 
     @Override

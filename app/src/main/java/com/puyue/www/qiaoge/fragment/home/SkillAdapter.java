@@ -100,12 +100,12 @@ public class SkillAdapter extends RecyclerView.Adapter<SkillAdapter.BaseViewHold
             holder.tv_price.setVisibility(View.VISIBLE);
         }
 
-//        if(activesBean.getFlag()==1) {
-//            holder.iv_sale_done.setVisibility(View.VISIBLE);
-//            Glide.with(mContext).load(activesBean.getSoldOutPic()).into(holder.iv_sale_done);
-//        }else {
-//            holder.iv_sale_done.setVisibility(View.GONE);
-//        }
+        if(activesBean.getFlag()==1) {
+            holder.iv_sale_done.setVisibility(View.VISIBLE);
+            Glide.with(mContext).load(activesBean.getSoldOutPic()).into(holder.iv_sale_done);
+        }else {
+            holder.iv_sale_done.setVisibility(View.GONE);
+        }
 
         holder.rl_group.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -251,7 +251,7 @@ public class SkillAdapter extends RecyclerView.Adapter<SkillAdapter.BaseViewHold
         //        private TextView tv_old_price;
         private TextView tv_desc;
         private TextView tv_name;
-        //        private ImageView iv_sale_done;
+        private ImageView iv_sale_done;
         private ImageView iv_flag;
         public BaseViewHolder(View view) {
             super(view);
@@ -263,7 +263,7 @@ public class SkillAdapter extends RecyclerView.Adapter<SkillAdapter.BaseViewHold
 //            tv_old_price = (TextView) view.findViewById(R.id.tv_old_price);
             tv_name = (TextView) view.findViewById(R.id.tv_name);
             tv_desc = (TextView) view.findViewById(R.id.tv_desc);
-//            iv_sale_done = (ImageView) view.findViewById(R.id.iv_sale_done);
+            iv_sale_done = (ImageView) view.findViewById(R.id.iv_sale_done);
         }
     }
 

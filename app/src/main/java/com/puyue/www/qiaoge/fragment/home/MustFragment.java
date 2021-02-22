@@ -23,6 +23,7 @@ import com.puyue.www.qiaoge.helper.UserInfoHelper;
 import com.puyue.www.qiaoge.model.home.GetCustomerPhoneModel;
 import com.puyue.www.qiaoge.model.home.MustModel;
 import com.puyue.www.qiaoge.utils.LoginUtil;
+import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -99,7 +100,7 @@ public class MustFragment extends BaseFragment {
         });
         recyclerView.setLayoutManager(new GridLayoutManager(mActivity,2));
         recyclerView.setAdapter(mustAdapter);
-
+        recyclerView.setNestedScrollingEnabled(false);
         mustAdapter.setEmptyView(emptyView);
     }
 

@@ -49,7 +49,7 @@ public class ChangeCityActivity extends BaseActivity {
     private RecyclerView rl_city_change;
     private CityChangeAdapter mAdapter;
     private List<CityChangeModel.DataBean> listCity =new ArrayList<>();
-
+    String fromPage;
     @Override
     public boolean handleExtra(Bundle savedInstanceState) {
         return false;
@@ -69,8 +69,9 @@ public class ChangeCityActivity extends BaseActivity {
     @Override
     public void setViewData() {
         String flag = getIntent().getStringExtra("flag");
+        fromPage = getIntent().getStringExtra("fromPage");
         rl_city_change.setLayoutManager(new LinearLayoutManager(mContext));
-        mAdapter = new CityChangeAdapter(flag,mActivity,R.layout.city_item, listCity);
+        mAdapter = new CityChangeAdapter(flag,mActivity,R.layout.city_item, listCity,fromPage);
         rl_city_change.setAdapter(mAdapter);
     }
 

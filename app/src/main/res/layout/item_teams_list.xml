@@ -8,17 +8,31 @@
     android:layout_height="wrap_content">
 
     <LinearLayout
+        android:id="@+id/rl_group"
         android:layout_marginBottom="@dimen/size_15dp"
         android:layout_width="wrap_content"
         android:orientation="vertical"
         android:layout_height="wrap_content">
 
-        <com.puyue.www.qiaoge.RoundImageView
-            android:id="@+id/iv_pic"
-            android:scaleType="fitXY"
-            android:layout_gravity="center_horizontal"
-            android:layout_width="98dp"
-            android:layout_height="98dp" />
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <com.puyue.www.qiaoge.RoundImageView
+                android:id="@+id/iv_pic"
+                android:scaleType="fitXY"
+                android:layout_gravity="center_horizontal"
+                android:layout_width="98dp"
+                android:layout_height="98dp" />
+
+            <ImageView
+                android:layout_centerInParent="true"
+                android:id="@+id/iv_sale_done"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+        </RelativeLayout>
+
 
         <TextView
             android:visibility="gone"

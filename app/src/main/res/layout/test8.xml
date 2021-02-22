@@ -1,0 +1,284 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:boy="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/rootview"
+    android:fitsSystemWindows="false"
+    android:focusableInTouchMode="true"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical">
+
+    <com.scwang.smartrefresh.layout.SmartRefreshLayout
+        android:id="@+id/smart"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+
+        <com.scwang.smartrefresh.header.MaterialHeader
+            android:id="@+id/header"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="?attr/actionBarSize"/>
+
+        <RelativeLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <com.puyue.www.qiaoge.view.ObservableScrollView
+                android:id="@+id/scroll"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <RelativeLayout
+                        android:orientation="vertical"
+                        android:id="@+id/rl_scroll1"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <LinearLayout
+                            android:orientation="vertical"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
+
+                            <LinearLayout
+                                android:id="@+id/ll_scroll"
+                                android:background="#ff0000"
+                                android:orientation="vertical"
+                                android:layout_width="match_parent"
+                                android:layout_height="270dp">
+
+                            </LinearLayout>
+
+                        </LinearLayout>
+
+                        <RelativeLayout
+                            android:id="@+id/rl_top"
+                            android:layout_marginTop="110dp"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
+
+                            <!--顶部的六种推荐-->
+                            <android.support.v7.widget.RecyclerView
+                                android:id="@+id/rv_recommend"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"/>
+
+                            <com.puyue.www.qiaoge.banner.Banner
+                                android:id="@+id/banner"
+                                android:layout_marginTop="@dimen/size_35dp"
+                                android:layout_width="match_parent"
+                                android:layout_height="142dp"
+                                android:layout_marginLeft="@dimen/dp_10"
+                                android:layout_marginRight="@dimen/dp_10"
+                                />
+
+                            <com.puyue.www.qiaoge.RoundImageView
+                                android:id="@+id/iv_empty"
+                                android:scaleType="fitXY"
+                                android:layout_marginLeft="@dimen/dp_10"
+                                android:layout_marginRight="@dimen/dp_10"
+                                android:visibility="gone"
+                                android:layout_marginTop="@dimen/size_30dp"
+                                android:src="@drawable/default_bg"
+                                android:layout_width="match_parent"
+                                android:layout_height="142dp" />
+
+
+                        </RelativeLayout>
+
+                        <android.support.v7.widget.RecyclerView
+                            android:id="@+id/rv_coupon1"
+                            android:layout_below="@+id/rl_top"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"/>
+
+                    </RelativeLayout>
+
+                    <include layout="@layout/view_bar"/>
+
+                    <!--底部fragment区域-->
+                    <LinearLayout
+                        android:background="#999999"
+                        android:layout_width="match_parent"
+                        android:layout_height="800dp">
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </com.puyue.www.qiaoge.view.ObservableScrollView>
+
+            <RelativeLayout
+                android:id="@+id/rl_bar"
+                android:layout_width="match_parent"
+                android:layout_height="72dp"
+                android:background="#ffffff">
+
+            </RelativeLayout>
+
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:id="@+id/ll_fixed"
+                android:layout_marginTop="72dp"
+                android:layout_width="match_parent"
+                android:layout_height="60dp">
+
+            </LinearLayout>
+
+            <!--移动搜索框-->
+            <RelativeLayout
+                android:id="@+id/rl_search"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_marginLeft="12dp"
+                android:layout_marginRight="12dp"
+                android:layout_marginTop="70dp"
+                >
+
+                <TextView
+                    android:layout_centerVertical="true"
+                    android:id="@+id/tv_search"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/size_33dp"
+                    android:background="@drawable/shape_goods_progress_fill"
+                    android:drawableLeft="@mipmap/ic_market_search"
+                    android:drawablePadding="@dimen/size_10dp"
+                    android:paddingLeft="12dp"
+                    android:paddingTop="8dp"
+                    android:paddingBottom="8dp"
+                    android:text="@string/inputCommodityName"
+                    android:textColor="#666666"
+                    android:textSize="@dimen/size_14dp" />
+            </RelativeLayout>
+
+            <!--顶部提示信息-->
+            <RelativeLayout
+                android:layout_marginTop="@dimen/size_35dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:id="@+id/iv_location"
+                    android:layout_marginLeft="15dp"
+                    android:src="@mipmap/icon_address2"
+                    android:layout_width="19dp"
+                    android:layout_height="@dimen/size_23dp" />
+
+                <TextView
+                    android:layout_toRightOf="@+id/iv_location"
+                    android:id="@+id/tv_city"
+                    android:layout_marginLeft="@dimen/size_5dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="杭州.余杭区"
+                    android:textColor="#ffffff"
+                    android:textSize="18dp" />
+
+                <ImageView
+                    android:layout_alignBaseline="@+id/tv_city"
+                    android:layout_marginLeft="@dimen/size_5dp"
+                    android:layout_toRightOf="@+id/tv_city"
+                    android:src="@mipmap/ic_home_location_img"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+            </RelativeLayout>
+
+        </RelativeLayout>
+
+    </com.scwang.smartrefresh.layout.SmartRefreshLayout>
+
+    <com.wang.avi.AVLoadingIndicatorView
+        android:id="@+id/lav_activity_loading"
+        android:layout_centerInParent="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:indicatorName="BallPulseIndicator"
+        android:visibility="gone"
+        style="@style/AVLoadingIndicatorView.Large"
+        app:indicatorColor="#f40"
+        />
+
+    <!--底部切换城市-->
+    <RelativeLayout
+        android:visibility="gone"
+        android:id="@+id/rl_address"
+        android:layout_alignParentBottom="true"
+        android:background="#FFFACA"
+        android:layout_width="match_parent"
+        android:layout_height="73dp">
+
+        <TextView
+            android:id="@+id/tv"
+            android:textSize="@dimen/sp_14"
+            android:textColor="#333333"
+            android:layout_marginLeft="@dimen/size_44dp"
+            android:layout_marginTop="@dimen/size_12dp"
+            android:text="当前地址不在配送范围内，建议您 "
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:text="修改地址"
+            android:id="@+id/tv_change_address"
+            android:textColor="#fff"
+            android:textSize="@dimen/sp_14"
+            android:layout_marginLeft="@dimen/size_5dp"
+            android:layout_marginTop="@dimen/size_5dp"
+            android:layout_toRightOf="@+id/tv"
+            android:padding="@dimen/size_5dp"
+            android:background="@drawable/shape_orange"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:id="@+id/tv1"
+            android:textSize="@dimen/sp_14"
+            android:textColor="#333333"
+            android:layout_below="@+id/tv"
+            android:layout_marginLeft="@dimen/size_44dp"
+            android:layout_marginTop="@dimen/size_10dp"
+            android:text="或"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:text="修改城市"
+            android:id="@+id/tv_change"
+            android:textColor="#fff"
+            android:textSize="@dimen/sp_14"
+            android:layout_below="@+id/tv"
+            android:layout_marginLeft="@dimen/size_5dp"
+            android:layout_marginTop="@dimen/size_5dp"
+            android:layout_toRightOf="@+id/tv1"
+            android:padding="@dimen/size_5dp"
+            android:background="@drawable/shape_orange"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+
+        <TextView
+            android:id="@+id/tv2"
+            android:textSize="@dimen/sp_14"
+            android:textColor="#333333"
+            android:layout_below="@+id/tv"
+            android:layout_marginLeft="@dimen/size_5dp"
+            android:layout_toRightOf="@+id/tv_change"
+            android:layout_marginTop="@dimen/size_10dp"
+            android:text="以便您能够正常下单!"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+    </RelativeLayout>
+
+</FrameLayout>
+

@@ -54,20 +54,30 @@ public class Skill5Adapter extends RecyclerView.Adapter<Skill5Adapter.BaseViewHo
             viewHolder.tv_name.setText(activesBean.getActiveName());
             viewHolder.tv_price.setText(activesBean.getPrice());
             Glide.with(context).load(activesBean.getDefaultPic()).into(viewHolder.iv_pic);
+            if(activesBean.getFlag()==1) {
+                Glide.with(context).load(activesBean.getSoldOutPic()).into(viewHolder.iv_sale_done);
+                viewHolder.iv_sale_done.setVisibility(View.VISIBLE);
+            }else {
+                viewHolder.iv_sale_done.setVisibility(View.GONE);
+            }
+
+            viewHolder.rl_group.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(context,SeckillGoodActivity.class);
+                    intent.putExtra(AppConstant.ACTIVEID,activesBean.getActiveId());
+                    intent.putExtra("priceType",SharedPreferencesUtil.getString(context,"priceType"));
+                    intent.putExtra("num","-1");
+                    context.startActivity(intent);
+                }
+            });
         }catch (Exception e) {
 
         }
 
-        viewHolder.ll_root.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(context,SeckillGoodActivity.class);
-                intent.putExtra(AppConstant.ACTIVEID,skillActive3.get(position).getActiveId());
-                intent.putExtra("priceType",SharedPreferencesUtil.getString(context,"priceType"));
-                intent.putExtra("num","-1");
-                context.startActivity(intent);
-            }
-        });
+
+
+
 
     }
 
@@ -80,13 +90,15 @@ public class Skill5Adapter extends RecyclerView.Adapter<Skill5Adapter.BaseViewHo
         ImageView iv_pic;
         TextView tv_name;
         TextView tv_price;
-        LinearLayout ll_root;
+        LinearLayout rl_group;
+        ImageView iv_sale_done;
         public BaseViewHolder(View view) {
             super(view);
+            iv_sale_done = (ImageView) view.findViewById(R.id.iv_sale_done);
             iv_pic = (ImageView) view.findViewById(R.id.iv_pic);
             tv_name = (TextView) view.findViewById(R.id.tv_name);
             tv_price = (TextView) view.findViewById(R.id.tv_price);
-            ll_root = (LinearLayout) view.findViewById(R.id.ll_root);
+            rl_group = (LinearLayout) view.findViewById(R.id.rl_group);
         }
     }
 }

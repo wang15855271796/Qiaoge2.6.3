@@ -13,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -50,6 +51,25 @@ public class Team3Adapter extends BaseQuickAdapter<CouponModel.DataBean.ActivesB
         TextView tv_name = helper.getView(R.id.tv_name);
         tv_name.setText(data.get(0).getActiveName());
         tv_price.setText(data.get(0).getPrice());
+        ImageView iv_sale_done = helper.getView(R.id.iv_sale_done);
+        if(item.getFlag()==1) {
+            iv_sale_done.setVisibility(View.VISIBLE);
+            Glide.with(mContext).load(item.getSoldOutPic()).into(iv_sale_done);
+        }else {
+            iv_sale_done.setVisibility(View.GONE);
+        }
+
+        LinearLayout rl_group = helper.getView(R.id.rl_group);
+        rl_group.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(mContext,SpecialGoodDetailActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK );
+                intent.putExtra(AppConstant.ACTIVEID, item.getActiveId());
+                intent.putExtra("priceType",SharedPreferencesUtil.getString(mContext,"priceType"));
+                mContext.startActivity(intent);
+            }
+        });
         if(countDownTimer1 == null) {
             countDownTimer1 = new CountDownTimer(5000,1000) {
                 int i = 0;

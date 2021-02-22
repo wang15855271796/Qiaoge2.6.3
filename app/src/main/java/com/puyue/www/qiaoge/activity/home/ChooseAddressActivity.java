@@ -18,6 +18,7 @@ import com.baidu.mapapi.search.sug.SuggestionSearch;
 import com.baidu.mapapi.search.sug.SuggestionSearchOption;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.puyue.www.qiaoge.R;
+import com.puyue.www.qiaoge.activity.HomeActivity;
 import com.puyue.www.qiaoge.activity.mine.account.AddressListActivity;
 import com.puyue.www.qiaoge.activity.mine.account.EditAddressActivity;
 import com.puyue.www.qiaoge.adapter.mine.SuggestAdressAdapter;
@@ -96,7 +97,7 @@ public class ChooseAddressActivity extends BaseSwipeActivity implements View.OnC
     private String city;
     private String areaName1;
     private int isDefault;
-
+    String fromPage;
     @Override
     public boolean handleExtra(Bundle savedInstanceState) {
         return false;
@@ -120,16 +121,26 @@ public class ChooseAddressActivity extends BaseSwipeActivity implements View.OnC
         addressListAdapter = new AddressListAdapter(R.layout.item_address_list,list);
         recyclerView.setLayoutManager(new LinearLayoutManager(mContext));
         recyclerView.setAdapter(addressListAdapter);
+        fromPage = getIntent().getStringExtra("fromPage");
         addressListAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
                 requestEditDefaultAddress(list.get(position).id,null,position);
                 areaName = getIntent().getStringExtra("areaName");
-//                SharedPreferencesUtil.saveString(mActivity,"cityName",list.get(position).getCityName());
-//                SharedPreferencesUtil.saveString(mActivity,"areaName",list.get(position).getAreaName());
-//                SharedPreferencesUtil.saveString(mActivity,"changeFlag","0");
+                if(fromPage.equals("0")) {
+                    finish();
+                }else {
+                    if(areaName.equals(list.get(position).areaName)) {
+                        finish();
+                    }else {
+                        Intent intent = new Intent(mContext,HomeActivity.class);//跳回首页
+                        startActivity(intent);
+                        EventBus.getDefault().post(new CityEvent());
+                        finish();
+                    }
+                }
 
-                finish();
+
             }
         });
 
@@ -323,6 +334,8 @@ public class ChooseAddressActivity extends BaseSwipeActivity implements View.OnC
 
             case R.id.ll_area:
                 Intent intentss = new Intent(mActivity,ChangeCityActivity.class);
+                intentss.putExtra("fromPage",fromPage);
+//                areaName
                 startActivityForResult(intentss, 105);
                 finish();
                 break;

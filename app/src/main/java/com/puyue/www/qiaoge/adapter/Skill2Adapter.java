@@ -99,10 +99,10 @@ public class Skill2Adapter extends RecyclerView.Adapter<Skill2Adapter.BaseViewHo
         }
 
         if(activesBean.getFlag()==1) {
-//            holder.iv_sale_done.setVisibility(View.VISIBLE);
-//            Glide.with(mContext).load(activesBean.getSoldOutPic()).into(holder.iv_sale_done);
+            holder.iv_sale_done.setVisibility(View.VISIBLE);
+            Glide.with(mContext).load(activesBean.getSoldOutPic()).into(holder.iv_sale_done);
         }else {
-//            holder.iv_sale_done.setVisibility(View.GONE);
+            holder.iv_sale_done.setVisibility(View.GONE);
         }
 
         holder.rl_group.setOnClickListener(new View.OnClickListener() {
@@ -250,7 +250,7 @@ public class Skill2Adapter extends RecyclerView.Adapter<Skill2Adapter.BaseViewHo
         //        private TextView tv_old_price;
         private TextView tv_desc;
         private TextView tv_name;
-        //        private ImageView iv_sale_done;
+        private ImageView iv_sale_done;
         private ImageView iv_flag;
         private TextView tv_coupon;
         public BaseViewHolder(View view) {
@@ -265,7 +265,7 @@ public class Skill2Adapter extends RecyclerView.Adapter<Skill2Adapter.BaseViewHo
 //            tv_old_price = (TextView) view.findViewById(R.id.tv_old_price);
             tv_name = (TextView) view.findViewById(R.id.tv_name);
             tv_desc = (TextView) view.findViewById(R.id.tv_desc);
-//            iv_sale_done = (ImageView) view.findViewById(R.id.iv_sale_done);
+            iv_sale_done = (ImageView) view.findViewById(R.id.iv_sale_done);
         }
     }
 }

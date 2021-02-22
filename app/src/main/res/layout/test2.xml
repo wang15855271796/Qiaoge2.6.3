@@ -1,21 +1,97 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:boy="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
+    android:fitsSystemWindows="true"
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <com.puyue.www.qiaoge.view.selectmenu.searchViews
-        android:id="@+id/main_search_layout"
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:orientation="vertical"
+        android:layout_height="match_parent">
+
+        <android.support.design.widget.CoordinatorLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <android.support.design.widget.AppBarLayout
+                android:id="@+id/appbar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <LinearLayout
+                    android:id="@+id/iv_search"
+                    android:layout_width="match_parent"
+                    android:layout_height="200dp"
+                    android:gravity="center"
+                    android:background="@color/black"
+                    boy:layout_scrollFlags="scroll|exitUntilCollapsed"
+                    android:orientation="vertical">
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/ll_topview"
+                    android:layout_width="match_parent"
+                    android:layout_height="66dp"
+                    android:gravity="right"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:text="顶部吸附1"
+                        android:layout_gravity="center_horizontal"
+                        android:textSize="@dimen/size_45dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"/>
+                </LinearLayout>
+
+            </android.support.design.widget.AppBarLayout>
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/reclerview"
+                android:layout_width="match_parent"
+                boy:layout_behavior="@string/appbar_scrolling_view_behavior"
+                boy:layout_scrollFlags="scroll"
+                android:layout_height="match_parent">
+            </android.support.v7.widget.RecyclerView>
+
+        </android.support.design.widget.CoordinatorLayout>
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-    </com.puyue.www.qiaoge.view.selectmenu.searchViews>
 
-    <ListView
-        android:visibility="gone"
-        android:id="@+id/main_lv_search_results"
+        <RelativeLayout
+            android:id="@+id/rv_bar"
+            android:background="#4DE0D9D9"
+            android:layout_width="match_parent"
+            android:layout_height="90dp"/>
+
+        <LinearLayout
+            android:id="@+id/ll_top"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:gravity="right"
+            android:orientation="vertical">
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <RelativeLayout
+        android:background="#ffffff"
+        android:id="@+id/rv_search"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="40dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="120dp"
+        >
 
-    </ListView>
-</LinearLayout>
+    </RelativeLayout>
+
+</RelativeLayout>

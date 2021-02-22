@@ -43,7 +43,8 @@ public abstract class CityDialog extends Dialog implements View.OnClickListener 
     ImageView iv_close;
     List<CityChangeModel.DataBean.CityNamesBean.AreaNamesBean> areaNames;
     String flag;
-    public CityDialog(String flag, Activity context, List<CityChangeModel.DataBean.CityNamesBean.AreaNamesBean> areaNames) {
+    String fromPage;
+    public CityDialog(String flag, Activity context, List<CityChangeModel.DataBean.CityNamesBean.AreaNamesBean> areaNames,String fromPage) {
         super(context, R.style.promptDialog);
         setContentView(R.layout.dialog_city);
         this.mContext = context;
@@ -51,6 +52,7 @@ public abstract class CityDialog extends Dialog implements View.OnClickListener 
         this.flag = flag;
         initView();
         initAction();
+        this.fromPage = fromPage;
     }
 
     private void initView() {
@@ -64,17 +66,37 @@ public abstract class CityDialog extends Dialog implements View.OnClickListener 
         areaAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-                isShow();
-                Confirm();
-                dismiss();
-                UserInfoHelper.saveAreaName(mContext, areaNames.get(position).getAreaName());
-                SharedPreferencesUtil.saveInt(mContext,"isClick",1);
-                UserInfoHelper.saveChangeFlag(mContext,1+"");
-                Intent intent = new Intent(mContext,HomeActivity.class);//跳回首页
-                mContext.setResult(104,intent);
-                EventBus.getDefault().post(new CityEvent());
-                mContext.startActivity(intent);
-                mContext.finish();
+                if(fromPage.equals("0")) {
+                    isShow();
+                    Confirm();
+                    dismiss();
+                    UserInfoHelper.saveAreaName(mContext, areaNames.get(position).getAreaName());
+                    SharedPreferencesUtil.saveInt(mContext,"isClick",1);
+                    UserInfoHelper.saveChangeFlag(mContext,1+"");
+                    Intent intent = new Intent(mContext,HomeActivity.class);//跳回首页
+                    mContext.setResult(104,intent);
+                    EventBus.getDefault().post(new CityEvent());
+                    mContext.startActivity(intent);
+                    mContext.finish();
+                }else {
+                    String areaName = UserInfoHelper.getAreaName(mContext);
+                    if(areaNames.get(position).getAreaName().equals(areaName)) {
+                        mContext.finish();
+                    }else {
+                        isShow();
+                        Confirm();
+                        dismiss();
+                        UserInfoHelper.saveAreaName(mContext, areaNames.get(position).getAreaName());
+                        SharedPreferencesUtil.saveInt(mContext,"isClick",1);
+                        UserInfoHelper.saveChangeFlag(mContext,1+"");
+                        Intent intent = new Intent(mContext,HomeActivity.class);//跳回首页
+                        mContext.setResult(104,intent);
+                        EventBus.getDefault().post(new CityEvent());
+                        mContext.startActivity(intent);
+                        mContext.finish();
+                    }
+                }
+
 
             }
         });

@@ -21,13 +21,27 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
 
-        <ImageView
-            android:id="@+id/iv_pic"
+        <RelativeLayout
+            android:id="@+id/rl_pics"
             android:layout_marginLeft="@dimen/dp_10"
             android:layout_centerVertical="true"
-            tools:src="@mipmap/icon_baidu"
-            android:layout_width="@dimen/size_88dp"
-            android:layout_height="@dimen/size_88dp" />
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:id="@+id/iv_pic"
+                tools:src="@mipmap/icon_baidu"
+                android:layout_width="@dimen/size_88dp"
+                android:layout_height="@dimen/size_88dp" />
+
+            <ImageView
+                android:layout_centerInParent="true"
+                android:id="@+id/iv_sale_done"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+        </RelativeLayout>
+
 
         <TextView
             tools:text="销量1000"
@@ -43,7 +57,7 @@
         <TextView
             android:textColor="#333333"
             android:maxLines="1"
-            android:layout_toRightOf="@+id/iv_pic"
+            android:layout_toRightOf="@+id/rl_pics"
             android:layout_marginRight="@dimen/dp_10"
             android:id="@+id/tv_name"
             android:layout_marginTop="@dimen/size_12dp"
@@ -61,7 +75,7 @@
             android:layout_marginLeft="@dimen/dp_10"
             android:background="@drawable/shape_team_orange"
             android:layout_below="@+id/tv_name"
-            android:layout_toRightOf="@+id/iv_pic"
+            android:layout_toRightOf="@+id/rl_pics"
             android:layout_width="wrap_content"
             android:layout_height="@dimen/size_30dp">
 
@@ -93,7 +107,7 @@
         <TextView
             android:id="@+id/tv_desc"
             android:visibility="gone"
-            android:layout_toRightOf="@+id/iv_pic"
+            android:layout_toRightOf="@+id/rl_pics"
             android:layout_marginLeft="@dimen/size_5dp"
             android:layout_marginTop="@dimen/size_35dp"
             android:layout_below="@+id/tv_name"

@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Path;
 import android.graphics.PathMeasure;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
@@ -32,6 +33,7 @@ import com.bumptech.glide.Glide;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.puyue.www.qiaoge.NewWebViewActivity;
 import com.puyue.www.qiaoge.R;
+import com.puyue.www.qiaoge.UnicornManager;
 import com.puyue.www.qiaoge.activity.CartActivity;
 import com.puyue.www.qiaoge.activity.IntelliGencyInfoActivity;
 import com.puyue.www.qiaoge.activity.mine.login.LoginActivity;
@@ -168,6 +170,8 @@ public class CommonGoodsDetailActivity extends BaseSwipeActivity {
     FlowLayout fl_container;
     @BindView(R.id.tv_address)
     TextView tv_address;
+    @BindView(R.id.rl_gongying)
+    RelativeLayout rl_gongying;
     @BindView(R.id.tv_desc)
     TextView tv_desc;
     @BindView(R.id.recyclerViewImage)
@@ -194,6 +198,10 @@ public class CommonGoodsDetailActivity extends BaseSwipeActivity {
     TextView tv_full_desc;
     @BindView(R.id.iv3)
     ImageView iv3;
+    @BindView(R.id.iv2)
+    ImageView iv2;
+    @BindView(R.id.tv_send_area)
+    TextView tv_send_area;
     private AlertDialog mTypedialog;
     LinearLayout ll_service;
     TextView tv_price;
@@ -403,17 +411,17 @@ public class CommonGoodsDetailActivity extends BaseSwipeActivity {
                         //这个用户是零售用户
 //                        if ("批发".equals(type)) {
 
-                            if (StringHelper.notEmptyAndNull(cell)) {
-                                AppHelper.showAuthorizationDialog(mContext, cell, new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View view) {
-                                        if (StringHelper.notEmptyAndNull(AppHelper.getAuthorizationCode())) {
-                                        } else {
-                                            AppHelper.showMsg(mContext, "请输入完整授权码");
-                                        }
+                        if (StringHelper.notEmptyAndNull(cell)) {
+                            AppHelper.showAuthorizationDialog(mContext, cell, new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    if (StringHelper.notEmptyAndNull(AppHelper.getAuthorizationCode())) {
+                                    } else {
+                                        AppHelper.showMsg(mContext, "请输入完整授权码");
                                     }
-                                });
-                            }
+                                }
+                            });
+                        }
 
                     } else {
                         if (isCollection) {
@@ -491,15 +499,28 @@ public class CommonGoodsDetailActivity extends BaseSwipeActivity {
 
     private AlertDialog mDialog;
     TextView tv_phone;
-    private void showPhoneDialog(String cell) {
-        mDialog = new AlertDialog.Builder(mActivity).create();
+    TextView tv_time;
+    public void showPhoneDialog(final String cell) {
+        mDialog = new AlertDialog.Builder(mContext).create();
         mDialog.show();
         mDialog.getWindow().setContentView(R.layout.dialog_shouye_tip);
         tv_phone = mDialog.getWindow().findViewById(R.id.tv_phone);
-        tv_phone.setText(cell);
-        mDialog.getWindow().findViewById(R.id.tv_dialog_call_phone_sure).setOnClickListener(new View.OnClickListener() {
+        tv_time = mDialog.getWindow().findViewById(R.id.tv_time);
+        tv_phone.setText("客服热线 ("+cell+")");
+
+        tv_phone.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Intent intent = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + cell));
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+                mDialog.dismiss();
+            }
+        });
+        tv_time.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                UnicornManager.inToUnicorn(mContext);
                 mDialog.dismiss();
             }
         });
@@ -539,14 +560,22 @@ public class CommonGoodsDetailActivity extends BaseSwipeActivity {
                             if(model.getData().getFullGiftSendInfo()!=null&&model.getData().getFullGiftSendInfo().size()>0) {
                                 tv_full_desc.setText(model.getData().getFullGiftSendInfo().get(0));
                             }
+                            if(models.getData().getSendTimeStr() == null||models.getData().getSendTimeStr().equals("")) {
+                                tv_date.setVisibility(View.GONE);
+                            }else {
+                                tv_date.setText(models.getData().getSendTimeStr());
+                                tv_date.setVisibility(View.VISIBLE);
+                                Log.d("afsdfdsfds....",models.getData().getSendTimeStr()+"ss");
+                            }
 
-                            Glide.with(mContext).load(models.getData().getSendTimeTpl()).into(iv3);
+                            Glide.with(mContext).load(models.getData().getSelfProd()).into(iv3);
+                            Glide.with(mContext).load(models.getData().getSelfProd()).into(iv2);
                             if("自营商品".equals(model.getData().getCompanyName())) {
-                                tv_address.setVisibility(View.GONE);
+                                rl_gongying.setVisibility(View.GONE);
                                 tv_date.setText(model.getData().getSendTimeStr());
 
                             }else {
-                                tv_address.setVisibility(View.VISIBLE);
+                                rl_gongying.setVisibility(View.VISIBLE);
                                 tv_address.setText(model.getData().getCompanyName());
                                 tv_date.setText(model.getData().getSendTimeStr());
                             }
@@ -557,7 +586,17 @@ public class CommonGoodsDetailActivity extends BaseSwipeActivity {
                                 rl_coupon.setVisibility(View.GONE);
                             }
 
-
+                            tv_send_area.setText(models.getData().getAddress()+" >");
+                            tv_send_area.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    Intent messageIntent = new Intent(mActivity, ChooseAddressActivity.class);
+                                    messageIntent.putExtra("cityName",models.getData().getCityName());
+                                    messageIntent.putExtra("areaName",models.getData().getAreaName());
+                                    messageIntent.putExtra("fromPage","1");
+                                    startActivity(messageIntent);
+                                }
+                            });
                             Log.d("wdsaaaaaaaa....","123");
                             if(priceType.equals("1")) {
                                 mTvPrice.setText(model.getData().getMinMaxPrice());
@@ -574,7 +613,6 @@ public class CommonGoodsDetailActivity extends BaseSwipeActivity {
                                     showPhoneDialog(cell);
                                 }
                             });
-                            Log.d("wdasassds.........","1222");
                             if(model.getData().getTypeUrl()==null||model.getData().getTypeUrl().equals("")) {
                                 iv_flag.setVisibility(View.GONE);
                             }else {

@@ -97,6 +97,17 @@ public class CommonssAdapter extends  RecyclerView.Adapter<CommonssAdapter.BaseV
 
         }
 
+        viewHolder.rl_group.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(mActivity,CommonGoodsDetailActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK );
+                intent.putExtra(AppConstant.ACTIVEID, activesBean.getProductMainId());
+                intent.putExtra("priceType",SharedPreferencesUtil.getString(mActivity,"priceType"));
+                mActivity.startActivity(intent);
+            }
+        });
+
     }
 
     @Override
@@ -126,6 +137,7 @@ public class CommonssAdapter extends  RecyclerView.Adapter<CommonssAdapter.BaseV
         RelativeLayout rl_gift;
         RelativeLayout rl_coupon;
         TextView tv_name;
+        RelativeLayout rl_group;
         public BaseViewHolder(View view) {
             super(view);
             tv_name = (TextView) view.findViewById(R.id.tv_name);
@@ -137,6 +149,7 @@ public class CommonssAdapter extends  RecyclerView.Adapter<CommonssAdapter.BaseV
             iv_pic = (RoundImageView) view.findViewById(R.id.iv_pic);
             tv_coupon = (TextView) view.findViewById(R.id.tv_coupon);
             tv_price = (TextView) view.findViewById(R.id.tv_price);
+            rl_group = (RelativeLayout) view.findViewById(R.id.rl_group);
         }
     }
 }
