@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
@@ -38,6 +39,7 @@ import com.puyue.www.qiaoge.base.BaseActivity;
 import com.puyue.www.qiaoge.base.BaseModel;
 import com.puyue.www.qiaoge.constant.AppConstant;
 import com.puyue.www.qiaoge.dialog.CouponDialog;
+import com.puyue.www.qiaoge.event.ChangeEvent;
 import com.puyue.www.qiaoge.event.FromIndexEvent;
 import com.puyue.www.qiaoge.event.GoToCartFragmentEvent;
 import com.puyue.www.qiaoge.event.GoToMarketEvent;
@@ -126,7 +128,7 @@ public class HomeActivity extends BaseActivity implements CartFragment.FragmentI
     @Override
     public void onAttachFragment(Fragment fragment) {
         //重新让新的Fragment指向了原本未被销毁的fragment，它就是onAttach方法对应的Fragment对象
-        if (mTabHome == null && fragment instanceof HomeFragment9)
+        if (mTabHome == null && fragment instanceof HomeFragment10)
             mTabHome = fragment;
         if (mTabMarket == null && fragment instanceof MarketsFragment)
             mTabMarket = fragment;
@@ -392,6 +394,17 @@ public class HomeActivity extends BaseActivity implements CartFragment.FragmentI
         couponDialog.show();
     }
 
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void change1(ChangeEvent changeEvent) {
+        if(changeEvent.isB()) {
+            mIvHome.setImageResource(R.mipmap.icon_go_top);
+            SharedPreferencesUtil.saveBoolean(mActivity,"isScroll",true);
+        }else {
+            mIvHome.setImageResource(R.mipmap.ic_tab_home_enable);
+            SharedPreferencesUtil.saveBoolean(mActivity,"isScroll",false);
+        }
+    }
+
     private void switchTab(String tab) {
 
         mLocationClient.stop();
@@ -428,25 +441,41 @@ public class HomeActivity extends BaseActivity implements CartFragment.FragmentI
         //切换被选中的tab
         switch (tab) {
             case TAB_HOME:
+
                 mTvHome.setVisibility(View.GONE);
                 if (mTabHome == null || isGet) {
-                    mTabHome = new HomeFragment11();
+                    mTabHome = new HomeFragment10();
                     mFragmentTransaction.add(R.id.layout_home_container, mTabHome);
+                    EventBus.getDefault().post(new TopEvent());
                     isGet = false;
                 } else {
                     mFragmentTransaction.show(mTabHome);
-
+                }
+                EventBus.getDefault().postSticky(new TopEvent());
+                Log.d("wdadasdqwds....","111");
+                boolean isScroll = SharedPreferencesUtil.getBoolean(mActivity, "isScroll");
+                if(isScroll) {
+                    mIvHome.setImageResource(R.mipmap.icon_go_top);
+                }else {
+                    mIvHome.setImageResource(R.mipmap.ic_tab_home_enable);
                 }
 
-                mIvHome.setImageResource(R.mipmap.ic_tab_home_enable);
                 mTvHome.setTextColor(getResources().getColor(R.color.app_tab_selected));
                 getCartPoductNum();
 
-                EventBus.getDefault().post(new TopEvent());
+
                 break;
 
             case TAB_MARKET:
+
                 mTvHome.setVisibility(View.VISIBLE);
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        mIvHome.setImageResource(R.mipmap.ic_tab_home_unable);
+                    }
+                },1/1000);
+
                 if (mTabMarket == null) {
                     mTabMarket = new MarketsFragment();
                     mFragmentTransaction.add(R.id.layout_home_container, mTabMarket);

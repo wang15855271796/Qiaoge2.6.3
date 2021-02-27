@@ -12,6 +12,7 @@ import com.puyue.www.qiaoge.adapter.mine.CitysAdapter;
 import com.puyue.www.qiaoge.dialog.CityDialog;
 import com.puyue.www.qiaoge.helper.UserInfoHelper;
 import com.puyue.www.qiaoge.model.home.CityChangeModel;
+import com.puyue.www.qiaoge.utils.SharedPreferencesUtil;
 import com.puyue.www.qiaoge.view.FlowLayout;
 
 import java.util.List;
@@ -52,6 +53,7 @@ public class CityChangeAdapter extends BaseQuickAdapter<CityChangeModel.DataBean
         citysAdapter.setOnItemClickListeners(new CitysAdapter.OnEventClickListener() {
             @Override
             public void onEventClick(int position, View view) {
+                SharedPreferencesUtil.saveString(mActivity,"provinceName",item.getProvinceName());
                 citysAdapter.selectPosition(position);
                 areaNames = item.getCityNames().get(position).getAreaNames();
                 UserInfoHelper.saveCity(mContext, item.getCityNames().get(position).getCityName());

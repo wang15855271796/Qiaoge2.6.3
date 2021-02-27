@@ -876,7 +876,7 @@
                 android:id="@+id/fl_container"
                 boy:layout_behavior="@string/appbar_scrolling_view_behavior"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"/>
+                android:layout_height="wrap_content"/>
 
 
         </android.support.design.widget.CoordinatorLayout>
@@ -897,11 +897,7 @@
             android:layout_width="match_parent"
             android:layout_height="72dp"/>
 
-            <LinearLayout
-                android:id="@+id/ll_fixed"
-                android:orientation="vertical"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/size_60dp"/>
+            <include layout="@layout/view_bars"/>
 
     </LinearLayout>
 

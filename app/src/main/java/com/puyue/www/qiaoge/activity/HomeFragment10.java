@@ -92,6 +92,7 @@ import com.puyue.www.qiaoge.dialog.PrivacyDialog;
 import com.puyue.www.qiaoge.dialog.TurnTableDialog;
 import com.puyue.www.qiaoge.event.AddressEvent;
 import com.puyue.www.qiaoge.event.BackEvent;
+import com.puyue.www.qiaoge.event.ChangeEvent;
 import com.puyue.www.qiaoge.event.CouponListModel;
 import com.puyue.www.qiaoge.event.FromIndexEvent;
 import com.puyue.www.qiaoge.event.GoToMarketEvent;
@@ -323,15 +324,14 @@ public class HomeFragment10 extends BaseFragment implements View.OnClickListener
     LinearLayout ll_scroll;
     @BindView(R.id.rl_grand)
     RelativeLayout rl_grand;
-    @BindView(R.id.ll_fixed)
-    LinearLayout ll_fixed;
     @BindView(R.id.ll_parent)
     RelativeLayout ll_parent;
     @BindView(R.id.rl_inSide)
     RelativeLayout rl_inSide;
     @BindView(R.id.rl_bar)
     RelativeLayout rl_bar;
-
+    @BindView(R.id.ll_parent_top)
+    RelativeLayout ll_parent_top;
     List<String> list = new ArrayList<>();
     private static final float ENDMARGINLEFT = 50;
     private static final float ENDMARGINTOP = 5;
@@ -341,7 +341,6 @@ public class HomeFragment10 extends BaseFragment implements View.OnClickListener
     private int evaluatetop;
     private RelativeLayout.LayoutParams layoutParams;
     int scrollLength;
-
     HotAdapter hotAdapter;
     Skill5Adapter skill5Adapter;
     ProductNormalModel productNormalModel;
@@ -435,8 +434,10 @@ public class HomeFragment10 extends BaseFragment implements View.OnClickListener
     private boolean isUpdate;
     private HomeActivityDialog homeActivityDialog;
     CommonssAdapter commonssAdapter;
-
-
+    int topHeight;
+    int scrollLength1;
+    int topHeight1;
+    int grandHeight;
     @Override
     public int setLayoutId() {
         return R.layout.test10;
@@ -447,20 +448,26 @@ public class HomeFragment10 extends BaseFragment implements View.OnClickListener
 
     }
 
-    int topHeight;
-    int scrollLength1;
-    int topHeight1;
+    int statusBarHeight1 = -1;
     @Override
     public void findViewById(View view) {
          bind = ButterKnife.bind(this, view);
 
+        //获取status_bar_height资源的ID
+        int resourceId = getResources().getIdentifier("status_bar_height", "dimen", "android");
+        if (resourceId > 0) {
+            //根据资源ID获取响应的尺寸值
+            statusBarHeight1 = getResources().getDimensionPixelSize(resourceId);
+        }
+
+
         for (int i = 0; i < 30; i++) {
             list.add("ss");
         }
+
         initFragment();
         setListener();
-
-
+        final int i = DensityUtil.dip2px(20,mActivity);
         ll_scroll.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
@@ -469,10 +476,16 @@ public class HomeFragment10 extends BaseFragment implements View.OnClickListener
                 scrollLength = Math.abs(scroll_height - bar_height);
                 topHeight = DensityUtil.dip2px(scrollLength, mActivity);
 
+
                 int grand_height = rl_grand.getHeight();
-                scrollLength1 = Math.abs(grand_height - bar_height);
+                scrollLength1 = Math.abs(grand_height - bar_height-i);
+
                 topHeight1 = DensityUtil.dip2px(scrollLength1, mActivity);
                 ll_scroll.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+
+                Log.d("qwdsfdfdf....",grand_height+"aa");
+                Log.d("qwdsfdfdf....",bar_height+"bb");
+                Log.d("qwdsfdfdf....",i+"cc");
             }
         });
 
@@ -480,20 +493,42 @@ public class HomeFragment10 extends BaseFragment implements View.OnClickListener
         appbar.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
             @Override
             public void onOffsetChanged(AppBarLayout appBarLayout, int y) {
+                Log.d("wasdasfff......",y+"");
                 int abs_y = Math.abs(y);
-                int appbarScrollLength = Math.abs(DensityUtil.dip2px(y, mActivity));
-                if (appbarScrollLength >= topHeight1) {
-                    if (rl_inSide.getParent() != ll_fixed) {
-                        ll_parent.removeView(rl_inSide);
-                        ll_fixed.addView(rl_inSide);
-                    }
-                } else {
-                    if (rl_inSide.getParent() != ll_parent) {
-                        ll_fixed.removeView(rl_inSide);
-                        ll_parent.addView(rl_inSide);
-                    }
-                }
+                if (abs_y >= scrollLength1) {
+                    ll_parent_top.setVisibility(View.VISIBLE);
+                    ll_small_title.setVisibility(View.GONE);
+                    ll_line.setVisibility(View.VISIBLE);
+                    EventBus.getDefault().post(new ChangeEvent(true));
+                    if(rb_must_common.isChecked()) {
+                        v1.setVisibility(View.VISIBLE);
+                        v2.setVisibility(View.INVISIBLE);
+                        v3.setVisibility(View.INVISIBLE);
+                        v4.setVisibility(View.INVISIBLE);
 
+                    }else if(rb_new.isChecked()) {
+                        v1.setVisibility(View.INVISIBLE);
+                        v2.setVisibility(View.VISIBLE);
+                        v3.setVisibility(View.INVISIBLE);
+                        v4.setVisibility(View.INVISIBLE);
+                    }else if(rb_reduce.isChecked()) {
+                        v1.setVisibility(View.INVISIBLE);
+                        v2.setVisibility(View.INVISIBLE);
+                        v3.setVisibility(View.VISIBLE);
+                        v4.setVisibility(View.INVISIBLE);
+                    }else if(rb_common.isChecked()){
+                        v1.setVisibility(View.INVISIBLE);
+                        v2.setVisibility(View.INVISIBLE);
+                        v3.setVisibility(View.INVISIBLE);
+                        v4.setVisibility(View.VISIBLE);
+                    }
+
+                } else {
+                    ll_parent_top.setVisibility(View.GONE);
+                    ll_small_title.setVisibility(View.VISIBLE);
+                    ll_line.setVisibility(View.GONE);
+                    EventBus.getDefault().post(new ChangeEvent(false));
+                }
                 //滑动距离小于顶部栏从透明到不透明所需的距离
                 if ((scrollLength - abs_y) > 0) {
                     //估值器
@@ -512,7 +547,7 @@ public class HomeFragment10 extends BaseFragment implements View.OnClickListener
                         layoutParams = (RelativeLayout.LayoutParams) rl_search.getLayoutParams();
                         layoutParams.setMargins(evaluatemargin, evaluatetop, evaluatemargin, 0);
                         if(evaluatetop<100) {
-                            layoutParams.setMargins(evaluatemargin, 80, evaluatemargin, 0);
+                            layoutParams.setMargins(evaluatemargin, 85, evaluatemargin, 0);
                             rl_search.requestLayout();
                         }else {
                             layoutParams.setMargins(evaluatemargin, evaluatetop, evaluatemargin, 0);
@@ -525,7 +560,7 @@ public class HomeFragment10 extends BaseFragment implements View.OnClickListener
                 } else {
                     rl_bar.getBackground().setAlpha(255);
                     if(layoutParams!=null){
-                        layoutParams.setMargins(DensityUtil.dip2px(ENDMARGINLEFT,mActivity),80, DensityUtil.dip2px(ENDMARGINLEFT,mActivity), 0);
+                        layoutParams.setMargins(DensityUtil.dip2px(ENDMARGINLEFT,mActivity),85, DensityUtil.dip2px(ENDMARGINLEFT,mActivity), 0);
                         rl_search.requestLayout();
                         iv_location.setImageResource(R.mipmap.icon_address1);
                         tv_city.setAlpha(0);
@@ -633,12 +668,12 @@ public class HomeFragment10 extends BaseFragment implements View.OnClickListener
         });
 
         rvIconAdapter = new RvIconAdapter(R.layout.item_home_icon,classifyList);
-        GridLayoutManager gridLayoutManager = new GridLayoutManager(context, 2, RecyclerView.HORIZONTAL, false);
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(mActivity, 2, RecyclerView.HORIZONTAL, false);
 
         rvIconAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-                context.startActivity(new Intent(context, HomeActivity.class));
+                mActivity.startActivity(new Intent(mActivity, HomeActivity.class));
                 EventBus.getDefault().post(new GoToMarketEvent());
                 EventBus.getDefault().postSticky(new FromIndexEvent(classifyList.get(position).getId() + ""));
             }
@@ -873,6 +908,7 @@ public class HomeFragment10 extends BaseFragment implements View.OnClickListener
                                         rv_coupon1.setLayoutManager(new LinearLayoutManager(mActivity, RecyclerView.HORIZONTAL, false));
                                         rv_coupon1.setAdapter(commonAdapter);
                                         commonAdapter.notifyDataSetChanged();
+
                                     }
                                 }
                             } else if (type == 3) {
@@ -1293,7 +1329,7 @@ public class HomeFragment10 extends BaseFragment implements View.OnClickListener
                                 }
 
                             } else {
-                                AppHelper.showMsg(context, couponListModel.getMessage());
+                                AppHelper.showMsg(mActivity, couponListModel.getMessage());
                             }
                         }
                     }
@@ -1907,11 +1943,12 @@ public class HomeFragment10 extends BaseFragment implements View.OnClickListener
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.tv_search:
-                Intent intent = new Intent(context, SearchStartActivity.class);
+                Intent intent = new Intent(mActivity, SearchStartActivity.class);
                 intent.putExtra(AppConstant.SEARCHTYPE, AppConstant.HOME_SEARCH);
                 intent.putExtra("flag", "first");
                 intent.putExtra("good_buy", "");
-                startActivity(intent);
+//
+
                 break;
 
 //            case R.id.tv_search1:
@@ -2157,8 +2194,8 @@ public class HomeFragment10 extends BaseFragment implements View.OnClickListener
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void topEvent(TopEvent event) {
-
+    public void getScrolls(TopEvent event) {
+        appbar.setExpanded(true);
     }
 
     int position;
@@ -2291,7 +2328,7 @@ public class HomeFragment10 extends BaseFragment implements View.OnClickListener
     private void setListener() {
         rg_new.setOnCheckedChangeListener(new MyOnCheckedChangeListener());
         //设置默认选中框架页面
-        rg_new.check(R.id.rb_must_common);
+        rg_new.check(R.id.rb_common);
     }
 
     private List<Fragment> mBaseFragment;

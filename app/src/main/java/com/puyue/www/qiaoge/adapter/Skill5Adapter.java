@@ -50,6 +50,7 @@ public class Skill5Adapter extends RecyclerView.Adapter<Skill5Adapter.BaseViewHo
     @Override
     public void onBindViewHolder(@NonNull BaseViewHolder viewHolder, int position) {
         try {
+            int pos = position % skillActive3.size();
             activesBean = skillActive3.get(position % skillActive3.size());
             viewHolder.tv_name.setText(activesBean.getActiveName());
             viewHolder.tv_price.setText(activesBean.getPrice());
@@ -65,7 +66,7 @@ public class Skill5Adapter extends RecyclerView.Adapter<Skill5Adapter.BaseViewHo
                 @Override
                 public void onClick(View v) {
                     Intent intent = new Intent(context,SeckillGoodActivity.class);
-                    intent.putExtra(AppConstant.ACTIVEID,activesBean.getActiveId());
+                    intent.putExtra(AppConstant.ACTIVEID,skillActive3.get(pos).getActiveId());
                     intent.putExtra("priceType",SharedPreferencesUtil.getString(context,"priceType"));
                     intent.putExtra("num","-1");
                     context.startActivity(intent);

@@ -28,6 +28,7 @@ import com.puyue.www.qiaoge.helper.UserInfoHelper;
 import com.puyue.www.qiaoge.listener.PopWindowListener;
 import com.puyue.www.qiaoge.model.InfoListModel;
 import com.puyue.www.qiaoge.model.home.CityChangeModel;
+import com.puyue.www.qiaoge.utils.SharedPreferencesUtil;
 import com.puyue.www.qiaoge.utils.ToastUtil;
 import com.puyue.www.qiaoge.view.CascadingMenuViewOnSelectListener;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
@@ -106,6 +107,9 @@ public class InfoFragment extends BaseFragment {
 
     @Override
     public void setViewData() {
+        provinceName = SharedPreferencesUtil.getString(mActivity,"provinceName");
+        cityName = UserInfoHelper.getCity(mActivity);
+        tv_address.setText(provinceName+cityName);
         marketsAdapter = new MarketsAdapter(R.layout.item_shop,list);
         recyclerView.setLayoutManager(new GridLayoutManager(mActivity,2));
         recyclerView.setAdapter(marketsAdapter);

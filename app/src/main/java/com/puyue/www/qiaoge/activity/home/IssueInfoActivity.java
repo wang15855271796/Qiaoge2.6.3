@@ -326,6 +326,7 @@ public class IssueInfoActivity extends BaseSwipeActivity {
                     for (int i = 0; i < images.size(); i++) {
                         picList.add(images.get(i).getCompressPath());
                     }
+                    Log.d("wdsddsd........",selectList.size()+"");
                     shopImageViewAdapter.setList(selectList);
                     shopImageViewAdapter.notifyDataSetChanged();
                     upImage(filesToMultipartBodyParts(picList));
@@ -354,16 +355,11 @@ public class IssueInfoActivity extends BaseSwipeActivity {
                         if (baseModel.success) {
                             returnPic = "";
                             if (baseModel.data != null) {
-//                                for (int i = 0; i < baseModel.data.length; i++) {
-//                                    returnPic += baseModel.data[i] + ",";
-//                                }
                                 String[] data = baseModel.data;
-
                                 Gson gson = new Gson();
                                 returnPic = gson.toJson(data);
                             }
-                            Log.i("wwwwbbb", "onNext: " + returnPic);
-                            //  sendMgs();
+
                         } else {
                             AppHelper.showMsg(mContext, baseModel.message);
                         }

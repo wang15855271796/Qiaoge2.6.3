@@ -193,7 +193,6 @@ public class IssueEditInfoActivity extends BaseSwipeActivity {
                                 Gson gson = new Gson();
                                 returnPic = gson.toJson(data);
                             }
-                            Log.d("wdadasdadasdsdsds.....",returnPic+"111");
                             //  sendMgs();
                         } else {
                             AppHelper.showMsg(mContext, baseModel.message);
@@ -433,17 +432,6 @@ public class IssueEditInfoActivity extends BaseSwipeActivity {
         if (resultCode == RESULT_OK) {
             switch (requestCode) {
                 case PictureConfig.CHOOSE_REQUEST:
-
-//                    images = PictureSelector.obtainMultipleResult(data);
-//                    selectList.addAll(images);
-//
-//                    for (int i = 0; i < images.size(); i++) {
-//                        picList.add(images.get(i).getCompressPath());
-//                    }
-//                    adapter.setList(selectList);
-//                    adapter.notifyDataSetChanged();
-//                    upImage(filesToMultipartBodyParts(picList));
-
 
                     // 图片选择结果回调
                     images = PictureSelector.obtainMultipleResult(data);
